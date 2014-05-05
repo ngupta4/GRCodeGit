@@ -1,0 +1,74 @@
+<!--- TEMPLATENAME: selectasystemsingle.isml --->
+<iscache status="off"/>
+
+<iscomment>
+	This template is created before the 'wrapper' template, so we can set
+	up the template configuration for the 'pt_selectasystem' template right here.
+</iscomment>
+
+
+<isdecorate template="rendering/folder/pt_selectasystem">
+	<isinclude template="util/modules"/>
+	<isscript>
+		importPackage(dw.util);
+		importPackage(dw.object);
+		importPackage(dw.catalog);
+		
+		
+		var CCC : Object = pdict.CurrentCampaignConfig;
+		var campaignCode : String = CCC.campaignCode;
+		var showHeader : boolean = CCC.showHeader;
+		var showFooter : boolean = CCC.showFooter;
+		var showNav : boolean = CCC.showNav;
+		var showOrderButton : boolean = CCC.showOrderButton;
+		var containerClasses : String = CCC.getContainerClasses();
+		var category : dw.catalog.Category = CCC.getCampaignCategory();
+		var primaryOffer : Product = null;
+		var offersList : ArrayList = new ArrayList();
+		var offerCodes : Array = null;
+		if( !empty(CCC) ) {
+			offerCodes = CCC.sasOfferCodes;
+			var aProduct : Product = null;
+			for( var i=0, ii=offerCodes.length; i<ii; i++ ) {
+				aProduct = ProductMgr.getProduct(offerCodes[i]);
+				if( !empty(aProduct) ) {
+					 primaryOffer = aProduct;
+					 break;
+				}
+			}
+		}
+	</isscript>
+	
+	<div class="content_box_outer_pdp">
+		<div class="content_box_inner_pdp">
+		
+			<div class="pdp_offers">
+				<table>
+					<tr>
+						<td class="cell-control-offer">
+							<div id="control-offer" class="pdp_offer_left">
+								<isinclude url="${URLUtils.url('Product-Offer','pid',primaryOffer.ID)}" />
+							</div>
+						</td>
+						<td>
+							<div id="alternate-offer" class="pdp_offer_right">
+								<isslot id="alternate-sas-offer-slot" context="category" description="Alternate Offer" context-object="${category}"/>
+							</div>
+						</td>
+					</tr>
+				</table>
+			</div>
+			
+			<iscomment>
+			<div class="pdp_reviews">			
+				<iscontentasset aid="mp-customer-reviews"/>
+			</div>
+			</iscomment>
+	
+		</div>			
+	</div>			
+	<!--<p class="sasLegal">Malibu Pilates&reg; Trial Offer - Your card will be billed for the first payment of $14.95 plus s&amp;h when your product is shipped. If you do not return your Malibu Pilates&reg; Program within 30 days, you will be billed six additional payments of $59.95 each month to the credit card used today. If you're not totally satisfied with Malibu Pilates&reg; in the first 30 days call our customer service at 800-964-1981 to cancel future charges and/or to receive complete return instructions on how to receive your refund less shipping and handling.</p>-->
+	<isset name="OmniturePage" value="Offerpage" scope="pdict">	
+	<isset name="pixel_content_asset" value="pixels_order_now" scope="request">
+	
+</isdecorate>

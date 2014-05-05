@@ -1,0 +1,126 @@
+<!--- TEMPLATENAME: cart1.isml ---><iscontent compact="true">
+<isscript>
+	importPackage(dw.object);
+	importPackage(dw.catalog);
+	importScript('guthyrenker_core:common/libUtils.ds');
+	
+	var CCC : Object = pdict.CurrentCampaignConfig;
+	var campaignCode : String = CCC.campaignCode;
+	var showHeader : boolean = CCC.showHeader;
+	var showFooter : boolean = CCC.showFooter;
+	var showNav : boolean = CCC.showNav;
+	var showOrderButton : boolean = CCC.showOrderButton;
+	
+	var category : dw.catalog.Category = CCC.getCampaignCategory();
+	
+</isscript>
+<isinclude template="util/modules"/>
+<isdecorate template="mobile/checkout/pt_checkout">
+	<isset name="multiCheckout" value="${false}" scope="pdict" />
+    
+	<isif condition="${empty(pdict.CheckoutStep) || 'cartinformation' == pdict.CheckoutStep}">
+		<iscomment>Disable checkout button for cart. We don't need it at this step</iscomment>
+		<isset name="EnableCheckout" value="${true}" scope="pdict" />
+		<div class="context" data-role="content">
+			<div class="step-overview segment-style">
+				<div style="float:right;padding-top: 10px;padding-bottom: 10px;">
+				<a class="button-fix" href='tel:+<isinclude url="${URLUtils.url('Phone-Show')}"/>' data-role="button" data-inline="true" data-theme="b">Click To Call</a>
+				</div>
+				<img src="${dw.web.URLUtils.staticURL('mobile/images/cart.png')}" style="padding-top:25px; padding-bottom:25px;"alt="" class="center">
+
+			</div>
+			<isinclude template="mobile/checkout/components/errors" />
+		<isinclude template="mobile/checkout/steps/cartinformation" />
+		</div>
+		<isset name="OmniturePage" value="SimpleCheckout" scope="pdict">
+	<iselseif condition="${'review' == pdict.CheckoutStep}">
+		<isinclude template="mobile/checkout/steps/review" />
+		<isset name="OmniturePage" value="CheckoutInformation" scope="pdict">
+	<iselseif condition="${'confirmation' == pdict.CheckoutStep}">
+		<isscript>
+		  var rememberMeObj = {
+		   "firstName" : pdict.Order.billingAddress.firstName,
+		   "lastName"  : pdict.Order.billingAddress.lastName,
+		   "email"     : pdict.Order.customerEmail
+		  }
+		  
+		  var rememberMeAge:Number = 604800;
+		  var sharedsessionAge:Number = 604800;
+		  
+		  importPackage (dw.web);
+		  importPackage( dw.system );
+		  
+		  var cookiesNames:Array = Site.current.getCustomPreferenceValue("GRTransferCookiesList");
+		  if (!empty(cookiesNames)) {
+		  	for(var i = 0; i < cookiesNames.length; i++){
+	        	var cookieDesc:String  = cookiesNames[i];
+	        	var cokiesArr:Array = cookieDesc.split(":");
+	        
+	        	var cookieName:String = cokiesArr[0];
+	        	var maxAge:Number = cokiesArr.length == 2? cokiesArr[1] * 86400: 604800;
+	        	
+	        	if(cookieName == 'rememberMe'){
+	        		rememberMeAge = maxAge;
+	        	}
+	        	if(cookieName == 'sharedsession'){
+	        		sharedsessionAge = maxAge;
+	        	}
+	        }
+		  }
+	 
+		  var cookie : Cookie = new Cookie("rememberMe",encodeURIComponent(rememberMeObj['firstName']+' '+rememberMeObj['lastName']+':'+rememberMeObj['email']));
+		  cookie.setMaxAge(rememberMeAge);
+		  cookie.path = "/";
+		  request.addHttpCookie(cookie);
+		  
+		  var cookie2 : Cookie = new Cookie("sharedsession",encodeURIComponent(JSON.stringify(rememberMeObj)));
+		  cookie2.setMaxAge(sharedsessionAge);
+		  cookie2.path = "/";
+		  request.addHttpCookie(cookie2);
+		 
+		</isscript>
+		
+		<div class="step-overview">
+			<img src="${URLUtils.staticURL('mobile/images/thanks.png')}"  alt="" class="center" style="padding-top:25px; padding-bottom:25px;">
+		</div>
+		<isinclude template="mobile/checkout/steps/confirmation" />
+		
+		<isset name="OmniturePage" value="COConf_acq" scope="pdict">
+	<iselseif condition="${'cartempty' == pdict.CheckoutStep}">
+		
+		<isinclude template="mobile/checkout/steps/cartempty" />
+		<isset name="OmniturePage" value="SimpleCheckout" scope="pdict">
+	</isif>
+</isdecorate>
+<iscomment> Checkout Page Pixels  </iscomment>
+<isinclude template="mobile/common/mediaPixelsInit.isml"/>
+
+<isif condition="${empty(pdict.CheckoutStep) || 'cartinformation' == pdict.CheckoutStep}">
+
+  <iscomment>In checkout page</iscomment>
+  <iscontentasset aid="m-checkout-mediapixel"/>
+  
+  <div class="mboxDefault"></div>
+  <script type="text/javascript">mboxCreate("Moble_PA_Checkout_SCP",'renderingExperience=' +"${session.custom.renderingGroup.ID}",'deviceGroup=' +"${session.custom.deviceCategory}",'device=' +"${session.custom.device}");</script>
+
+<iselseif condition="${'review' == pdict.CheckoutStep}">
+
+  <iscomment>In Preview Page</iscomment>
+  <iscontentasset aid="m-checkout-mediapixel"/>
+
+<iselseif condition="${'confirmation' == pdict.CheckoutStep}">
+  
+  <iscomment>In confirmation page</iscomment>
+  <iscontentasset aid="m-confirm-mediapixel"/>
+   <script id="script304" src="https://t4.mgplatform.com/gr/mconfirm-sheercover.js?orderid=${pdict.Order.orderNo}"></script>
+	<isscript>
+		campaignCode = pdict.Order.custom.campaignCode.toString();
+		CCC = getSharedCurrentConfig(getCampaignForCampaignCode(campaignCode),true,null);
+	</isscript>
+  <isif condition="${CCC.enableSlpSas}">
+  	<iscontentasset aid="m-confirm-slp-sas-mediapixel"/>
+  </isif>
+  <div class="mboxDefault"></div>
+  <script type="text/javascript">mboxCreate('Mobile_PA_Confirm_SCP','productPurchasedId=' + offerArray.join(), 'orderTotal=' + subTotal, 'orderId=' + orderID,'renderingExperience=' +"${session.custom.renderingGroup.ID}",'deviceGroup=' +"${session.custom.deviceCategory}",'device=' +"${session.custom.device}");</script>
+
+</isif>

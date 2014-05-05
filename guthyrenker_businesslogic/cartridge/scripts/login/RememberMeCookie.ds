@@ -1,0 +1,41 @@
+/**
+*	@input CurrentReq : dw.system.Request
+*   @input email : String
+*-   @input password : String
+*   @input rememberme : Boolean
+*/
+
+
+importPackage( dw.system ); 
+importPackage( dw.catalog);
+importPackage( dw.util );
+importPackage(dw.web);
+importPackage(dw.object);
+
+
+function execute( pdict : PipelineDictionary ) : Number
+{  
+
+    var remembermeEncryptedName:String="dwcustomer_d5daae0bfd2ff56096ea8fea58bad5e2";
+    var encoding:String="UTF-8";//new String(Resource.msg('readcookies.utf8','account',null));
+	var preferences : CustomAttributes = 180;//dw.system.Site.getCurrent().preferences.custom.Credential_Cookies_Age;  
+	  
+	if(pdict.rememberme){
+		    /* Overriding cookies stored at local system. */
+
+			var cookieRememberme:Cookie=new Cookie(remembermeEncryptedName,StringUtils.encodeBase64(pdict.email, encoding));
+			cookieRememberme.setMaxAge(preferences);
+			cookieRememberme.setPath("/");
+
+			pdict.CurrentReq.addHttpCookie(cookieRememberme);	
+	 }else if(pdict.rememberme==false){
+	 	   /* Deleting cookies from local system. */
+			var cookieRememberme:Cookie=new Cookie(remembermeEncryptedName,StringUtils.encodeBase64(pdict.rememberme, encoding));
+			cookieRememberme.setMaxAge(0);
+			cookieRememberme.setPath("/"); 
+
+			pdict.CurrentReq.addHttpCookie(cookieRememberme); 
+			 
+	}	  	
+   return PIPELET_NEXT;
+}

@@ -1,0 +1,54 @@
+<isinclude template="util/modules"/>
+<div class="accountlanding">
+  <isif condition="${pdict.CurrentCustomer.authenticated}">
+  <div class="gr-bg-wraper">
+    <div class="white-bg">
+      <div class="title">${Resource.msg('account.profile','account',null)}</div>
+      <div class="panel-wraper">
+        <div class="left-panel">
+          <isinclude template="account/dashboardAccountProfile"/>
+        </div>
+        </isif>
+        <div class="right-panel">
+         <isinclude template="account/dashboardAddressBook"/>
+        </div>
+        
+     
+      <div class="panel-wraper">
+        <div class="left-panel">
+			<isinclude template="account/dashboardPaymentMethod"/>
+        </div>
+        <div class="right-panel">
+          <isinclude template="account/dashboardAboutUs"/>
+        </div>
+        
+      </div>
+    </div>
+  </div> </div>
+  <div class="order-wraper">
+    <div class="left-panel2">
+      <div class="gr-bg-wraper">
+        <div class="white-bg minheight">
+			<isinclude template="account/dashboardOrderStatusHistory"/>
+        </div>
+      </div>
+    </div>
+    <div class="right-panel2">
+      <div class="gr-bg-wraper">
+        <div class="white-bg minheight">
+         	 <isinclude template="account/dashboardKit"/>
+        </div>
+      </div>
+    </div>
+    
+    </div>
+     <iscomment>
+    	Community Section goes here
+    </iscomment>
+    <div class="gr-bg-wraper">
+<isif condition="${dw.system.Site.getCurrent().getCustomPreferenceValue('enableBV')}">
+    <isinclude template="community/usercommunitydashboard" />
+</isif>
+  </div>
+</div>
+<!-- END: accountlanding --> 

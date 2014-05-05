@@ -1,0 +1,6 @@
+<!--- TEMPLATENAME: selectasystem_full_a.isml --->
+<isdecorate template="clearzone/search/pt_selectasystem_full">
+       <isscript>var category : dw.catalog.Category = pdict.CurrentCampaignConfig.getCampaignCategory();</isscript>
+       <isslot id="sas_body" description="Sas body" context="category" context-object="${category}" />
+       <isinclude template="bv/display/rr/reviews" />
+</isdecorate>

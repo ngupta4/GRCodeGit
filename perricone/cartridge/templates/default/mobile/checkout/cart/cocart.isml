@@ -1,0 +1,84 @@
+<isset name="enableCheckout" value="${pdict.EnableCheckout}" scope="page"/>	
+<isset name="multiCheckout" value="${pdict.multiCheckout}" scope="page"/>
+<isset name="ShowCartQuestions" value="${true}" scope="pdict" />
+	
+<iscomment>Display selected bonus products Order Promotion message</iscomment>
+
+<isloop items="${pdict.Basket.bonusDiscountLineItems}" var="bonusDiscountLineItem">
+	<isif condition="${bonusDiscountLineItem.getPromotion().getPromotionClass() == dw.campaign.Promotion.PROMOTION_CLASS_ORDER && bonusDiscountLineItem.getBonusProductLineItems().size() == 0}">
+		<div class="orderbonuslineitempromo">			
+		<iscomment>Display appropriate text based on status of bonus discount and number of selected bonus products.</iscomment>
+		<isif condition="${bonusDiscountLineItem.getBonusProductLineItems().size() > 0}">
+			<isif condition="${bonusDiscountLineItem.getMaxBonusItems() > 1}"><isset name="bonusButtonText" value="${Resource.msg('cart.updatebonusproducts','checkout',null)}" scope="page"/><iselse><isset name="bonusButtonText" value="${Resource.msg('cart.updatebonusproduct','checkout',null)}" scope="page"/></isif>
+		<iselse>
+			<isif condition="${bonusDiscountLineItem.getMaxBonusItems() > 1}"><isset name="bonusButtonText" value="${Resource.msg('cart.selectbonusproducts','checkout',null)}" scope="page"/><iselse><isset name="bonusButtonText" value="${Resource.msg('cart.selectbonusproduct','checkout',null)}" scope="page"/></isif>
+		</isif>
+		<div class="bonuslineitemdetails">
+			<div class="promo"><isprint value="${bonusDiscountLineItem.getPromotion().getName()}"/></div>
+			<isprint value="${bonusDiscountLineItem.getPromotion().getCalloutMsg()}"/>
+			<span class="formfieldtooltip"><a class="tooltip">${Resource.msg('product.promotiondetails','product',null)}
+				<div class="tooltip-body" style="display:none">
+					<div class="tooltipcontainer">
+						<isprint value="${bonusDiscountLineItem.getPromotion().getDetails()}"/><br />
+						${StringUtils.format(Resource.msg('cart.bonusmaxitems','checkout',null), bonusDiscountLineItem.getMaxBonusItems())} ${StringUtils.format(Resource.msg('cart.bonusnumselected','checkout',null), bonusDiscountLineItem.getBonusProductLineItems().size())}
+					</div>
+				</div></a>
+			</span>
+		</div>
+		<div class="bonusproducts">
+			<a href="${URLUtils.url('Product-GetBonusProducts','bonusDiscountLineItemUUID', bonusDiscountLineItem.UUID)}" title="${bonusButtonText}" class="imagebutton"><span>${bonusButtonText}</span></a>
+		</div>
+		<div class="clear"><!-- FLOAT CLEAR --></div>
+		</div>
+	</isif>
+</isloop>
+
+<iscomment>show the basket when we have data </iscomment>
+<div class="title center">
+	<isprint value="${Resource.msg('cocart.basket.title.mobile', 'rendering',null)}"/>
+</div>
+<isinclude template="mobile/checkout/cart/carttable" />
+<isinclude template="mobile/checkout/cart/ordertotal" />
+
+
+<script type="text/javascript">
+app.proactiv.resources.set({
+	'cartFormID' : '${pdict.CurrentForms.cart.htmlName}',
+	'cartUpdateBtnID' : '${pdict.CurrentForms.cart.updateCart.htmlName}'
+});
+
+jQuery(document).ready(function () {
+	jQuery("#recalculate").bind("click",function(event){
+		event.preventDefault();
+		var shippingMethodID = jQuery("select[name=${pdict.CurrentForms.cart.shippingMethodID.htmlName}]");
+		if(shippingMethodID!=null){
+			var url = app.util.appendParamToURL("${URLUtils.url('COCart-SetShippingMethod')}", "shippingID", shippingMethodID.val());
+			var options = {
+					type: "POST",
+					url :  url,
+					callback : function (data){
+						if(!data || !data.success) {
+							window.location="${URLUtils.url('ABTest-Show')}";
+						}else{
+							updateCartAmountValue(data.update);
+						}
+					}
+				};
+			app.ajax.getJson(options);
+
+		}
+		return false;
+	});	
+});
+
+var updateCartAmountValue = function(dataObj) {
+	for(var x in dataObj){
+		var elm = jQuery("."+x);
+		if(elm!=null){
+			elm.html(dataObj[x].stringValue);
+		}
+	}
+	
+};
+
+</script>

@@ -1,0 +1,203 @@
+<!--- TEMPLATENAME: cart101.isml --->
+<isinclude template="util/modules" />
+<isscript>
+	var decoratorTemplate = ('cartempty' == pdict.CheckoutStep || 'review' == pdict.CheckoutStep || 'confirmation' == pdict.CheckoutStep) ? 'mobile/content/checkout/pt_checkout' : 'mobile/checkout/cartrefresh/pt_checkoutcartrefresh'; 
+</isscript>
+
+<isdecorate template="${decoratorTemplate}">
+
+<!-- <script src="https://ajax.aspnetcdn.com/ajax/jQuery/jquery-1.10.2.min.js"></script> -->
+
+
+<isset name="pagetitle" value="${Resource.msg('shopping.sas.title','rendering',null)}" scope="pdict">
+
+<isif condition="${empty(pdict.CheckoutStep) || 'cartinformation' == pdict.CheckoutStep}">
+	
+	<script type="text/javascript">var campaignCode = '${pdict.CurrentCampaignConfig['campaignCode']}';	</script>
+	<isset name="pid" value="${pdict.CurrentHttpParameterMap.pid}" scope="page" />
+	
+
+ 	<script type="text/javascript" src="${URLUtils.staticURL('/js/paymentMethods/paymentMethodHandler.js')}" ></script>
+	<isscript>
+		importPackage(dw.util);
+		importPackage(dw.catalog);
+		importScript('getdepend:product/GetProductMap.ds');		
+		var orderStep : Number = 1;
+		var orderStep : Number = 1;
+		var CCC : Object = pdict.CurrentCampaignConfig;
+		
+		var offersList : ArrayList = new ArrayList();
+		var offerCodes : Array = null;
+		if( !empty(CCC) ) {
+			offerCodes = CCC.sasOfferCodes;
+			var aProduct : Product = null;
+			for( var i=0, ii=offerCodes.length; i<ii; i++ ) {
+				aProduct = ProductMgr.getProduct(offerCodes[i]);
+				if( !empty(aProduct) ) {
+					offersList.add1(aProduct);
+				}
+			}
+			var product : Product = offersList[0];
+		}
+		var category : dw.catalog.Category = CCC.getCampaignCategory();
+		var showRecommendationPopup="false";
+		
+		</isscript>
+	<iscomment>
+	<div class="mboxDefault"></div>
+	<script type="text/javascript">
+		var g_mboxUCIcode = "${dwUCI}";
+		mboxCreate("PAP_SAS_UpsellInline",'sasCampaign=' + '${CCC.campaignCode}','sasUCI=' + g_mboxUCIcode,'renderingExperience=' +"${session.custom.renderingGroup.ID}",'deviceGroup=' +"${session.custom.deviceCategory}",'device=' +"${session.custom.device}");
+	</script>
+	
+    <div class="mboxDefault"></div>
+	<script type="text/javascript">
+		mboxCreate("PAP_Checkout_Inline",'renderingExperience=' +"${session.custom.renderingGroup.ID}",'deviceGroup=' +"${session.custom.deviceCategory}",'device=' +"${session.custom.device}");
+	</script>
+  	</iscomment>  
+	<input type="hidden" id="coreProductID" class="coreProductID" value="${coreProductID}" />
+
+	<div class="page-wrapper-SAS-title">
+		<isprint value="${Resource.msg('select.kit.page.title.mobile.panelc','locale',null)}" encoding="off" />
+	</div>
+	<div class="page-wrapper-SAS">
+
+	<div class="page-wrapper-mobile">
+
+		<div class="selectakitpanel">
+			<a class="stepBlock" name="Step1">&nbsp;</a>
+
+			<isinclude template="mobile/upsellinlinepanel/selectakit" />
+
+		</div>
+	
+		<div class="selectaProductpanel">
+			<a class="stepBlock" name="Step2">&nbsp;</a>
+			<isinclude template="mobile/upsellinlinepanel/selectaproduct" />
+		</div> 
+	
+		<div class="upsellrecommendation SASpartition select4open">	
+			<a class="stepBlock" name="Step3">&nbsp;</a>
+			<isinclude template="mobile/upsellinlinepanel/upsellrecommendation" />
+			
+			<div class="MoveSlideContainer">
+				<div class="MoveSlide">
+					<div class="NextBack closeopen" id="select3"><span class="arrow"><</span> Back</div>
+					<div class="NextBack closeopen" id="select5">Next <span class="arrow">></span></div>
+				</div>
+			</div>
+		</div>
+	
+		<iscomment>new code</iscomment>
+		<form action="${URLUtils.httpsContinue()}" method="post" id="${pdict.CurrentForms.cart.htmlName}" class="checkoutform" >
+			<isinclude template="checkout/components/errors"/>
+				<a class="stepBlock" name="Step4">&nbsp;</a>
+			<div class="checkoutPanelB SASpartition select5open">
+				
+				<div class="leftSection">
+					<div class="checkoutPanelB-Title">
+						<h2 class="pageTitle">${Resource.msg('checkout.heading.title', 'rendering', null)}</h2>
+					</div>
+					<isset name="step" value="billingshipping" scope="page">
+					<isinclude template="checkout/cartrefresh/cartproduct" />
+					<div class="rightSection bottomPanel" style="width:100%;">
+					<div class="rightPosition">
+						<isinclude template="mobile/checkout/cartrefresh/cartsummary" />					
+					</div>
+				</div>	
+								
+					<isinclude template="mobile/checkout/cartrefresh/personinformation" />				    
+				</div>
+				
+				<div <isif condition="${pdict.Basket.productLineItems.length!=1}">
+						
+						class="row actionPanel fullBar"						
+						
+						
+					 <iselseif condition="${null!=CCC.rtsEnabled && CCC.rtsEnabled==true}">
+					 	class="row actionPanel fullBar"
+					 <iselse>	
+						 class="row actionPanel"
+					</isif>	 >
+					<div class="leftSection" <isif condition="${null!=CCC.rtsEnabled && CCC.rtsEnabled==true}">style="display:none"</isif>>
+						<isinclude template="checkout/cartrefresh/vitaminrecommendation" />
+					</div>
+					<div class="rightSection">	
+						  <div class="compBtn">
+						  <isif condition="${null!=CCC.rtsEnabled && CCC.rtsEnabled==true}">
+						  	<input type="hidden" value="x" name="${pdict.CurrentForms.personinf.apply.htmlName}" />
+						  	<button class="continueBtn" id="contYourOrder" type="submit" value="${Resource.msg('global.checkout', 'locale', null)}" name="${pdict.CurrentForms.personinf.apply.htmlName}" tabindex="30"><span>${Resource.msg('checkout_refresh.submit', 'rendering', null)}</span></button>
+						  <iselse>
+								<input type="hidden" value="x" name="${pdict.CurrentForms.personinf.apply.htmlName}" />
+								<button class="continueBtn medOrngBtn" id="contYourOrder" type="submit" value="${Resource.msg('global.checkout', 'locale', null)}" name="${pdict.CurrentForms.personinf.apply.htmlName}" tabindex="30" ><span>${Resource.msg('checkout_refresh.submit', 'rendering', null)}</span></button>
+		   	        	  </isif>
+		   	        	  </div>
+					</div>	
+				</div>		
+			</div>
+		</form>
+	</div>
+	
+	<isif condition="${(pdict.BasketStatus != null && pdict.BasketStatus.error) ||pdict.PlaceOrderError != null || (!empty(pdict.AVSError) && pdict.AVSError && !empty(pdict.LitleResponseAVSMessage)) }">
+		<script type="text/javascript">
+		$(document).ready(function() {
+		       var selectKitHeight = jQuery('.selectakitpanel').height();
+		       var genderProductHeight = jQuery('.selectaProductpanel').height();
+		       var supplyHeight = jQuery('.upsellrecommendation').height();
+		       var giftUpsellCheckoutHeight = selectKitHeight + genderProductHeight + supplyHeight+175;
+		      
+		              
+		       function scrollOnload(){
+		              $("html,body").animate({scrollTop: giftUpsellCheckoutHeight}, 1000);
+		       }
+		       scrollOnload();
+		});
+		</script>                         
+	</isif>
+	
+	<div class="panelB_content">
+		
+	<iselseif condition="${'review' == pdict.CheckoutStep}">
+		<ischeckoutbreadcrumbs type="simple" step="review" paypal="${true}" />		
+		<isinclude template="checkout/steps/review" />
+	<iselseif condition="${'confirmation' == pdict.CheckoutStep}">
+		<iscomment>
+		<div class="mboxDefault"></div>
+		<script type="text/javascript">mboxCreate('PA_Confirm_SCP','productPurchasedId=' + offerArray.join(), 'orderTotal=' + subTotal, 'orderId=' + orderID,'renderingExperience=' +"${session.custom.renderingGroup.ID}",'deviceGroup=' +"${session.custom.deviceCategory}",'device=' +"${session.custom.device}");</script>
+		</iscomment>
+		<isset name="step" value="confirmation" scope="page">	
+		
+		<iscomment>
+			<div class="checkout_header">
+				<h1><isprint value="${Resource.msg('confirmation.header','checkout',null)}"/></h1>
+			</div>		
+			<ischeckoutbreadcrumbs type="simple" step="confirm" paypal="${pdict.IsPaypalPayment}" />
+		</iscomment>	
+		<isinclude template="checkout/components/errors" />
+		<isinclude template="checkout/steps/confirmation" />
+	<iselseif condition="${'cartempty' == pdict.CheckoutStep}">
+		<iscomment>
+			<div class="checkout_header">
+				<iscontentasset aid="cart-header-text-billing-details" />
+			</div>		
+			<ischeckoutbreadcrumbs type="simple" step="" paypal="${pdict.IsPaypalPayment}" />
+		</iscomment>		
+		<isinclude template="checkout/components/errors" />		
+		<isinclude template="checkout/cartrefresh/cartempty" />
+	</isif>
+	<iscomment> End of New code	
+		<a href="javascript:void(0)" class="updatecartbtn">${Resource.msg('cart.updatecart.button', 'rendering', null)}</a>
+	</iscomment>
+	
+	<isif condition="${'confirmation' == pdict.CheckoutStep}">
+		<isset name="OmniturePage" value="COConfirmationAcq" scope="pdict">
+	<iselse>
+	<isset name="OmniturePage" value="Checkout_Airline" scope="pdict">
+	</isif>
+	
+	<iscomment>Media Pixel</iscomment> 
+    <isif condition="${'confirmation' != pdict.CheckoutStep}">
+	    <isslot id="MediaPixelForSAS" context="global" description="MediaPixelForSAS" />
+	</isif>	
+	
+</isdecorate>

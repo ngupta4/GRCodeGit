@@ -1,0 +1,63 @@
+<isdecorate template="mobile/pt_mobile">
+<isinclude template="mobile/util/modules"/>
+
+<iscomment>Report this checkout step</iscomment>
+<isset name="checkoutstep" value="${1}" scope="pdict"/>
+<isset name="checkoutname" value="${'CheckoutMethod'}" scope="pdict"/>
+
+<isscript>
+	
+	//test the errors
+	var status = pdict.status;
+	var formError = false;
+	var map;
+
+	try{
+
+		if(status.getItems().size()>0){
+			formError = true;
+			map = pdict.CurrentHttpParameterMap;
+		}
+	
+	} catch(e){
+	
+	}
+
+</isscript>
+
+<div id="checkoutlogin" class="mobilecontent">
+
+	<isscript>
+
+	//set the username if already registered
+	var username : String = "";
+	try{
+		if(pdict.CurrentCustomer.registered){
+			username = pdict.CurrentCustomer.profile.credentials.login;
+		}
+	} catch(e){}
+</isscript>
+
+	<iscomment>returning customer</iscomment>
+	<div>	
+		<h3>${Resource.msg('accountlogin.loginheader','account',null)}</h3>
+		<p>${Resource.msg('logininclude.registered','account',null)}</p>
+		<form action="${URLUtils.https('mAccount-ShowAccountOverview')}" method="post" id="loginForm">			
+			<iscomment>Login Unsuccessful Error Message</iscomment>
+			<isinclude template="mobile/components/display_status">						
+			<div>
+				<span class="requiredindicator">*</span>${Resource.msg('logininclude.username','account',null)}<br>
+				<input type="text" class="full" name="login_username" value="${username}" autocomplete="off">
+			</div>
+			<div>
+				<span class="requiredindicator">*</span>${Resource.msg('logininclude.password','account',null)}<br>
+				<input type="password" class="full" name="login_password" value="" autocomplete="off">
+			</div>
+							
+			<div>
+				<button type="submit" value="${Resource.msg('global.login','locale',null)}"><span>${Resource.msg('global.login','locale',null)}</span></button>
+			</div>			
+		</form>		
+	</div><!-- END: returningcustomers -->
+</div>
+</isdecorate>

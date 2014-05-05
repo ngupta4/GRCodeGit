@@ -1,0 +1,9 @@
+<div>
+	<iscomment>HOME BREADCRUMB</iscomment>
+	<a href="${URLUtils.httpHome()}"  >${Resource.msg('global.home','locale',null)}</a>
+	
+	<iscomment> SHOW CONTENT NAME </iscomment>
+	<isif condition="${pdict.Content != null}">
+		<span >&gt;</span><a href="${URLUtils.url('mPage-Show','cid',pdict.Content.ID)}" >${pdict.Content.name}</a>
+	</isif>
+</div><!-- END: breadcrumb -->

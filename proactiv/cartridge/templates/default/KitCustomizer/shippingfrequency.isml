@@ -1,0 +1,41 @@
+<!--- TEMPLATENAME: learnmore.isml --->
+<isdecorate template="account/pt_account">
+<isinclude template="util/modules"/>
+<isscript>
+	if(('contentPageCounter' in pdict.CurrentSession.custom) && (null != pdict.CurrentSession.custom.contentPageCounter)){
+	pdict.CurrentSession.custom.contentPageCounter = pdict.CurrentSession.custom.contentPageCounter + 1
+	 }else{
+	  	pdict.CurrentSession.custom.contentPageCounter = 0;
+	  }
+</isscript>
+	<isset name="pagetitle" value="${Resource.msg('shipping.frequency.page.title','locale',null)}" encoding="off" scope="pdict">
+	<div class="pageWidth">
+		<input type="hidden" id="tagetPipeline" value="${pdict.TargetPipeline}"/>
+		<input type="hidden" id="tagetParams" value="${pdict.TargetPipelineParams}"/>
+
+		<isinclude template="KitCustomizer/kitinclude"/>
+		
+		<div class="mainWide">
+		    <div class="main">
+		      <div id="content">
+		        <div class="center">
+		          <div class="leftsection">		           
+		            <iscontentasset aid="Kit-shippingfrequency"/>
+		          </div>
+		           
+		          <div class="rightsection">  
+		          	  <isslot id="right-side-learnmore" description="Banner for My Account pages" context="global" />
+		              <isslot id="right-side-learnmore1" description="Banner for My Account pages" context="global" />
+		              <isslot id="right-side-learnmore2" description="Banner for My Account pages" context="global" />
+		              <isif condition="${pdict.CurrentCustomer.authenticated || pdict.CurrentCustomer.registered || pdict.CurrentSession.custom.cRememberMe}">
+		               	<isinclude url="${URLUtils.url('DrWalkthrough-TileLaunch')}"/>
+		             </isif>
+		          </div>
+		        </div>
+		      </div>
+		    </div>
+		  </div>
+
+		<isset name="OmniturePage" value="kitlearnmore" scope="pdict">
+	</div>
+</isdecorate>

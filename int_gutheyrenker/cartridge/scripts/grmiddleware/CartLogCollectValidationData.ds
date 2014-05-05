@@ -1,0 +1,97 @@
+/**
+*
+*
+*   @input  Form : dw.web.FormGroup 
+*   @input  ValidationErrors : Array
+*   @input  Basket : dw.order.LineItemCtnr
+*   @output LogData : Object
+*
+*/
+importPackage( dw.system );
+importPackage( dw.web );
+importPackage( dw.util );
+importPackage( dw.order );
+
+function getBasketCreditCardNumber(basket:Basket):String{
+    var intstumentList:Collection = basket.getPaymentInstruments();
+    if(intstumentList.empty){
+        return null;
+    }
+    
+    var instrumet:PaymentInstrument =  intstumentList.iterator().next();
+    var creditCardNumber:String = instrumet.creditCardNumber;
+    if(empty(creditCardNumber)){
+        return null;
+    }
+    
+    if(creditCardNumber.length < 8){
+        return creditCardNumber;
+    }else{
+        var matches = creditCardNumber.match(/^(....)(.*)(....)$/);
+        return matches[1] + matches[2].replace(/./g, "*") + matches[3];
+    }
+}
+
+function execute( args : PipelineDictionary ) : Number
+{
+    var personinf : FormGroup = args.Form;
+    var contact   : FormGroup = personinf.contact;
+    var bill : FormGroup = personinf.billtoaddress;
+    var ship : FormGroup = personinf.shipptoaddress;
+    var account : FormGroup = personinf.account;
+    var creditcard : FormGroup = personinf.creditcard;
+
+
+    var basketCCN =  getBasketCreditCardNumber(args.Basket);
+    var creditcardnumber = basketCCN || creditcard.number.htmlValue;
+    
+    var map : Map = new HashMap();
+    
+    map.put("submission_state",  "ORDERSUBMIT");
+    
+    map.put("form_email",  contact.email.htmlValue);
+    map.put("form_dphone", contact.daytimephone.htmlValue);
+    map.put("form_ephone", contact.eveningphone.htmlValue);
+    map.put("card_fname",  bill.firstName.htmlValue);
+    map.put("card_lname",  bill.lastName.htmlValue);
+    map.put("address",     bill.address1.htmlValue);
+    map.put("suppadr",     bill.address2.htmlValue);
+    map.put("address2",    bill.address2.htmlValue);
+    map.put("city",        bill.city.htmlValue);
+    map.put("state",       bill.states.stateUS.htmlValue);
+    map.put("zip",         bill.zip.htmlValue);
+    
+    map.put("sameasbilling", personinf.useAsBillingAddress.value == true ? "y" : "n");
+    map.put("ship_fname",  ship.firstName.htmlValue);
+    map.put("ship_lname",  ship.lastName.htmlValue);
+    map.put("s_address",   ship.address1.htmlValue);
+    map.put("s_suppard",   ship.address2.htmlValue);
+    map.put("s_city",      ship.city.htmlValue);
+    map.put("s_state",     ship.states.stateUS.htmlValue);
+    map.put("s_zip",       ship.zip.htmlValue);
+    
+    map.put("formpwd",      account.password.htmlValue);
+    map.put("retypformpwd", account.passwordconfirm.htmlValue);
+    map.put("age",          account.age.htmlValue);
+    map.put("gender",       account.gender.value);
+    
+    map.put("paytype",     creditcard.type.htmlValue);
+    map.put("card_number", creditcardnumber);
+    map.put("card_month",  creditcard.month.htmlValue);
+    map.put("card_year",   creditcard.year.htmlValue);
+    
+    var error_list:String = "";
+    for(var i = 0; i < args.ValidationErrors.length; i++){
+        if(i != 0){
+            error_list += ",";
+        }
+        error_list += args.ValidationErrors[i].code;
+    }
+    
+    map.put("errors",   args.ValidationErrors.length);
+    map.put("error_list",   error_list);
+    
+    args.LogData = map;
+    
+    return PIPELET_NEXT;
+}

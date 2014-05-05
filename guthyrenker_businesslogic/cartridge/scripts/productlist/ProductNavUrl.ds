@@ -1,0 +1,113 @@
+/**
+* Demandware Script File
+* To get the product navigation url for products.
+* to create a product link along with any refinements and color variation value
+* For example:
+*
+*-   @input ExampleIn : String This is a sample comment.
+*-   @output ExampleOut : Number
+*
+*/
+importPackage( dw.system );
+
+function createLink(product : PipelineDictionary, productHit : PipelineDictionary, 
+					productSearchResult: PipelineDictionary, start : PipelineDictionary)
+{
+	// to create a product link along with any refinements and color variation value
+			var varAttrColor = null;
+			var selectableColor = null;
+		
+			if ( product != null && product.master ) {
+				var varModel : dw.catalog.ProductVariationModel = product.variationModel;
+				varAttrColor = varModel.getProductVariationAttribute("color");
+				
+				if( varAttrColor != null )
+				{
+					// always take the first color value in the refinements!
+					var repVarVals = productHit.getRepresentedVariationValues( varAttrColor );
+					
+					if (repVarVals && repVarVals.size() > 0) {
+						selectableColor = repVarVals.get(0);
+					}
+				}
+			}
+			
+			var productUrl = "";
+			var imgUrl = "";
+			var imgFile;
+			if (!empty(product)) {
+				productUrl = productSearchResult.url(URLUtils.url('Product-Show', 'pid', product.ID, 'start', start));								
+				if (!empty(product) && !empty(selectableColor) && !empty(varAttrColor)) {					
+					// we have a variation product
+					// build variation selection url first and grab its query string
+					/* 
+						This is the right way but since ProductSearchResult.url takes either an action name or URL and urlSelectVariationValue return url in a String thus
+						have to append variation attr value manually.
+						  
+						var variationUrl = product.variationModel.urlSelectVariationValue('Product-Show', varAttrColor, selectableColor);
+					*/					
+					// append the variation url query string with the search url (search url could have refinements)
+					productUrl = productSearchResult.url(URLUtils.url('Product-Show', 'pid', product.ID, product.variationModel.getHtmlName(varAttrColor), selectableColor.value, 'start', start));
+					imgFile = selectableColor.getImage('small');
+				}
+				else {
+					imgFile = product.getImage('small');					
+				}
+			}
+			else {
+				return {pUrl: "", imgUrl: URLUtils.staticURL('/images/noimagesmall.png'), imgAlt: "", imgTitle: ""};
+			}
+			
+			return {pUrl: productUrl, imgUrl: (imgFile != null) ? imgFile.url: URLUtils.staticURL('/images/noimagesmall.png'), imgAlt: (imgFile != null) ? imgFile.alt: product.name, imgTitle: (imgFile != null) ? imgFile.title: product.name};
+	
+}
+
+
+function getProductNavUrl(productPagingModel : PipelineDictionary, 
+				currentHttpParameterMap : PipelineDictionary, productSearchResult: PipelineDictionary) : dw.util.Collection{
+			
+		var productPagingModel = productPagingModel;	
+		var currentHttpParameterMap = currentHttpParameterMap;
+		var rList 		= productPagingModel.pageElements.asList();
+		var listSize 	= rList.size();
+		var start 		= currentHttpParameterMap.start.intValue;
+		
+		var totalCount = productPagingModel.count;
+		var prevProd = null, prevProdHit = null;
+		var nextProd = null, nextProdHit = null;
+		var currentProd = null, currentProdHit = null;
+		var currentProdInd = 0;
+		
+		if (listSize > 0 && (start > 1) && (totalCount > 1)) {
+			prevProdHit = rList.get(0);
+			prevProd = prevProdHit.product;			
+			currentProdInd = 1; // if we have prev then the current product is the prev+one
+		}
+		
+		if (listSize > 0 && start < totalCount) {
+			var i = 1;
+			if (start == 1 && listSize > 2) i = 2;
+			nextProdHit = rList.get(listSize-i);
+			nextProd = nextProdHit.product;
+			currentProdInd = listSize-i-1; // if we have next then the current product is the next-one
+		}
+		
+		start = parseInt(start);
+		
+		currentProdHit = rList.get(currentProdInd);
+		currentProd = currentProdHit.product;	
+		
+		var prevProdUrls 	= createLink(prevProd, prevProdHit,productSearchResult, start-1);
+		var currentProdUrl 		= createLink(currentProd, currentProdHit, productSearchResult,start).pUrl;
+		var nextProdUrls 	= createLink(nextProd, nextProdHit,productSearchResult, start+1);
+		
+		var retList: dw.util.ArrayList = new dw.util.ArrayList();
+		
+		retList.add(prevProd);
+		retList.add(prevProdUrls);
+		retList.add(nextProd);
+		retList.add(nextProdUrls);
+		
+		
+		return retList;
+}

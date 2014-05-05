@@ -1,0 +1,23 @@
+<!--- TEMPLATENAME: cataloglanding.isml --->
+<isset name="rootCategory" value="${dw.catalog.CatalogMgr.getCategory(Resource.msg('search.category.all','search',null))}" scope="page"/>
+<div class="pdpContainer">
+	<div class="productsContainer">
+		<isloop items="${rootCategory.onlineOutgoingCategoryLinks}" var="catLink">
+			<isset name="subCat" value=${catLink.targetCategory} scope="page"/>
+			<h2 class="categoryTitle" id="${subCat.getID()}"><isprint value="${subCat.getDisplayName()}" encoding="off"/></h2>
+			<isset name="products" value="${subCat.getOnlineProducts()}" scope="page"/>
+			<div class="productsDetails">	
+				<isloop items="${products}" var="Product">
+					<isif condition="${!(Product.custom.isAKitFlag) || subCat.getID()== Resource.msg('search.category.special.valueset','search',null)  }">
+						<isinclude template="product/producttiledetailed"/>
+					</isif>		
+					
+				</isloop>
+			</div>
+		</isloop>
+	 </div><!--END: productContainer -->
+</div><!--END: categoryContainer -->
+<isif condition="${!empty(dw.web.Resource.msg('bazaarvoice.isenabled','bazaarvoice',null)) 
+						&& dw.web.Resource.msg('bazaarvoice.isenabled','bazaarvoice',null) == 'true'}">
+		<isinclude template="bv/display/headerincludes"/>
+</isif>

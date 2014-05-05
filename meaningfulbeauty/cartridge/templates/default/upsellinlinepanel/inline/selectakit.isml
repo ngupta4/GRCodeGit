@@ -1,0 +1,59 @@
+<isscript>
+			importScript('guthyrenker_businesslogic:product/GetProductMap.ds');
+			importPackage(dw.util);
+			importPackage(dw.catalog);
+</isscript>			
+<div class="selectKit freeGiftSelector PanelB kitType column${offersList.size()}">
+	<div class="selectKit">
+		<h1 class="pageTitle">${Resource.msg('select.kit.page.title.panelc.inline','rendering', null)}</h1>
+		<ul class="sasKits">
+			<isloop items="${offersList}" var="offer" status="offers_status">
+				<li id="system${offers_status.count}" class="${offer.ID} updatecartbtn">
+				<div class="selected"><span><isprint value="${offer.name}" encoding="off"/></span></div>
+					<div class="giftBlockSAS">
+						<div class="selectKit_Img">
+							<iscomment>For customer favourite</iscomment>
+							<isif condition="${!empty(offer.custom.offerTabCallout)&&!empty(offer.custom.offerTabCallout.markup)}">
+								<isprint value="${offer.custom.offerTabCallout.markup}" encoding="off"/>
+							<iselse/>
+							</isif>
+							<isif condition="${!empty(offer.getImage('small',0))}">
+								<img src="${offer.getImage('small',0).url}" alt="${offer.getImage('small',0).alt}" />
+							<iselse>
+								<img src="${URLUtils.staticURL('/images/noimagesmall.png')}" alt="${Resource.msg('noimage.alt.text','locale',null)}"/>
+							</isif>
+						</div>
+						<div class="sasLongDescription">
+							<isprint value="${offer.longDescription}" encoding="off"/>						
+							<div class="kitIncludes">
+								<isif condition="${!empty(offer.custom.tabDescription)&&!empty(offer.custom.tabDescription.markup)}">
+									<isprint value="${offer.custom.tabDescription.markup}" encoding="off"/>
+								<iselse/>
+								</isif>
+							</div>
+						</div>						
+					</div>
+					<div class="pdata">
+						<span class="pTab"><isprint value="${Resource.msg('bottomPanel.free','rendering',null)}" encoding="off"/></span>
+						<span class="pprice"><isprint value="${offer.priceModel.getPrice()}" /></span>
+						<span class="pimage"><isprint value="${offer.getImage('swatch',0).url}" /></span>
+					</div>
+				</li>
+			</isloop>
+		</ul>
+	</div>
+	<div class="bottomPanel panelB">
+	  <div class="orderSummaryBottom">
+				<div id="prodSummary" class="ordersummarycontainer">
+					<div class="swatchImg"><img src="${product.getImage('swatch',0).url}" /></div>
+					<div class="swatchDesc">
+						<h4><isprint value="${Resource.msg('cart.title.order.summary','rendering',null)}" encoding="off"/></h4>
+						<strong class="kitName"><isprint value="${product.name}" encoding="off"/></strong><br/>					
+						<span class="freeLink"><isprint value="${Resource.msg('bottomPanel.free','rendering',null)}" encoding="off"/></span><br/>
+						<span class="kitPrice"><isprint value="${product.priceModel.getPrice()}" encoding="off"/></span>
+					</div>
+				</div>
+		</div>	 
+	  <a href="#Step2" class="medOrngBtn" id="step2">&nbsp;<span><em><isprint value="${Resource.msg('next.select.freegiftsmall','locale',null)}" encoding="off"/></em><isprint value="${Resource.msg('next.select.freegift','locale',null)}" encoding="off"/></span></a>
+	</div>
+</div>

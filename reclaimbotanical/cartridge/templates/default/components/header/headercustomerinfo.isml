@@ -1,0 +1,109 @@
+<iscache status="off"/>
+
+<iscomment>
+	This template displays a 3-level category tree as top navigation.
+	Only categories marked with showInMenu are shown.
+</iscomment>
+
+<isscript>
+	importScript('int_gutheyrenker:common/libEncoding.ds');
+	
+	var sessionID = null;
+	
+	if( !empty(pdict.CurrentHttpParameterMap.pactvid) && !empty(pdict.CurrentHttpParameterMap.pactvid.stringValue) ) {
+		sessionID = pdict.CurrentHttpParameterMap.pactvid.stringValue;
+	}
+</isscript>
+
+<isset name="RememberMe" value="${pdict.CurrentRequest.httpCookies['rememberMe']}" scope="page" />
+<isset name="SharedSession" value="${pdict.CurrentRequest.httpCookies['sharedsession']}" scope="page" />
+<isset name="LoggedIn" value="${pdict.CurrentRequest.httpCookies['loggedin']}" scope="page" />
+
+<isset name="PHPSESSID" value="${!empty(pdict.CurrentRequest.httpCookies['PHPSESSID']) ? pdict.CurrentRequest.httpCookies['PHPSESSID'].value : (!empty(sessionID)?sessionID:'')}" scope="page" />
+
+<isset name="RememberUserFirstName" value="${''}" scope="page" />
+<isset name="RememberUserLastName" value="${''}" scope="page" />
+<isset name="RememberUserEmail" value="${''}" scope="page" />
+
+<isif condition="${!empty(SharedSession) && !empty(SharedSession.value)}">
+	<isset name="Parts" value="${JSON.parse(decodeURIComponent(SharedSession.value))}" scope="page"/>
+	<isset name="RememberUserFirstName" value="${Parts['firstName']}" scope="page" />
+	<isset name="RememberUserLastName" value="${Parts['lastName']}" scope="page" />
+	<isset name="RememberUserEmail" value="${Parts['email']}" scope="page" />
+<iscomment>RM11297 | WEN Legacy Retention User with 'Remember Me' Set will see invalid Soft Login experience with Wen 2 On Demandware</iscomment>	
+<iselseif condition="${!empty(RememberMe) && !empty(RememberMe.value)}">
+	<isset name="Parts" value="${decodeURIComponent(RememberMe.value)}" scope="page"/>
+	
+	<isset name="RememberUserFirstName" value="${Parts.substr(0,Parts.indexOf(' '))}" scope="page" />
+	<isif condition="${null!=RememberUserFirstName || RememberUserFirstName==''}">
+		<isset name="RememberUserFirstName" value="${Parts.substr(0,Parts.indexOf('+'))}" scope="page" />
+	</isif>
+	<isset name="RememberUserEmail" value="${Parts.substr(Parts.indexOf(':'))}" scope="page" />
+</isif>
+<isif condition="${pdict.CurrentCustomer.authenticated}">
+<div class="welcomecoloum">	
+	<div id="member-logedin">
+	 	<span class="welcomemessage">${Resource.msg('headercustomerinfo.welcome','common',null)}</span> 
+	 	<a href="${URLUtils.https('Account-Show')}" title="${pdict.CurrentCustomer.profile.firstName}" class="username">
+	   		<span class="username"><isprint value="${pdict.CurrentCustomer.profile.firstName}"/>!</span>
+	    </a>		    
+	 	<span class="divider"> |</span>
+	</div>     
+	<div class="accountnav"><a href="${URLUtils.https('Account-Show')}" class="account"><isprint value="${Resource.msg('customizekit.header.youracc','account',null)}" encoding="off" /></a>	
+	   <div class="dropdownbox">
+	  	 <ul>
+	    	<li><a href="${URLUtils.https('Account-EditProfile')}">${Resource.msg('addresslist.accountinfo','account',null)}</a> </li>
+	        <li><a href="${URLUtils.https('Address-List')}">${Resource.msg('addresslist.addressbook','account',null)}</a></li>
+	        <li><a href="${URLUtils.https('PaymentInstruments-List')}">${Resource.msg('addresslist.paymentmethod','account',null)}</a> </li>
+	        <li><a href="${URLUtils.https('DisplayDashboard-AboutYou')}">${Resource.msg('addresslist.aboutyou','account',null)}</a></li>
+	        <li><a href="${URLUtils.https('KitCustomizer-KitShipDetail')}"><isprint value="${Resource.msg('kit.header.dropdown','account',null)}"/></a></li>
+	   		<li><a href="${URLUtils.https('OrderHistory-History')}">${Resource.msg('addresslist.orderstatus','account',null)}</a></li>
+	   		<li><a href="${URLUtils.https('KitCustomizer-KitShipDetail')}"><isprint value="${Resource.msg('customizekit.header.dropdown','account',null)}" encoding="off" /></a></li>
+		</ul>
+		<div class="sign-out"><a href="${URLUtils.url('Login-Logout')}"><isprint value="${Resource.msg('customizekit.header.signout','account',null)}" encoding="off" /></a></div>
+	   </div>	 
+	</div>  
+	</div>     
+<iscomment>RM11297 | Sheer Cover Legacy Retention User with 'Remember Me' Set will see invalid Soft Login experience with Sheer Cover 2 On Demandware</iscomment>	
+<iselseif condition="${(!empty(RememberMe) && !empty(RememberMe.value))}">
+	<div class="welcomecoloum">
+	 <isif condition="${(!empty(RememberMe) && !empty(RememberMe.value)) ||(!empty(LoggedIn) && LoggedIn.value == '1')}">
+	  <div id="member-logedin">
+		    <span class="welcomemessage">${Resource.msg('headercustomerinfo.welcome','common',null)}</span> 
+		  	<a href="${URLUtils.https('Account-Show')}" title="${RememberUserFirstName}" class="username">
+		    	<span class="username"><isprint value="${RememberUserFirstName}"/>!</span>
+		    </a>
+		   <iscomment>
+		   	<span class="unauthenticated">(<a title="${Resource.msg('global.login','locale',null)}${RememberUserFirstName} ${RememberUserLastName}" href="${URLUtils.https('Account-Show')}" class="userlogin">${Resource.msg('headercustomerinfo.pleaselogin','components',null)}</a>)</span>
+		   </iscomment>
+		   <span class="divider"> |</span>	 
+	  </div>
+	  </isif>
+	<div class="accountnav"><a href="javascript:void(0)" class="account"><isprint value="${Resource.msg('customizekit.header.youracc','account',null)}" encoding="off" /></a>
+	   <div class="dropdownbox">
+	  	 	<ul>
+	    	<li><a href="${URLUtils.https('Account-EditProfile')}">${Resource.msg('addresslist.accountinfo','account',null)}</a> </li>
+	        <li><a href="${URLUtils.https('Address-List')}">${Resource.msg('addresslist.addressbook','account',null)}</a></li>
+	        <li><a href="${URLUtils.https('PaymentInstruments-List')}">${Resource.msg('addresslist.paymentmethod','account',null)}</a> </li>
+	        <li><a href="${URLUtils.https('DisplayDashboard-AboutYou')}">${Resource.msg('addresslist.aboutyou','account',null)}</a></li>
+			<li><a href="${URLUtils.https('KitCustomizer-KitShipDetail')}"><isprint value="${Resource.msg('kit.header.dropdown','account',null)}"/></a></li>	        
+	   		<li><a href="${URLUtils.https('OrderHistory-History')}">${Resource.msg('addresslist.orderstatus','account',null)}</a></li>
+	   		<li><a href="${URLUtils.https('KitCustomizer-KitShipDetail')}"><isprint value="${Resource.msg('customizekit.header.dropdown','account',null)}" encoding="off" /></a></li>
+		</ul>
+		<div class="sign-out"><a href="${URLUtils.url('Login-Logout')}"><isprint value="${Resource.msg('customizekit.header.signout','account',null)}" encoding="off" /></a></div>
+	   </div>
+	</div>   
+	</div>	  
+<iselse>
+
+
+<ul class="aqcCustomers">
+	<li class="myAccount"><a title="${Resource.msg('global.existing','locale',null)}" href="JavaScript:void(0);" class="active" id="signInTrigger">${Resource.msg('global.existing','locale',null)} <span class="icon"></span></a></li>
+ 	<li class="custServLink"><a class="omniCustomerService" title="${Resource.msg('header.customerservice.linkname','rendering',null)}" href="${URLUtils.https('CustomerService-ContactUs')}"><isprint value="${Resource.msg('header.customerservice.linkname','rendering',null)}" /></a></li>
+ 	
+</ul>
+	<isinclude template="components/header/loginhover"/>
+</isif>
+
+<!-- END: headercustomerinfo -->
+

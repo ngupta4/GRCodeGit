@@ -1,0 +1,42 @@
+<!--- TEMPLATENAME: checkoutbreadcrumbs.isml --->
+
+<isif condition="${empty(pdict.type)}">
+	<isset name="type" value="simple" scope="page"/>
+<iselse>
+    <isset name="type" value="${pdict.type}" scope="page"/>
+</isif>
+
+<isif condition="${empty(pdict.step)}">
+	<isset name="step" value="1" scope="page"/>
+<iselse>
+    <isset name="step" value="${pdict.step}" scope="page"/>
+</isif>
+
+<isset name="step1name" value="${Resource.msg('cart.step1.label','rendering',null)}" scope="page"/>
+<isif condition="${type == 'simple'}">	
+	<isset name="step2name" value="${Resource.msg('cart2steps.step2.label','rendering',null)}" scope="page"/>
+<iselseif condition="${type == 'multi'}">
+	<isset name="step2name" value="${Resource.msg('cart3steps.step2.label','rendering',null)}" scope="page"/>
+	<isset name="step3name" value="${Resource.msg('cart3steps.step3.label','rendering',null)}" scope="page"/>
+</isif>
+
+<isset name="step1class" value="" scope="page"/>
+<isset name="step2class" value="" scope="page"/>
+<isset name="step3class" value="" scope="page"/>
+<isif condition="${step == '1'}">	
+	<isset name="step1class" value="class='active'" scope="page"/>
+<iselseif condition="${step == '2'}">
+	<isset name="step2class" value="class='active'" scope="page"/>
+<iselseif condition="${step == '3'}">
+	<isset name="step3class" value="class='active'" scope="page"/>
+</isif>
+
+<div class="checkout_steps">
+	<ul>
+		<li ${step1class}><span>1</span><p>${step1name}</p></li>
+		<li ${step2class}><span>2</span><p>${step2name}</p></li>
+		<isif condition="${type == 'multi'}">
+			<li ${step3class}><span>3</span><p>${step3name}</p></li>
+		</isif>
+	</ul>
+</div>

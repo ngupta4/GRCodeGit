@@ -1,0 +1,84 @@
+<isif condition="${!(!empty(LoggedIn) && LoggedIn.value == '1') || empty(RememberMe)}">	
+	<div class="loggedout loginDrawer" id="infopanel_loggedout">
+	
+		<!--start header notlogged in content-->
+		<form id="formHeadLogin" method="post" action="${URLUtils.https('Account-LoginHover')}">
+			<script type="text/javascript">
+			$(document).ready( function(){				
+				$("#login_email").focus( function() {					
+					$('[for="login_email"]').addClass("focused");
+				});
+				$("#login_email").blur( function() {
+					if($(this).attr("value") == "") {
+						$('[for="login_email"]').removeClass("focused");
+					}
+				});
+				$("#login_password").focus( function() {
+					$('[for="login_password"]').addClass("focused");
+				});
+				$("#login_password").blur( function() {
+					if($(this).attr("value") == "") {
+						$('[for="login_password"]').removeClass("focused");
+					}
+				});
+				
+				if(jQuery.browser.msie && parseInt(jQuery.browser.version) < 10){
+		            enablePlaceHolderSupport();
+		        }
+		        else{
+		            $("input").each(
+		            function(){
+		                $(this).data('holder',$(this).attr('placeholder'));
+
+		                $(this).focus(function(){
+		                   $(this).attr('placeholder','');
+		                });
+		                $(this).blur(function(){
+		                    $(this).attr('placeholder',$(this).data('holder'));
+		                });
+		            });      
+
+		        }
+				
+			} );
+			</script>
+			<h3>${Resource.msg('sign.in.to.proactiv.plus.title','account',null)}</h3>
+			<div id="emailGroup">
+				<span>
+					<isif condition="${!empty(RememberMe)}">
+						<input type="text" class="required" name="email" placeholder="email address" id="login_email" value="${RememberUserEmail}" />
+					<iselse/>
+						<input type="text" class="required" name="email" id="login_email" placeholder="email address"/>
+					</isif>
+			
+				</span>
+			</div>
+			<div id="passwordGroup">
+				<span>
+					<input type="password" class="required" name="passwd" id="login_password" placeholder="password"/>
+				</span>
+			</div>
+			
+			<div id="rememberGroup">
+		  <iscomment><a class="iconInfo" title="What's this?" href="javascript:void(0);">${Resource.msg('what.this.title','account',null)}</a></iscomment>
+				<input type="checkbox" checked="checked" name="remember_me" id="login_remember_me" /> 
+					<label for="login_remember_me">${Resource.msg('remember.me.title','account',null)}</label>
+				|&nbsp; 	<!--(<a class="openOverlay" href="/remember/index.php" id="overlayRemember" onClick="return false;">What's This?</a>)-->
+			</div> 
+			<div id="forgotGroup">
+				<iscomment><a class="iconInfo" title="What's this?" href="javascript:void(0);">${Resource.msg('what.this.title','account',null)}</a></iscomment>
+		    <a href="${URLUtils.https('Account-PasswordResetDialog')}" id="PasswordReset" title="${Resource.msg('logininclude.forgotpassword','account',null)}">${Resource.msg('password.help.title','account',null)}</a>
+			</div>
+			
+			<div id="signInBtn">
+				<button name="sign_in" type="submit" class="orngBtnSmall" value="">${Resource.msg('sign.in.title','account',null)}</button>
+			</div>
+			
+		  <div id="registerGroup">
+			${Resource.msg('already.a.member.title','account',null)}<br/>
+		    <a class="orngBtnSmall" href="${URLUtils.https('Account-StartRegister')}">${Resource.msg('access.your.accout.online.title','account',null)}</a>
+			</div>
+		</form>
+		<!--//end header notlogged in content-->
+	</div>
+</isif>

@@ -1,0 +1,29 @@
+/**
+*   @output QuestionTypes : dw.util.Collection
+*/
+importPackage( dw.system );
+importPackage( dw.util );
+
+function execute( args : PipelineDictionary ) : Number
+{
+    var types:ArrayList = new ArrayList();
+    
+    var questions:Array = Site.current.getCustomPreferenceValue("contactUsQuestions");
+    if(empty(questions)){
+        return PIPELET_ERROR;
+    }
+    
+    for(var i = 0; i < questions.length; i++){
+        var quiz:String = questions[i];
+        var items = quiz.split(":", 2);
+        
+        var value = items[0];
+        var displayValue = items.length == 2 ? items[1] : value;
+         
+        types.add({"value":value, "displayValue": displayValue});
+    }
+    
+    args.QuestionTypes  = types;
+    
+    return PIPELET_NEXT;
+}

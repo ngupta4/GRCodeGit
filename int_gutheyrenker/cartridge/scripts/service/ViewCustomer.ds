@@ -1,0 +1,20 @@
+/**
+*   @input currentCustomer : dw.customer.Customer
+*   @output status : String
+*
+*/
+importPackage( dw.system );
+importPackage( dw.util );
+importPackage( dw.customer );
+
+function execute( args : PipelineDictionary ) : Number
+{
+	var customer : Customer = args.currentCustomer;
+	
+	var status : String ;
+	status= "true";
+	
+	args.status=status;		
+
+   return PIPELET_NEXT;
+}

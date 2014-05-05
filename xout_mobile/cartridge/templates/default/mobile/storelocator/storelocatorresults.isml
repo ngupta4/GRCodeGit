@@ -1,0 +1,58 @@
+<isdecorate template="mobile/pt_mobile">
+<isinclude template="mobile/util/modules"/>
+
+<a href="${URLUtils.http('mStores-Find')}" class="linkbar backlink">${Resource.msg('storelocatorresults.backtostorelocator','storelocator', null)}</a>  
+
+<isif condition="${empty(pdict.Stores)}">
+    <span class="noStores">
+        ${Resource.msg('storelocatorresults.nostoresfound','storelocator',null)} <span class='locationhighlight'> ${pdict.SearchString} ${Resource.msg('storelocatorresults.radius','storelocator',null)} ${pdict.MaxDistance}</span>        
+    </span>
+</isif>
+
+<div id="storelocator" class="storelocator">
+
+    <isif condition="${!empty(pdict.Stores)}">
+        <div id="storeresults" class="storeresults">       
+           <div class="locatorsearchresults"><h1>${Resource.msg('storelocator.storelocatorresults.allstores','storelocator',null)} <span class="locationhighlight"><isprint value="${pdict.Location}"/> ${Resource.msg('storelocatorresults.radius','storelocator',null)} <isprint value="${pdict.MaxDistance}" /></span></h1></div>
+              <isloop items="${pdict.Stores}" var="Store" status="loopstate">
+          		<div class="storedetail ${Store.UUID}" id="${Store.UUID}">
+			            <table class="storedetailtable">
+			               	<tr>
+				     			      <td class="storeaddress">
+		                      <h5><isprint value="${Store.name}"/></h5>
+				             		  <div><isprint value="${Store.address1}"/></div>
+				                  <div><isprint value="${Store.city}"/><isif condition="${Store.city != null && Store.stateCode != null}">,</isif> <isprint value="${Store.stateCode}"/> <isprint value="${Store.postalCode}"/></div>
+				                  <div><isprint value="${Store.countryCode}"/></div>
+
+                          <div>										      
+	                          <iscomment>Example for a link to a map service</iscomment>
+	                          <isscript>
+	                              var qAttr = "";
+	                              if(Store.address1    != null) qAttr += Store.address1 + ", ";
+	                              if(Store.address2    != null) qAttr += Store.address2 + ", ";
+	                              if(Store.city        != null) qAttr += Store.city + ", ";
+	                              if(Store.postalCode  != null) qAttr += Store.postalCode + ", ";
+	                              if(Store.stateCode   != null) qAttr += Store.stateCode + ", ";
+	                              if(Store.countryCode != null) qAttr += Store.countryCode;
+	
+	                              var glink = "http://maps.google.com/maps?hl=en&f=q&q=" + encodeURI(qAttr);
+	                          </isscript>
+	                          <a class="googlemap" href="${glink}" name="${glink}" target="_blank">${Resource.msg('storelocatorresults.directions','storelocator',null)}</a>
+                          </div>
+                          
+                          <isif condition="${Store.storeHours != null}">
+                              <div class="storehours"><isprint value="${Store.storeHours}" encoding="off"/></div>
+                          </isif>
+                          <isif condition="${Store.storeEvents != null}">
+                              <div class="storeevents"><isprint value="${Store.storeEvents}" encoding="off"/></div>
+                          </isif>
+	                    </td>                            
+  	                </tr>	                   
+                  </table>       
+	            </div><!-- END: storedetail -->  
+       		    </isloop>
+        </div><!-- END: storeresults -->
+    </isif>
+</div><!-- END: storelocator -->
+
+</isdecorate>

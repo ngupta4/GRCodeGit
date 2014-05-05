@@ -1,0 +1,16 @@
+<iscomment>
+	Renders the real stories page
+</iscomment>
+	<isif condition="${'storyCategory' in pdict.CurrentHttpParameterMap && !empty(pdict.CurrentHttpParameterMap.storyCategory.value)}">
+		<isset name="catID" value="${pdict.CurrentHttpParameterMap.storyCategory.value}" scope="pdict"/>
+	<iselse>
+		<isset name="catID" value="${'bvStoryCategory' in dw.system.Site.current.preferences.custom ? dw.system.Site.getCurrent().getCustomPreferenceValue('bvStoryCategory') : 'grbv1d20110517'}" scope="pdict"/>
+	</isif>
+	
+	<isif condition="${!empty(dw.web.Resource.msg('bazaarvoice.isenabled','bazaarvoice',null)) 
+								&& dw.web.Resource.msg('bazaarvoice.isenabled','bazaarvoice',null) == 'true'}">
+		<isinclude template="bv/display/sy/stories"/>
+
+	</isif>
+		<div class="clear"></div>
+		

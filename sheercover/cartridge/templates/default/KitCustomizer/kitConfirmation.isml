@@ -1,0 +1,19 @@
+<isdecorate template="account/pt_account">
+<isinclude template="util/modules"/>
+
+<div class="pageWrapper accountContainer">
+	<div class="minHeight thankyouKit">
+		<h2 class="formTitle" id="formTitleChangeFrequency"><isprint value="${Resource.msg('kit.adjust.frequency.confirm.title','account',null)}"/></h2>
+		<p class="changeFrequencyTopText">
+			<isif condition="${pdict.customizationStep.equals('Change Frequency')}">
+			<isprint value="${Resource.msg('kit.account.adjust.frequency.confirm.changeFreq.msg','account',null)}" encoding="off" />
+			<iselse>
+			<isprint value="${Resource.msg('kit.account.adjust.frequency.confirm.shipNow.msg','account',null)}" encoding="off" />
+			</isif> <br />
+			<isprint value="${Resource.msg('kit.account.adjust.frequency.confirm.msg2','account',null)}"/>
+			<a href="mailto:${pdict.CurrentCustomer.profile.email}"><isprint value="${pdict.CurrentCustomer.profile.email}"/></a>				
+		</p>
+	</div>	
+</div> 
+<isset name="OmniturePage" value="KitConfirmation" scope="pdict">	
+</isdecorate>

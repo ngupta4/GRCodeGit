@@ -1,0 +1,11 @@
+<!--- TEMPLATENAME: offersidebar.isml --->
+<isinclude template="util/modules"/>
+<iscomment>make sure we have content at all</iscomment>
+<isif condition="${slotcontent != null}">
+	<isif condition="${!empty(slotcontent.content)}">
+		<isloop items="${slotcontent.content}" var="product" status="status">
+			<isset name="Product" value="${product}" scope="pdict" />
+			<isinclude template="rendering/product/components/sidebar.isml" />
+		</isloop>
+	</isif>
+</isif>

@@ -1,0 +1,43 @@
+/*
+*
+*/
+importPackage( dw.rpc );
+importPackage( dw.util );
+importPackage(dw.system);
+
+importScript("services/BazaarvoiceAPIWebService.ds");
+
+function getBazaarvoiceAPIWebService() {
+	var service = BazaarvoiceAPIWebService();
+	
+	//fetches User profile based on the id provided to the function
+	service.fetchUserProfileById = function (id) {		
+		var url = httpResponse = "", passkey = this.config.security.passkey, apiversion = this.config.service.apiversion;
+		
+		url = StringUtils.format(this.config.service.url + "authors.json" + "?apiversion={0}&passkey={1}&filter=id:{2}&stats=reviews,questions,answers", 
+			encodeURIComponent(apiversion),
+			encodeURIComponent(passkey),
+			encodeURIComponent(id));
+			
+		httpResponse = this.callService(url);
+
+		return httpResponse;
+	};
+	
+	//fetches latest conversation based on the category id
+	//Note Restricting number of results to 50 to limit data usuage
+	service.fetchLatestQuestionsByCategoryID = function(categoryID) {
+		var url = httpResponse = "", passkey = this.config.security.passkey, apiversion = this.config.service.apiversion;
+		
+		url = StringUtils.format(this.config.service.url + "questions.json" + "?apiversion={0}&passkey={1}&filter=CategoryId:{2}&Sort=SubmissionTime:desc&Limit=50", 
+			encodeURIComponent(apiversion),
+			encodeURIComponent(passkey),
+			encodeURIComponent(categoryID));
+			
+		httpResponse = this.callService(url);
+
+		return httpResponse;
+	};
+
+	return service;
+};

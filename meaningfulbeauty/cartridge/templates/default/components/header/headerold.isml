@@ -1,0 +1,98 @@
+<iscache type="relative" minute="60" varyby="price_promotion" />
+<isset name="CCC" value="${pdict.CurrentCampaignConfig}" scope="page" />
+<isscript>
+		importPackage(dw.object);
+		importPackage(dw.catalog);
+		
+		importScript('int_gutheyrenker:common/libEncoding.ds');
+		
+		if(pdict.CurrentCampaignConfig!=null) {
+			var CCC : Object = pdict.CurrentCampaignConfig;
+			if(CCC !=null ){
+				var category : dw.catalog.Category = CCC.getCampaignCategory();
+			}
+		}
+</isscript>
+<isslot id="campaign-css" context="category" description="Campaign CSS" context-object="${category}"/>
+<iscomment>Check the htmlhead.isml for the server side tracking pixel</iscomment>
+<isif condition="${dw.system.Site.getCurrent().getCustomPreferenceValue('GRMVisitorLogPixelEnabled') == true}">
+    <img src="${URLUtils.url('GRMiddleware-VisitorLog', 'urlpath', request.httpPath, 'urlquery', request.httpQueryString)}" width="1" height="1"/>
+</isif>
+
+<isif condition="${('showNav' in this && !!showNav) || empty(CCC) || empty(CCC.showNav) }">
+	<isset name="showNav" value="${true}" scope="page" />
+<iselse/>
+	<isset name="showNav" value="${CCC.showNav}" scope="page" />
+</isif>
+
+
+<isif condition="${'donotShowNavMenu' in pdict.CurrentHttpParameterMap && pdict.CurrentHttpParameterMap.donotShowNavMenu}">
+	<isset name="showheaderNav" value="${pdict.CurrentHttpParameterMap.donotShowNavMenu}" scope="page">
+</isif>
+
+
+<isscript>
+      importScript('guthyrenker_core:common/libUtils.ds');
+      var contentInfo    = getCurrentContentInfo(pdict.CurrentHttpParameterMap);
+      var CurrentContent : Content = contentInfo.content;
+      
+      if (pdict.CurrentHttpParameterMap.enableSearch.value == 'true') {
+      		pdict.CurrentSession.custom.enableSearch = true;
+      }
+</isscript>
+
+<isif condition="${!empty(CurrentContent) && CurrentContent.ID == 'rightnow-header'}">
+  <isif condition = "${request.httpCookies['PHPSESSID'] == null}">
+    <iscookie name="PHPSESSID" value="${pdict.CurrentSession.sessionID}" path="/" maxAge="-1" />
+  </isif>
+  
+  <script type="text/javascript">
+    var session_id = "<isprint value="${pdict.CurrentSession.sessionID}">";
+  </script>
+
+  
+</isif>
+
+
+<isif condition="${showNav && showheaderNav=="true"}">
+	<isif condition="${('showOrderButton' in pdict.CurrentHttpParameterMap)}">
+		 <isset name="showOrderButton" value="${pdict.CurrentHttpParameterMap.showOrderButton}" scope="page"/>
+	<iselse>
+		 <isset name="showOrderButton" value="${false}" scope="page"/>
+	</isif>
+	
+	
+	<div class="headerWide">			
+		<div id="header">
+			<isif condition="${pdict.CurrentSession.custom.enableSearch}">
+				<div id="SearchContainer">
+					<form id="search">
+					<span>Site Search</span>
+					<input name="searchQ" id="searchQ" type="text"/> <input type="submit" value="Go"/>
+					</form>
+					<div class="error" id="searchError"></div>
+				</div>
+			</isif>  
+		  	<isif condition="${!empty(pdict.CurrentHttpParameterMap.pactvid) && !empty(pdict.CurrentHttpParameterMap.pactvid.stringValue)}">
+				<iscomment>INCLUDE: category menu bar at the bottom of the header (it's computing intensive, it's cached)</iscomment>
+				<isinclude url="${URLUtils.url('Home-IncludeHeaderMenuOld','pactvid',pdict.CurrentHttpParameterMap.pactvid.stringValue)}"/>
+				<isinclude url="${URLUtils.url('Home-IncludeHeaderCustomerInfoOld','pactvid',pdict.CurrentHttpParameterMap.pactvid.stringValue)}"/>
+			<iselse/>
+				<iscomment>INCLUDE: category menu bar at the bottom of the header (it's computing intensive, it's cached)</iscomment>
+				 <isinclude url="${URLUtils.url('Home-IncludeHeaderMenuOld','showOrderButton',showOrderButton)}"/>
+				<isinclude url="${URLUtils.url('Home-IncludeHeaderCustomerInfoOld')}"/>
+			</isif>
+		</div>
+	</div><!-- END: headerWide -->
+
+<iselse/>
+
+	<div class="headerWide">
+	  <div id="header">
+		<a id="mbLogo" href="${URLUtils.url('Home-Show')}">Meaningful Beauty</a>
+	  </div>
+	</div>
+</isif>
+
+<iscomment>Cookies and Javascript enabled check
+<isinclude template="components/browsertoolscheck"/></iscomment>

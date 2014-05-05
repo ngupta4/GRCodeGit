@@ -1,0 +1,165 @@
+<isset name="pagetitle" value="${Resource.msg('pagetitle.billingshipinginfo','account',null)}" scope="pdict"/>
+<isdecorate template="account/pt_account">
+
+<isinclude template="util/modules"/>
+<isinclude template="KitCustomizer/kitinclude"/>
+<input type="hidden" id="tagetPipeline" value="${pdict.TargetPipeline}"/>
+<input type="hidden" id="tagetParams" value="${pdict.TargetPipelineParams}"/>
+<istabdisplayed  tabid="AL"/>
+
+<iscomment>Include common framework to make tabs</iscomment>
+<isset name="instantAccess" value="${pdict.CurrentSession.custom.instantAccess}" scope="page"/>		
+<div class="pageWrapper accountContainer">
+   <div class="accountForm addressBookCont">
+	<isslot id="account-banner" description="Banner for My Account pages" context="global" />
+	<h2 class="formTitle">${Resource.msg('addresslist.header','account',null)}</h2>
+	<isif condition="${null == instantAccess && instantAccess != true}">
+		<div class="addNewAddress">
+			<a class="btnColorA aButton"  href="${URLUtils.https('Address-Add')}" title="${Resource.msg('addresslist.create','account',null)}">
+				${Resource.msg('addresslist.create','account',null)}				 
+			</a>
+		</div>
+	</isif>
+	
+<div class="addressList">
+<isif condition="${null == instantAccess && instantAccess != true}">
+	<div class="topLabel">
+		<span class="InfoTitle">${Resource.msg('change.note','account',null)}</span>
+		<p class="textInfo"><isprint value="${Resource.msg('chnge.note','account',null)}" encoding="off"/></p>
+	</div>
+<iselse>
+	 <div class="topLabel">
+	 ${Resource.msg('instantAccess.message1','account',null)}<br/>${Resource.msg('instantAccess.message2','account',null)}
+	</div>
+</isif>
+
+  <isif condition="${!empty(pdict.CurrentCustomer.profile.addressBook.addresses)}">
+    <iscomment>addresses are sorted, preferred first, than alphabetic </iscomment>
+    <isif condition="${pdict.Status != null && pdict.Status.isError()}"> 
+	    <!--- Use the error code value to build an appropriate error message ---> 
+	    <span class="error">
+	    <isprint value="${Resource.msg('addressdetails.' + pdict.Status.code, 'account',null)}"/>
+	    </span>
+    </isif>
+    
+ 	<isif condition = "${null!=pdict.genericError && !empty(pdict.genericError)}">
+	 <span class="errormessage"><isprint value="${pdict.genericError}"></span>
+	</isif>
+    <iscomment>Display the Wen Shipping And Billing Address</iscomment>
+    <isloop items="${pdict.CurrentCustomer.profile.addressBook.addresses}" var="address">
+      <isif condition="${address.custom.shippingAddress==true}">
+        <div class="default">
+          <div class="accountaddress whiteBg">
+            <div class="accountaddressInner">
+              <div class="topHeading">
+                <isif condition="${null!=pdict.CurrentCustomer.profile.custom.member && pdict.CurrentCustomer.profile.custom.member == true}">
+                	${Resource.msg('wen.shipping.label','account',null)}
+                <iselse>
+                	${Resource.msg('default.shipping.label','account',null)}
+                </isif>
+              </div>
+              <isminiaddress p_address="${address}"/>
+              <isif condition="${null == instantAccess && instantAccess != true}">
+	                <div class="actions">
+	                  <a href ="${URLUtils.https('Address-EditShippingAddress','AddressID',address.ID)}" title="${Resource.msg('account.change','account',null)}" class="btnColorB aButton">
+	                  	${Resource.msg('addressinclude.edittitle','account',null)}
+	                  </a>
+	                </div>
+                </isif>
+            </div>
+          </div>
+        </div>
+      </isif>
+      </isloop>
+      <isloop items="${pdict.CurrentCustomer.profile.addressBook.addresses}" var="address">
+      <isif condition="${address.custom.billingAddress==true}">
+       	<div class="default last">
+          <div class="accountaddress whiteBg">
+            <div class="accountaddressInner">
+              <div class="topHeading">
+                <isif condition="${null!=pdict.CurrentCustomer.profile.custom.member && pdict.CurrentCustomer.profile.custom.member == true}">
+                	${Resource.msg('wen.billing.label','account',null)}
+                <iselse>
+                	${Resource.msg('default.billing.label','account',null)}
+                </isif>
+               </div>
+              <isminiaddress p_address="${address}"/>
+              <isif condition="${null == instantAccess && instantAccess != true}">	               
+	                  <div class="actions">
+		                  <a href ="${URLUtils.https('Address-EditBillingAddress','AddressID',address.ID)}" title="${Resource.msg('addressinclude.edittitle','account',null)}" class="btnColorB aButton">
+		                 	 ${Resource.msg('addressinclude.edittitle','account',null)}		                 	  
+		                  </a>
+	                 </div>
+	                  <!-- END: actions -->	            
+                </isif>
+            </div>
+          </div>
+        </div>
+      </isif>
+    </isloop>
+     	<isloop items="${pdict.CurrentCustomer.profile.addressBook.addresses}" var="address">
+		<isif condition="${address.custom.shippingAddress!=true && address.custom.billingAddress!=true}">
+			<isset name="showHeading" value=${true} scope="page"/>
+			<isbreak>
+		</isif>
+	</isloop>
+	<iscomment>Display the list of Addresses which are not Wen Addresses</iscomment>
+	
+	<div class="row">
+		<isif condition="${showHeading}">	      
+			<h4>${Resource.msg('account.yousaveaccount','account',null)}</h4>
+		</isif>
+	    <isloop items="${pdict.CurrentCustomer.profile.addressBook.addresses}" var="address">
+			<isif condition="${address.custom.shippingAddress!=true && address.custom.billingAddress!=true}">
+			<div class="youSaveAccount">
+	          <div class="default">
+	            <div class="accountaddress whiteBg">
+	              <div class="accountaddressInner">
+	              <isminiaddress p_address="${address}"/>
+	                <!-- END: actions -->
+	                <isif condition="${null == instantAccess && instantAccess != true}">
+		                <div class="actions">
+		               	 <a href ="${URLUtils.https('Address-Edit','AddressID',address.ID)}" class="aButton btnDark" title="${Resource.msg('account.edit','account',null)}">
+		               	 	${Resource.msg('account.edit','account',null)}
+		               	 </a>
+		               	 <a class="deletelink aButton" title="${Resource.msg('addressinclude.delete','account',null)}" name="${address.ID}">
+		               	 	${Resource.msg('addressinclude.delete','account',null)}
+		               	 </a>
+		               </div> <!-- END: actions -->
+		              </isif>
+		               
+	              </div>
+	            </div>
+	            <!-- END: account_address --> 
+	          </div>
+	          </div>
+	        </isif>
+	      </isloop>
+      </div>
+  </isif>
+</div><!-- END: addressList -->
+</div><!-- END: accountForm -->
+</div>
+<script type="text/javascript"><!--
+jQuery(document.body).bind('dialogClosed', function(event){
+      window.location.href = "${URLUtils.url('Address-List')}";	
+});
+
+jQuery(document).ready(function() {
+	jQuery(".selectDefault").click(function() {
+		var setDefaultURL = app.util.appendParamToURL("${URLUtils.url('Address-SetDefault')}", "AddressID", this.value);
+		window.location.href = setDefaultURL;
+	});
+
+	jQuery(".deletelink").click(function() {
+		var accepted = confirm("${Resource.msg('forms.customeraddress.deleteaddressconfirm','forms',null)}");		
+		if( accepted ) {
+   			var deleteURL = app.util.appendParamToURL("${URLUtils.url('Address-Delete')}", "AddressID", jQuery(this).attr('name'));
+			window.location.href = deleteURL;
+		}			
+	});
+});
+    
+//--></script>
+<isset name="OmniturePage" value="MyAccountAddressbook" scope="pdict">
+</isdecorate>

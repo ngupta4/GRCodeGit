@@ -1,0 +1,157 @@
+<isinclude template="util/modules"/>
+
+<isset name="multiCheckout" value="${pdict.multiCheckout}" scope="page"/>
+<isif condition="${multiCheckout}">
+	<isset name="submitbtnClass" value="continue_btn" scope="page"/>
+<iselse>	
+	<isset name="submitbtnClass" value="complete_order_btn" scope="page"/>
+</isif>
+
+<iscomment>js for value change event on text fields.</iscomment>
+<isinclude template="checkout/steps/triggerseewhy" />
+			
+<div class="personInfform">
+	<iscomment>Contact information</iscomment>
+	<isinclude template="checkout/personinformation/contactinformation" />
+	 	
+	<iscomment>Billing and shipping</iscomment>
+	<div class="billingShipping">
+		<isinclude template="checkout/personinformation/billinginformation" />
+		
+		<div class="checkoutBox cbShipping cartShipping">
+			<h4 class="asbilling">
+			    <isinputfield id="sameAsBilling" formfield="${pdict.CurrentForms.personinf.useAsBillingAddress}" type="checkbox" />
+				<span>${Resource.msg('personinformation.shippinginformation.label', 'rendering', null)}</span>
+			</h4>
+			<div class="checkoutBoxInner">
+				<div id="shippingMessageBlock">
+					<iscontentasset aid="cart-international-site" />
+			    </div>
+				<div id="shippingBox">
+				<isinclude template="checkout/personinformation/shippinginformation" />
+				</div>
+			</div>
+		</div>
+	</div>
+	 <iscomment>Account access information</iscomment>
+		<isinclude template="checkout/personinformation/accountaccessinformation" />
+		
+	 <iscomment>Payment information</iscomment>
+	<isinclude template="checkout/personinformation/paymentinformation" />
+	
+	<iscomment>order total</iscomment>
+	<div class="orderTotalFinal ordertotalfinal">
+		<div class="cocartContainer">			
+			<span class="cocartLabel">
+				${Resource.msg('cart.ordertotal.label', 'rendering', null)}&nbsp;
+			</span>
+			
+			<span class="totalPrice cocart-price" id="orderTotal_2">					
+				<isprint value="${pdict.Basket.getTotalNetPrice()}"/>
+			</span>
+		</div>
+	</div>
+	
+	<div class="checkoutBottom">
+		<div class="requiredIndicator">${Resource.msg('cart.required.indicator', 'checkout', null)}</div>
+		<div class="agreeBox">
+			<p>${Resource.msg('cart.agreetext', 'rendering', null)}</p>
+			<a id="agreeTerms">${Resource.msg('forms.checkout.agree.label','forms',null)}<span class="requiredindicator">*</span></a>
+			
+			<isinputfield id="termsAndConditions" formfield="${pdict.CurrentForms.personinf.agree}" type="checkbox" attribute1="requiredmesage" value1="${Resource.msg('forms.checkout.agree.value-error','forms',null)}" attribute2="tabindex" value2="28">
+		</div>
+		<div class="terms" id="terms" style="display:none;overflow:auto;">
+    			<iscontentasset aid="terms"/>
+  	    </div>
+		<script type="text/javascript">
+		<!--
+		  jQuery(".agreeBox").hide();
+		-->
+		</script>
+		
+		
+		<div class="${submitbtnClass}">	    	
+			<input type="hidden" value="x" name="${pdict.CurrentForms.personinf.apply.htmlName}" />
+			<button class="orngBtnBig continueBtn" id="contYourOrder" type="submit" value="${Resource.msg('global.checkout', 'locale', null)}" name="${pdict.CurrentForms.personinf.apply.htmlName}" tabindex="29">
+			<span class='caption'>${Resource.msg('checkout.continueOrder', 'rendering', null)}</span>
+			</button>
+		</div>
+	</div>
+</div>
+<script type="text/javascript">
+$('.agreeBox .checkbox label').hide();
+jQuery(document).ready(function() {	
+jQuery('#terms').dialog({
+bgiframe: true,
+autoOpen: false,
+modal: true,
+top:0,
+	width: 895,
+	height:500,
+title: '${Resource.msg('global.terms','locale',null)}',
+resizable: false
+});
+
+jQuery('#termsConditions').click( function() {
+jQuery('#terms').show();
+jQuery('#terms').dialog('open');
+})
+});
+</script>
+<script type="text/javascript"><!--
+app.getdepend.resources.set({
+	'verifyEmailLimit' : ${pdict.CurrentSession.privacy.verifyemaillimit},
+	'verifyEmailUrl' : '<isprint value="${URLUtils.url('GRMiddleware-VerifyEmail')}" encoding="off"/>',
+	'billingEqualsShipping' : ${pdict.BillingEqualsShipping},
+	'billingEqualsShippingCheckbox' : '${pdict.CurrentForms.personinf.useAsBillingAddress.htmlName}',
+	'updateShippingPriceUrl' : '${URLUtils.url("COCart-SetShippingMethod")}',
+	'updateQtyUrl' : '${URLUtils.url("COCart-UpdateProductQty")}',
+	'subtotal-selector' : '.merchandiseTotal',
+	'shipping-price-selector' : '${"#"}totalshippingprice .value',
+	'total-price-selector' : '.order-totals .totalPrice, .ordertotalfinal .totalPrice'
+});
+//--></script>
+
+<isif condition="${(URLUtils.home().toString().indexOf('getdepend.qa.dw.grdev.com')!=-1  ||
+	 				URLUtils.home().toString().indexOf('getdepend.stg.dw.grdev.com')!=-1 ||
+	 				URLUtils.home().toString().indexOf('dev18')!=-1)}">
+<script type="text/javascript"><!--
+//@author:dsweeney
+//hack in _d parameter form autofill. hardcoded to only work in QA, stg, and dev18 servers 
+
+if (window.location.href.indexOf("_d=1")!=-1) {
+	jQuery("#dwfrm_cart").ready(function() {
+
+		jQuery(this).children('option[selected="selected"]').removeAttr("selected");
+		
+		jQuery("#dwfrm_personinf_contact_email, #dwfrm_personinf_contact_emailconfirm").attr("value","grcwebtest@guthy-renker.com");
+		jQuery("#daytimePhone").attr("value","555-555-5555");
+		jQuery("#eveningPhone").attr("value","666-666-6666");
+
+		jQuery("#billFirstName").attr("value","Betty");
+		jQuery("#billLastName").attr("value","Buyer");
+		jQuery("#billAddress").attr("value","123 Breakout Blvd.");
+		jQuery("#billAddress2").attr("value","Bill addr line supp");
+		jQuery("#billCity").attr("value","Billings");
+		jQuery("#billState").children('option[label="Montana"]').attr("selected","selected");
+		jQuery("#billZip").attr("value","59101");
+
+		jQuery("#shipFirstName").attr("value","Sally");
+		jQuery("#shipLastName").attr("value","Shipper");
+		jQuery("#shipAddress").attr("value","234 Sallow St.");
+		jQuery("#shipAddress2").attr("value","Ship addr line supp");
+		jQuery("#shipCity").attr("value","Salesville");
+		jQuery("#shipState").children('option[label="Ohio"]').attr("selected","selected");
+		jQuery("#shipZip").attr("value","43778");
+
+		jQuery("#paymentMethod").children('option[value="Visa"]').attr("selected","selected");
+		jQuery("#creditCardNumber").attr("value","4111111111111111");
+		jQuery("#creditCardMonth").children('option[value="11"]').attr("selected","selected");
+		jQuery("#creditCardYear").children('option[value="2012"]').attr("selected","selected");
+		jQuery("#dwfrm_personinf_agree").attr("checked","checked");
+	});
+}
+
+
+//--></script>
+</isif>

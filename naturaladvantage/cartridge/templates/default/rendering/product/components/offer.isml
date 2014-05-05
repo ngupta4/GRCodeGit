@@ -1,0 +1,49 @@
+<!--- TEMPLATENAME: offer.isml --->
+<isif condition="${pdict.Product != null}">
+	<isobject object="${pdict.Product}" view="detail">
+		<div id="offer-${pdict.Product.ID}" class="offerContainer">
+			<iscomment>set the product for local reuse</iscomment>
+			<isset name="Product" value="${pdict.Product}" scope="page"/>
+			<div class="name">
+				<h2><isprint value="${Product.name}" encoding="off"/></h2> 
+			</div><!-- END: name -->
+			
+			<div class="shortDescription">
+				<isprint value="${Product.shortDescription}" encoding="off"/>
+			</div><!-- END: shortDescription -->
+			
+			<div class="productimage"><!-- Product Image -->
+				<isif condition="${Product.master && pdict.CurrentVariationModel && CurrentVariationModel.variants.size() > 0}">
+					<isset name="imageProduct" value="${CurrentVariationModel.variants[0]}" scope="page"/>
+				<iselse/>
+					<isset name="imageProduct" value="${Product}" scope="page"/>
+				</isif>
+			
+				<isif condition="${!empty(imageProduct.getImage('large',0))}">
+					<isset name="imageUrl" value="${imageProduct.getImage('large',0).url}" scope="page"/>
+					<isset name="imageAlt" value="${imageProduct.getImage('large',0).alt}" scope="page"/>
+					<isset name="imageTitle" value="${imageProduct.getImage('large',0).title}" scope="page"/>
+				<iselse/>
+					<isset name="imageUrl" value="${URLUtils.staticURL('/images/noimagelarge.png')}" scope="page"/>
+					<isset name="imageAlt" value="${Product.name}" scope="page"/>
+					<isset name="imageTitle" value="${Product.name}" scope="page"/>
+				</isif>
+				<img src="${imageUrl}" alt="${imageAlt}" title="${imageTitle}"/>
+			</div>
+			
+			<div class="OrderNowLink">
+				<a title="${Resource.msg('addtocart.label','rendering',null)}" href="${URLUtils.url('COCart-AddProduct','pid',Product.ID)}">${Resource.msg('button.ordernow.label','rendering',null)} &gt;&gt;</a>
+			</div>
+			
+			<div class="longDescription">		
+				<isprint value="${Product.longDescription}" encoding="off"/>
+			</div><!-- END: longDescription -->	
+			
+			<div class="pricing"><isprint value="${Product.custom.upgradeOfferCallout}" encoding="off"/></div>
+			<a class="OrderNowButton" href="${URLUtils.url('COCart-AddProduct','pid',Product.ID)}"><isprint value="${Product.custom.orderButtonCallout}" encoding="off"/></a>	
+			<div class="promo"><isprint value="${Product.custom.shippingPromoText}" encoding="off"/></div>
+		</div>
+	</isobject>
+<iselse/>
+	
+</isif>

@@ -1,0 +1,143 @@
+<isinclude template="util/modules"/>
+<isif condition="${session.custom.suppCY == null || session.custom.suppCY == 0}">
+<script type="text/javascript">
+if(typeof cy != "undefined"){
+  cy.SUPPRESSDEFAULT = true;
+  $(document).ready(function(){
+  	$("#dwfrm_personinf_contact_email").change(cy_checkFieldsAndGetImageSrc);
+  	$("#dwfrm_personinf_contact_emailconfirm").change(cy_checkFieldsAndGetImageSrc);
+  	$("#billFirstName").change(cy_checkFieldsAndGetImageSrc);
+	$("#billLastName").change(cy_checkFieldsAndGetImageSrc);
+	$("#billState").change(cy_checkFieldsAndGetImageSrc);
+	$("#paymentMethod").change(cy_checkFieldsAndGetImageSrc);
+  });
+  function getImageSrc()
+  {
+    cy.CUSTOMERCODE = "${dw.system.Site.current.preferences.custom.seeWhyCustomerCode}";
+    cy.FunnelLevel = "2";
+    cy.UserId = "${pdict.CurrentForms.personinf.contact.email.htmlValue}";
+  }
+  function cy_checkFieldsAndGetImageSrc() {
+	  	cy.CUSTOM3='${pdict.Basket.getAllProductLineItems()[0].productID}';
+		cy.USERID=$("#dwfrm_personinf_contact_email").val();
+		cy.CUSTOM1=$('#billFirstName').val();
+		cy.CUSTOM2=$('#billLastName').val();
+		cy.CUSTOM4=$('#billState').val();
+		cy.CUSTOM5="";
+		cy.FUNNELLEVEL='4';
+		if ($('paymentMethod').val() == 'PREPAY'){
+			cy.FUNNELLEVEL = 5;
+		} 
+		if (isEmailValid(cy.USERID)){
+			cy_getImageSrc();
+		}
+	}
+
+  function isEmailValid(emailAddress) {
+			var pattern = new RegExp(/^(("[\w-\s]+")|([\w-]+(?:\.[\w-]+)*)|("[\w-\s]+")([\w-]+(?:\.[\w-]+)*))(@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$)|(@\[?((25[0-5]\.|2[0-4][0-9]\.|1[0-9]{2}\.|[0-9]{1,2}\.))((25[0-5]|2[0-4][0-9]|1[0-9]{2}|[0-9]{1,2})\.){2}(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[0-9]{1,2})\]?$)/i);
+			return pattern.test(emailAddress);
+  }
+ }
+</script>
+</isif>
+
+<div class="contact_info">
+  <div class="cont_info_text">${Resource.msg('personinformation.contactinformation.label','rendering',null)}</div>
+  <div class="email_confirm_email">
+    <div class="formfield email">
+      <isinputfield formfield="${pdict.CurrentForms.personinf.contact.email}" type="input" attribute1="requiredmesage" value1="${Resource.msg('forms.contactinf.email.parse-error','forms',null)}" attribute2="tabindex" value2="1">
+	  <isif condition="${!empty(pdict.EmailValidationError)}">
+	    <span class="errorclient" htmlfor="${pdict.CurrentForms.personinf.contact.email.htmlName}">
+	      <strong><isprint value="${Resource.msgf('checkout.error.useractive','rendering',null, URLUtils.url('Account-Show'))}" encoding="off" /><strong>
+	    </span> 
+	  </isif>
+    </div>
+
+    <div class="formfield emailConfirm">
+      <isinputfield formfield="${pdict.CurrentForms.personinf.contact.emailconfirm}" type="input" attribute1="requiredmesage" value1="${Resource.msg('forms.contactinf.email.parse-error','forms',null)}" attribute2="tabindex" value2="2" attribute3="equalTo" value3="${'#'+pdict.CurrentForms.personinf.contact.email.htmlName}">	   
+    </div>
+  </div>
+  
+  <div class="phone_evephone">
+    <div class="formfield phone daytime">
+      <isinputfield id="daytimePhone" formfield="${pdict.CurrentForms.personinf.contact.daytimephone}" type="input" attribute1="requiredmesage" value1="${Resource.msg('forms.contactinf.daytimephone.parse-error','forms',null)}" attribute2="tabindex" value2="3">	    		
+    </div>
+  		
+    <div class="formfield phone evetime">
+      <isinputfield id="eveningphone" formfield="${pdict.CurrentForms.personinf.contact.eveningphone}" type="input" attribute1="tabindex" value1="4">	    		
+    </div>
+  </div>
+</div>
+
+<div class="billing_address">
+  <div class="bill_addr_text">${Resource.msg('personinformation.billaddr.label','rendering',null)}</div>
+  <div class="formfield firstName">
+    <isinputfield id="billFirstName" formfield="${pdict.CurrentForms.personinf.billtoaddress.firstName}" type="input" attribute1="requiredmesage" value1="${Resource.msg('forms.addressinf.firstname.missing','forms',null)}" attribute2="tabindex" value2="5">
+  </div>
+		    
+  <div class="formfield lastName">
+    <isinputfield id="billLastName" formfield="${pdict.CurrentForms.personinf.billtoaddress.lastName}" type="input" attribute1="requiredmesage" value1="${Resource.msg('forms.addressinf.lastname.missing','forms',null)}" attribute2="tabindex" value2="6">
+  </div>
+
+  <div class="formfield first address">
+    <isinputfield id="billAddress" formfield="${pdict.CurrentForms.personinf.billtoaddress.address1}" type="input" attribute1="requiredmesage" value1="${Resource.msg('forms.addressinf.address1.missing','forms',null)}" attribute2="tabindex" value2="7">
+  </div>
+		    
+  <div class="formfield second address">
+    <isinputfield id="billAddress2" formfield="${pdict.CurrentForms.personinf.billtoaddress.address2}" type="input" attribute1="tabindex" value1="8">
+  </div>
+
+  <div class="formfield city">
+    <isinputfield id="billCity" formfield="${pdict.CurrentForms.personinf.billtoaddress.city}" type="input" attribute1="requiredmesage" value1="${Resource.msg('forms.addressinf.city.missing','forms',null)}" attribute2="tabindex" value2="9">
+  </div>
+  			 
+  <div class="formfield state">
+    <isinputfield id="billState" formfield="${pdict.CurrentForms.personinf.billtoaddress.states.stateUS}" type="select" attribute1="requiredmesage" value1="${Resource.msg('forms.addressinf.state.missing','forms',null)}" attribute2="tabindex" value2="10">
+  </div>
+
+  <div class="formfield zip">
+    <isinputfield id="billZip" formfield="${pdict.CurrentForms.personinf.billtoaddress.zip}" type="input" attribute1="requiredmesage" value1="${Resource.msg('forms.addressinf.zip.missing','forms',null)}" attribute2="tabindex" value2="11">    		   
+  </div>
+</div>
+
+<div class="payment_info">
+  <div class="personInfform">
+	<isinclude template="checkout/personinformation/slp_paymentinformation" />
+	
+	<isif condition="${!empty(pdict.CurrentForms.personinf.creditcard.error)}">
+		<p class="errormessage">${pdict.CurrentForms.personinf.creditcard.error}</p>
+	</isif>
+  </div>
+
+</div>
+
+<div class="order_total"> 
+  <div class="ot_req_field">${Resource.msg('slpcart.requiredfield.label','rendering',null)}</div>
+  <div class="ot_order_total">${Resource.msg('slpcart.ordertotal.label','rendering',null)}</div>  
+  <div class="ot_net_price">$<isprint value="${pdict.Basket.getTotalNetPrice().value}" style="MONEY_LONG"/></div>
+</div>
+
+<div class="complete_your_order">
+  <div class="guarantee_img"><img src="${URLUtils.staticURL('/images/carts/my3_guarantee.png')}"></div>
+<input type="hidden" id="termsAndConditions" name="${pdict.CurrentForms.personinf.agree.htmlName}" value="true">
+		
+  <div class="checkoutBottom">
+	<div class="placeOrder">
+    	<div class="requiredIndicator">${Resource.msg('cart.required.indicator', 'checkout', null)}</div>
+		<input type="hidden" value="x" name="${pdict.CurrentForms.personinf.apply.htmlName}" />
+		<button class="continueBtn orangeButton" id="contYourOrder"  type="submit" value="Complete Your Order ->" name="${pdict.CurrentForms.personinf.apply.htmlName}" tabindex="20"></button>
+	</div>
+  </div>
+</div>  
+
+<div class="satis_gurantee">
+  <div class="satis_gurantee_title">${Resource.msg('slpcart.satisgurantee.label','rendering',null)}</div>
+  <p>${Resource.msg('slpcart.parag1.label','rendering',null)}</p>
+  <p>${Resource.msg('slpcart.parag2.label','rendering',null)}*</p>
+</div>
+
+
+
+<script type="text/javascript">
+$('.agreeBox .checkbox label').hide();
+</script>

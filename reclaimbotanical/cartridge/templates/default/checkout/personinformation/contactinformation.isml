@@ -1,0 +1,76 @@
+<!--- TEMPLATENAME: contactinformation.isml --->
+<div class="contactinfo">
+	<h4 ><isprint value="${Resource.msg('personinformation.personelinfoform.label','rendering',null)}" encoding="off"></isprint></h4>
+	
+	
+		<isif condition="${!empty(pdict.CurrentForms.personinf.contact.error)}">
+			<div class="errorform">
+				${pdict.CurrentForms.personinf.contact.error}
+			</div>
+		</isif>
+		<div class="row_gender">
+			<label class="blockheading">${Resource.msg(pdict.CurrentForms.personinf.account.genderheading.label, 'forms', null)}</label>
+			<div class="G-gender">
+			 <div class="gender row">			 
+					<label>${Resource.msg(pdict.CurrentForms.personinf.account.gender.label, 'forms', null)}</label>
+					<div class="options row">
+						<isloop items="${pdict.CurrentForms.personinf.account.gender.options}" var="gender">
+							<label>
+								<input type="radio" id="gender_${gender.value}" name="${pdict.CurrentForms.personinf.account.gender.htmlName}"<isif condition="${gender.selected}"> checked="checked"</isif> value="${gender.value}" />
+								${Resource.msg(gender.label, 'forms', null)}
+							</label>
+						</isloop>
+					</div>
+				</div>
+				<div class="age row">
+					<isinputfield id="age" formfield="${pdict.CurrentForms.personinf.account.age}" type="input" size="5" attribute2="tabindex" value2="3"/>
+				</div>
+				</div>
+		</div>
+			
+		<div class="row_email">
+		<label class="blockheading"><isprint value="${Resource.msgf('personinformation.contactinformation.label','rendering',null)}" encoding="off" /></label>
+		<div class="row email">
+			<div class="formfield email">
+	    		<isinputfield formfield="${pdict.CurrentForms.personinf.contact.email}" type="input" attribute1="requiredmesage" value1="${Resource.msg('forms.contactinf.email.parse-error','forms',null)}" attribute2="tabindex" value2="4">
+	    		<isif condition="${!empty(pdict.EmailValidationError)}">
+					<span class="errorclient" htmlfor="${pdict.CurrentForms.personinf.contact.email.htmlName}">
+						<strong><isprint value="${Resource.msgf('checkout.error.useractive','rendering',null, URLUtils.url('Account-Show'))}" encoding="off" /><strong>
+					</span> 
+				</isif>
+	    	</div>
+	    	<div class="formfield emailConfirm">
+	    		<isinputfield formfield="${pdict.CurrentForms.personinf.contact.emailconfirm}" type="input" attribute1="requiredmesage" value1="${Resource.msg('forms.contactinf.email.parse-error','forms',null)}" attribute2="tabindex" value2="5" attribute3="equalTo" value3="${'#'+pdict.CurrentForms.personinf.contact.email.htmlName}">	   
+	    	</div>	
+	    	
+		</div>		
+		<div class="row phonecontainer">
+			<div class="formfield phone daytime">
+			<label><isprint value="${Resource.msg('forms.contactinf.daytimephone.label','forms',null)}" encoding="off"></isprint>&nbsp;<span class="requiredindicator">*</span></label>		
+			<input type="text" id="phone1" <isif condition="${pdict.CurrentForms.personinf.contact.daytimephone.valid!=true}">class="small required errormessage" <iselse>class="small required"</isif> maxlength="3" size="3" tabindex="6"/>
+			<input type="text" id="phone2"  <isif condition="${pdict.CurrentForms.personinf.contact.daytimephone.valid!=true}">class="small required errormessage" <iselse>class="small required"</isif> maxlength="3" size="3" tabindex="7"/>
+			<input type="text" id="phone3" <isif condition="${pdict.CurrentForms.personinf.contact.daytimephone.valid!=true}">class="numberbox required errormessage" <iselse>class="numberbox required"</isif>  maxlength="4" size="6" tabindex="8"/>
+			<isinputfield id="daytimePhone" type="hidden" formfield="${pdict.CurrentForms.personinf.contact.daytimephone}" attribute1="requiredmesage" value1="${Resource.msg('forms.contactinf.daytimephone.parse-error','forms',null)}">
+			
+			<isif condition="${pdict.CurrentForms.personinf.contact.daytimephone.valid!=true}">
+			  		<div class="errormessage">${Resource.msg('profile.dayphoneno.parseerror','forms',null)}</div>
+			</isif>		    		
+		    </div>														
+			<div class="formfield phone evening">
+			<iscomment>
+				<label><isprint value="${Resource.msg('forms.contactinf.eveningphone.label','forms',null)}" encoding="off"></isprint></label>	
+				<input type="text" id="eveningphone1" class="small" maxlength="3" size="3" tabindex="9"/><span class="phoneseperator">-</span>
+				<input type="text" id="eveningphone2" class="small" maxlength="3" size="3" tabindex="10"/><span class="phoneseperator">-</span>
+				<input type="text" id="eveningphone3" class="numberbox" maxlength="4" size="6" tabindex="11"/>
+			</iscomment>
+			
+			<isinputfield id="eveningPhone" type="hidden" formfield="${pdict.CurrentForms.personinf.contact.eveningphone}">
+			
+			<isif condition="${pdict.CurrentForms.personinf.contact.eveningphone.valid!=true}">
+				<div class="errormessage">${Resource.msg('profile.dayphoneno.parseerror','forms',null)}</div>
+			</isif>
+			</div>
+		</div>
+	</div>	
+		
+</div>

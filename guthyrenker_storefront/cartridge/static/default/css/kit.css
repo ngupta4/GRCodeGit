@@ -1,0 +1,1173 @@
+@charset "utf-8";
+/* CSS Document */
+#MyWidget{
+	width:925px;
+}
+
+
+#kitthreeproductswarning {
+    display: none;
+}
+
+/*#overlays {
+	top: 0px;
+	left: 0px;
+	width: 100%;
+	height: 100%;
+	background: #000;
+	opacity: 0.60;
+	-ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=79)";
+	filter: alpha(opacity=67);
+	-moz-opacity: 0.79;
+	z-index: 1005;
+	position: absolute;
+
+}*/
+
+#widgetHeader {
+	background-image:url(../images/kit/header.png);
+	background-repeat:no-repeat;
+	width:925px;
+	height: 39px;
+}
+
+#questionmark{
+	background-image:url(../images/kit/question_mark.png);
+	background-repeat:no-repeat;
+	position:relative;
+	display:block;
+	left:407px;
+	top:10px;
+	width:13px;
+	height:14px;
+	padding: 0 0 19px;
+	cursor:pointer;
+	z-index:20;
+}
+
+#whiteborder{
+	width:917px;
+	height:1px;
+	border-top:1px dotted #d8e4e9;
+	border-bottom:1px dotted #d8e4e9;
+	position:relative;
+	top:2px;
+	left:4px;
+}
+
+.widget_customize_button,.widget_customize_close {position:relative;	padding: 2px 0 0;	background:url(../images/kit/kitwidget-btm-bar.png) 0 0 no-repeat; width:923px; /*height:3px;*/}
+.widget_customize_close {display:none; padding: 0; background:url(../images/kit/kitwidget-btm-bar.png)0 0 no-repeat;}
+#widgetHeaderText{
+	position:relative;
+	display:inline;
+	left:600px;
+	top:-8px;
+}
+
+#headerloginlink{
+	font-family:Verdana, Geneva, sans-serif;
+	color:#0d6254;
+	font-size:11px;
+	font-weight:bold;
+	text-decoration:underline;
+	cursor:pointer;
+}
+
+#headerseperator{
+	font-family:Verdana, Geneva, sans-serif;
+	color:#0d6254;
+	font-size:11px;
+	font-weight:bold;
+}
+
+#headerbecomeamemberlink{
+	font-family:Verdana, Geneva, sans-serif;
+	color:#0d6254;
+	font-size:11px;
+	font-weight:bold;
+	text-decoration:underline;
+	cursor:pointer;
+}
+
+#headersaveandmore {
+	font-family:Verdana, Geneva, sans-serif;
+	color:#ffffff;
+	font-size:11px;
+	font-weight:bold;
+}
+
+
+#widget_customize_background{
+	background-image:url(../images/kit/open_background.png);
+	background-repeat:no-repeat;
+	display:none;
+	height:178px;
+	background-color: #c0e1e0;
+	position: relative;
+}
+
+
+#widget_customize_button{
+	/*position:relative;*/
+	cursor:pointer;
+	/*margin-left: 10px;
+	top:40px;*/
+}
+
+#widget_customize_close{
+	position:relative;
+	cursor:pointer;
+	display:block;
+	left:0px;
+	top:2px;
+	z-index:19;
+
+}
+
+#proactive_logo{
+	position:relative;
+	top:20px;
+	left:28px;
+	
+}
+
+
+#previewwindow{
+	display:none;
+	background-image:url(../images/kit/blank_preview.png);
+	background-repeat:no-repeat;
+	height:203px;
+	width:158px;
+	position:absolute;
+	top:200px;
+	left:0px;
+	z-index:100;
+}
+
+#previewImage{
+	display: block;
+    height: 131px;
+    left:5px;
+    top:5px;
+    width: 149px;
+    background-repeat:no-repeat;
+    position:relative;
+    padding-bottom:3px;
+    border-bottom:1px dotted #808080;
+}
+
+#previewProdName{
+	position:relative;
+	padding-top:5px;
+	width:143px;
+	text-align:center;
+	font-size:11px;
+	font-family:Arial, Geneva, sans-serif;
+	left:9px;
+	font-weight:bold;
+	height:22px;
+}
+
+#previewVariant{
+	position:relative;
+	padding-top:1px;
+	width:136px;
+	text-align:center;
+	font-size:11px;
+	font-style:italic;
+	font-family:Arial, Geneva, sans-serif;
+	left:12px;
+	top:14px;
+}
+
+#variantValue{
+	position:relative;
+	/*top:2px;*/
+	display:inline;	
+}
+
+#itemaddedbox {
+	display:none;
+	background-image:url(../images/kit/item_added_box.png);
+	background-repeat:no-repeat;
+	height:77px;
+	width:339px;
+	position:absolute;
+	/*display:block;*/
+	top:0px;
+	left:0px;
+	z-index:30;
+}
+
+#doctorsadvice {
+	display:none;
+	overflow: hidden;
+	height:157px !important;
+}
+
+#doctorsadviceimage {
+	display:block;
+	position:relative;
+	top:-4px;
+	left:-17px;
+	height:166px;
+	width:132px;
+}
+
+#doctorsadviceokbtn{
+	background-image:url(../images/kit/ok_btn.jpg);
+	background-repeat:no-repeat;
+	width:58px;
+	height:24px;
+	position:relative;
+	display:block;
+	top:-190px;
+	left:440px;
+	z-index:31;
+}
+
+#text_doctors_advice_title{
+	position:relative;
+	display:block;
+	font-family:Arial, Geneva, sans-serif;
+	color:#4d4d4d;
+	font-size:16px;
+	font-weight:bold;
+	text-align:center;
+	top:-200px;
+	left:-56px;
+}
+
+#text_doctors_advice_main{
+	position:relative;
+	display:block;
+	font-family:Arial, Geneva, sans-serif;
+	color:#4d4d4d;
+	font-size:12px;
+	text-align:left;
+	top:-186px;
+	left:129px;
+	width:370px;
+}
+
+
+#text_doctors_advice_products{
+	position:relative;
+	display:inline;
+	font-family:Verdana, Geneva, sans-serif;
+	color:#397a96;
+	font-size:11px;
+	font-weight:bold;
+	font-style: italic;
+	text-align:left;
+	top:-175px;
+	left:131px;
+	
+}
+
+#doctorsadvicetext{
+	position:relative;
+	top:31px;
+}
+#text_doctors_advice_products a{
+	color:#327995;
+	text-decoration:none;
+}
+
+#text_doctors_advice_products a:hover{color:#102942;}
+
+#adjustfrequencymain{
+	display:none;
+	padding:22px 20px 20px;
+}
+
+#frequencyselectbox{
+	position:relative;
+	display:inline;
+	top:40px;
+	left:0px;
+	z-index:31;
+}
+
+#frequencysavebtn{
+	background-image:url(../images/kit/save_btn.jpg);
+	background-repeat:no-repeat;
+	width:122px;
+	height:24px;
+	position:relative;
+	display:block;
+	top:17px;
+	left:120px;
+	z-index:31;
+}
+
+#frequencycancelbtn{
+	background-image:url(../images/kit/cancel_btn.jpg);
+	background-repeat:no-repeat;
+	width:85px;
+	height:24px;
+	position:relative;
+	display:block;
+	top:-6px;
+	left:250px;
+	z-index:31;
+}
+
+#frequencyxbtn{
+	background-image:url(../images/kit/x_btn.png);
+	background-repeat:no-repeat;
+	width:17px;
+	height:17px;
+	position:relative;
+	display:block;
+	top:-53px;
+	left:506px;
+	z-index:31;
+}
+
+#adjustfrequencyconfirm{
+	display:none;
+	float:none;
+	height:130px !important;
+	padding: 18px 25px 20px;
+}
+
+#text_adjust_frequency_title{
+	position:relative;
+	display:inline;
+	font-family:Verdana, Geneva, sans-serif;
+	color:#4d4d4d;
+	font-size:16px;
+	font-weight:bold;
+	text-align:left;
+	top:1px;
+	left:0px;
+}
+
+#text_adjust_frequency_main{
+	position:relative;
+	display:block;
+	font-family:Arial, Geneva, sans-serif;
+	color:#4d4d4d;
+	font-size:12px;
+	text-align:left;
+	top:12px;
+	left:0px;
+	font-weight:bold;
+	width:472px;
+}
+
+#text_adjust_frequency_helper{
+	position:relative;
+	display:block;
+	font-family:Verdana, Geneva, sans-serif;
+	color:#4d4d4d;
+	font-size:9px;
+	text-align:left;
+	top:22px;
+	left:0px;
+	width:472px;
+}
+
+#text_adjust_frequency_confirm_title {
+	position:relative;
+	display:block;
+	font-family:Verdana, Geneva, sans-serif;
+	color:#4d4d4d;
+	font-size:16px;
+	font-weight:bold;
+	text-align:center;
+	top:1px;
+}
+
+#text_adjust_frequency_confirm_main{
+	position:relative;
+	display:block;
+	font-family:Verdana, Geneva, sans-serif;
+	color:#4d4d4d;
+	font-size:11px;
+	text-align:center;
+	top:10px;
+}
+
+#frequencyclosebtn{
+	background-image:url(../images/kit/fclose_btn.png);
+	background-repeat:no-repeat;
+	width:76px;
+	height:24px;
+	position:relative;
+	display:block;
+	top:31px;
+	left:186px;
+	z-index:31;
+}
+/*kit maxed out error window*/
+#kitfullmessagewindow{
+	display:none;
+	height:132px !important;
+}
+
+#kitfulltexttitle {
+	position:relative;
+	display:block;
+	font-family:Verdana, Geneva, sans-serif;
+	color:#4d4d4d;
+	font-size:16px;
+	font-weight:bold;
+	text-align:center;
+	top:9px;
+	left:10px;
+}
+
+#kitfulltextbody{
+	position:relative;
+	display:block;
+	font-family:Arial, Geneva, sans-serif;
+	color:#4d4d4d;
+	font-size:12px;
+	text-align:center;
+	top:27px;
+	left:7px
+}
+
+#kitfullokbtn{
+	background-image:url(../images/kit/ok_btn.jpg);
+	background-repeat:no-repeat;
+	width:58px;
+	height:24px;
+	position:relative;
+	display:block;
+	top:42px;
+	left:209px;
+	z-index:31;
+}
+
+/*final code changes from producto*/
+#limitedsupplywindow{
+	display:none;
+	height:130px !important; 
+}
+
+#limitedsupplyremove{
+	/*background-image:url(../images/kit/remove_btn.png);*/
+	background-repeat:no-repeat;
+	width:114px;
+	height:22px;
+	position:relative;
+	display:block;
+	top:34px;
+	left:125px;
+	z-index:31;
+}
+
+#limitedsupplyclosebtn{
+	/*background-image:url(../images/kit/nevermind_btn.png);*/
+	background-repeat:no-repeat;
+	width:99px;
+	height:27px;
+	position:relative;
+	display:block;
+	top:-8px;
+	left:246px;
+	z-index:31;
+}
+
+#text_limited_supply_title{
+	position:relative;
+	display:block;
+	font-family:Verdana, Geneva, sans-serif;
+	color:#4d4d4d;
+	font-size:16px;
+	font-weight:bold;
+	text-align:center;
+	top:7px;
+	/*left:-10px;*/
+}
+
+#text_limited_supply_main{
+	position:relative;
+	display:block;
+	font-family:Verdana, Geneva, sans-serif;
+	color:#4d4d4d;
+	font-size:12px;
+	text-align:center;
+	top:16px;
+	left:0px;
+	width:468px;
+}
+
+#howtoaddwindow{
+	display:none;
+	height:130px !important;
+}
+
+#howtoaddmoreinfobtn{
+	width:98px;
+	height:22px;
+	position:relative;
+	display:block;
+	top:32px;
+	left:132px;
+	z-index:31;
+}
+
+
+#howtoaddokbtn{
+	width:90px;
+	height:22px;
+	position:relative;
+	display:block;
+	top:-10px;
+	left:240px;
+	z-index:31;
+}
+
+#howtoaddokbtn a span{padding:0 34px 0 26px;}
+#howtoaddmoreinfobtn a{color:#fff; font-size:11px;}
+#howtoaddmoreinfobtn a span{padding: 0 20px 0 14px;}
+
+#text_how_to_add_main{
+	position:relative;
+	display:block;
+	font-family:Verdana, Geneva, sans-serif;
+	color:#4d4d4d;
+	font-size:12px;
+	text-align:center;
+	top:24px;
+	left:0px;
+	width:460px;
+}
+
+#shippingwindow{
+	display:none;
+	height:137px !important;
+}
+
+#shippingheader{
+	position:relative;
+	display:block;
+	font-family:Verdana, Geneva, sans-serif;
+	color:#4d4d4d;
+	font-size:16px;
+	font-weight:bold;
+	text-align:center;
+	top:9px;
+}
+
+#shippingtext{
+	position:relative;
+	display:block;
+	font-family:Verdana, Geneva, sans-serif;
+	color:#4d4d4d;
+	font-size:12px;
+	text-align:center;
+	top:26px;
+	
+}
+
+#shippingcost{
+	position:relative;
+	display:block;
+	font-family:Verdana, Geneva, sans-serif;
+	color:#4d4d4d;
+	font-size:14px;
+	text-align:center;
+	top:32px;
+	font-weight:bold;
+}
+
+#shippingokbtn{
+	background-image:url(../images/kit/ok_btn.jpg);
+	background-repeat:no-repeat;
+	width:58px;
+	height:24px;
+	position:relative;
+	display:block;
+	top:52px;
+	left:204px;
+	z-index:31;
+}
+
+#learnmorewindow{
+	display:none;
+	padding: 10px 23px 15px;
+	height: 130px !important;
+}
+#shipnowconfirmation{
+	display:none;
+	float:none;
+	height: 193px !important;
+	padding:10px 25px 0;
+}
+#adjustFreqOldDateConfirmation{
+	display:none;
+	height: 211px !important;
+}
+#ui-dialog-title-adjustFreqOldDateConfirmation.ui-dialog-title{display: none;}
+#learnmoretext, #shipNowtext1, #shipNowtext2, #adjustFreqOldDatetext{
+	position:relative;
+	display:block;
+	width:445px;
+	padding:10px;
+	font-family:Verdana, Geneva, sans-serif;
+	color:#4d4d4d;
+	font-size:12px;
+	text-align:center;
+	top:11px;
+	
+}
+#shipNowtext2{width: 472px;}
+#shipNowtext1{
+	font-size:13px;
+	font-weight:bold; 
+}
+#learnmorebtn, #shipnowokbtn, #adjustfreqolddateokbtn{
+	background-repeat:no-repeat;
+	width:114px;
+	height:22px;
+	position:relative;
+	display:block;
+	top:34px;
+	left:142px;
+	z-index:31;
+}
+#learnmorebtn a, #shipnowokbtn a,#limitedsupplyremove a, #adjustfreqolddateokbtn a{color:#fff; font-size:11px;margin:0px}
+
+#learnmoreokbtn, #shipnowcancelbtn, #adjustfreqolddatecancelbtn{
+	width:99px;
+	height:22px;
+	position:relative;
+	display:block;
+	top:12px;
+	left:252px;
+	z-index:31;
+}
+#shipnowcancelbtn, #adjustfreqolddatecancelbtn, #limitedsupplyclosebtn{width:125px;}
+#shipnowokbtn .gr-btn span,#limitedsupplyremove .gr-btn span, #adjustfreqolddateokbtn .gr-btn span{width:72px; text-align: center;}
+#shipnowokbtn .gr-btn span.lc,#limitedsupplyremove .gr-btn span.lc, #adjustfreqolddateokbtn .gr-btn span.lc{width:0px;}
+#shipnowcancelbtn a span, #limitedsupplyclosebtn a span, #adjustfreqolddatecancelbtn a span{font-size: 11px;padding: 0 39px 0 29px;}
+#learnmorexbtn{
+	background-image:url(../images/kit/x_btn.png);
+	background-repeat:no-repeat;
+	width:17px;
+	height:17px;
+	position:relative;
+	display:block;
+	top:-92px;
+	left:468px;
+	z-index:31;
+}
+
+#errormessagewindow{
+	display:none;
+	overflow: inherit;
+	padding:10px 16px 20px;
+}
+
+#errortext{
+	position:relative;
+	display:block;
+	width:470px;
+	padding:10px 0px 10px 10px;
+	font-family:Verdana, Geneva, sans-serif;
+	color:#4d4d4d;
+	font-size:12px;
+	text-align:center;
+	top:0px;
+}
+
+#errorokbtn{
+	background-image:url(../images/kit/ok_btn.jpg);
+	background-repeat:no-repeat;
+	width:58px;
+	height:24px;
+	position:relative;
+	display:block;
+	top:12px;
+	left:208px;
+	z-index:31;
+}
+
+#shipnowerrormessagewindow{
+	display:none;
+	padding: 10px 21px 20px;
+	min-height:135px !important;
+}
+
+#shipnowerrortext{
+	position:relative;
+	display:block;
+	width:450px;
+	padding:10px;
+	font-family:Verdana, Geneva, sans-serif;
+	color:#4d4d4d;
+	font-size:12px;
+	text-align:center;
+	top:6px;
+}
+
+#shipnowerrorokbtn{
+	background-image:url(../images/kit/ok_btn.jpg);
+	background-repeat:no-repeat;
+	width:58px;
+	height:24px;
+	position:relative;
+	display:block;
+	top:18px;
+	left:208px;
+	z-index:31;
+}
+
+#confirmwindow{
+	display:none;
+	height:112px !important;
+}
+
+#confirmtext{
+	position:relative;
+	display:block;
+	width:426px;
+	padding:10px;
+	font-family:Verdana, Geneva, sans-serif;
+	color:#4d4d4d;
+	font-size:12px;
+	text-align:center;
+	top:9px;
+}
+
+#confirmokbtn{
+	width:90px;
+	height:22px;
+	position:relative;
+	display:block;
+	top:10px;
+	left:142px;
+	z-index:31;
+}
+#confirmcancelbtn a{color:#fff; font-size:12px;}
+
+#confirmcancelbtn{
+	width:82px;
+	height:22px;
+	position:relative;
+	display:block;
+	top:-22px;
+	left:226px;
+	z-index:31;
+}
+/*final code changes end*/
+
+.selectborder{
+	border: 1px solid #bbb;
+}
+
+/* #kitunavailable{
+	position:relative;
+	display:inline;
+	top:-66px;
+	left:188px;
+	background-color: white;
+	width:708px;
+	height:92px;
+	text-align: center;
+	font-size: 14px;
+	font-weight: bold;
+	padding:40px 188px
+} */
+
+#instantaccess{
+	background-color: #FFFFFF;
+    color: #000000;
+    display: inline-block;
+    font-size: 15px;
+    font-weight: bold;
+    height: 53px;
+    left: 187px;
+    padding: 39px 0 0 10px;
+    position: relative;
+    top: -102px;
+    width: 714px;
+}
+
+#productData{
+	position:relative;
+	left:-1px;
+	top:1px;
+}
+
+#slot1{
+	position:relative;
+	display:inline;
+	top:-92px;
+	left:195px;
+	
+}
+
+#slot1delete{
+	position:relative;
+	display:inline;
+	top:-153px;
+	left:183px;
+	z-index:10;
+	
+}
+
+#slot2{
+	position:relative;
+	display:inline;
+	top:-92px;
+	left:185px;
+	
+}
+
+#slot2delete{
+	position:relative;
+	display:inline;
+	top:-153px;
+	left:173px;
+	z-index:10;
+	
+}
+
+#slot3{
+	position:relative;
+	display:inline;
+	top:-92px;
+	left:175px;
+	
+}
+
+#slot3delete{
+	position:relative;
+	display:inline;
+	top:-153px;
+	left:163px;
+	z-index:10;
+	
+}
+
+#slot4{
+	position:relative;
+	display:inline;
+	top:-92px;
+	left:165px;
+	
+}
+
+#slot4delete{
+	position:relative;
+	display:inline;
+	top:-153px;
+	left:153px;
+	z-index:10;
+	
+}
+
+#slot5{
+	position:relative;
+	display:inline;
+	top:-92px;
+	left:155px;
+	
+}
+
+#slot5delete{
+	position:relative;
+	display:inline;
+	top:-153px;
+	left:143px;
+	z-index:10;
+	
+}
+
+#slot6{
+	position:relative;
+	display:inline;
+	top:-92px;
+	left:145px;
+	
+}
+
+#slot6delete{
+	position:relative;
+	display:inline;
+	top:-153px;
+	left:133px;
+	z-index:10;
+	
+}
+
+#slot7{
+	position:relative;
+	display:inline;
+	top:-92px;
+	left:135px;
+	
+}
+
+#slot7delete{
+	position:relative;
+	display:inline;
+	top:-153px;
+	left:123px;
+	z-index:10;
+	
+}
+
+#slot8{
+	position:relative;
+	display:inline;
+	top:-92px;
+	left:125px;
+	
+}
+
+#slot8delete{
+	position:relative;
+	display:inline;
+	top:-153px;
+	left:113px;
+	z-index:10;
+	
+}
+
+#slot9{
+	position:relative;
+	display:inline;
+	top:-92px;
+	left:115px;
+	
+}
+
+#slot9delete{
+	position:relative;
+	display:inline;
+	top:-153px;
+	left:103px;
+	z-index:10;
+	
+}
+
+#righttextholder{
+	position:relative;
+	display:block;
+	top:-172px;
+	left:734px;
+	width:200px;
+	padding-left:5px;	
+}
+
+.kitmemberprice{
+	font-family:Verdana, Geneva, sans-serif;
+	font-size:10px;
+	font-weight:bold;
+}
+
+
+.memberpricestrikethru{
+	font-family:Verdana, Geneva, sans-serif;
+	font-size:10px;
+	font-weight:bold;
+	text-decoration:line-through;
+}
+
+.kitcostlabel{
+	font-family:Verdana, Geneva, sans-serif;
+	font-size:10px;
+	font-weight:bold;
+}
+
+.kitcostvalue{
+	font-family:Verdana, Geneva, sans-serif;
+	font-size:10px;
+	
+}
+
+.kitsavelabel{
+	font-family:Verdana, Geneva, sans-serif;
+	color:#0d6254;
+	font-size:10px;
+	font-weight:bold;
+}
+
+.membersavings{
+	font-family:Verdana, Geneva, sans-serif;
+	color:#0d6254;
+	font-size:10px;
+	font-weight:bold;
+}
+
+#shipping{
+	font-family:Verdana, Geneva, sans-serif;
+	color:#DCC9A9;
+	font-size:10px;
+	font-weight:bold;
+	cursor:pointer;
+}
+
+
+#bottomnav{
+	position:absolute;
+	display:block;
+	top:152px;
+	left:7px;
+}
+
+.lastshipmenttext{
+	position:relative;
+	display:inline;
+	top:-28px;
+	/*left:-653px;*/
+	font-family:Verdana, Geneva, sans-serif;
+	color:#636363;
+	font-size:10px;
+	font-weight:bold;
+	left: -3px;
+}
+.lastshipmentvalue {
+	position:relative;
+	display:inline;
+	top:-29px;
+	left:13px;
+	font-family:Verdana, Geneva, sans-serif;
+	color:#636363;
+	font-size:10px;
+	font-weight:bold;
+}
+
+#trackpackagebtn{
+	position:relative;
+	display:block;
+	left:193px;
+	top:-47px;
+	height:22px;
+	width:95px;
+	background-image:url(../images/kit/track_btn.png);
+	background-repeat:no-repeat;
+}
+
+.nextshipmenttext{
+	position:relative;
+	display:inline;
+	left:300px;
+	top:-70px;
+	font-family:Verdana, Geneva, sans-serif;
+	color:#636363;
+	font-size:10px;
+	font-weight:bold;
+}
+
+.nextshipmentvalue{
+	position:relative;
+	display:inline;
+	left:342px;
+	top:-71px;
+	font-family:Verdana, Geneva, sans-serif;
+	color:#636363;
+	font-size:10px;
+	font-weight:bold;
+}
+
+#shipnowbtndisabled{
+	position:relative;
+	display:block;
+	left:503px;
+	top:-90px;
+	height:22px;
+	width:95px;
+	/*cursor:pointer;*/
+	background-image:url(../images/kit/shipnow_btn_dis.png);
+	background-repeat:no-repeat;
+}
+
+#shipnowbtn{
+	position:relative;
+	display:block;
+	left:503px;
+	top:-90px;
+	height:22px;
+	width:95px;
+	background-image:url(../images/kit/shipnow_btn.png);
+	background-repeat:no-repeat;
+}
+
+.adjustfrequencytext{
+	position:relative;
+	display:block;
+	left:619px;
+	top:-110px;
+	font-family:Verdana, Geneva, sans-serif;
+	color:#636363;
+	font-size:10px;
+	font-weight:bold;
+	width: 193px;
+}
+
+#adjustnowbtn{
+	position:relative;
+	display:block;
+	left:813px;
+	top:-130px;
+	height:22px;
+	width:95px;
+	background-image:url(../images/kit/adjustnow_btn.png);
+	background-repeat:no-repeat;
+}
+
+#adjustnowbtndisabled{
+	position:relative;
+	display:block;
+	left:813px;
+	top:-130px;
+	height:22px;
+	width:95px;
+	/*cursor:pointer;*/
+	background-image:url(../images/kit/adjustnow_btn-dis.png);
+	background-repeat:no-repeat;
+}
+
+#bottomtextholder{
+	position:relative;
+	display:inline;
+	top:-47px;
+	left:182px;
+	font-weight:bold;
+	font-family:Verdana, Geneva, sans-serif;
+	color:#0d6254;
+	font-size:10px;;
+}
+
+#bottomtextholderkitunavailable{
+	position:relative;
+	display:block;
+	top:-55px;
+	left:190px;
+	font-family:Verdana, Geneva, sans-serif;
+	color:#0d6254;
+	font-size:10px;
+	font-weight:100;
+}
+
+#customizerHolder{
+	left:100;
+	float:left;
+	/*top:0;*/
+	z-index:100;	
+}
+#kitthreeproductswarning{float:left;}
+#customizerwrapper{width:925px; margin:0 auto;}
+/*	
+#exampleproduct{
+	position:relative;
+	display:inline;
+	cursor:pointer;
+}
+*/
+
+.customize-your-kit{float: left;padding-top: 25px;width: 100%;}
+.customize-your-kit .widgetBottom.customizeKit{padding-bottom:9px;}
+
+/* button css begin */
+#shipnowokbtn .gr-btn,#learnmorebtn .gr-btn{background:#51c4c1; border:none; border-radius:15px;color:#FFF;display:inline-block;font-family:"ff-din-web","Arial";font-size:11px;font-weight:bold;height:24px;line-height:26px;outline:none;padding: 0;text-transform: uppercase;vertical-align: middle;text-decoration:none; width:95px; text-align:center;}
+#shipnowcancelbtn .gy-btn,#learnmoreokbtn .gy-btn{background:#909090;border:none; border-radius:15px;display:inline-block;font-family:"ff-din-web","Arial";font-size:11px;font-weight:bold;height:24px;line-height:26px;outline:none;padding: 0px;text-transform: uppercase; color:#fff !important;vertical-align: middle; width:95px; text-align:center;text-decoration:none !important;}
+/* button css end */

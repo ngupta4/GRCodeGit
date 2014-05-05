@@ -1,0 +1,59 @@
+<iscomment>
+	Renders the community section on User account dash board
+</iscomment>
+
+<div class="white-bg">
+	<div class="top-l-corner"></div>
+	<div class="top-r-corner"></div>
+	<div class="bot-l-corner"></div>
+	<div class="bot-r-corner"></div>
+	<div class="title">${Resource.msg('account.commprofile','account',null)}</div>
+	<div class="panel-wraper2">
+		<iscomment>
+			Display the community details if there is screen name in customer profile otherwise
+			show user to start engaging.
+		</iscomment>
+		<isif condition="${'CommunityUserProfileJSON' in pdict.CurrentSession.custom}">
+			<isset name="CommunityUserProfileJSON" value="${pdict.CurrentSession.custom.CommunityUserProfileJSON}" scope="pdict" />
+		</isif>
+		<isif condition="${null != pdict.CommunityUserProfileJSON}">
+			<isif condition="${null != pdict.CurrentCustomer.profile.custom.bvBadgeImage}">
+				<img src="${pdict.CurrentCustomer.profile.custom.bvBadgeImage.url}" width="75px" height="75px"/>
+			</isif>
+			<div>
+			<div class="comm-left"><isprint value="${Resource.msg('community.screenname','account',null)}"/> <isprint value="${pdict.CommunityUserProfileJSON.DisplayName}" />
+			</br>
+			<isif condition="${null != pdict.CommunityUserProfileJSON.Badge}">
+				<isprint value="${Resource.msg('community.badge','account',null)}"/> <isprint value="${pdict.CommunityUserProfileJSON.Badge}" />
+			</isif>
+		</br>
+			<isprint value="${Resource.msg('community.helpfulness.votes','account',null)}"/> <isprint value="${pdict.CommunityUserProfileJSON.HelpfullVotes}" />
+			</div>
+			<div class="comm-right">
+			<isprint value="${Resource.msg('community.recent.activity','account',null)}"/> 
+			<br />
+			<isprint value="${Resource.msg('community.questions.asked','account',null)}"/> <isprint value="${pdict.CommunityUserProfileJSON.QuestionsCount}" />
+			<br />
+			<isprint value="${Resource.msg('community.questions.answered','account',null)}"/> <isprint value="${pdict.CommunityUserProfileJSON.AnswersCount}" />
+			<br/>
+			</div>
+			<div class="clear"></div>
+			</div>
+			<a href="${URLUtils.https('Community-Profile')}" class="blue-btn bl-btn-a margin10"><span><isprint value="${Resource.msg('community.dashboard','account',null)}"/></span></a>
+			<div class="clear"></div>
+		<iselse>
+			<div class="community-badge"><isprint value="${Resource.msg('community.badge','account',null)}"/><span> <isprint value="${Resource.msg('community.contributor','account',null)}"/></span></div>
+			<div class="community">
+			<isprint value="${Resource.msg('community.participate','account',null)}"/></div>
+			<div class="community-btn">
+			<ul>
+			<li><a href="${URLUtils.https('Community-Conversations')}" class="ask"><isprint value="${Resource.msg('community.ask.question','account',null)}"/></a></li>
+			<li><a href="${URLUtils.https('Page-Show', 'cid', 'Retngrbv1d20110517')}" class="share"><isprint value="${Resource.msg('community.share.story','account',null)}"/></a></li>
+			<li><a href="${URLUtils.https('Page-Show', 'cid', 'submitYourTestimonial')}" class="testimonial"><isprint value="${Resource.msg('community.submit.testimonial','account',null)}"/></a></li>
+			<li><a href="${URLUtils.https('Search-Show','cgid','MST')}" class="review"><isprint value="${Resource.msg('community.reveiw.products','account',null)}"/></a></li>
+			</ul>
+			</div>
+		</isif>
+
+	</div>
+</div>

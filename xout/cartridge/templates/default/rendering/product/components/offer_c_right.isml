@@ -1,0 +1,137 @@
+<!--- TEMPLATENAME: offer_c_right.isml --->
+<isscript>
+importPackage( dw.system );
+importPackage( dw.util );
+importPackage( dw.object );
+importPackage( dw.web );
+importPackage( dw.catalog );
+importPackage( dw.content );
+importScript('guthyrenker_core:common/libUtils.ds');
+importScript("sas/offergrab.ds");
+
+var rightOffers : Array = getRightOffersA(pdict.Product.ID);
+var offer1Popup : Array = getPopUpText(rightOffers[0]);
+var offer2Popup : Array = getPopUpText(rightOffers[1]);
+var offer3Popup : Array = getPopUpText(rightOffers[2]);
+</isscript>
+
+
+<iscomment> Debug div 
+<div style="position:absolute;top:200px;left:0px;">
+right ${rightOffers}
+</div>
+</iscomment>
+
+
+<div class="pdpTag pdpRightBase">
+<iscomment>Start fixing your face and<br/>freeing up your life.</iscomment>
+</div>
+<div class="pdpRightBase pdpRightCopyContainer">
+  
+  <span class="bigHeadline"><b>X Out&trade; Deluxe Kit</b></span><br/>
+  
+  <span class="pdpDesc">
+  	Your Deluxe Supply comes with two additional products designed to complement the acne fighting power of X Out&trade;:
+  	 Spot Corrector and Shine Control. Plus, you'll also receive a <b>FREE BONUS!</b>
+  </span><br/>
+  
+  <span class="smallHeadline">Your Deluxe Kit Includes:</span><br/>
+  <ul><li>Acne Wash-In Treatment: the 1-step acne
+      fighter that works as a face wash, spot 
+      treatment, and mask.</li>
+      <li class="mid">Spot Corrector: an invisible pimple treatment 
+      that can be worn anytime, even under your <br/>
+      makeup.</li>
+      <li>Shine Control: to help fight oil and shine all day.</li>
+      </ul><br/>
+  
+  <span class="smallHeadline">FREE BONUS</span><br/>
+  <ul><li>Cleansing Bar: to treat blemishes on the chest, 
+      back and shoulders by gently washing away 
+      dirt, impurities, oil and dead skin cells.</li></ul>
+</div>
+  <div class="popupContainer washInCommentBRight" style="display:none;">
+	<div class="popupTitle">X Out&trade; Acne Wash-In Treatment</div>
+	<div class="popupDesc">The all-in-one X Out Wash-In Acne Treatment that works as a face wash, a spot treatment, and a mask.</div>
+	<a class="popupClose" onclick="jQuery('.washInCommentBRight').hide();">x close</a>
+  </div> 
+
+<div class="otherOfferCRight feb2012 testPanel">
+	<div class="offerBorderRight">
+		<input type="radio" name="offerRight" value="${rightOffers[1]}" checked/>
+        <span class="otherOffersText"><b>30-Day Supply:</b><br/>
+			<div class="priceText">Only $29.95 + <span style="color:#9d008c"><b>FREE SHIPPING</b></span> <a onclick="showPopup('subscribeAndSaveOneRight');" class="pdpHighlight" style="font-size:12px">Details</a></div>
+        </span>
+	</div>
+  	<div class="popupContainer subscribeAndSaveOneRight" style="display:none;">
+		<isif condition="${offer2Popup[0] != '' && offer2Popup[1] != ''}">
+			<div class="popupTitle"><isprint value="${offer2Popup[1]}" /></div>
+			<div class="popupDesc"><isprint value="${offer2Popup[0]}" /></div>
+		<iselse>
+			<div class="popupTitle">Subscribe & Save Program</div>
+			<div class="popupDesc">After 30 days you'll receive a new 2 month supply of X Out&trade; every 60-days.  You will always be notified by email prior to shipment. Need your X Out&trade; sooner? Got you covered. Want to delay your next shipment? No problem!</div>
+		</isif>
+		<a class="popupClose" onclick="jQuery('.subscribeAndSaveOneRight').hide();">x close</a>
+  	</div>	
+  	<div class="offerBorderLeft" style="border-bottom: 1px solid #acacac;height:1px;margin:5px 0;padding:0;width:416px;">
+  	
+  	</div>
+	<div class="offerBorderRight selected">
+		<input type="radio" name="offerRight" value="${rightOffers[0]}"/>
+        <span class="otherOffersText"><b>60-Day Supply:</b> <br/>
+		  	<div class="priceText">Only $59.90 + <span style="color:#9d008c"><b>FREE SHIPPING</b></span> <a onclick="showPopup('subscribeAndSaveTwoRight')" class="pdpHighlight" style="font-size:12px">Details</a></div>
+        </span>
+	</div>
+  	<div class="popupContainer subscribeAndSaveTwoRight" style="display:none;">
+		<isif condition="${offer1Popup[0] != '' && offer1Popup[1] != ''}">
+			<div class="popupTitle"><isprint value="${offer1Popup[1]}" /></div>
+			<div class="popupDesc"><isprint value="${offer1Popup[0]}" /></div>
+		<iselse>	
+			<div class="popupTitle">Subscribe & Save Program<br/><span style="font-size:10px">Available to Web Customers Only</span></div>
+			<div class="popupDesc">After 60 days you'll receive a new 2 month supply of X Out&trade; every 60-days.  You will always be notified by email prior to shipment. Need your X Out&trade; sooner? Got you covered. Want to delay your next shipment? No problem!</div>
+		</isif>
+		<a class="popupClose" onclick="jQuery('.subscribeAndSaveTwoRight').hide();">x close</a>
+  	</div>	
+  	<div class="offerBorderRight toggleOneShotRight"><a href="#">Click Here For More Offers</a></div>
+  	<div class="offerBorderLeft oneShotRight" style="border-bottom: 1px solid #acacac;height:1px;margin:5px 0;padding:0;width:416px;">
+  	
+  	</div>
+  	<div class="offerBorderRight oneShotRight">
+		<input type="radio" name="offerRight" value="${rightOffers[2]}"/>
+        <span class="otherOffersText"><b>30-Day One time delivery:</b> <br/>
+			<div class="priceText">Only $29.95 + $<span style="color:#9d008c"><b>5.99 S/H</b></span> <a onclick="showPopup('subscribeAndSave3Right');" class="pdpHighlight" style="font-size:12px">Details</a></div>
+        </span>
+	</div>
+  	<div class="popupContainer subscribeAndSave3Right" style="display:none;">
+		<isif condition="${offer3Popup[0] != '' && offer3Popup[1] != ''}">
+			<div class="popupTitle"><isprint value="${offer3Popup[1]}" /></div>
+			<div class="popupDesc"><isprint value="${offer3Popup[0]}" /></div>
+		<iselse>	
+			<div class="popupTitle">Subscribe & Save Program</div>
+			<div class="popupDesc">Choose this if you want to try X Out&trade; for just one month with the option to reorder.</div>
+		</isif>
+		<a class="popupClose" onclick="jQuery('.subscribeAndSave3Right').hide();">x close</a>
+  	</div>	
+  	<a href="${URLUtils.https('COCart-AddProduct', 'pid', Product.ID)}" class="rightSubmit"></a>
+</div>
+<script type="text/javascript">
+  jQuery(document).ready(function() {
+    jQuery('.toggleOneShotRight a').live('click',function(e) {
+		e.preventDefault();
+		jQuery('.toggleOneShotRight').hide();
+		jQuery('.oneShotRight').show();
+    });
+	jQuery('input[name="offerRight"]').click(function() {
+	  var url = jQuery('a.rightSubmit').attr('href');
+      var urlParts = url.split('?');
+	  jQuery('a.rightSubmit').attr('href', urlParts[0] + '?pid=' + jQuery(this).val());
+      jQuery('.offerBorderRight').removeClass('selected');
+      jQuery(this).parent().addClass('selected'); 
+    });
+    jQuery('.offerBorderRight input[type=radio]')[0].click()
+  });
+  function showPopup(divName) {
+	  jQuery('.popupContainer').hide();
+	  jQuery('.' + divName).show();
+  }    
+</script>

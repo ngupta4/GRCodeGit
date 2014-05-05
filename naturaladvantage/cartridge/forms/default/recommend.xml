@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<form xmlns="http://www.demandware.com/xml/form/2008-04-19">
+	<!-- products -->
+	<list formid="recommendation" binding="product">
+		<action formid="details" valid-form="false"/>
+		<action formid="addtocart" valid-form="false"/>
+	</list>
+	<field formid="agree" label="forms.checkout.agree.label" type="boolean" mandatory="true" value-error="forms.checkout.agree.value-error"/>
+	<list formid="suggest" binding="product">
+		<action formid="nothanks" valid-form="false"/>
+		<action formid="addtobasket" valid-form="false"/>
+	</list>
+	<action formid="createorder" valid-form="false"/>
+</form>

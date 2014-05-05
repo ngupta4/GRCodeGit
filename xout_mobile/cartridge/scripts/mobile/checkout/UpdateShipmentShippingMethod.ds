@@ -1,0 +1,51 @@
+/**
+ * This script updates the shipping method of the given shipment. If a shipping 
+ * method ID is not given, the given shipping method used to update
+ * the shipment.
+ * 
+ * @input Shipment: dw.order.Shipment The shipment to update the shipping method for.
+ * @input ShippingMethodID : String The ID of the shipping method to set for the shipment.
+ * @input ShippingMethod : dw.order.ShippingMethod The shipping method to set for the shipment.
+ */
+importPackage( dw.customer );
+importPackage( dw.order );
+importPackage( dw.system );
+importPackage( dw.util );
+importPackage( dw.web );
+
+function execute( pdict : PipelineDictionary ) : Number
+{
+	var shipment : dw.order.Shipment = pdict.Shipment;
+	var shippingMethodID : String = pdict.ShippingMethodID;
+	var shippingMethod : dw.order.ShippingMethod = pdict.ShippingMethod;
+	
+	// update shipment from shipping method ID
+	if( shippingMethodID != null )
+	{
+		var shippingModel : ShipmentShippingModel= ShippingMgr.getShipmentShippingModel( shipment );
+		var shippingMethodsIter : Iterator = shippingModel.applicableShippingMethods.iterator();
+		var method : ShippingMethod = null;
+		
+		// find shipping method with this ID
+		while( shippingMethodsIter.hasNext() )
+		{
+			method = shippingMethodsIter.next();
+			if( !method.ID.equals( shippingMethodID ) ) continue;
+			
+			// set this shipping method
+			shipment.setShippingMethod( method );
+			return PIPELET_NEXT;
+		}
+		
+		return PIPELET_ERROR;
+	}
+	
+	// update shipment from shipping method object
+	if( shippingMethod != null )
+	{
+		shipment.setShippingMethod( shippingMethod );
+		return PIPELET_NEXT;
+	}
+
+    return PIPELET_ERROR;
+}

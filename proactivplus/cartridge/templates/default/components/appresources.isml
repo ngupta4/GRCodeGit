@@ -1,0 +1,204 @@
+<script type="text/javascript"><!--
+
+	/*
+	* This is a globle resource which contains the page name
+	* dynamically like CARTPAGE, SHIPPINGPAGE etc.
+	*/ 
+	app.resources["PAGE_NAME"]			= "";
+
+	//constants
+	app.constants.AVAIL_STATUS_IN_STOCK 		= "${dw.catalog.ProductAvailabilityModel.AVAILABILITY_STATUS_IN_STOCK}";
+	app.constants.AVAIL_STATUS_PREORDER 		= "${dw.catalog.ProductAvailabilityModel.AVAILABILITY_STATUS_PREORDER}";
+	app.constants.AVAIL_STATUS_BACKORDER 		= "${dw.catalog.ProductAvailabilityModel.AVAILABILITY_STATUS_BACKORDER}";
+	app.constants.AVAIL_STATUS_NOT_AVAILABLE 	= "${dw.catalog.ProductAvailabilityModel.AVAILABILITY_STATUS_NOT_AVAILABLE}";
+	app.constants.CURRENT_YEAR 					= "${dw.system.System.getCalendar().get(dw.util.Calendar.YEAR)}";
+	
+	//resources
+	app.resources["MISSINGVAL"] 				= "${Resource.msg('global.missingval','locale',null)}";
+	app.resources["SERVER_ERROR"] 				= "${Resource.msg('global.servererror','locale',null)}";
+	app.resources["MISSING_LIB"] 				= "${Resource.msg('global.missinglib','locale',null)}";
+	app.resources["BAD_RESPONSE"]				= "${Resource.msg('global.badresponse','locale',null)}";
+	app.resources["INVALID_PHONE"]				= "${Resource.msg('global.invalidphone','locale',null)}";
+	app.resources["INVALID_AGE"]				= "${Resource.msg('profile.age.parseerror','forms',null)}";
+	app.resources["REMOVE"]						= "${Resource.msg('global.remove','locale',null)}";
+	app.resources["QTY"]						= "${Resource.msg('global.qty','locale',null)}";
+	app.minicart.showupselloff     			    =  "${dw.system.Site.getCurrent().getCustomPreferenceValue('showUpsellDialogOff')}";
+	app.resources["WINBACK_ERRORMESSAGE"]		= "${Resource.msg('error.winback.wrongauthcode','errormessages',null)}";
+
+	// product availability messages
+	app.resources["${dw.catalog.ProductAvailabilityModel.AVAILABILITY_STATUS_IN_STOCK}"] = "${StringUtils.format(Resource.msg('global.instock','locale',null))}";
+	app.resources["QTY_${dw.catalog.ProductAvailabilityModel.AVAILABILITY_STATUS_IN_STOCK}"] = "${StringUtils.format(Resource.msg('global.quantityinstock','locale',null))}";
+	app.resources["${dw.catalog.ProductAvailabilityModel.AVAILABILITY_STATUS_PREORDER}"] = "${StringUtils.format(Resource.msg('global.allpreorder','locale',null))}";
+	app.resources["QTY_${dw.catalog.ProductAvailabilityModel.AVAILABILITY_STATUS_PREORDER}"] = "${StringUtils.format(Resource.msg('global.quantitypreorder','locale',null))}";
+	app.resources["REMAIN_${dw.catalog.ProductAvailabilityModel.AVAILABILITY_STATUS_PREORDER}"] = "${StringUtils.format(Resource.msg('global.remainingpreorder','locale',null))}";
+	app.resources["${dw.catalog.ProductAvailabilityModel.AVAILABILITY_STATUS_BACKORDER}"] = "${StringUtils.format(Resource.msg('global.allbackorder','locale',null))}";
+	app.resources["QTY_${dw.catalog.ProductAvailabilityModel.AVAILABILITY_STATUS_BACKORDER}"] = "${StringUtils.format(Resource.msg('global.quantitybackorder','locale',null))}";
+	app.resources["REMAIN_${dw.catalog.ProductAvailabilityModel.AVAILABILITY_STATUS_BACKORDER}"] = "${StringUtils.format(Resource.msg('global.remainingbackorder','locale',null))}";
+	app.resources["${dw.catalog.ProductAvailabilityModel.AVAILABILITY_STATUS_NOT_AVAILABLE}"] = "${StringUtils.format(Resource.msg('global.allnotavailable','locale',null))}";
+	app.resources["REMAIN_${dw.catalog.ProductAvailabilityModel.AVAILABILITY_STATUS_NOT_AVAILABLE}"] = "${StringUtils.format(Resource.msg('global.remainingnotavailable','locale',null))}";
+	app.resources["IN_STOCK_DATE"] = "${Resource.msg('global.inStockDate','locale',null)}";
+	app.resources["NON_SELECTED"] = "${StringUtils.format(Resource.msg('global.nonSelected','locale',null))}";
+	app.resources["MISSING_VAL"] = "${StringUtils.format(Resource.msg('product.missingval','product',null))}";
+	app.resources["SIZECHART_TITLE"] = "${StringUtils.format(Resource.msg('product.sizecharttitle','product',null))}";
+	app.resources["SEND_TO_FRIEND"] = "${Resource.msg('account.sendfriend','account',null)}";
+	app.resources["MISSING_VAL"] = "${StringUtils.format(Resource.msg('product.missingval','product',null))}";
+
+	// bonus products messages
+	app.resources["BONUS_PRODUCTS"] = "${StringUtils.format(Resource.msg('product.bonusproducts','product',null))}";
+	app.resources["SELECT_BONUS_PRODUCT"] = "${StringUtils.format(Resource.msg('product.selectbonusproduct','product',null))}";
+	app.resources["BONUS_PRODUCT_MAX"] = "${StringUtils.format(Resource.msg('product.bonusproductsmax','product',null))}";
+
+
+	//shipping resources
+	app.resources["SHIP_FIRST_NAME"] 	= "input[name=${pdict.CurrentForms.singleshipping.shippingAddress.addressFields.firstName.htmlName}]";
+	app.resources["SHIP_LAST_NAME"] 	= "input[name=${pdict.CurrentForms.singleshipping.shippingAddress.addressFields.lastName.htmlName}]";
+	app.resources["SHIP_ADDRESS1"] 		= "input[name=${pdict.CurrentForms.singleshipping.shippingAddress.addressFields.address1.htmlName}]";
+	app.resources["SHIP_ADDRESS2"] 		= "input[name=${pdict.CurrentForms.singleshipping.shippingAddress.addressFields.address2.htmlName}]";				
+	app.resources["SHIP_CITY"] 			= "input[name=${pdict.CurrentForms.singleshipping.shippingAddress.addressFields.city.htmlName}]";
+	app.resources["SHIP_ZIP"] 			= "input[name=${pdict.CurrentForms.singleshipping.shippingAddress.addressFields.zip.htmlName}]";
+	app.resources["SHIP_PHONE"] 		= "input[name=${pdict.CurrentForms.singleshipping.shippingAddress.addressFields.phone.htmlName}]";
+	app.resources["SHIP_EVENING_PHONE"]	= "input[name=${pdict.CurrentForms.singleshipping.shippingAddress.addressFields.eveningPhone.htmlName}]";
+	app.resources["SHIP_ADDRESS_ID"] 	= "input[name=${pdict.CurrentForms.singleshipping.shippingAddress.selectedShippingAddressID.htmlName}]";
+	
+	app.resources["SHIP_STATE"] 		= "select[name=${pdict.CurrentForms.singleshipping.shippingAddress.addressFields.states.state.htmlName}]";
+	app.resources["SHIP_STATE_US"] 		= "select[name=${pdict.CurrentForms.singleshipping.shippingAddress.addressFields.states.stateUS.htmlName}]";
+	app.resources["SHIP_STATE_CA"] 		= "select[name=${pdict.CurrentForms.singleshipping.shippingAddress.addressFields.states.stateCA.htmlName}]";
+	app.resources["SHIP_STATE_DE"] 		= "select[name=${pdict.CurrentForms.singleshipping.shippingAddress.addressFields.states.stateDE.htmlName}]";
+	app.resources["SHIP_COUNTRY"] 		= "input[name=${pdict.CurrentForms.singleshipping.shippingAddress.addressFields.country.htmlName}]";
+	app.resources["SHIP_STATE_LABEL"] 	= "${Resource.msg('forms.state','forms',null)}";
+	app.resources["SHIP_PROVINCE_LABEL"] = "${Resource.msg('forms.province','forms',null)}";
+	app.resources["SHIP_shippingMethodID"] 	= "input[name=${pdict.CurrentForms.singleshipping.shippingAddress.shippingMethodID.htmlName}]";
+	app.resources["SHIP_QualifiesFor"] 		= "${Resource.msg('shipment.qualifiesfor','checkout',null)}"
+	app.resources["SHIP_AddressLoadError"] 	= "${Resource.msg('checkout.addressloaderror','checkout',null)}";
+	app.resources["SHIP_SAVE_ADDRESS"] 		= "input[name=${pdict.CurrentForms.singleshipping.shippingAddress.addToAddressBook.htmlName}]";
+	app.resources["SHIP_SAVE"] 				= "button[name=${pdict.CurrentForms.singleshipping.shippingAddress.save.htmlName}]";
+	
+	//billing resources
+	app.resources["BILL_FIRST_NAME"] 	= "input[name=${pdict.CurrentForms.billing.billingAddress.addressFields.firstName.htmlName}]";
+	app.resources["BILL_LAST_NAME"] 	= "input[name=${pdict.CurrentForms.billing.billingAddress.addressFields.lastName.htmlName}]";
+	app.resources["BILL_ADDRESS1"] 		= "input[name=${pdict.CurrentForms.billing.billingAddress.addressFields.address1.htmlName}]";
+	app.resources["BILL_ADDRESS2"] 		= "input[name=${pdict.CurrentForms.billing.billingAddress.addressFields.address2.htmlName}]";				
+	app.resources["BILL_PHONE"] 		= "input[name=${pdict.CurrentForms.billing.billingAddress.addressFields.phone.htmlName}]";
+	app.resources["BILL_EVENING_PHONE"]	= "input[name=${pdict.CurrentForms.billing.billingAddress.addressFields.eveningPhone.htmlName}]";
+	app.resources["BILL_ADDRESS_ID"] 	= "input[name=${pdict.CurrentForms.billing.billingAddress.selectedBillingAddressID.htmlName}]";
+	app.URLs.AllCategory			    = "${URLUtils.url('Search-Show','cgid','ALL')}";
+	
+	app.resources["BILL_STATE"] 	= "select[name=${pdict.CurrentForms.billing.billingAddress.addressFields.states.state.htmlName}]";
+	app.resources["BILL_STATE_US"] 	= "select[name=${pdict.CurrentForms.billing.billingAddress.addressFields.states.stateUS.htmlName}]";
+	app.resources["BILL_STATE_CA"] 	= "select[name=${pdict.CurrentForms.billing.billingAddress.addressFields.states.stateCA.htmlName}]";
+	app.resources["BILL_STATE_DE"] 	= "select[name=${pdict.CurrentForms.billing.billingAddress.addressFields.states.stateDE.htmlName}]";
+	app.resources["BILL_COUNTRY"] 	= "input[name=${pdict.CurrentForms.billing.billingAddress.addressFields.country.htmlName}]";
+	app.resources["BILL_CITY"] 		= "input[name=${pdict.CurrentForms.billing.billingAddress.addressFields.city.htmlName}]";
+	app.resources["BILL_ZIP"] 		= "input[name=${pdict.CurrentForms.billing.billingAddress.addressFields.zip.htmlName}]";
+	app.resources["CC_LOAD_ERROR"] 	= "${Resource.msg('billing.creditcardloaderror','checkout',null)}";
+
+	app.resources["BILL_CC_OWNER"] 	= "input[name=${pdict.CurrentForms.billing.paymentMethods.creditCard.owner.htmlName}]";
+	app.resources["BILL_CC_TYPE"] 	= "select[name=${pdict.CurrentForms.billing.paymentMethods.creditCard.type.htmlName}]";
+	app.resources["BILL_CC_NUMBER"] = "input[name=${pdict.CurrentForms.billing.paymentMethods.creditCard.number.htmlName}]";
+	app.resources["BILL_CC_MONTH"] 	= "select[name=${pdict.CurrentForms.billing.paymentMethods.creditCard.month.htmlName}]";
+	app.resources["BILL_CC_YEAR"] 	= "select[name=${pdict.CurrentForms.billing.paymentMethods.creditCard.year.htmlName}]";
+	app.resources["BILL_CC_CVN"] 	= "input[name=${pdict.CurrentForms.billing.paymentMethods.creditCard.cvn.htmlName}]";
+	app.resources["BILL_CC_DEFAULT_ID"] 	= "input[name=${pdict.CurrentForms.billing.paymentMethods.creditCard.defaultCreditCardID.htmlName}]";
+
+	app.resources["BILL_PAYMENT_METHOD_ID_SELECTED"] = "input[name=${pdict.CurrentForms.billing.paymentMethods.selectedPaymentMethodID.htmlName}]:checked";
+	app.resources["BILL_PAYMENT_METHOD_ID"] = "input[name=${pdict.CurrentForms.billing.paymentMethods.selectedPaymentMethodID.htmlName}]";
+	app.resources["BILL_SAVE"] = "button[name=${pdict.CurrentForms.billing.save.htmlName}]";
+	app.resources["BILL_NAME"] = "${'#' + pdict.CurrentForms.billing.htmlName}";
+	app.resources["BILL_METHOD_ID_NAME"] = "${pdict.CurrentForms.billing.paymentMethods.selectedPaymentMethodID.htmlName}";
+	app.resources["BILL_HTML_NAME"] = "${'#' + pdict.CurrentForms.billing.htmlName} input[name=${pdict.CurrentForms.billing.paymentMethods.selectedPaymentMethodID.htmlName}]";
+	app.resources["BILL_HTML_NAME_PART"] = "${'#' + pdict.CurrentForms.billing.htmlName} input[name=";
+	app.resources["BILL_GC"] = "${dw.order.PaymentInstrument.METHOD_GIFT_CERTIFICATE}";
+	app.resources["BILL_DEFAULT_PMI"] 		= "${pdict.CurrentForms.billing.paymentMethods.selectedPaymentMethodID.options}";
+	app.resources["BILL_AddressLoadError"] 	= "${Resource.msg('checkout.addressloaderror','checkout',null)}";
+	app.resources["BILL_SAVE_ADDRESS"] 		= "input[name=${pdict.CurrentForms.billing.billingAddress.addToAddressBook.htmlName}]";
+	app.resources["BILL_SAVE_CREDIT_CARD"]	= "input[name=${pdict.CurrentForms.billing.paymentMethods.creditCard.saveCard.htmlName}]";
+
+	<isif condition="${pdict.CurrentCustomer.authenticated && null != pdict.CurrentCustomer.profile && null != pdict.CurrentCustomer.profile.custom && 'shippingSameAsBilling' in pdict.CurrentCustomer.profile.custom && !empty(pdict.CurrentCustomer.profile.custom.shippingSameAsBilling)}">
+		app.resources["PROFILE_ShippingSameAsBilling"]	= "${pdict.CurrentCustomer.profile.custom.shippingSameAsBilling}";
+	<iselse>
+		app.resources["PROFILE_ShippingSameAsBilling"]	= false;
+	</isif>
+	<isif condition="${pdict.CurrentCustomer.authenticated && null != pdict.CurrentCustomer.profile && null != pdict.CurrentCustomer.profile.custom && null != pdict.CurrentCustomer.profile.custom.billingAddressID}">
+		app.resources["BILL_DEFAULT_ADDRESS_ID"]   		= "${pdict.CurrentCustomer.profile.custom.billingAddressID}";
+	<iselse>
+		app.resources["BILL_DEFAULT_ADDRESS_ID"]   		= "";
+	</isif>
+	app.resources["PHONE_MISSING"] 			= "${Resource.msg('forms.address.phone.missing','forms',null)}";
+	app.resources["PHONE_INVALID"] 			= "${Resource.msg('forms.address.field.invalid','forms',null)}";
+
+	//Contact us
+	app.resources["CONTACT_US_SAVE"] 		= "button[name=${pdict.CurrentForms.contactus.send.htmlName}]";
+	app.resources["CONTACT_US_PHONE"]       = "input[name=${pdict.CurrentForms.contactus.phone.htmlName}]";
+	app.resources["JSCRIPT_ENABLED"]       = "input[name=${pdict.CurrentForms.contactus.jscriptEnabled.htmlName}]";
+	
+	//others vars
+	app.resources["IS_USER_AUTHENTICATED"] = "${pdict.CurrentCustomer.authenticated}";
+	
+	//These changes has been done for artifact:  #11257
+	app.resources["POP_UP_DIV"] = "${pdict.popUpDiv}";
+		
+	//Urls
+	<isif condition="${!pdict.CurrentRequest.isHttpSecure()}">
+		app.URLs.submitDialogURL 			= '${URLUtils.httpContinue()}';
+	<iselse/>
+		app.URLs.submitDialogURL 			= '${URLUtils.httpsContinue()}';
+		app.URLs.submitDialogURL 			= '${URLUtils.httpContinue()}';
+	</isif>
+
+	//kit data
+	app.resources["ADDPRODUCT_ERROR"]	= "${Resource.msg('kit.addproduct.maxproduct.error','errormessages',null)}";
+	app.resources["DELPRODUCT_ERROR"]	= "${Resource.msg('kit.delproduct.minproduct.error','errormessages',null)}";
+	app.resources["KIT_DELETE_LIMIT"]	= "${Resource.msg('kit.min.limit.reached', 'errormessages', null)}";
+	app.resources["NO_PRODUCTS_ERROR"]	= "${Resource.msg('kit.no.products','errormessages',null)}";
+	app.resources["SHIP_NOW_SUCCESS"]	= "${Resource.msg('kit.ship.now.success','errormessages',null)}";
+	app.resources["INSTANT_ACCESS_ADD"]	= "${Resource.msg('kit.instant.access.error','errormessages',null)}";
+	app.resources["INSTANT_REVIEW"]		= "${Resource.msg('bazaar.instant.access.error','errormessages',null)}";
+	app.resources["FULL_STOP"]			= "${Resource.msg('symbol.fullstop','common',null)}";
+	app.resources["SCENE_7_URL"]		= "${Resource.msg('image.scene7url','common',null)}";
+	app.resources["SCENE_7_PRESET"]		= "${Resource.msg('image.scene7.preset.translucent','common',null)}";
+	app.resources["SHIP_NOW_DUPLICATE"]	= "${Resource.msg('kit.duplicate.ship.now','errormessages',null)}";
+	app.resources["PAPLUS_PRODUCT_ADDITION_MSG1"]	= "${Resource.msg('kit.PA+.addition.error.msg1','errormessages',null)}";
+	app.resources["PAPLUS_PRODUCT_ADDITION_MSG2"]	= "${Resource.msg('kit.PA+.addition.error.msg2','errormessages',null)}";
+	app.resources["KIT-ERROR"]							= "${Resource.msg('kit-error','errormessages',null)}";
+	app.resources["MAX-KIT-SIZE-ERROR"]					= "${Resource.msg('max-kit-size-error','errormessages',null)}";
+	app.resources["CUSTOMIZATION-UNAVAILABLE-ERROR"]	= "${Resource.msg('customization-unavailable-error','errormessages',null)}";
+	app.URLs.kitwidgetjs				= "${URLUtils.staticURL('/js/kitcustomizer/kitwidget.js')}";
+	app.URLs.kitdeletebutton			= "${URLUtils.staticURL('/images/kit/x_btn_over.png')}";
+	app.URLs.kitemptyslot				= "${URLUtils.staticURL('/images/kit/empty_product_slot.png')}";
+	app.URLs.adjustnowdis				= "${URLUtils.staticURL('/images/kit/btn_dis.png')}";
+	app.URLs.shipnowdis					= "${URLUtils.staticURL('/images/kit/btn_dis.png')}";
+	app.URLs.kitdeleteblank				= "${URLUtils.staticURL('/images/kit/delete_x_blank.png')}";
+	app.URLs.kitsmallhr					= "${URLUtils.staticURL('/images/kit/small_hr.png')}";
+	app.URLs.kitunavailable				= "${URLUtils.staticURL('/images/kit/kit_unavailable.jpg')}";
+	app.URLs.trackbtndisabled			= "${URLUtils.staticURL('/images/kit/btn_dis.png')}";
+	app.URLs.kitCustomizerShow			= "${URLUtils.url('KitCustomizer-Show')}";
+	app.URLs.kitSave					= "${URLUtils.url('KitCustomizer-Save')}";
+	app.URLs.kitShipNow					= "${URLUtils.url('KitCustomizer-ShipNow')}";
+	app.URLs.kitChangeFrequency			= "${URLUtils.url('KitCustomizer-ChangeShipFreq')}";
+	app.URLs.kitaddProduct				= "${URLUtils.url('KitCustomizer-Add')}";
+	app.URLs.kitdeleteProduct			= "${URLUtils.url('KitCustomizer-Delete')}";
+	app.URLs.kitLearnMore				= "${URLUtils.url('KitCustomizer-LearnMore','showKit','true')}";
+    app.resources["Cookie_Domain"]		= "${dw.system.Site.getCurrent().getCustomPreferenceValue('GRCookiesDomain')}";	
+	app.URLs.summaryRefreshURL			= "${URLUtils.url('COBilling-UpdateSummary')}";
+	app.URLs.billingSelectCC			= "${URLUtils.https('COBilling-SelectCreditCard')}";
+	app.URLs.updateAddressDetails		= "${URLUtils.https('COShipping-UpdateAddressDetails')}";
+	app.URLs.updateAddressDetailsBilling= "${URLUtils.https('COBilling-UpdateAddressDetails')}";
+	app.URLs.updateSummary				= "${URLUtils.url('COBilling-UpdateSummary')}";
+	app.URLs.ShippingMethodsJSON		= "${URLUtils.https('COShipping-GetApplicableShippingMethodsJSON')}";
+	app.URLs.ShippingMethodsList		= "${URLUtils.https('COShipping-UpdateShippingMethodList')}";
+	app.URLs.GetShippingMethodsList		= "${URLUtils.https('COShipping-SelectShippingMethod')}";
+	app.URLs.ResetPaymentForms 			= "${URLUtils.url('COBilling-ResetPaymentForms')}";
+	app.URLs.SeverConnectionError		= "${Resource.msg('global.serverconnection','locale',null)}";
+	app.URLs.GetAddressDetails			= "${URLUtils.https('Address-GetAddressDetails')}";
+	app.URLs.GetShipmentAddressJSON		= "${URLUtils.https('COBilling-GetShipmentAddress')}";
+
+	app.URLs.CartShow		    		= "${URLUtils.url('Cart-Show')}";
+	app.URLs.UpdateProductQty		    = "${URLUtils.url('COCart-UpdateProductQty')}";
+	app.minicart.upsellproduct		    = "${URLUtils.url('Product-UpdateCartAfterUpsell')}";
+	app.minicart.showupsell		     	= "${URLUtils.url('Product-UpSellRecommendation')}";
+	app.URLs.sessionActive 				= "${URLUtils.url('Login-SessionActive')}";
+	app.URLs.divLogin 					= "${URLUtils.http('Account-DivLogin')}";
+	app.URLs.securedivLogin 			= "${URLUtils.https('Account-SecureDivLogin')}";
+	app.URLs.formatMoney				= "${URLUtils.url('Product-FormatPrices')}";
+	app.URLs.AcqKit						= "${URLUtils.https('SelectASystem-AddVariantToCart')}";
+//--></script>

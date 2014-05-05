@@ -1,0 +1,25 @@
+<!--- TEMPLATENAME: contactinformation.isml --->
+<div data-role="content">
+	<fieldset data-role="controlgroup">
+		<isif condition="${!empty(pdict.CurrentForms.personinf.contact.error)}">
+			<div class="errorform">
+				${pdict.CurrentForms.personinf.contact.error}
+			</div>
+		</isif>
+		<div data-role="fieldcontain">
+	    		<isinputfield formfield="${pdict.CurrentForms.personinf.contact.email}" type="input" attribute1="requiredmesage" value1="${Resource.msg('forms.contactinf.email.parse-error','forms',null)}" attribute2="tabindex" value2="1">
+				<isinputfield formfield="${pdict.CurrentForms.personinf.contact.emailconfirm}" type="hidden" >	   
+	    		<isif condition="${!empty(pdict.EmailValidationError)}">
+					<span class="errorclient" htmlfor="${pdict.CurrentForms.personinf.contact.email.htmlName}">
+						<strong><isprint value="${Resource.msgf('checkout.error.useractive','rendering',null, dw.system.Site.current.getCustomPreferenceValue('GRAccountLoginHost')+'/login')}" encoding="off" /><strong>
+					</span> 
+				</isif>
+	    </div>	
+		<div data-role="fieldcontain">
+			<isinputfield id="eveningPhone" formfield="${pdict.CurrentForms.personinf.contact.eveningphone}" type="hidden">
+	    	<isinputfield id="daytimePhone" formfield="${pdict.CurrentForms.personinf.contact.daytimephone}" type="input" attribute1="requiredmesage" value1="${Resource.msg('forms.contactinf.daytimephone.parse-error','forms',null)}" attribute2="tabindex" value2="2">	    		
+		</div>
+	</fieldset>
+</div>
+
+

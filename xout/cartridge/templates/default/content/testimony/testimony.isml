@@ -1,0 +1,439 @@
+<!--- TEMPLATENAME: proof.isml --->
+<iscache status="off"/>
+
+<isdecorate template="content/home/pt_storefront">
+	<script type="text/javascript" src="${URLUtils.staticURL('lib/jquery/js/fancybox/jquery.fancybox-1.3.4.pack.js')}"></script>
+	<link rel="stylesheet" href="${URLUtils.staticURL('lib/jquery/js/fancybox/jquery.fancybox-1.3.4.css')}" type="text/css" />
+	<isinclude template="util/modules"/>
+	<isscript>
+		importPackage(dw.object);
+		importPackage(dw.catalog);
+		
+		var CCC : Object = pdict.CurrentCampaignConfig;
+	
+		var landingTemplate : String = CCC.landingTemplate;
+		var campaignCode : String = CCC.campaignCode;
+		
+		var showHeader : boolean = CCC.showHeader;
+		var showFooter : boolean = CCC.showFooter;
+		var showNav : boolean = CCC.showNav;
+		var showOrderButton : boolean = CCC.showOrderButton;
+		
+		var containerClasses : String = CCC.getContainerClasses();
+		
+		var category : dw.catalog.Category = CatalogMgr.getCategory(campaignCode + '-proof');
+		var showsingup : boolean = false;
+		if('showsignup' in dw.system.Site.getCurrent().preferences.custom){
+			showsingup = dw.system.Site.getCurrent().preferences.custom.showsignup;
+		}
+	</isscript>	
+	<div id="proofContainer">
+		<isset name="subNav" value="${dw.content.ContentMgr.getFolder('proof')}" scope="page"/>
+		<isif condition="${!empty(subNav)}">
+		<ul class="sub-navigation">
+			<isloop items="${subNav.getOnlineSubFolders()}" var="aFolder" status="navstat">
+				<li id="${aFolder.ID}" class="subNav">
+					<isif condition="${'linkPipeline' in aFolder.custom && !empty(aFolder.custom.linkPipeline)}">
+						<isset name="LinkParts" value="${aFolder.custom.linkPipeline.split(',')}" scope="page" />
+						<isset name="Pipeline" value="${LinkParts[0]}" scope="page" />
+						<isif condition="${LinkParts.length>5}">
+							<isset name="FolderLinkURL" value="${URLUtils.url(Pipeline,LinkParts[1],LinkParts[2],LinkParts[3],LinkParts[4],LinkParts[5],LinkParts[6])}" scope="page" />
+						<iselseif condition="${LinkParts.length>3}">
+							<isset name="FolderLinkURL" value="${URLUtils.url(Pipeline,LinkParts[1],LinkParts[2],LinkParts[3],LinkParts[4])}" scope="page" />
+						<iselseif condition="${LinkParts.length>1}">
+							<isset name="FolderLinkURL" value="${URLUtils.url(Pipeline,LinkParts[1],LinkParts[2])}" scope="page" />
+						<iselse/>
+							<isset name="FolderLinkURL" value="${URLUtils.url(Pipeline)}" scope="page" />
+						</isif>				
+					<iselse/>
+						<isset name="FirstContentAsset" value="${!empty(aFolder.onlineContent)?aFolder.onlineContent[0].ID:aFolder.ID}" scope="page" />
+						<isset name="FolderLinkURL" value="${URLUtils.url('Page-Show','cid',FirstContentAsset)}" scope="page"/>
+					</isif>
+					<a href="<isprint value="${FolderLinkURL}" encoding="off"/>" class="alt-img">${aFolder.displayName}</a>		
+				</li>
+			</isloop>
+		</ul>
+		</isif> 
+		
+		<isif condition="${!empty(pdict.Content) && !empty(pdict.Content.custom.body)}">
+			<div class="diffVideos">
+				<isprint value="${pdict.Content.custom.body}" encoding="off"/>
+			</div>
+		</isif>
+		
+		
+		
+		<div id="proofBreadCrumb">
+		</div>	
+		<div id="testimonialbox">
+	<div class="blockGrey">
+		<div class="block">
+			<div id="imghead">
+				<img src="${URLUtils.staticURL('/images/worthalot.png')}" alt="Your Before Photo is WORTH A LOT!" 
+                width="622px" height="71px" >
+			</div>
+			<div id="texthead">
+				<div class="sharereg" id="share1">
+					<isprint value="${Resource.msg('testimony.submit.subheader1','rendering',null)}" encoding="off"/>
+				</div>
+				<span class="sharereg" id="share2">
+					<isprint value="${Resource.msg('testimony.submit.subheader2','rendering',null)}" encoding="off"/>
+				</span>
+				<span class="sharebold" id="share3">
+					<isprint value="${Resource.msg('testimony.submit.subheader3','rendering',null)}" encoding="off"/>
+				</span>	
+				<span class="sharereg" id="share4">
+					<isprint value="${Resource.msg('testimony.submit.subheader4','rendering',null)}" encoding="off"/>
+				</span>
+				<span class="sharebold" id="share5">
+					<isprint value="${Resource.msg('testimony.submit.subheader5','rendering',null)}" encoding="off"/>
+				</span>
+			</div>
+			<div class="promotion">
+				<div id="imglist">
+					<img src="${URLUtils.staticURL('/images/goodphoto.png')}" alt="Tips to a GOOD PHOTO:" 
+                    width="249px" height="49px">				
+				</div>
+				<ul id="Tlist">
+					<li class="sharelist">
+						<isprint value="${Resource.msg('testimony.submit.list.anotation1','rendering',null)}" 
+                        encoding="off"/>
+					</li>
+					<li class="sharelist">
+						<isprint value="${Resource.msg('testimony.submit.list.anotation2','rendering',null)}" 
+                        encoding="off"/>
+					</li>	
+					<li class="sharelist">
+						<isprint value="${Resource.msg('testimony.submit.list.anotation3','rendering',null)}" 
+                        encoding="off"/>
+					</li>
+				</ul>			
+			</div>
+				
+			<div id="imgMadeline">
+				<img src="${URLUtils.staticURL('/images/shareMadeline.jpg')}" alt="Madeline" width="522px" 
+                height="337px">
+			</div>
+								
+			<div class="outer-wraper">	
+				<div class="blockContent">
+					<isif condition="${!empty(pdict.UploadError)}">
+						<div class="error" style="color: red;">
+							<isprint value="${pdict.UploadError}" />
+						</div>
+					</isif>
+					
+					<div id="formhead1">
+						<isprint value="${Resource.msg('testimony.submit.form.header1','rendering',null)}" 
+                        encoding="off"/>
+					</div>
+
+					<div id="formhead2">
+						<isprint value="${Resource.msg('testimony.submit.form.header2','rendering',null)}" 
+                        encoding="off"/>
+					</div>
+					
+					<div id="Trequired">
+						<span><isprint value="${Resource.msg('testimony.submit.form.required','forms',null)}" 
+                        encoding="off"/></span>
+					</div>		
+					<form class="testimonial-form" action="${URLUtils.url('Testimony-Send')}" 
+					enctype="multipart/form-data" method="post" id="testimonialForm" >
+						<div class="form-column">
+							<div class="personal-details">
+								<div id="personalinfo">	
+												
+									<div class="Tformfield">
+										<div class="first-name">
+											<isinputfield formfield="${pdict.CurrentForms.testimonials.firstname}" 
+                                            type="input" attribute1="requiredmesage" value1=	
+                                            "${Resource.msg('testimony.submit.form.firstmame.error','forms',null)}"/>
+										</div>
+									</div>
+									<div class="Tformfield">
+										<div class="last-name">
+											<isinputfield formfield="${pdict.CurrentForms.testimonials.lastname}" 
+            	                            type="input" attribute1="requiredmesage" value1=
+                                            "${Resource.msg('testimony.submit.form.lastmame.error','forms',null)}"/>
+										</div>
+									</div>		
+									<div class="addressGroup">						
+										<div class="Tformfield" id="email">
+											<div>
+												<isinputfield formfield="${pdict.CurrentForms.testimonials.email}" 
+                        	                    type="input" attribute1="requiredmesage" value1=
+                            	                "${Resource.msg('testimony.submit.form.email.error','forms',null)}"/>
+											</div>
+										</div>								
+										<div class="Tformfield" id="emailverify">
+											<div>
+												<isinputfield formfield=
+                                                "${pdict.CurrentForms.testimonials.retypeemail}" type="input" 
+                                                attribute1="requiredmesage" value1=
+                                           		"${Resource.msg('forms.testimony.email.match','forms',null)}"
+										    	attribute2="equalTo" value2=
+                                            	"${'#'+pdict.CurrentForms.testimonials.email.htmlName}" attribute3=			
+                                            	"equaltomessage" value3="${Resource.msg('forms.testimony.email.match', 
+                                            	'forms', null)}"/>
+											</div>
+										</div>
+										<div class="Tformfield">
+											<div id="address1">
+												<isinputfield formfield="${pdict.CurrentForms.testimonials.address1}" 
+            	                                type="input" attribute1="requiredmesage" value1=
+                	                            "${Resource.msg('address.addressline1.missingerror','forms',null)}"  
+                    	                        id="address1" />
+											</div>
+										</div>
+										<div class="Tformfield">
+											<div id="address2">
+												<isinputfield formfield="${pdict.CurrentForms.testimonials.address2}" 
+                                            	type="input" id="address2"/>
+											</div>
+										</div>
+									</div>
+									<div>
+										<div class="city-outer">
+											<isinputfield formfield="${pdict.CurrentForms.testimonials.city}" type=
+                                            "input" attribute1="requiredmesage" value1=
+                            	             "${Resource.msg('address.city.missingerror','forms',null)}"/>
+                                        </div>
+										<div class="state-outer">
+											<isinputfield formfield="${pdict.CurrentForms.testimonials.state}" 
+                                        	type="select" attribute1="requiredmesage" 
+											value1="${Resource.msg('address.state.missingerror','forms',null)}"/>
+                                    	</div>
+										<div class="zip-outer">
+											<isinputfield formfield="${pdict.CurrentForms.testimonials.zip}" type=
+                                            "input" attribute1="requiredmesage" 
+											value1="${Resource.msg('address.zip.missingerror','forms',null)}"/>
+										</div>
+									</div>							
+									<div class="Tformfield dayphone">
+										<label class="label">	
+            	                        	${Resource.msg('forms.testimony.phone.dayphone.label','forms',null)}
+											<span class="requiredindicator">
+                    	                    	*
+                        	                </span>
+                            	        </label>
+									<div>
+						            <input type="text" id="phone1" class="small" maxlength="3" />
+						            <input type="text" id="phone2" class="small" maxlength="3"/>
+						            <input type="text" id="phone3" class="numberbox" maxlength="4"/>
+						            <div style="display:none;">
+						    	    	<isinputfield formfield="${pdict.CurrentForms.testimonials.phone}" 
+                                        type="hidden" id="phoneNo" value1=
+                        	            "${Resource.msg('testimony.submit.form.phone.error','forms',null)}"/>
+					        		</div>
+								</div>
+					            <div class="clear">
+                                </div>
+					        </div>
+							<div class="Tformfield">
+								<div class="age">
+									<isinputfield formfield="${pdict.CurrentForms.testimonials.age}" type="input" 
+									attribute1="requiredmesage" 
+									value1="${Resource.msg('forms.testimony.require.age','forms',null)}"/>
+									<div class="ageErrorMsg" style="display:none;">Enter valid value</div>
+								</div>
+							</div>	
+							<div class="Tformfield">	
+								<div class="sys_gender">
+									<isinputfield formfield="${pdict.CurrentForms.testimonials.gender}" type="select" 
+									attribute1="requiredmesage" 
+									value1="${Resource.msg('forms.testimony.require','forms',null)}"/>
+								</div>
+							</div>						
+							<div class="Tformfield" id="w-auto">
+								<isinputfield  formfield="${pdict.CurrentForms.testimonials.story}" type="textarea" 
+                                attribute1="requiredmesage" value1=
+                                "${Resource.msg('forms.testimony.require','forms',null)}"/>
+							</div>
+							<div id="50char">
+								<isprint value="${Resource.msg('testimony.submit.form.50char','forms',null)}" 
+                            	encoding="off"/>
+							</div>	
+						</div>
+					<div class="Tphotos">	
+						<div class="photo-details">					
+							<div class="beforeGroup">
+                       	    <div class="send_photo">
+                            	<isprint value="${Resource.msg('testimony.submit.form.send_photo','forms',null)}" 
+                            	encoding="off"/>
+                            </div> 	
+							<div class="Tformfield">
+								<div class="sys_18years_limit">
+									<isprint value=
+                                    "${Resource.msg('testimony.submit.form.upload.before.note','forms',null)}" 
+									encoding="off"/>
+								</div>
+								<div class="beforelabel">
+                                   	<isprint value="${Resource.msg('testimony.submit.image.note','forms',null)}" 
+									encoding="off"/>
+								</div>
+								<div class="Tfiles">
+									<input type="file" name="${pdict.CurrentForms.testimonials.before1.htmlName}"
+									id="before1" attribute1="requiredmesage" 
+									value1="${Resource.msg('forms.testimony.require','forms',null)}"/>
+								</div>
+								<div class="Tfiles">
+									<input type="file" name="${pdict.CurrentForms.testimonials.before2.htmlName}" 
+                                    id="before2"/>
+								</div>
+								<div class="Tfiles">
+									<input type="file" name="${pdict.CurrentForms.testimonials.before3.htmlName}" 
+                                    id="before3"/>
+								</div>	
+								<div class="sys_size_limit">
+                                   	<isprint value="${Resource.msg('testimony.submit.requirements','forms',null)}" 
+									encoding="off"/></div>		
+								</div>
+								<div class="afterGroup">
+									<div class="Tformfield">
+										<div class="beforelabel">
+                                           	<isprint value=		
+                                             "${Resource.msg('testimony.submit.image.note2','forms',null)}" 
+                                             encoding="off"/>
+										</div>
+										<div class="Tfiles">
+											<input type="file" name=
+                                            "${pdict.CurrentForms.testimonials.after1.htmlName}" id="after1" 
+                                            attribute1="requiredmesage" 
+											value1="${Resource.msg('forms.testimony.require','forms',null)}"/>
+										</div>
+										<div class="Tfiles">
+											<input type="file" name=
+                                            "${pdict.CurrentForms.testimonials.after2.htmlName}" id="after2"/>
+										</div>
+										<div class="Tfiles">
+											<input type="file" name=
+                                            "${pdict.CurrentForms.testimonials.after3.htmlName}" id="after3"/>
+										</div>
+										<div class="sys_size_limit">
+                                        	<isprint value=
+                                            "${Resource.msg('testimony.submit.requirements','forms',null)}" 
+											encoding="off"/>
+                                        </div>	
+									</div>
+								</div>	
+							</div>
+						<!-- //eo form-column -->
+							<div class="formactions">
+								<button class="btnSend sub-test" type="submit" alt="Send"  
+								onclick="beforeSubmit()" name="${pdict.CurrentForms.testimonials.submit.htmlName}">
+									<img src="${URLUtils.staticURL('/images/submityourstoryBTN.png')}"/>
+								</button>
+							</div>
+							<div id="Tprivacy">
+								<isprint value="${Resource.msg('forms.testimony.privacy','forms',null)}" encoding="off"/>		
+							</div>
+						</div>	
+                    	</div>
+                    </div>				
+					</form>
+					
+				</div>
+				<a href="${URLUtils.url('COCart-Show')}">
+					<div id="proofOrder" >
+						<img src="${URLUtils.staticURL('/images/proof/orderProof.png')}" onClick=
+    	                "javascript:location.href='${URLUtils.url('COCart-Show')}'"/>
+					</div>
+				</a>
+			</div>
+		</div>
+	</div>
+</div>
+</div>
+</div>
+
+
+
+
+
+</div> <!-- left section -->
+          <div class="rightsection">  
+            <isif condition="${'categoryName' in pdict.Content.custom && empty(pdict.Content.custom.categoryName)}">
+              <isset name="folderName" value="${pdict.Content.classificationFolder.displayName}"/>
+              <isslot id="right-side-contentpages" context="category" description="right navigation content pages" context-object="${dw.catalog.CatalogMgr.getCategory(folderName)}"/>
+               <isslot id="right-side-contentpages1" context="category" description="right navigation content pages1" context-object="${dw.catalog.CatalogMgr.getCategory(folderName)}"/>
+                <isslot id="right-side-contentpages2" context="category" description="right navigation content pages2" context-object="${dw.catalog.CatalogMgr.getCategory(folderName)}"/>
+                <isslot id="MediaPixel" context="category" description="MediaPixel" context-object="${dw.catalog.CatalogMgr.getCategory(folderName)}"/>
+                
+              <iselse>
+              <isslot id="right-side-contentpages" context="category" description="right navigation content pages" context-object="${dw.catalog.CatalogMgr.getCategory(pdict.Content.custom.categoryName)}"/>
+              <isslot id="right-side-contentpages1" context="category" description="right navigation content pages1" context-object="${dw.catalog.CatalogMgr.getCategory(pdict.Content.custom.categoryName)}"/>
+              <isslot id="right-side-contentpages2" context="category" description="right navigation content pages2" context-object="${dw.catalog.CatalogMgr.getCategory(pdict.Content.custom.categoryName)}"/>
+              <isslot id="MediaPixel" context="category" description="MediaPixel" context-object="${dw.catalog.CatalogMgr.getCategory(pdict.Content.custom.categoryName)}"/>
+            </isif>
+            <isif condition="${pdict.CurrentCustomer.authenticated || pdict.CurrentCustomer.registered || pdict.CurrentSession.custom.cRememberMe}">
+			<isinclude url="${URLUtils.url('DrWalkthrough-TileLaunch')}"/>
+			</isif>
+            
+          </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<script type="text/javascript"><!--
+//populating phone no. on load it availabel
+
+function beforeSubmit(){
+	if(isNaN(jQuery("input[name=${pdict.CurrentForms.testimonials.age.htmlName}]").val())){
+		$('.ageErrorMsg').show();
+		if(event.preventDefault){ 
+			event.preventDefault();
+		}else{
+			event.returnValue = false;
+		}
+	};
+}
+
+
+jQuery(document).ready(function() {
+	$(jQuery("input[name=${pdict.CurrentForms.testimonials.age.htmlName}]")).focus(function () {
+		$('.ageErrorMsg').hide();
+	});
+
+	$("#testimonialForm").submit(function(event){
+		//copy the values to form element
+		if(isNaN(jQuery("input[name=${pdict.CurrentForms.testimonials.age.htmlName}]").val())){
+			$('.ageErrorMsg').show();
+			if(event.preventDefault){ 
+				event.preventDefault();
+			}else{
+				event.returnValue = false;
+			}
+		};
+	});
+});
+
+	if($("#phoneNo").val()!= null){
+		var acc1= $("#phoneNo").val().substr(0,3);
+		var acc2= $("#phoneNo").val().substr(3,3);
+		var acc3= $("#phoneNo").val().substr(6,4);
+		jQuery("#phone1").val(acc1);
+		jQuery("#phone2").val(acc2);
+		jQuery("#phone3").val(acc3);
+	}
+
+	$("#eveningphone1,#eveningphone2,#eveningphone3,#phone1,#phone2,#phone3").keyup(function () {
+	    var maxLength = $(this).attr('maxlength');
+		if($(this).val().length == maxLength) {
+	        $(this).next().focus();
+	    }
+	});
+
+	$(jQuery("input[name=${pdict.CurrentForms.testimonials.age.htmlName}]")).focus(function () {
+		$('.ageErrorMsg').hide();
+	});
+
+	$(jQuery("input[name=${pdict.CurrentForms.testimonials.phone.htmlName}]")).focus(function () {
+		$('.phoneErrorMsg').hide();
+	});
+
+	
+//--></script>
+</isdecorate>
+

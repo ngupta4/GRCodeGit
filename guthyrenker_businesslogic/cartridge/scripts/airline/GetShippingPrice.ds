@@ -1,0 +1,59 @@
+/**
+ * GetShippingPrice.ds
+ *
+ * For Airline
+*/
+
+ importPackage( dw.system );
+ importPackage( dw.web );
+ importPackage( dw.value );
+ importPackage( dw.util );
+ importPackage( dw.order ); 
+ importPackage( dw.catalog );
+
+
+function getShippingPrice( shipment : dw.order.Shipment)
+{
+
+	var shippingCostMap : Map = new LinkedHashMap();
+	var shippingModel : ShipmentShippingModel = ShippingMgr.getShipmentShippingModel(shipment);
+	var productShippingModel : ProductShippingModel = null;
+	var shippingMethodsIt : Iterator = shippingModel.getApplicableShippingMethods().iterator();
+	var productLineItemIt : Iterator = null;
+	
+	var shippingMethod : ShippingMethod = null;
+	var shipmentShippingCost : ShipmentShippingCost = null;
+	var productShippingCost : ProductShippingCost = null;
+	var totalShippingCost : Money = new Money(0.0,Site.current.currencyCode);
+
+	var pli : ProductLineItem = null;
+	var coreOffer : Product = null;
+
+	while(shippingMethodsIt.hasNext()) {
+		shippingMethod = shippingMethodsIt.next();
+		
+		totalShippingCost = shippingModel.getShippingCost(shippingMethod).getAmount();
+		
+			productLineItemIt = shipment.productLineItems.iterator();
+			var pliCost : Number = 0, 
+			totalCost : Number = 0;
+			
+			totalCost += totalShippingCost.value;
+			
+			// calculate product level shipping cost i.e. fixed cost etc.
+			while (productLineItemIt.hasNext()) {
+				pli = productLineItemIt.next();
+				
+				var psc : ProductShippingCost = ShippingMgr.getProductShippingModel(pli.product).getShippingCost(shippingMethod);
+				pliCost = psc == null ? 0: psc.getAmount().value;
+				totalCost += pliCost;
+				
+			}
+		
+		shippingCostMap.put(shippingMethod, new Money(totalCost, Site.current.currencyCode));
+	}
+	
+	return shippingCostMap;
+}
+
+

@@ -1,0 +1,13 @@
+<isdecorate template="rendering/folder/pt_contentpage">
+<isinclude template="util/modules"/>
+
+<iscomment>create reporting event</iscomment>
+<isinclude template="util/reporting/ReportSearch.isml"/>
+
+<div class="mainWrapper">
+	<div class="pageWrapper">
+		<isinclude template="content/content/htmlcontentasset" />
+	</div>
+</div>
+<isset name="OmniturePage" value="StaticContent" scope="pdict">
+</isdecorate>

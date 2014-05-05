@@ -1,0 +1,64 @@
+<iscache status="off"/>
+
+<iscomment>
+	This template displays a 3-level category tree as top navigation.
+	Only categories marked with showInMenu are shown.
+</iscomment>
+
+<isscript>
+	importScript('int_gutheyrenker:common/libEncoding.ds');
+	
+	var sessionID = null;
+	
+	if( !empty(pdict.CurrentHttpParameterMap.pactvid) && !empty(pdict.CurrentHttpParameterMap.pactvid.stringValue) ) {
+		sessionID = pdict.CurrentHttpParameterMap.pactvid.stringValue;
+	}
+</isscript>
+
+<isset name="RememberMe" value="${pdict.CurrentRequest.httpCookies['rememberMe']}" scope="page" />
+<isset name="SharedSession" value="${pdict.CurrentRequest.httpCookies['sharedsession']}" scope="page" />
+<isset name="LoggedIn" value="${pdict.CurrentRequest.httpCookies['loggedin']}" scope="page" />
+
+<isset name="PHPSESSID" value="${!empty(pdict.CurrentRequest.httpCookies['PHPSESSID']) ? pdict.CurrentRequest.httpCookies['PHPSESSID'].value : (!empty(sessionID)?sessionID:'')}" scope="page" />
+
+<isset name="RememberUserFirstName" value="${''}" scope="page" />
+<isset name="RememberUserLastName" value="${''}" scope="page" />
+<isset name="RememberUserEmail" value="${''}" scope="page" />
+
+<isif condition="${!empty(SharedSession) && !empty(SharedSession.value)}">
+	<isset name="Parts" value="${JSON.parse(decodeURIComponent(SharedSession.value))}" scope="page"/>
+	<isset name="RememberUserFirstName" value="${Parts['firstName']}" scope="page" />
+	<isset name="RememberUserLastName" value="${Parts['lastName']}" scope="page" />
+	<isset name="RememberUserEmail" value="${Parts['email']}" scope="page" />
+</isif>
+
+<isif condition="${!(!empty(LoggedIn) && LoggedIn.value == '1') || empty(RememberMe)}">	
+	<ul class="miniNav">
+	
+	<iscomment>If campaign is panel B, called "refreshB", then change "Cart" to "Shopping Bag" and get rid of right arrows in Sign In.  Yeah, I know.  Big whoop, word change.</iscomment>
+	<isscript>var campaignPanel = pdict.CurrentSession.privacy.campaignID</isscript>
+	<isif condition = "${campaignPanel == 'refreshB-campaign'}">
+      <li class="shoppingBagLink"><a title="Shopping Bag" href="${URLUtils.https('COCart-Show')}">Cart</a></li>
+      <li id="cmmSignIn"><a title="Sign In" href="${dw.system.Site.getCurrent().getCustomPreferenceValue('signInLegacyURL')}">Sign In</a></li>
+	<iselse>
+      <li class="shoppingBagLink"><a title="Shopping Bag" href="${URLUtils.https('COCart-Show')}">Shopping Bag</a></li>
+      <li id="cmmSignIn"><a title="Sign In" href="${dw.system.Site.getCurrent().getCustomPreferenceValue('signInLegacyURL')}">Sign In &gt;&gt;</a></li>
+	</isif>
+	
+    </ul>
+</isif>
+<iscomment>
+<div id="member-login">
+    <isif condition="${pdict.CurrentCustomer.registered}">
+        <span class="welcomemessage">${Resource.msg('headercustomerinfo.welcome','components',null)}</span>
+        <a href="${URLUtils.https('Account-Show')}" title="${Resource.msg('global.accountlink','locale',null)} ${pdict.CurrentCustomer.profile.firstName} ${pdict.CurrentCustomer.profile.lastName}" class="username"><span class="username"><isprint value="${pdict.CurrentCustomer.profile.firstName}"/>&nbsp;<isprint value="${pdict.CurrentCustomer.profile.lastName}"/></span></a>
+         <isif condition="${!pdict.CurrentCustomer.authenticated}">
+            <span class="unauthenticated">(<a title="${Resource.msg('global.login','locale',null)}${pdict.CurrentCustomer.profile.firstName} ${pdict.CurrentCustomer.profile.lastName}" href="${URLUtils.https('Account-Show')}" class="userlogin">${Resource.msg('headercustomerinfo.pleaselogin','components',null)}</a>)</span>
+        </isif>
+        <span class="divider">|</span>
+        (<a title="${Resource.msg('headercustomerinfo.not','components',null)} ${pdict.CurrentCustomer.profile.firstName} ${pdict.CurrentCustomer.profile.lastName}" href="${URLUtils.url('Login-Logout')}" class="usernot">${Resource.msg('headercustomerinfo.not','components',null)} ${pdict.CurrentCustomer.profile.firstName}</a>?)	
+    <iselse>
+    	Already a Home Delivery Member?<strong>&nbsp;<a class="underlink" href="${URLUtils.https('Account-Show')}">Log In</a> &gt;&gt;&nbsp;&nbsp;</strong>
+    </isif>
+</div><!-- END: headercustomerinfo -->
+</iscomment>

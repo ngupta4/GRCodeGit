@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<?demandware-pipeline version="2.0"?>
+
+<pipeline type="view">
+  <branch basename="Detect">
+    <segment>
+      <node>
+        <start-node call-mode="private" name="Detect" secure="false"/>
+        <node-display x="2" y="2"/>
+      </node>
+      <simple-transition>
+        <transition-display>
+          <bend-point relative-to="source" x="0" y="1"/>
+        </transition-display>
+      </simple-transition>
+      <node>
+        <pipelet-node pipelet-name="Script" pipelet-set-identifier="bc_api">
+          <config-property key="Transactional" value="false"/>
+          <config-property key="OnError" value="PIPELET_ERROR"/>
+          <config-property key="ScriptFile" value="common/MobileRedirect.ds"/>
+          <key-binding alias="sLog" key="ScriptLog"/>
+          <key-binding alias="CurrentHttpParameterMap.ICID.stringValue" key="queryStr"/>
+          <key-binding alias="CurrentRequest.httpQueryString" key="mobileRedirect"/>
+          <key-binding alias="ContentRedirect" key="redirect"/>
+          <key-binding alias="CurrentRequest.httpPath" key="curURL"/>
+          <key-binding alias="CurrentRequest" key="curRequest"/>
+          <key-binding alias="Location" key="redirectURL"/>
+          <key-binding alias="Location" key="submissionURL"/>
+          <key-binding alias="CurrentHttpParameterMap.cid.stringValue" key="cid"/>
+          <key-binding alias="CurrentHttpParameterMap.mid.stringValue" key="mid"/>
+          <key-binding alias="CurrentHttpParameterMap.ICID.stringValue" key="icid"/>
+          <key-binding alias="CurrentHttpParameterMap.murl.stringValue" key="murl"/>
+          <key-binding alias="CurrentHttpParameterMap.url.stringValue" key="url"/>
+          <key-binding alias="IsMobile" key="mobileDetected"/>
+          <key-binding alias="Permanent" key="permanent"/>
+        </pipelet-node>
+        <node-display x="0" y="1"/>
+        <branch basename="b2" source-connector="error">
+          <transition target-connector="in">
+            <transition-display>
+              <bend-point relative-to="source" x="2" y="0"/>
+              <bend-point relative-to="target" x="0" y="-1"/>
+            </transition-display>
+          </transition>
+          <segment>
+            <node>
+              <end-node/>
+              <node-display x="1" y="1"/>
+            </node>
+          </segment>
+        </branch>
+      </node>
+      <simple-transition>
+        <transition-display>
+          <bend-point relative-to="target" x="0" y="-1"/>
+        </transition-display>
+      </simple-transition>
+      <node>
+        <end-node/>
+        <node-display x="0" y="2"/>
+      </node>
+    </segment>
+  </branch>
+</pipeline>

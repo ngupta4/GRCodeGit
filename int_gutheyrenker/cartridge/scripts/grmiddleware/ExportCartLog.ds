@@ -1,0 +1,95 @@
+/**
+*
+*   @input MaxEntries : Number
+*   @input ExportFile : String Export file path.  This path is relative to the 'src' subdirectory within the top-level IMPEX directory.
+*   @output EntriesLast: Boolean
+*
+*/
+importPackage( dw.system );
+importPackage( dw.io );
+importPackage( dw.object );
+importPackage( dw.util );
+
+importScript( "grmiddleware/libGRMiddleware.ds" );
+
+function prepareFolder(fileName:String){
+    var index = fileName.lastIndexOf("/");
+    var file:File = new File(fileName.substr(0, index));
+    if(!file.exists()){
+        file.mkdir();
+    }
+}
+
+function execute( args : PipelineDictionary ) : Number
+{
+    var fileName:String    = File.IMPEX + "/src/" + args.ExportFile;
+    var tmpFileName:String = fileName + ".tmp"; 
+    var tmpFile: File      = new File(tmpFileName);
+    var iterator:Iterator  = CustomObjectMgr.getAllCustomObjects("CartLog");
+    var tobeRemoved : Array = [];
+    
+    if(!iterator.hasNext()) return PIPELET_NEXT;
+        
+    var exportGroup:ObjectAttributeGroup = CustomObjectMgr.describe("CartLog").getAttributeGroup("export");
+    
+    prepareFolder(fileName);
+    
+    if(new File(fileName).exists()){
+        Logger.error("File: " + fileName + " already exists");
+        return PIPELET_ERROR;
+    }
+    
+    var writer:XMLStreamWriter = new XMLIndentingStreamWriter(new FileWriter(tmpFile));
+    
+    writer.writeStartDocument();
+    
+    writer.writeStartElement("cartLogs");
+    writer.writeNamespace("xsi", "http://www.w3.org/2001/XMLSchema-instance");
+    writer.writeAttribute("xsi:noNamespaceSchemaLocation", "cartLog_0-1.xsd");
+    
+    
+        var hasNext;
+        while( (hasNext = iterator.hasNext()) && tobeRemoved.length < args.MaxEntries){
+            var object:CustomObject = iterator.next();
+            
+            tobeRemoved.push(object);
+            
+            writer.writeStartElement("cartLog");
+              writer.writeAttribute("cartId", notNull(object.custom.cart_id));
+              writer.writeAttribute("state", notNull(object.custom.submission_state));
+              
+              var attributeDefinitions:Iterator = exportGroup.attributeDefinitions.iterator();
+              while(attributeDefinitions.hasNext()){
+                  var definition:ObjectAttributeDefinition = attributeDefinitions.next();
+                  var prop = definition.ID;
+                  if(!empty(object.custom[prop])){
+                      writer.writeStartElement("field");
+                      writer.writeAttribute("name", prop);
+                      writer.writeCharacters(notNull(object.custom[prop]));
+                      writer.writeEndElement();
+                  }
+              }
+              
+            writer.writeEndElement();
+        }
+    
+    writer.writeEndElement();
+    writer.close();
+    
+    args.EntriesLast = hasNext;
+    
+    for(var i = 0; i < tobeRemoved.length; i++){
+    	
+        CustomObjectMgr.remove(tobeRemoved[i]);
+    			
+    }
+    
+    if(!tmpFile.renameTo(new File(fileName))){
+        Logger.error("Can't rename tmp file to '" + fileName + "'");
+        return PIPELET_ERROR;
+    }
+    
+    return PIPELET_NEXT;
+}
+
+    	

@@ -1,0 +1,311 @@
+/**
+* Demandware Script File
+* Export an XML file of customer metadata, not included in standard customer export (e.g. create and last-mod dates)
+*
+*   @input TempDir : String
+*   @input ArchiveDir : String
+*-	@input Orders : dw.util.Iterator mandatory, Orders of interest, in an Iterator
+*-	@output OrdersOut : String
+*/
+importPackage( dw.system );
+importPackage( dw.util );
+importPackage( dw.io );
+importPackage( dw.order );
+importPackage( dw.catalog );
+importPackage( dw.net );
+importPackage( dw.web);
+
+importScript('int_gutheyrenker:common/libUtils.ds');
+
+function execute( args : PipelineDictionary ) : Number {
+	 
+    // get input vars for directory names
+    var tempDir : String = !empty( args.TempDir ) ? args.TempDir : "temp";
+    var archiveDir : String = !empty( args.ArchiveDir ) ? args.ArchiveDir : "archive";
+	
+	// create timestamps for compiled export file name
+	var calendar : Calendar = dw.system.Site.getCurrent().getCalendar();
+	var deliveryTimestamp : String = StringUtils.formatCalendar( calendar, "MMddyyyy" );
+	var runTimestamp : String = StringUtils.formatCalendar( calendar, "yyyyMMddhhmmss" );
+	
+	try {
+		
+		// create temp folder if it's needed
+		if ( !createFolder( tempDir ) ) {
+			return PIPELET_ERROR; // error message written in createFolder
+		}
+		
+		// get temp dir
+		var tempFileDir = new File( File.IMPEX + File.SEPARATOR + "src" + File.SEPARATOR + tempDir );
+		var tempFiles = new Array();
+		
+		// create file for compiled export data
+		var compiledExportFile : File = new File( File.IMPEX + File.SEPARATOR + "src" + File.SEPARATOR + "DWOrders_" + deliveryTimestamp + "_u" + runTimestamp + ".txt" );
+		var compiledExportFileRemote : String = "DWOrders_" + deliveryTimestamp + "_u" + runTimestamp + ".txt";
+
+		// create writers to enable file writing
+		var fileWriter : FileWriter = new FileWriter( compiledExportFile );
+		var writer : CSVStreamWriter = new CSVStreamWriter( fileWriter, ",", '"' );
+	
+		// loop through each files in the temp file directory
+		for each ( var file:File in tempFileDir.listFiles() ) {	
+
+			// setup current file to be read
+			var currentTempFile : FileReader = new FileReader( file );
+			
+			// loop through each line of the file
+			for each( var record:String in currentTempFile.getLines() ) {
+				
+				// each line is a comma-separated list, so split on each comma to grab each line's items
+				var recordItems : Array = record.split( "," );
+				
+				// create a new array to hold each item from the current line
+				var orderDetails : Array = new Array();
+				
+				// loop on each item, adding it to the newly created array
+				for each( var recordItem:String in recordItems ) {
+					orderDetails.push( recordItem );
+				}
+				
+				// write the filled-out array to the file
+				writer.writeNext( orderDetails );
+			}
+			
+			// at this point we are done with the current file and can move it to the archive directory
+			
+			// create archive folder if it's needed
+			if ( !createFolder( archiveDir ) ) {
+				return PIPELET_ERROR; // error message written in createFolder
+			}
+
+			// create archive day folder
+			var archiveDayFolderString : String = archiveDir + File.SEPARATOR + getCurrentDateString();
+			if ( !createFolder( archiveDayFolderString ) ) {
+				return PIPELET_ERROR; // error message written in createFolder
+			}
+			
+			// prepare for archive
+			var archiveFileString : String = archiveDayFolderString + File.SEPARATOR + file.name;
+			var archiveFile : File = new File( File.IMPEX + File.SEPARATOR + "src" + File.SEPARATOR + archiveFileString );
+
+			// archive current file
+			var result : boolean = file.renameTo( archiveFile );
+			if ( !result ) {
+				Logger.getLogger("simplefeeds").error( "Archive error couldn't move " + file.fullPath + " to " + archiveFile.fullPath );
+				return PIPELET_ERROR;
+			}
+		}
+				
+	} catch( e ) {
+		Logger.error( "Unable to complete Order Number export: " + e.message );
+		return PIPELET_ERROR;
+	} finally {
+		if ( writer ) writer.close();
+
+		var orgPrefs : OrganizationPreferences = dw.system.System.getPreferences();
+		var sftp_host : String = "sftp://GRFiles.guthy-renker.com/";
+		var sftp_user : String = "ecomm76-gr";
+		var sftp_pass : String = "W-upHuxa=$Ra";
+		var sftp_subdir : String = "CFDWOrder/";
+		var result : Boolean = uploadFileSFTP_orderNumberFile( compiledExportFile, sftp_host, compiledExportFileRemote, sftp_user, sftp_pass, sftp_subdir );	
+		
+		// remove tmp file
+		if( result ) {
+			compiledExportFile.remove();
+		}
+		
+		cleanupArchive( archiveDir );
+
+	}
+		
+	return PIPELET_NEXT;
+}
+
+/*
+ * Creates a new directory based on the passed-in parameter
+ */
+ function createFolder( folder : String ) : boolean {
+	
+	var localFolder : File = new File( File.IMPEX + File.SEPARATOR + "src" + File.SEPARATOR + folder );
+
+	if ( localFolder.exists() ) {
+		// nothing to do
+		return true;
+	}
+
+	// create folder	
+	var result : boolean = localFolder.mkdirs();
+	if ( !result ) {
+		Logger.getLogger("simplefeeds").error( "Archive error creating folder " + localFolder.fullPath );
+		return false;
+	}
+	
+	return true;
+}
+
+/*
+ * Returns the current GMT date in yyyy-MM-dd format.
+ */
+function getCurrentDateString() : String {
+	
+	// current date/time
+	var calendar : Calendar = new Calendar();
+	
+	// for data exchanges we always use GMT
+	calendar.timeZone = "GMT";
+	
+	var dateString : String = StringUtils.formatCalendar(calendar, "yyyy-MM-dd");
+	
+	return dateString;
+}
+
+function uploadFileSFTP_orderNumberFile( file : File, remoteFolderURL : String, remoteFile : String, remoteLogin : String, remotePassword : String, subdir : String ) : boolean
+{
+    // for SFTP remoteLogin and remotePassword are required
+    if ( empty( remoteLogin ) ) {
+    	Logger.getLogger("simplefeeds").error( "UploadFeed: Parameter RemoteLogin empty (required for SFTP)" );
+    	return false;
+    }
+
+    if ( empty( remotePassword ) ) {
+    	Logger.getLogger("simplefeeds").error( "UploadFeed: Parameter RemotePassword empty (required for SFTP)" );
+    	return false;
+    }
+
+    // parse URL, e.g. "sftp://sftp.myserver.com:22/folder/"
+	var params : Array = /^sftp:\/\/([^\/:]+)(?::(\d+))?(\/(?:.*\/)?)$/.exec( remoteFolderURL );
+
+	if ( params == null || params.length != 4 ) {
+    	Logger.getLogger("simplefeeds").error( "UploadFeed: Parameter RemoteFolderURL not recognized, RemoteFolderURL: " + remoteFolderURL );
+    	return null;
+	}
+
+	var host : String = params[1];
+	var port : Number = null;
+	// params[2] is undefined if there was no port provided
+	if ( params[2] != undefined ) {
+		port = new Number( params[2] );
+	}
+	
+	var path : String = params[3];
+	
+	// connect
+	var sftpClient : SFTPClient = new SFTPClient();
+	var result : boolean;
+	
+	try {
+		if ( port != null ) {
+			result = sftpClient.connect( host, port, remoteLogin, remotePassword );
+		} else {
+			// use default port
+			result = sftpClient.connect( host, remoteLogin, remotePassword );
+		}
+	} catch ( ex ) {
+		Logger.getLogger("simplefeeds").error( "UploadFeed: Error while connecting to " +
+			host + ( ( port != null ) ? ( ":" + port ) : "" ) + ": " + ex );		
+		return false;
+	}
+	
+	try {
+		if( !empty( subdir ) ) {
+			result = sftpClient.cd( subdir );	
+		}
+	} catch ( ex ) {
+		Logger.getLogger("simplefeeds").error( "UploadFeed: Error while changing to sub-directory" );		
+		return false;
+	}
+
+	if ( !result ) {
+		Logger.getLogger("simplefeeds").error( "UploadFeed: Error while connecting to " +
+			host + ( ( port != null ) ? ( ":" + port ) : "" ) + ": " + sftpClient.errorMessage );		
+		return false;
+	}
+
+	// upload
+	try {
+		result = sftpClient.putBinary( path + subdir + remoteFile, file );
+	} catch ( ex ) {
+		Logger.getLogger("simplefeeds").error( "UploadFeed: Error while uploading " + 
+			path + remoteFile + ": " + ex );		
+		return false;
+	}
+
+	if ( !result ) {
+		Logger.getLogger("simplefeeds").error( "UploadFeed: Error while uploading " + 
+			path + remoteFile + ": " + sftpClient.errorMessage );		
+		return false;
+	}
+	
+	// disconnect
+	sftpClient.disconnect();
+	
+    return true;
+}
+
+function cleanupArchive( archiveFolder : String ) : boolean
+{
+	var localArchiveFolder : File = new File( File.IMPEX + File.SEPARATOR + "src" + File.SEPARATOR + archiveFolder );
+
+	if ( !localArchiveFolder.exists() )
+	{
+		Logger.getLogger("simplefeeds").error( "ArchiveFeed: Folder " + localArchiveFolder.fullPath + " does not exist." );			
+		return false;	
+	}
+	
+	Logger.getLogger("simplefeeds").debug( "ArchiveFeed: Cleaning up folder " + localArchiveFolder.fullPath );
+	
+	// everything that's older than purgeDate gets deleted
+	var purgeDate : Calendar = new Calendar();
+	purgeDate.timeZone = "GMT";
+	// keep archives for 7 days
+	purgeDate.add(Calendar.DATE, -7);
+	
+	Logger.getLogger("simplefeeds").debug( "ArchiveFeed: Purging archives before " + StringUtils.formatCalendar( purgeDate, "yyyy-MM-dd" ) );
+	
+	var calendar : Calendar = new Calendar();
+	calendar.timeZone = "GMT";
+
+	// iterate over archiveDayFolders	
+	for each ( var archiveDayName : String in localArchiveFolder.list() )
+	{
+		try
+		{		
+			calendar.parseByFormat( archiveDayName, "yyyy-MM-dd" );
+		}
+		catch ( ex )
+		{
+			Logger.getLogger("simplefeeds").warn( "ArchiveFeed: Unexpected name format in folder " + localArchiveFolder.fullPath + ": " + archiveDayName );
+			continue;
+		}
+		
+		if ( calendar.before( purgeDate ) )
+		{
+			var archiveDayString : String = archiveFolder + File.SEPARATOR + archiveDayName;
+			var archiveDayFolder : File = new File( File.IMPEX + File.SEPARATOR + "src" + File.SEPARATOR + archiveDayString );
+		
+			Logger.getLogger("simplefeeds").debug( "ArchiveFeed: Purging folder " + archiveDayFolder.fullPath );
+			
+		 	// Delete files in folder. We do not expect subfolders in that folder.
+			for each ( var filename : String in archiveDayFolder.list() )
+			{
+				var file : File = new File(
+					File.IMPEX + File.SEPARATOR + "src" + File.SEPARATOR +
+					archiveDayString + File.SEPARATOR + filename );
+				if ( !file.remove() )
+				{
+					Logger.getLogger("simplefeeds").error( "ArchiveFeed: Couldn't delete file " + file.fullPath );
+					return false;
+				}
+			}		 	
+		 	
+		 	// delete the empty folder
+		 	if ( !archiveDayFolder.remove() )
+		 	{
+		 		Logger.getLogger("simplefeeds").error( "ArchiveFeed: Couldn't delete folder " + archiveDayFolder.fullPath );
+		 		return false;
+		 	}
+		}
+	}
+	
+	return true;
+}

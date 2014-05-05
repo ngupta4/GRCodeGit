@@ -1,0 +1,22 @@
+<!--- TEMPLATENAME: customredirectwishlist.isml --->
+<iscontent type="text/html" charset="UTF-8" compact="true">
+<isscript>
+	importPackage( dw.system );
+	importPackage( dw.util );
+	
+	var pageName : String = pdict.pageName;	
+
+		var location = pdict.Location;
+		var targetpipestring;
+		if(location.indexOf("tp")>0){
+		var len = location.lastIndexOf("tp");
+	 	targetpipestring = location.slice(len, location.length);
+	 	}
+	 	
+	 	location = location.replace(targetpipestring,'tp='+pageName)
+	url = escape(location);
+</isscript>	
+<script type="text/javascript">
+	var url = "${url}";
+	javascript:top.location.href = unescape(url);
+</script>

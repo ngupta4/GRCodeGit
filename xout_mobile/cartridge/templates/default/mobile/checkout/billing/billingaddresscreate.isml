@@ -1,0 +1,73 @@
+<isdecorate template="mobile/pt_mobile">
+<isinclude template="mobile/util/modules"/>
+
+<div id="billingaddresscreate" class="mobilecontent">
+    
+	<form action="${URLUtils.httpsContinue()}" method="post" id="${pdict.CurrentForms.billing.billingAddress.htmlName}>
+		
+		<iscomment>billing address area</iscomment>
+		<div id="addressform" >
+			<h3>${Resource.msg('billing.addressheader','checkout',null)}</h3>
+					
+			<div>
+				<div><span class="requiredindicator">*</span><span >${Resource.msg('global.requiredfield','locale',null)}</span></div>
+			</div>
+			
+	     	<div><!-- firstname -->
+		    	<isinputfield formfield="${pdict.CurrentForms.billing.billingAddress.addressFields.firstName}" type="input"/>		    	
+		    </div>
+		    
+		    <div><!-- lastname -->
+		    	<isinputfield formfield="${pdict.CurrentForms.billing.billingAddress.addressFields.lastName}" type="input"/>
+		    </div>
+		    
+		    <div><!-- address1 -->
+	    		<isinputfield formfield="${pdict.CurrentForms.billing.billingAddress.addressFields.address1}" type="input"/>
+		    </div>
+		    
+		    <div><!-- address2 -->
+		    	<isinputfield formfield="${pdict.CurrentForms.billing.billingAddress.addressFields.address2}" type="input"/>
+		    </div>
+		    
+		    <div><!-- country -->
+		    	<isinputfield formfield="${pdict.CurrentForms.billing.billingAddress.addressFields.country}" type="select"/>
+		    </div>
+		    
+		    <div><!-- state -->				
+		    	<isinputfield formfield="${pdict.CurrentForms.billing.billingAddress.addressFields.states.state}" type="select"/>
+		    </div>
+		    
+		    <div><!-- city -->
+		    	<isinputfield formfield="${pdict.CurrentForms.billing.billingAddress.addressFields.city}" type="input"/>
+		    </div>
+		    
+		    <div><!-- zip -->			
+		    	<isinputfield formfield="${pdict.CurrentForms.billing.billingAddress.addressFields.zip}" type="input"/>
+		    </div>
+		    
+		    <div><!-- phone -->
+	    		<isinputfield formfield="${pdict.CurrentForms.billing.billingAddress.addressFields.phone}" type="input"  xhtmlclass="phoneUS"/>
+		    </div>
+		    
+   		    <div><!-- email -->
+	    		<isinputfield formfield="${pdict.CurrentForms.billing.billingAddress.email.emailAddress}" type="input"/>
+		    </div>
+		    
+  		    <div><!-- email signup -->
+   		    	${Resource.msg('global.email.policy','locale',null)}: <isinputfield formfield="${pdict.CurrentForms.billing.billingAddress.addToEmailList}" type="checkbox" label="false"/>
+		    </div>
+		     
+		</div>
+		
+		<div style="padding-top: 15px;">
+			<table cellpadding="0" cellspacing="0" width="100%" border="0"><tr><td>
+			<button type="submit" value="back" name="${pdict.CurrentForms.billing.back.htmlName}">${Resource.msg('global.back','locale',null)}</button>
+			</td><td align="right">
+			<button type="submit" value="${Resource.msg('global.continuecheckout','locale',null)}" name="${pdict.CurrentForms.billing.confirm.htmlName}">${Resource.msg('global.continuecheckout','locale',null)}</button>
+			</td></tr></table>
+		</div>
+
+	</form>
+</div>
+
+</isdecorate>

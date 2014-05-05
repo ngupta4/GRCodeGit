@@ -1,0 +1,137 @@
+<!--- TEMPLATENAME: complete.isml --->
+<isset name="ShowBrowsingOrderYourSystem" value="${false}" scope="pdict" />
+<isset name="ShowOtherWaysToPurchase" value="${false}" scope="pdict" />
+<isset name="ShowRelatedLinks" value="${false}" scope="pdict" />
+<isset name="ShowUpsells" value="${false}" scope="pdict" />
+<isset name="ShowGuarantee" value="${true}" scope="pdict" />
+<isset name="ShowCartPhone" value="${false}" scope="pdict" />
+<isset name="ShowCartQuestions" value="${false}" scope="pdict" />
+<isset name="LeftRailShowCheck" value="${false}" scope="pdict"/>
+<isset name="showOrderButton" value="${false}" scope="pdict" />
+<isset name="cookiesDomain" value="${dw.system.Site.current.getCustomPreferenceValue("GRCookiesDomain")}" scope="page"/>
+<isset name="primaryUCI" value="${pdict.CurrentRequest.httpCookies['uci'].value}" scope="page"/>
+<!-- Refer a friend -->
+<isset name="pageName" value="Confirmation" scope="page"/>
+<iscomment><isinclude template="checkout/referafriend"/></iscomment>
+
+<!-- To keep track of referred friend -->
+<iscomment><isinclude template="checkout/referafriendconversionpage"/></iscomment>
+
+<script type="text/javascript">
+	var orderIdinserted='<isprint value="${pdict.Order.orderNo}"/>';
+</script>
+
+<iscomment>including see why js & setting up initial variables</iscomment>
+<isinclude template="checkout/steps/initseewhy" />
+
+<iscomment> Commenting the creation of rememberme cookies.Now the user from aquisition site after placing the 
+	order and on click of any link, the new retentions site will show the old/legacy/aquistion page on retention site
+</iscomment>
+<iscomment>
+	<isscript>
+	  var rememberMeObj = {
+	   "firstName" : pdict.Order.billingAddress.firstName,
+	   "lastName"  : pdict.Order.billingAddress.lastName,
+	   "email"     : pdict.Order.customerEmail
+	  }
+	 
+	</isscript>
+	<iscookie name="rememberMe" path="/" value="${encodeURIComponent(rememberMeObj['firstName']+' '+rememberMeObj['lastName']+':'+rememberMeObj['email'])}" domain="${cookiesDomain}" maxAge="2678400" />
+	<iscookie name="sharedsession" path="/" value="${encodeURIComponent(JSON.stringify(rememberMeObj))}" domain="${cookiesDomain}" maxAge="2678400" />
+</iscomment>
+<iscookie name="campaign" path="/" value="${}" domain="${cookiesDomain}" maxAge="0" />
+<iscookie name="uci" path="/" value="${}" domain="${cookiesDomain}" maxAge="0" />
+<iscookie name="secondaryuci" path="/" value="${}" domain="${cookiesDomain}" maxAge="0" />
+
+<iscomment>Clear out Order information that is no longer useful or required anymore</iscomment>
+<isscript>
+	delete pdict.CurrentSession.privacy.OrderNo;
+	delete pdict.CurrentSession.privacy.OrderNoDec;
+</isscript>
+<isif condition="${pdict.ServerError}">
+<div class="errorform">${Resource.msgf('global.unable.to.process','locale',null)}</div>
+</isif>
+<div class="orderConfimationContainer">
+<iscomment>'Thank you' section</iscomment>	
+<div class="thankyoumessage">
+	<h2><span>${Resource.msg('cart.thankyou.label', 'rendering', null)}</span></h2>
+	<div class="orderno"><isprint value="${Resource.msgf('cart.thankyou.orderno', 'rendering', null, pdict.Order.orderNo)}" encoding="off" /></div>
+	<div class="arrivePeriod">${Resource.msg('cart.thankyou.arriveperiod', 'rendering', null)}</div>
+	<div class="confirmemail"><isprint value="${Resource.msgf('cart.thankyou.confirmemail', 'rendering', null, pdict.CurrentForms.personinf.contact.email.value)}" encoding="off" /></div>
+</div>
+
+<div class="ordersummary">
+	<isinclude template="checkout/components/ordersummary" />
+</div>
+
+<div class="yourinformation">
+	<isinclude template="checkout/components/yourinformation" />
+</div>
+<div class="customerServiceText"><p><isprint value="${Resource.msg('customer.service.representatives', 'rendering', null)}" encoding="off"/></p></div>
+</div>
+
+<iscomment>SeeWhy code</iscomment>
+<isif condition="${dw.system.Site.current.preferences.custom.seeWhyIncluded}">
+	<script type="text/javascript">
+		cy.USERID='${pdict.CurrentForms.personinf.contact.email.value}';
+		cy.CUSTOM1='${pdict.CurrentForms.personinf.billtoaddress.firstName.value}';
+		cy.CUSTOM2='${pdict.CurrentForms.personinf.billtoaddress.lastName.value}';
+		cy.CUSTOM3='${pdict.CurrentForms.cart.shipments[0].items[0].object.product.ID}';
+		cy.CUSTOM4='${addressObj.states.stateUS.htmlValue}';
+		cy.CUSTOM5="";
+		cy.FUNNELLEVEL='7';
+	</script>
+	
+	<isinclude template="seewhy/variables/setcheckoutvariables.isml"/>
+</isif>
+<iscomment>Media Pixel</iscomment>
+<isslot id="MediaPixelForConfirmation" context="global" description="MediaPixelForConfirmation" />
+ 
+<isif condition="${(!pdict.ServerError) && (pdict.originalCampaignCode == Resource.msg('campaign.code.core', 'configuration', 'core'))}">
+	<isslot id="confirmation-cross-sell" description="Cross-sell on confirmation page" context="global" />
+</isif>
+
+
+<isscript>
+  var orderId = pdict.Order.orderNo;
+  var brand   = 'reclaimbotanical';
+
+  var qty1  = qty2  = 0;
+  var kit1  = kit2  = '';
+  var prod1 = prod2 = '';
+  var rev1  = rev2  = 0;
+
+  var iter = pdict.Order.getAllProductLineItems().iterator();
+  var loopc = 0;
+
+  while (iter.hasNext()) {
+    var pli = iter.next();
+
+      if (loopc == 0) {
+        qty1  = pli.quantityValue;
+        kit1  = pli.product.ID;
+        prod1 = pli.product.name;
+      } else {
+        qty2  = pli.quantityValue;
+        kit2  = pli.product.ID;
+        prod2 = pli.product.name;
+      }
+
+      brand = pli.product.brand;
+      loopc = loopc + 1;
+  }
+  var revenue = 0;
+  revenue = pdict.Order.getAdjustedMerchandizeTotalPrice(true).value + pdict.Order.giftCertificateTotalPrice.value;
+
+  if (prod1.indexOf("Vitamins") != -1) {  
+    rev1 = 0;
+    rev2 = revenue;
+  } else {
+    rev1 = revenue;
+    rev2 = 0;
+  }  
+
+</isscript>
+<iscomment>
+	<isinclude template="analytics/linkshare"/>
+</iscomment>

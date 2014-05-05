@@ -1,0 +1,55 @@
+<!--- TEMPLATENAME: mediaPixelsInit.isml --->
+<isscript>
+var Obj,
+	OrderNo,
+	MainOffer,
+	OfferQuantities = [],
+	OfferRevenues = [],
+	ShippingsList = [],
+	OffersList = [],
+	OrderZip = "";
+	
+Obj = pdict.Order || pdict.Basket;
+//OrderZip = Obj.defaultShipment.shippingAddress.postalCode;
+
+OrderNo = pdict.Order && pdict.Order.orderNo;
+
+if (Obj && !empty(Obj.productLineItems)) {
+	for each (var pli in Obj.productLineItems)
+	{
+		if (pli.product.custom.coreItem)
+		{
+			MainOffer = pli;
+		}
+		
+		OfferQuantities.push(pli.quantityValue);
+		OfferRevenues.push(pli.basePrice.value);
+		ShippingsList.push(pli.shippingLineItem ? pli.shippingLineItem.adjustedPrice.value : 0);
+		OffersList.push(pli.productID);
+	}
+}
+
+var primaryUCI     : dw.web.Cookie = pdict.CurrentRequest.httpCookies['uci'];
+var omnCampaignUCI : String = !empty(primaryUCI)?primaryUCI.value: !empty(pdict.CurrentSession.privacy.campaignUCIID) ? pdict.CurrentSession.privacy.campaignUCIID : '';
+
+</isscript>
+
+<script type="text/javascript">
+var pageUrl = location.href, // complete page url with query string
+	orderZip = "${OrderZip}",
+	uci = "${omnCampaignUCI}",
+	subTotal = ${Obj && Obj.getAdjustedMerchandizeTotalPrice && Obj.getAdjustedMerchandizeTotalPrice(false).value || 0}, // total price minus (-) shipping & handling
+	shipTotal = ${Obj && Obj.shippingTotalPrice && Obj.shippingTotalPrice.value || 0}, // total shipping & handling
+	orderTotalWOTax = subTotal + shipTotal, // Order Total, without tax
+	orderTotal = ${Obj && Obj.getTotalGrossPrice && Obj.getTotalGrossPrice().value || 0}, // Order Total, including shipping & handling, with Tax
+	orderID = ${OrderNo ? "'" + OrderNo + "'" : null}, // confirmation ID
+	mainOfferCode = '${MainOffer && MainOffer.productID || ""}', // offercode of main product; not the upsell
+	mainItemAmt = ${MainOffer && MainOffer.adjustedPrice && MainOffer.adjustedPrice.value || 0}, // item price for main product; not the upsell
+	mainItemQty = ${MainOffer && MainOffer.quantityValue || 0}, // quantity of main product; not the upsell
+	mainItemTitle = '${MainOffer && MainOffer.product && MainOffer.product.name || ""}', // title of main product; not the upsell
+	itemCount = ${Obj && Obj.productLineItems && Obj.productLineItems.length || 0}, // total number of different offers selected
+	quantityArray = [${OfferQuantities.join(", ")}], // array listing of all the items selected
+	revenueArray = [${OfferRevenues.join(", ")}], // array of each item revenue
+	shippingArray = [${ShippingsList.join(", ")}], // array of each item shipping cost
+	offerArray = [${OffersList.length > 0 ? ("'" + OffersList.join("', '") + "'") : ""}]; // list of all offers in the cart
+</script>

@@ -1,0 +1,34 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<iscomment>This includes global utilities into the pages</iscomment>
+<isinclude template="util/modules"/>
+
+<iscomment>This page must be cachable. It inherits the caching attributes by the decorated template.</iscomment>
+
+<head>
+	<iscomment>
+		Include all important information globally , e.g. meta-data, link information, and
+		javascript.
+	</iscomment>
+	<isinclude template="components/header/htmlhead"/>
+
+	<iscomment>Add page type specific header information here.</iscomment>
+<link href="${URLUtils.staticURL('/css/account.css')}" type="text/css" rel="stylesheet" /></head>
+<body>
+<isinclude template="common/mboxglobal"/>
+<div id="container" class="pt_order">
+	<isinclude template="components/header/header"/>
+	
+			<isif condition="${empty(pdict.Order)}">
+				<isbreadcrumbs bcurl1="${URLUtils.https('Account-Show')}" bctext1="My Account" bctext2="Order History"/>
+			<iselse>
+				<isbreadcrumbs bcurl1="${URLUtils.https('Account-Show')}" bctext1="My Account" bcurl2="${URLUtils.https('Order-History')}" bctext2="Order History" bctext3="${pdict.Order.orderNo}"/>
+			</isif>			
+			<isreplace/>
+		
+	</div>
+	<isinclude template="components/footer/footer"/>
+</div><!-- END: container -->
+</body>
+</html>

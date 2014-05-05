@@ -1,0 +1,34 @@
+<isdecorate template="mobile/pt_mobile">
+<isinclude template="mobile/util/modules"/>
+
+<iscomment>
+	This template visualizes the billing step of both checkout scenarios.
+	It provides selecting a payment method, entering gift certificates and
+	specifying a separate billing address.
+	Depending on the checkout scenario (single or multi shipping) it is
+	either the second or third checkout step.
+</iscomment>
+
+<iscomment>Report this checkout step</iscomment>
+<isset name="checkoutstep" value="${4}" scope="pdict"/>
+<isset name="checkoutname" value="${'Billing'}" scope="pdict"/>
+
+<div id="billing" class="mobilecontent">
+
+    <h3>${Resource.msg('billing.selectbillingaddress','checkout',null)}</h3>	
+   		<a href="${URLUtils.https('mCOBilling-CreateBilling','CopyAddress',true)}" class="linkbar">${Resource.msg('billing.sameaddress','checkout',null)}</a>
+    	
+   		<a href="${URLUtils.https('mCOBilling-CreateBilling', 'EditMode', true)}" class="linkbar">${Resource.msg('billing.createaddress','checkout',null)}</a>
+    <isif condition="${!pdict.CurrentCustomer.isAnonymous() && pdict.CurrentCustomer.profile.addressBook.addresses.size() > 0}">
+    	<h4>${Resource.msg('billing.selectaddress','checkout',null)}</h4>
+    	<isloop items="${pdict.CurrentCustomer.profile.addressBook.addresses}" var="address">				
+    		<a href="${URLUtils.https('mCOBilling-CreateBilling','addressID',address.ID)}" class="linkbar"><isprint value="${address.ID}"/></a>
+		</isloop>
+    </isif>
+    
+	<form  action="${URLUtils.https('mCOShipping-CreateShipping')}" method="post" id="${pdict.CurrentForms.billing.htmlName}">
+		<button  type="submit" value="${Resource.msg('global.continueshopping','locale',null)}" name="${pdict.CurrentForms.cart.continueShopping.htmlName}"><span>${Resource.msg('global.back','locale',null)}</span></button>
+	</form>
+				
+</div>
+</isdecorate>

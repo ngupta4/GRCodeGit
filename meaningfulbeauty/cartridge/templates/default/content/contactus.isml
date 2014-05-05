@@ -1,0 +1,125 @@
+<isset name="CurrentFolder"  value="${dw.content.ContentMgr.getFolder('contact-us')}" scope="page"/>
+<isset name="CurrentContent" value="${dw.content.ContentMgr.getFolder('contact-us')}" scope="page"/>
+
+<isscript>
+importScript("guthyrenker_core:common/libUtils.ds");
+</isscript>
+<isdecorate template="rendering/folder/pt_contentpage">
+<isinclude template="util/modules"/>
+<div class="mainWide">
+<div id="content" class="contactUs formStyle1">
+	<div class="leftsection">	
+	<form action="${URLUtils.httpsContinue()}" method="post"  class="suppress" id="RegistrationForm">
+		<fieldset>
+			<div class="customerServiceCopy">
+			    <h1>${Resource.msg('global.contactus','locale',null)}</h1>
+			  	<div class="col2">			        
+					<div class="formfields">
+						<div class="clearFix">
+							<div class="formfield" id="first">
+								<isinputfield formfield="${pdict.CurrentForms.contactus.firstname}" type="input" attribute1="requiredmesage" value1="${Resource.msg('forms.contactus.firstname.missing','forms',null)}"/>
+							</div><!-- END: firstname -->
+							<div class="formfield">
+								<isinputfield formfield="${pdict.CurrentForms.contactus.lastname}" type="input" attribute1="requiredmesage" value1="${Resource.msg('forms.contactus.lastname.missing','forms',null)}"/>
+							</div>
+						</div>			
+						<isinputfield formfield="${pdict.CurrentForms.contactus.jscriptEnabled}" type="hidden" attribute1="value" label="false"/>			
+							<div class="formfield">
+								<isinputfield formfield="${pdict.CurrentForms.contactus.email}" type="input" attribute1="requiredmesage" value1="${Resource.msg('forms.contactus.email.missing','forms',null)}"/>
+							</div>
+							<div class="formfield">
+			                    <isinputfield formfield="${pdict.CurrentForms.contactus.reemail}" type="input" 
+			                                  attribute1="requiredmesage" value1="${Resource.msg('forms.contactus.reemail.missing','forms',null)}" 
+			                                  attribute2="equalTo"        value2="${'#'+pdict.CurrentForms.contactus.email.htmlName}"
+			                                  attribute3="equaltomessage" value3="${Resource.msg('forms.contactus.email.match', 'forms', null)}"/>
+			            </div>
+			                
+			            <div class="description">${Resource.msg('contactus.orderdescription','locale',null)}</div>
+			           
+			            <div class="formrow orderinfo">
+			                <div class="formfield" id="first-box">
+			                    <isinputfield formfield="${pdict.CurrentForms.contactus.ordernumber}" type="input"/>
+			                </div>
+			                <div class="formfield">
+			                    <isinputfield formfield="${pdict.CurrentForms.contactus.accountnumber}" type="input"/>
+			                </div>
+			            </div>
+		                <div class="formfield">
+		                    <isinputfield formfield="${pdict.CurrentForms.contactus.address1}" type="input" 
+		                    attribute1="requiredmesage" value1="${Resource.msg('forms.addresserror','forms',null)}"/>
+		                </div>
+		                <div class="formfield">
+		                    <isinputfield formfield="${pdict.CurrentForms.contactus.address2}" type="input"/>
+		                </div>
+		                <div class="formrow citystate">
+			                <div class="formfield">
+			                    <isinputfield formfield="${pdict.CurrentForms.contactus.city}" type="input"/>
+			                </div>
+			                <div class="formfield" id="state">
+			                    <isinputfield formfield="${pdict.CurrentForms.contactus.states.stateUS}" type="select"/>
+			                </div>
+			                <div class="formfield" id="zip">
+			                    <isinputfield formfield="${pdict.CurrentForms.contactus.zip}" type="input"/>
+			                </div>
+			            </div>
+			           			                	                
+						<div class="formfield clearfix phone">
+							<isinputfield formfield="${pdict.CurrentForms.contactus.phone}" type="input" attribute1="requiredmesage" />
+             			      	<isif condition="${!pdict.CurrentForms.contactus.phone.valid}" >                  				
+                  			</isif>
+	             		</div>		
+						
+						<div class="formfield myquestion">
+						    <isinputfield formfield="${pdict.CurrentForms.contactus.myquestion}" type="select" attribute1="requiredmesage" value1="${Resource.msg('forms.contactus.required','forms',null)}"/>
+						</div>
+						
+						<div class="formfield">
+							<isinputfield attribute1="rows" value1="8" attribute2="cols" value2="40" formfield="${pdict.CurrentForms.contactus.comment}" type="textarea" attribute1="requiredmesage" value1="${Resource.msg('forms.contactus.note.missing','forms',null)}"/>
+						</div>
+						<div class="formfield">
+						    <label class="label">
+								<span class="labeltext">${Resource.msg('forms.contactus.securecode.label', 'forms', null)}</span>	
+								<span class="requiredindicator">*</span>
+							</label>
+						</div>
+						 <isinclude template="components/captcha.isml"/>
+					</div><!-- END:formfields -->
+					<div class="formactions">
+	                      <button class="sbmtBtn" id="sendBtn" type="submit" value="${Resource.msg('global.send','locale',null)}" name="${pdict.CurrentForms.contactus.send.htmlName}"></button>
+	                </div>
+	                      
+				</div>
+			</div><!-- END: customer-service -->
+		</fieldset>
+	</form>
+	<isset name="OmniturePage" value="ContactUs" scope="pdict">
+	<iscomment>
+	<div class="contentFooter">
+        <h3>${Resource.msg('contactus.otherwaystocontactus', 'locale', null)}</h3>
+        <div class="narrowColumn">
+            <div class="note">${Resource.msg('contactus.usingtheform', 'locale', null)}</div>
+	<div class="fur-desc">
+            <h4>${Resource.msg('contactus.phone', 'locale', null)}</h4>
+            <p>${Resource.msg('contactus.tospeakwithone', 'locale', null)}</p>
+            <div class="clear"></div>
+	</div>
+	<div class="fur-desc">
+            <h4>${Resource.msg('contactus.mail', 'locale', null)}</h4>
+            <p>${Resource.msg('contactus.mbsolution', 'locale', null)}<br />
+            ${Resource.msg('contactus.pobox', 'locale', null)}<br />
+            ${Resource.msg('contactus.desmoines', 'locale', null)}</p>
+            <div class="clear"></div>
+            </div>
+        </div>
+    </div>
+    </iscomment>
+    </div><!-- END: leftsection -->
+
+<div class="rightsection">
+	<iscomment><iscontentasset aid="contact-us-Livechat"/></iscomment>
+	<iscontentasset aid="guarantee-module-sidebar"/>
+</div><!-- END: rightsection -->
+</div><!-- END: content -->
+<div class="clear"></div>
+</div><!-- END: mainwide -->
+</isdecorate>

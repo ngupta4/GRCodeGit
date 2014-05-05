@@ -1,0 +1,30 @@
+<isif condition="${pdict.Product.productSet}">
+	<div id="pdpProductSetDiv" >
+		<iscomment>Display Product Set Individual Products</iscomment>
+		<iscomment>Preserve the current product instance</iscomment>
+		<isset name="ProductSet" value="${pdict.Product}" scope="pdict"/>
+		<isloop items="${pdict.ProductSet.getProductSetProducts()}" var="SetProduct" status="productSetLoop">
+			<isif condition="${SetProduct.online}">		
+				<isset name="Product" value="${SetProduct}" scope="pdict"/>
+				<isset name="ProductCount" value="${productSetLoop.count}" scope="pdict"/>
+				
+				<form id="subProduct${pdict.ProductCount}Form" action="${URLUtils.http('mCart-AddProduct')}" method="post">
+													
+					<isobject object="${pdict.Product}" view="setproduct">
+						<isinclude template="mobile/product/components/subproduct"/>
+					</isobject>
+		
+					<script type="text/javascript"><!--
+						jQuery(document).ready(function(){
+							var subProduct = new Product({data: <isinclude template="mobile/product/productjson"/>, containerId : 'subProduct${pdict.ProductCount}', quantity : 1});
+							show(subProduct);
+							productCache.subProducts.push(subProduct);
+						});
+					//--></script>
+				</form>
+			</isif>
+		</isloop>
+		<iscomment>Restore the current product instance</iscomment>
+		<isset name="Product" value="${pdict.ProductSet}" scope="pdict"/>
+	</div><!-- END: productset -->
+</isif>

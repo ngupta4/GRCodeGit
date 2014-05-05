@@ -1,0 +1,69 @@
+/**
+ * Creates a Echeck payment instrument from the given Echeck form
+ * for the given basket. If any error occurs the pipelet returns PIPELET_ERROR with
+ * no payment instrument being created. If the creation succeeded the script returns 
+ * the newly created payment instrument.
+ *
+ * Only single Echeck payments are allowed. Therefore any existing Echeck
+ * is removed from the basket once the new Echeck payment was successfully created. 
+ *
+ *  @input Basket : dw.order.Basket The basket.
+ *  @input EcheckForm : dw.web.FormGroup The Echeck form.
+ *  @input payType : String
+ *  @output PaymentInstrument : dw.order.PaymentInstrument The created payment instrument.
+ */
+importPackage( dw.system );
+importPackage( dw.order );
+importPackage( dw.util );
+importPackage( dw.value );
+importPackage( dw.web );
+
+importScript("checkout/Utils.ds");
+
+function execute( pdict : PipelineDictionary ) : Number
+{
+    var basket : Basket = pdict.Basket;
+	var echeckForm : FormGroup = pdict.EcheckForm;
+	var payType : String = pdict.payType;
+	// verify that we have a basket and a valid Echeck form
+	if( basket == null || !echeckForm.valid )
+	{
+		return PIPELET_ERROR;
+	}
+
+	// remove existing Echeck from the basket
+	removeExistingPaymentInstruments( basket );
+
+	// calculate the amount to be charged for the Echeck
+	var amount = calculateNonGiftCertificateAmount( basket );
+
+	// create a payment instrument for this credit card
+	var paymentInstr : PaymentInstrument = basket.createPaymentInstrument( payType, amount );
+
+	// copy the Echeck details to the payment instrument
+  //paymentInstr.setBankAccountHolder(echeckForm.bankAccountType.value); // Bank Acccount Type
+	paymentInstr.setBankRoutingNumber(echeckForm.routing.value); // Routing Numbar
+	paymentInstr.setBankAccountNumber(echeckForm.account.value); // Account Number
+
+	pdict.PaymentInstrument = paymentInstr; 
+    return PIPELET_NEXT;
+}
+
+/** 
+ * Determines if the basket already contains a Echeck payment 
+ * instrument and removes it from the basket.
+ */
+function removeExistingPaymentInstruments( basket : Basket )
+{
+	// get all Echeck payment instruments
+	var ccPaymentInstrs : Collection = basket.getPaymentInstruments();
+	var iter : Iterator = ccPaymentInstrs.iterator();
+	var existingPI : OrderPaymentInstrument = null;
+
+	// remove them
+	while( iter.hasNext() )
+	{
+		existingPI = iter.next();
+		basket.removePaymentInstrument( existingPI );
+	}
+}

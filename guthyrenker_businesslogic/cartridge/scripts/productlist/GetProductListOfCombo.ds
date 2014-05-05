@@ -1,0 +1,50 @@
+/**
+* Traverse through list of products, combo product is made up of.
+*
+*/
+importPackage( dw.system );
+importPackage( dw.catalog );
+importScript('int_gutheyrenker:common/libUtils.ds');
+
+/*
+* This method returns the list of products, a combo product is composed of. 
+* If product is not a combo and not products are defined, then it will return empty list.
+*/
+function getProductsInCombo( product : PipelineDictionary ) : dw.util.Collection
+{
+	logInfo("Entering GetProductListOfCombo-getProductsInCombo");
+	var prodList: dw.util.ArrayList = new dw.util.ArrayList();
+	var product: Product = product;
+
+	if( null != product && product.custom.isAKitFlag){
+		var pidString:String = product.custom.kitComponents;
+		logDebug("GetProductListOfCombo-getProductsInCombo component of Combo "+ pidString);
+			if( null != pidString && !empty(pidString[0])){
+				var arrString : Array = pidString[0].split(",");
+				prodList = getProductForPids(arrString);
+			}
+	}
+	logInfo("Exiting GetProductListOfCombo-getProductsInCombo");
+   return prodList;
+}
+
+
+/*
+* Method traverse through all the pids and return list of products for those pids.
+*/
+function getProductForPids(pids: PipelineDictionary) : dw.util.Collection
+{
+	logInfo("Entering GetProductListOfCombo-getProductForPids");
+	var prodList: dw.util.ArrayList = new dw.util.ArrayList();
+		if( null != pids){
+			for( var i=0, ii=pids.length; i<ii; i++ ) {				
+				var p : Product = ProductMgr.getProduct(dw.util.StringUtils.trim(pids[i]));
+				if( null != p){
+					logDebug("GetProductListOfCombo-getProductForPids: fetched product id "+p.ID); 
+					prodList.add( p);
+				}
+			}
+		}	
+	logInfo("Exiting GetProductListOfCombo-getProductForPids");		
+	return prodList;
+}

@@ -1,0 +1,27 @@
+<isdecorate template="mobile/pt_mobile">
+<iscache type="relative" hour="24">
+<isinclude template="mobile/util/modules">
+<div>
+	<div class="errorpage">
+		<div class="errorpagemessage">
+			<iscontentasset aid="404-callout">
+		</div><!-- END: errorpagemessage -->
+		
+		<div class="errorsearch">
+		 	<form action="${URLUtils.url('mSearch-Show')}" method="get">
+				
+					<label>${Resource.msg('nohits.searchlabel','search',null)}</label>
+					<input type="text" name="q" value="" />
+					<button type="submit" value="${Resource.msg('global.go','locale',null)}" name="simplesearch"><span>${Resource.msg('global.go','locale',null)}</span></button>
+				
+			</form>
+		</div><!-- END: errorssearch -->
+		
+		<div class="errorfooter">
+			<div class="errorfooterbottom">
+				<iscontentasset aid="404-service">
+			</div><!-- END: errorfooterbottom -->
+		</div><!-- END: errorfooter -->
+	</div><!-- END: errorpage -->
+</div><!-- END: notfound -->
+</isdecorate>

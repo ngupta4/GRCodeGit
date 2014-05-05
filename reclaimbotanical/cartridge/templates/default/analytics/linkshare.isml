@@ -1,0 +1,38 @@
+<!--- TEMPLATENAME: linkshare.isml --->
+
+
+<!--Begin LinkShare Tagging-->
+<isif condition="${primaryUCI=='ous106'}">
+<script type="text/javascript">
+var brnd_pfix = "RB";
+var brnd_name = "Reclaim Botanical:";
+var LSmsg = "";
+var LSord = "ord=" + brnd_pfix + "${pdict.Order.orderNo}";
+var LSsku = "skulist=";
+var LSqty = "qlist=";
+var LSamt = "amtlist=";
+var LSname = "namelist=";
+
+function addLSitem(ls1,ls2,ls3,ls4) {
+  LSsku = LSsku + brnd_pfix + escape(ls1) + "|";
+  LSqty = LSqty + ls2 + "|";
+  ls3 = ls3 * ls2 * 100;
+  ls3 = ls3.toFixed(0);
+  LSamt = LSamt + ls3 + "|";
+  LSname = LSname + escape(brnd_name) + escape(ls4) + "|";
+}
+
+// Call AddLSitem(SKU Number, Qty Purchased, Item Unit Price, Item Name) for each item purchased.
+addLSitem(
+        "${kit1}",
+        "${qty1}",
+        "${rev1}",
+        "${prod1}"
+);
+
+
+LSmsg = "mid=2637&cur=USD&" + LSord + "&" + LSsku + "&" + LSqty + "&" + LSamt + "&" + LSname;
+document.write('<img src="https://track.linksynergy.com/ep?' + LSmsg + '" border="0" width="1px" height="1px" alt="">');
+</script>
+</isif>
+<!--End LinkShare Tagging-->

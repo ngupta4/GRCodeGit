@@ -1,0 +1,113 @@
+/**
+*
+*   @input LogData : Object
+*   @input LogSource : String
+*   @input Request : dw.system.Request
+*   @input CurrentCampaignConfig : Object
+*   @input Submissions : Object
+*
+*/
+importPackage( dw.system );
+importPackage( dw.object );
+importPackage( dw.util );
+importPackage( dw.web );
+
+importScript( "grmiddleware/libGRMiddleware.ds" );
+
+//-------------------------------//
+//----- LOG DATA METHODS --------//
+//-------------------------------//
+
+function getLogDataValue(logData:Object, name): String{
+    if(logData instanceof Map){
+        var parameterMap:Map = logData;
+        return parameterMap.get(name);
+    }if(logData instanceof HttpParameterMap){
+        var parameterMap:HttpParameterMap = logData;
+        var parameter:HttpParameter = parameterMap.get(name); 
+        return parameter == null ? null : parameter.value;
+    }
+}
+
+function getLogDataNames(logData:Object) : Iterator{
+    if(logData instanceof Map){
+        var parameterMap:Map = logData;
+        return parameterMap.keySet().iterator();
+    }if(logData instanceof HttpParameterMap){
+        var parameterMap:HttpParameterMap = logData;
+        return parameterMap.parameterNames.iterator();
+    }
+}
+//-------------------------------//
+//-------------------------------//
+
+function execute( args : PipelineDictionary ) : Number
+{
+    var id = Site.current.ID + "-" + new Date().toISOString();
+    var logObject:CustomObject = CustomObjectMgr.createCustomObject("CartLog", id);
+    
+    //--------------------------
+    // DEFAULT VALUES
+    //--------------------------
+    setValue(logObject, "script_id",   "1");
+    setValue(logObject, "submit_type", "Form");
+    setValue(logObject, "errors", "0");
+    setValue(logObject, "submissions", "0");
+    
+    
+    //--------------------------
+    // CUSTOM PARAMETERS
+    //--------------------------
+    
+    var LogData : Object   = args.LogData;
+    var names   : Iterator = getLogDataNames(LogData);
+    
+    while(names.hasNext()){
+        var prop:String = names.next();
+        setValue(logObject, prop,  getLogDataValue(LogData, prop));
+    }
+    
+    if(getLogDataValue(LogData, "sameasbilling") == "y" || getLogDataValue(LogData, "sameasbilling") == true){
+        setValue(logObject, "ship_fname",  getLogDataValue(LogData, "card_fname"));
+        setValue(logObject, "ship_lname",  getLogDataValue(LogData, "card_lname"));
+        setValue(logObject, "s_address",   getLogDataValue(LogData, "address"));
+        setValue(logObject, "s_suppard",   getLogDataValue(LogData, "suppadr"));
+        setValue(logObject, "s_city",      getLogDataValue(LogData, "city"));
+        setValue(logObject, "s_state",     getLogDataValue(LogData, "state"));
+        setValue(logObject, "s_zip",       getLogDataValue(LogData, "zip"));
+    }
+    
+    //--------------------------
+    // SYSTEM PARAMETERS
+    //--------------------------
+    setValue(logObject, "cart_id",     args.CurrentCampaignConfig.cartID);
+    setValue(logObject, "lt_uid",      "undef");
+    setValue(logObject, "submitted",   formatISODateNoMills(new Date()));
+    setValue(logObject, "submissions", args.Submissions || "0");
+    
+    setValue(logObject, "logsource", args.LogSource);
+    
+    if(args.Request != null){
+        var request:Request = args.Request;
+        var session:Session = request.session;
+        
+        var uid:String = getCustomerUID(request);
+        if(!empty(uid)){
+            setValue(logObject, "lt_uid",  uid);
+        }
+        
+        setValue(logObject, "session_id",  session.sessionID);
+        setValue(logObject, "started",     formatISODateNoMills(getSessionStartDate(session)));
+        setValue(logObject, "ip",          request.httpRemoteAddress);
+        
+        setValue(logObject, "campaign", getCampaignCode(request));
+        setValue(logObject, "primaryUci",   getPrimaryUCI(request));
+        setValue(logObject, "secondaryUcis",   getSecondaryUCI(request));
+    }
+    else
+    {
+        Logger.error("Can't log request data, because Request isn't passed.");
+    }
+    
+    return PIPELET_NEXT;
+}

@@ -1,0 +1,40 @@
+/**
+*   @input Request  : dw.system.Request
+*/
+importPackage( dw.system );
+importPackage( dw.web );
+
+function execute( args : PipelineDictionary ) : Number
+{
+    var request:Request = args.Request;
+    var cookies:Cookies = request.getHttpCookies();
+    
+    var cookiesNames:Array = Site.current.getCustomPreferenceValue("GRTransferCookiesList");
+    var domain:String = Site.current.getCustomPreferenceValue("GRCookiesDomain");
+    
+    if (!empty(cookiesNames)) {
+	    for(var i = 0; i < cookiesNames.length; i++){
+	        var cookieDesc:String  = cookiesNames[i];
+	        var cokiesArr:Array = cookieDesc.split(":");
+	        
+	        var cookieName:String = cokiesArr[0];
+	        var maxAge:Number = cokiesArr.length == 2? cokiesArr[1] * 86400: -1;
+	        
+	        var oldCookie:Cookie = cookies[cookieName];
+	        if(!empty(oldCookie)){
+	            var removeCookie:Cookie = new Cookie(cookieName, "");
+	            removeCookie.setMaxAge(0);
+	            removeCookie.setPath(oldCookie.path);
+	            removeCookie.setDomain(oldCookie.domain);
+	            response.addHttpCookie(removeCookie);
+	            
+	            var newCookie:Cookie = new Cookie(cookieName, oldCookie.value);
+	            newCookie.setDomain(domain);
+	            newCookie.setMaxAge(maxAge);
+	            newCookie.setPath("/");
+	            response.addHttpCookie(newCookie);
+	        }
+		}
+    }
+    return PIPELET_NEXT;
+}

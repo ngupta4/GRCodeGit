@@ -1,0 +1,24 @@
+<!--- TEMPLATENAME: jsonresult.isml --->
+<iscontent compact="true" type="text/json" />
+{
+	stores:[
+<isloop items="${pdict.NearestLocations.keySet()}" var="store" status="status_store">
+		{
+			name:"${store.name}",
+			address1:"${store.address1}",
+			address2:"${store.address2}",
+			city:"${store.city}",
+			state:"${store.state}",
+			postalCode:"${store.postalCode}",
+			countryCode:"${store.countryCode}",
+			phone:"${store.phone}",
+			email:"${store.email}",
+			fax:"${store.fax}",
+			latitude:"${store.latitude}",
+			longitude:"${store.longitude}",
+			imagePath:"${store.imagePath}",
+			distance: "${pdict.NearestLocations.get(store)}""
+		},
+</isloop>
+	]
+}

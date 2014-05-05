@@ -1,0 +1,10 @@
+<iscontentasset aid="m-footer"/>
+<!---  Omniture tracking  --->
+<isinclude template="analytics/omniture/omniture"/>
+<iscomponent pipeline ="Tealium-FooterInclude"
+pid=${pdict.CurrentHttpParameterMap.pid.stringValue}
+searchterm=${pdict.CurrentHttpParameterMap.q.stringValue}
+searchresultscount=${pdict.ProductSearchResult.count+''}
+orderno=${pdict.OrderNo}
+contentsearchresultscount=${pdict.ContentSearchResult.count+''}
+pagecgid=${pdict.CurrentHttpParameterMap.cgid.stringValue} />

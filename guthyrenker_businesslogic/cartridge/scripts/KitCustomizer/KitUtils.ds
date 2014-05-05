@@ -1,0 +1,119 @@
+importPackage( dw.system );
+importScript('int_gutheyrenker:common/libUtils.ds');
+
+function createProductObject(Product : dw.catalog.Product){
+	var returnProduct : Object = new Object();
+	
+	var productName = Product.custom.catalogDisplayNameTwo != null ? Product.custom.catalogDisplayNameTwo : Product.name;
+	
+	//product object creation from the original Demandware Product starts here.
+	returnProduct['ID'] = Product.ID;
+	returnProduct['sceneSevenAssetId'] = Product.custom.sceneSevenAssetId;
+	returnProduct['isEssentialProduct'] = Product.custom.isEssentialProduct;
+	returnProduct['isCustomizableFlag'] = Product.custom.isCustomizableFlag;
+	returnProduct['master'] = Product.master;
+	returnProduct['variant'] = Product.variant;
+	returnProduct['UPC'] = Product.UPC;
+	returnProduct['essentialStep'] = ''; //for which step is the product essential
+	returnProduct['size'] = Product.custom.size;
+	returnProduct['productLine'] = Product.custom.productLine;
+	logInfo("Checking limited supply for product: " + Product.ID );
+	returnProduct['limitedSupply'] = checkLimitedSupply(Product, 0); // For checking if the product is discontinued and has alternate
+	if(Product.variant || Product.master){
+		var PVM = Product.variationModel;
+		for each(var PVA in PVM.productVariationAttributes){
+			returnProduct['variationType'] = PVA.displayName;
+			var variationValue = Product.variationModel.getVariationValue(PVM.selectedVariant, PVA);
+			returnProduct['variantVal'] = variationValue.ID;
+			
+			if(PVA.displayName == "Color"){
+				returnProduct['variantVal'] = 'small_'+Product.UPC+'_'+variationValue.ID;
+			} 
+			
+			var tempName = productName;
+			if(tempName.indexOf('-')>0){
+				productName = tempName.split('-')[0];
+			}else if(tempName.indexOf('(')>0){
+				productName = tempName.split('(')[0];
+			}
+		} 
+	} else {
+		returnProduct['variationType'] = '';
+		returnProduct['variantVal'] = '';
+	}		
+	returnProduct['name'] = productName;
+	
+	returnProduct['kitPrice'] = Product.custom.kitPrice;
+	var PriceModel : dw.catalog.ProductPriceModel = Product.getPriceModel(Product.getOptionModel());
+	returnProduct['memberPrice'] = PriceModel.getPriceBookPrice(Site.getCurrent().getCustomPreferenceValue('memberPriceBook'));
+	
+	return returnProduct;	
+}
+
+function checkLimitedSupply(Product : dw.catalog.Product, loopCount : Number){
+	var recommendationType : Number = dw.web.Resource.msg('alternate.product.recommendation','configuration',null); // recommendation type for the alternate product.
+	var isCustomizableFlag = Product.custom.isCustomizableFlag;
+	var inStock : Boolean = Product.getAvailabilityModel().isInStock(); // Checks for product stock and site assignment and online/offline
+	
+	if( inStock && isCustomizableFlag) {
+		// Getting the master's category assignment in case of variant product
+		var inCategory : Boolean = Product.variant ? checkProductCategory(Product.getVariationModel().getMaster()) : checkProductCategory(Product);
+		if(inCategory) {
+			logInfo("Product not discontinued : " + Product.ID + " LoopCount: "+ loopCount);
+			return false; // Product is not in limited supply.
+		}
+	}
+		
+	var recommendationsIterator : Iterator = Product.getRecommendations(recommendationType).iterator();
+	if( recommendationsIterator.hasNext() ){
+		if(loopCount >= dw.web.Resource.msg('alternate.product.max.loopcount','configuration',null)){
+			logInfo("Alternate Product loop, limit reached : " + Product.ID + " LoopCount: "+ loopCount );
+			return true; // Maximum loop count limit reached for alternate discontinued products.
+		}
+		else{
+			return checkLimitedSupply(recommendationsIterator.next().getRecommendedItem() , loopCount+1); // checking if the alternate product is itself discontinued.
+		}
+	}
+	else{
+		logInfo("Product is discontinued : " + Product.ID + " LoopCount: "+ loopCount );
+		return true; // product is in limited supply.
+	}
+}
+
+function checkProductCategory(Product : dw.catalog.Product){
+	var parentCategory : dw.catalog.Category = dw.catalog.CatalogMgr.getCategory(dw.web.Resource.msg('search.retention','search',null));
+	if(Product.getPrimaryCategory() != null && Product.getPrimaryCategory().isSubCategoryOf(parentCategory)){
+		return true;
+	}
+	else{
+		var categoryIterator : Iterator = Product.getCategories().iterator();
+		var cateogry : dw.catalog.Category;
+		while(categoryIterator.hasNext()){
+			cateogry = categoryIterator.next();
+			if(cateogry.isSubCategoryOf(parentCategory)){
+				return true;
+			}
+		}
+		return false;
+	}
+}
+
+/*
+//this function checks whether the essential products added have a similar essential product in the list or not.
+function checkEssentialProducts(productList : dw.util.ArrayList){
+	var listStep1 = dw.web.Resource.msg('','',null);
+	var listStep2 = dw.web.Resource.msg('','',null);
+	var listStep3 = dw.web.Resource.msg('','',null);
+	for each(var productObj in productList){
+		if(listStep1.indexOf(productObj.ID)>=0){
+			productObj['essentialStep'] = '1';
+		} else if(listStep2.indexOf(productObj.ID)>=0){
+			productObj['essentialStep'] = '2';
+		} else if(listStep3.indexOf(productObj.ID)>=0){
+			productObj['essentialStep'] = '3';
+		}
+	}
+	
+	return productList;
+}
+*/

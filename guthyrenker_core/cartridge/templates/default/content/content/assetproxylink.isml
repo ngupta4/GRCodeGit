@@ -1,0 +1,39 @@
+<!--- TEMPLATENAME: assetproxylink.isml --->
+<isif condition="${empty(pdict.content)&&!empty(pdict.folder)}">
+	<isset name="ObjectName" value="${aFolder.displayName}" scope="page" />
+	<isif condition="${'linkPipeline' in pdict.folder.custom && !empty(pdict.folder.custom.linkPipeline)}">
+		<isset name="LinkParts" value="${pdict.folder.custom.linkPipeline.split(',')}" scope="page" />
+		<isset name="Pipeline" value="${LinkParts[0]}" scope="page" />
+		<isif condition="${LinkParts.length>5}">
+			<isset name="FolderLinkURL" value="${URLUtils.url(Pipeline,LinkParts[1],LinkParts[2],LinkParts[3],LinkParts[4],LinkParts[5],LinkParts[6])}" scope="page" />
+		<iselseif condition="${LinkParts.length>3}">
+			<isset name="FolderLinkURL" value="${URLUtils.url(Pipeline,LinkParts[1],LinkParts[2],LinkParts[3],LinkParts[4])}" scope="page" />
+		<iselseif condition="${LinkParts.length>1}">
+			<isset name="FolderLinkURL" value="${URLUtils.url(Pipeline,LinkParts[1],LinkParts[2])}" scope="page" />
+		<iselse/>
+			<isset name="FolderLinkURL" value="${URLUtils.url(Pipeline)}" scope="page" />
+		</isif>				
+	<iselse/>
+		<isset name="FirstContentAsset" value="${!empty(pdict.folder.onlineContent)?pdict.folder.onlineContent[0].ID:pdict.folder.ID}" scope="page" />
+		<isset name="FolderLinkURL" value="${URLUtils.url('Page-Show','cid',FirstContentAsset)}" scope="page"/>
+	</isif>
+</isif>
+<isif condition="${!empty(pdict.content)&&empty(pdict.folder)}">
+	<isset name="ObjectName" value="${pdict.content.name}" scope="page" />
+	<isif condition="${'linkPipeline' in pdict.content.custom && !empty(pdict.content.custom.linkPipeline)}">
+		<isset name="LinkParts" value="${pdict.content.custom.linkPipeline.split(',')}" scope="page" />
+		<isset name="Pipeline" value="${LinkParts[0]}" scope="page" />
+		<isif condition="${LinkParts.length>5}">
+			<isset name="FolderLinkURL" value="${URLUtils.url(Pipeline,LinkParts[1],LinkParts[2],LinkParts[3],LinkParts[4],LinkParts[5],LinkParts[6])}" scope="page" />
+		<iselseif condition="${LinkParts.length>3}">
+			<isset name="FolderLinkURL" value="${URLUtils.url(Pipeline,LinkParts[1],LinkParts[2],LinkParts[3],LinkParts[4])}" scope="page" />
+		<iselseif condition="${LinkParts.length>1}">
+			<isset name="FolderLinkURL" value="${URLUtils.url(Pipeline,LinkParts[1],LinkParts[2])}" scope="page" />
+		<iselse/>
+			<isset name="FolderLinkURL" value="${URLUtils.url(Pipeline)}" scope="page" />
+		</isif>				
+	<iselse/>
+		<isset name="FolderLinkURL" value="${URLUtils.url('Page-Show','cid',pdict.content.ID)}" scope="page"/>
+	</isif>
+</isif>
+<a href="<isprint value="${FolderLinkURL}" encoding="off"/>" class="alt-img">${ObjectName}</a>

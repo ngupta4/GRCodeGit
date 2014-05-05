@@ -1,0 +1,36 @@
+<!--- TEMPLATENAME: pt_popupdialog.isml --->
+<isinclude template="util/modules"/>
+<div class="dialog" style="">
+	<div class="wen_close"> </div>
+	<iscomment><table class="top table_window">
+		<tr>
+			<td class="wen_nw"></td>
+			<td class="wen_n"><div class="wen_title title_window">&nbsp;</div></td>
+			<td class="wen_ne"></td>
+		</tr>
+	</table></iscomment>
+	<table class="mid table_window">
+		<tr>
+			<iscomment><td class="wen_w"></td></iscomment>
+			<td valign="top" class="wen_content">
+				<div class="wen_content">
+					<div class="wen_message" id="modal_dialog_message">
+					
+						<isreplace/>
+						
+					</div>
+				</div>
+			</td>
+			<iscomment><td class="wen_e"></td></iscomment>
+		</tr>
+	</table>
+	<iscomment><table class="bot table_window">
+		<tr>
+			<td class="wen_sw"></td>
+			<td class="wen_s"><div class="status_bar"><span style="float:left; width:1px; height:1px"></span></div></td>
+			<td class="wen_se"></td>
+		</tr>
+	</table></iscomment>
+	<div class="wen_popBkd"> </div>
+</div>
+

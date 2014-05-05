@@ -1,0 +1,142 @@
+/**
+*  @input feedFileList : dw.util.ArrayList
+*  @output errormessage : String
+*  @output dirOut : dw.io.File
+*/
+ importPackage( dw.system );
+ importPackage( dw.order );
+ importPackage( dw.util );
+ importPackage( dw.web );
+ importPackage( dw.net );
+ importPackage(dw.io);
+ importPackage(dw.object);
+
+
+function execute( args : PipelineDictionary ) : Number
+{
+	try 
+	{
+    	Logger.debug("Executing Try");
+    	var impexFolder : String = Site.getCurrent().getCustomPreferenceValue("ImportFeed_ImpexPath"); //"catalog";//
+    	var filePath:String = "src" + File.SEPARATOR + impexFolder;
+    	  var currDate:Date = new Date();
+    	 var tim:String= currDate.toISOString();
+           var timDate:String=tim.substr(0,19);  
+           
+	   	var fileList: dw.util.ArrayList = args.feedFileList;
+	   	if(null!=fileList && !fileList.isEmpty()){  
+	   		
+			var directory : dw.io.File= new File(new File("/IMPEX"),filePath);
+	      	
+			var dirArch:File=new File(directory,"Archive");
+			for each(var fileName : dw.io.File in fileList){
+			    var xmlFile : dw.io.File= new File(new File("/IMPEX"),filePath+File.SEPARATOR+fileName);
+		    	var readFile:dw.io.FileReader= new FileReader(xmlFile);
+   		    	var content : String = readFile.getString(); 
+		    	var archFile:File=new File(dirArch,xmlFile.getName()+"."+timDate+".Processed");
+		    	var writeFile:FileWriter= new FileWriter(archFile);
+		    	writeFile.write(content);
+		    	writeFile.flush();
+		    	writeFile.close();
+		       	xmlFile.remove();
+			} 	
+	  	}	    
+	}
+	catch(ex){
+		Logger.error("Exception Caught="+ex);
+		args.errormessage = "Error while Archiving the file. Error Log : " + ex;     			
+		return PIPELET_ERROR;  
+	}
+	
+	
+   	Logger.debug("ArchiveInventory: Exiting from Script");
+   	return PIPELET_NEXT;
+   }
+
+
+
+	/*
+	*input : File  - root directory
+	*input : FileList  - files to be archieved
+	*input : filePath  - files path
+	*output : Boolean - if true then file is archieved
+	*Description - This method will archieve the file after it is processed.It will create a new folder 'Achive'(if not existing) in the working dir,
+	* and inside that it will create a new folder(if not existing) with its name derived from current date as YYYYMMDD,inside that we will eep this file
+	*/ 
+	
+	function archieveTheseFiles(rootDirectory:dw.io.File,fileList:dw.util.ArrayList,filePath:String):Boolean
+	  {
+	  	   var dirExists:Boolean=false;   
+           var currDate:Date = new Date();
+           //get current date in YYYY-MM-DD format
+           var tim:String= currDate.toISOString();
+           var timDate:String=tim.substr(0,19);   
+           var dirName="Archive_Dir_"+timDate;
+           //get the appropriate directory from inside  'archive' folder , create new if non existing
+            
+           try{
+           		dirExists=createDirectoryIfNotExist(rootDirectory,"Archive" + File.SEPARATOR+dirName);
+           		//if directory is there , go ahead and copy the order xml file to archive
+			   	if(dirExists)
+			   	{
+			   		var dirArch:File=new File(rootDirectory,"Archive" + File.SEPARATOR+dirName);
+			   		for each(var fileName : dw.io.File in fileList){
+			   		   
+			   		    var xmlFile : dw.io.File= new File(new File("/IMPEX"),filePath+File.SEPARATOR+fileName);
+				    	var readFile:dw.io.FileReader= new FileReader(xmlFile);
+		   		    	var content : String = readFile.getString(); 
+				    	var archFile:File=new File(dirArch,xmlFile.getName());
+				    	var writeFile:FileWriter= new FileWriter(archFile);
+				    	writeFile.write(content);
+				    	writeFile.flush();
+				    	writeFile.close();
+			   		}
+			    	return true;//return true if file copied sucessfully
+			   	}
+           }catch(e)
+           {
+           	Logger.error(e);
+           }
+			   
+       return false;
+	  
+      } 
+
+	 
+           
+/*
+*input : File  - root directory
+*input : String  - name of directort to be created
+*output : Boolean - if true then file is archieved
+*/
+      function createDirectoryIfNotExist(rootDirectory:dw.io.File,dirName:String):Boolean
+      {
+          var dirExists:Boolean=false; 	
+          try{  	  
+		      	var arr:Array=dirName.split("/");
+		      	  for(var i=0;i<arr.length;i++)
+		      	  {
+			      	  	if(arr[i]=="")
+			      	  	{
+			      	  	continue;
+			      	  	}
+			      	  	 var dir:File=new File(rootDirectory,arr[i]); 
+			      	  	 if(!(dir.exists()&&dir.isDirectory()))
+			      	  	 {
+			      	  	  dirExists=dir.mkdir();
+			      	  	 } 
+			      	  	 else
+			      	  	 {
+			      	  	 	dirExists=true;
+			      	  	 }
+			      	  	 rootDirectory=dir;
+		      	  }
+          }
+          catch(e){
+          	Logger.error("Exception in method createDirectoryIfNotExist | in ArchiveCatalog.ds"+e);
+          return false;
+          }
+          
+      return dirExists;
+      }    
+

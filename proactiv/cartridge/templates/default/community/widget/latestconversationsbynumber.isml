@@ -1,0 +1,17 @@
+<iscomment>
+	Renders Latest conversations for the default conversation category by number.
+</iscomment>
+
+<isif condition="${'Questions' in pdict && !empty(pdict.Questions)}">
+	<div class="blue-box-top"></div>
+	<isset name="NumConversations" value="${new Number(pdict.CurrentHttpParameterMap.NumConversations.value)}" scope="page" />
+	<div class="blue-box-content">
+	<isloop iterator="${pdict.Questions}" alias="question" end="${NumConversations > 0 ? NumConversations-1 : 0}">
+		<b><isprint value="${question.SubmittedBy}"/>:</b>
+		<p><isprint value="${question.QuestionDetails}"/></p>
+	</isloop>
+	<a href="#" class="golink">Read the Answer</a>
+	</div>
+	<div class="blue-box-btm"></div>
+	<a href="#" class="golink more">View Community Conversations</a>
+</isif>

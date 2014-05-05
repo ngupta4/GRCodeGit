@@ -1,0 +1,28 @@
+          <div class="title">
+            <isprint value="${Resource.msg('account.orderstatus.history','account',null)}"/>
+          </div>
+          <div class="panel-wraper2"> <b>
+            <isprint value="${Resource.msg('account.next.shipment','account',null)}"/>
+            </b>
+            <isif condition="${'kitName' in pdict.CurrentCustomer.profile.custom}">
+              <div class="row">
+                <label>${Resource.msg('account.kitName','account',null)}</label>
+                <isprint value="${pdict.CurrentCustomer.profile.custom.kitName}"  encoding="off"/>
+              </div>
+              <div class="row">
+                <label>${Resource.msg('account.estDate','account',null)}</label>
+	                <isif condition="${'shipdate' in pdict.CurrentCustomer.profile.custom}">
+	                	<isprint value="${pdict.CurrentCustomer.profile.custom.shipdate}" style="DATE_SHORT" timezone="utc"/>
+	                </isif>
+              </div>
+              <div class="btn-wraper"><a href="${URLUtils.https('OrderHistory-History')}" title="View Details" class="blue-btn bl-btn-a">
+              <span class="blc"></span>
+              <span>
+                <isprint value="${Resource.msg('account.view.details','account',null)}"/>
+                </span></a></div>
+             <iselse>
+                 <div class="no_orders">${Resource.msg('orders.noorders','account',null)}</div><!-- END: no_orders -->
+        		 <div class="no_orders">${Resource.msg('orders.noordersmsg','account',null)}</div><!-- END: no_orders -->
+              
+            </isif>
+          </div>

@@ -1,0 +1,198 @@
+/**
+* Demandware Script File
+* To define input and output parameters, create entries of the form:
+*
+* @<paramUsageType> <paramName> : <paramDataType> [<paramComment>]
+*
+* where
+*   <paramUsageType> can be either 'input' or 'output'
+*   <paramName> can be any valid parameter name
+*   <paramDataType> identifies the type of the parameter
+*   <paramComment> is an optional comment
+*
+* For example:
+*
+*   @input currentSessionId :String  //CurrentSession.sessionID
+*   @input ipAddress :String   //CurrentRequest.httpRemoteAddress
+*   @input cartId :String
+*-	@input profileForm : dw.web.Form
+*	@input account : String
+*	@input brandId : String
+*	@input uid : String
+*	@input transactionID : String
+*	@input weeksBetweenShipments : String
+*	@output statusMessage : String
+*   @output ErrorContainer : Array
+*
+*/
+
+importPackage( dw.system );
+importPackage( dw.order );
+importPackage( dw.net );
+importPackage( dw.crypto );
+importPackage( dw.util );
+importPackage( dw.io );
+importPackage( dw.web );
+
+function execute( args : PipelineDictionary ) : Number
+{
+
+
+ 
+    var req =<customerRequest
+				xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+				xsi:noNamespaceSchemaLocation="customerShippingFrequencyRequest_0-1.xsd">
+					<shippingFrequency>
+						<weeksBetweenShipments>16</weeksBetweenShipments>
+					</shippingFrequency>
+				</customerRequest>;
+    
+    	
+   	// Build the XML for the service to consume
+//	var profileForm : Form = args.profileForm;
+	var xmlWriter : StringWriter = new StringWriter();
+	var shippFreqXML: String = xmlWriter.toString();
+			
+	
+	var sessioId=args.currentSessionId;
+	var ipaddress=args.ipAddress;
+	var cartId=args.cartId;
+	createshippFreqReqXML(xmlWriter,sessioId,ipaddress,cartId,args.weeksBetweenShipments);
+	
+	var errorContainer : Array = [];
+	var error = null;
+	
+	// Figure out service URL
+	var serviceURL : String = getServiceURL(args.account, args.brandId, args.uid,args.transactionID);
+	
+   //Shipping Freq---Web service call
+   
+   	 // Call GR Service
+	/*var http : HTTPClient = new HTTPClient();
+    try {
+	    http.setRequestHeader('Content-Type','text/xml');
+	    http.setRequestHeader('Authorization',oauthHeader);
+	    Logger.debug("Shipping URL :"+serviceURL);
+	    http.open('POST', serviceURL);
+	    Logger.info("Shipping Freq XML =" + shippFreqXML);
+	    // Send XML data
+	    http.send(shippFreqXML);
+	}
+	catch (e)
+	{
+		Logger.error(e);
+	}*/
+   
+   
+  //Response parsing
+   var errorcontent: String= <customerResponse>
+						<status>400</status>
+						<requestData>
+							<method>shipping-frequency</method>
+							<account>202265898</account>
+							<brand>PA</brand>
+							<uid>VHgNyZ</uid>
+							<trans>12233445514</trans>
+						</requestData>
+						<errorCount>1</errorCount>
+						<errorData>
+						<error>
+							<code>7000</code>
+							<message>invalid value</message>
+							<field>weeksBetweenShipments</field>
+							<value>aa</value>
+						</error>
+						</errorData>
+						</customerResponse> ;
+
+      var content1: String= <customerResponse>
+								<status>200</status>
+								<requestData>
+									<method>shipping-frequency</method>
+									<account>202265898</account>
+									<brand>PA</brand>
+									<uid>VHgNyZ</uid>
+									<trans>12233445514</trans>
+								</requestData>
+								<responseData>
+								  <statusMessage>OK</statusMessage>
+								</responseData>
+							</customerResponse> ;
+    // Capture response
+	
+	//var response : String = http.text;
+	//var errorResponse : String = http.errorText;
+	var responseXML : XML = null;
+	var errorContainer : Array = [];
+	var error = null;
+	var status:String=null;
+	
+	//Logger.info("Shipping response = "+ response);
+	//Logger.info("Shipping errorResponse = "+ errorResponse);	
+
+	/****
+	* Handle error responses
+	* Empty response (no XML) or non-empty error response
+	****/
+	
+	/*if( !empty(errorResponse) ) {
+		response = errorResponse;
+	}
+	
+	if( !empty(response) ) {*/																		
+     
+      var response : String = content1.toString();
+	  var realStart : Number = response.indexOf('<customerResponse>');
+	  responseXML = new XML(response.substring(realStart));
+		
+      status = responseXML.status;
+		
+		if(status == 200){
+		   var method = responseXML.requestData.method;
+		   var  statMessage= responseXML.responseData.statusMessage;
+	       if(statMessage=="OK") { 
+		       	 Logger.info("Shipping Frequency Updated");
+		       }
+		    else{
+		    	Logger.info("Error Occurred while updating Shippng Freq");
+		    }   
+	   	}else {
+			var errorcode = responseXML.errorData.error.code;
+			var errormsg = responseXML.errorData.error.message+" :"+responseXML.errorData.error.field+" = "+responseXML.errorData.error.value;
+			error = {	"code":errorcode,
+						"message":errormsg						
+					};
+			errorContainer.push(error);
+		}
+		
+	//}
+	//#####################
+	args.statusMessage = status;
+	args.ErrorContainer=errorContainer;
+	return PIPELET_NEXT;
+}
+
+
+
+function getServiceURL(account : String, brand : String, uid : String, trans: String) {
+	//https://grws.grdev.com/customer/shipping-frequency/account/<accountNumber>/brand/<brandId>/uid/<uid>/trans/<transactionID>
+	var baseURL : String = Site.current.getCustomPreferenceValue("middlewareAPIURL");
+	baseURL= baseURL + "/customer/shipping-frequency/account/"+ account +"/brand/"+ brand+"/uid/"+ uid +"/trans/"+trans ;	
+	return baseURL
+}
+
+
+function createshippFreqReqXML (xmlWriter : Writer,  sessionId:String, ipAddress : String,cartId:String,weeksBetweenShipments:String) {
+	// Write XML header to file
+	xmlWriter.write('<customerRequest xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="customerShippingFrequencyRequest_0-1.xsd"> \n');
+	xmlWriter.write('	<clientId>Demandware</clientId>\n');
+	xmlWriter.write('	<sessionData>\n');
+	xmlWriter.write('		<sessionId><![CDATA['+sessionId+']]></sessionId>\n');
+	xmlWriter.write('		<ipAddress><![CDATA['+ipAddress+']]></ipAddress>\n');
+	xmlWriter.write('		<ipAddress><![CDATA['+cartId+']]></ipAddress>\n');
+	xmlWriter.write('	</sessionData>\n');	
+	xmlWriter.write('	<shippingFrequency>\n');
+	xmlWriter.write('		<weeksBetweenShipments><![CDATA['+weeksBetweenShipments+']]></weeksBetweenShipments>\n');
+	xmlWriter.write('	</shippingFrequency>\n');	
+	xmlWriter.write('</customerRequest>\n');
+}

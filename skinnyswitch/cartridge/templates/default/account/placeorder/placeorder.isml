@@ -1,0 +1,109 @@
+<isdecorate template="content/home/pt_storefront">
+	<isinclude template="util/modules"/>
+	<isscript>
+		importPackage(dw.object);
+		importPackage(dw.catalog);
+		
+		var CCC : Object = pdict.CurrentCampaignConfig; 
+	
+		var landingTemplate : String = CCC.landingTemplate;
+		var campaignCode : String = CCC.campaignCode;
+		
+		var showHeader : boolean = CCC.showHeader;
+		var showFooter : boolean = CCC.showFooter;
+		var showNav : boolean = CCC.showNav;
+		var showOrderButton : boolean = CCC.showOrderButton;
+		
+		var containerClasses : String = CCC.getContainerClasses();
+		
+		var category : dw.catalog.Category = CCC.getCampaignCategory();
+		var showsingup : boolean = false;
+		if('showsignup' in dw.system.Site.getCurrent().preferences.custom){
+			showsingup = dw.system.Site.getCurrent().preferences.custom.showsignup;
+		}
+	</isscript>
+	
+	<script type="text/javascript">
+		console.log("${Object.keys(CCC).toString()}");
+		console.log("sasOfferCodes() == ${CCC.sasOfferCodes.toString();}");
+	</script>
+	
+	<div class="place-order">
+		<isslot id="hp-top" context="category" description="Home Page Top" context-object="${category}"/>
+	</div>
+		
+	<isslot id="po-middle-1" context="category" description="PlaceOrder Graphic" context-object="${category}" />
+	<isslot id="po-bottom-1" context="category" description="PlaceOrder Text" context-object="${category}" />
+	
+	<isloop items="${pdict.Basket.getAllProductLineItems()}" var="pli" status="loopStatus">			
+		<div class="product-info">
+			<div class="productimage"><!-- Product Image -->
+				<isif condition="${pli.product.master && pdict.CurrentVariationModel && CurrentVariationModel.variants.size() > 0}">
+					<isset name="imageProduct" value="${CurrentVariationModel.variants[0]}" scope="page"/>
+				<iselse/>
+					<isset name="imageProduct" value="${pli.product}" scope="page"/>
+				</isif>
+				<isif condition="${!empty(imageProduct.getImage('small',0))}">
+					<isset name="imageUrl" value="${imageProduct.getImage('small',0).url}" scope="page"/>
+					<isset name="imageAlt" value="${imageProduct.getImage('small',0).alt}" scope="page"/>
+					<isset name="imageTitle" value="${imageProduct.getImage('small',0).title}" scope="page"/>
+				<iselse/>
+					<isset name="imageUrl" value="${URLUtils.staticURL('/images/noimagesmall.png')}" scope="page"/>
+					<isset name="imageAlt" value="${product.name}" scope="page"/>
+					<isset name="imageTitle" value="${product.name}" scope="page"/>
+				</isif>
+				<img src="${imageUrl}" alt="${imageAlt}" title="${imageTitle}"/>
+			</div>
+			<div class="upselldescription">
+				<isprint value="${pli.product.custom.cartDescription}" encoding="off"/>
+			</div><!-- END: shortDescription -->							
+		</div>
+	</isloop>
+		
+	<div class="credit-card-info ">
+		<form method="post" action="${URLUtils.httpsContinue()}" id="CCForm">
+			<fieldset>
+				<div class="formfield type">
+					<isinputfield id="paymentCCType" formfield="${pdict.CurrentForms.personinf.creditcard.type}" type="select" attribute1="requiredmesage" value1="${Resource.msg('forms.paymentinf.creditcard.type.typemissing','forms',null)}" attribute2="tabindex" value2="1"/>
+				</div>
+				<div class="formfield number">
+					<isinputfield id="paymentCCNumber" formfield="${pdict.CurrentForms.personinf.creditcard.number}" type="input" attribute1="requiredmesage" value1="${Resource.msg('forms.paymentinf.creditcard.number.numbermissing','forms',null)}" attribute2="tabindex" value2="2" />
+				</div>
+				<div class="formfield expirationMonth">
+					<div class="label">Card Expiration Date: </div>
+					<isinputfield id="paymentCCExpirationMonth" formfield="${pdict.CurrentForms.personinf.creditcard.month}" label="true" type="select" attribute1="requiredmesage" value1="${Resource.msg('forms.paymentinf.creditcard.month.monthmissing','forms',null)}" attribute2="tabindex" value2="3"/>			
+					<isinputfield id="paymentCCExpirationYear" formfield="${pdict.CurrentForms.personinf.creditcard.year}" label="false" type="select" attribute1="requiredmesage" value1="${Resource.msg('forms.paymentinf.creditcard.year.yearmissing','forms',null)}" attribute2="tabindex" value2="4"/>
+				</div>
+				<div class="formfield agreetoterms">
+					<span class="terms">${Resource.msg('forms.checkout.agree.text','forms',null)}</span>
+					<isinputfield id="orderreview agree" formfield="${pdict.CurrentForms.orderreview.agree}" type="checkbox" attribute1="requiredmesage" value1="${Resource.msg('forms.checkout.agree.value-error','forms',null)}" attribute2="tabindex" value2="5" />
+				</div>
+				<div class="formfield submit">
+					<button id="btnPlaceOrder" type="button" value="${Resource.msg('global.apply','locale',null)}"></button>		
+				</div>
+			</fieldset>
+		</form>
+	</div>
+	
+	
+	<isinclude template="checkout/components/cartinfo" />
+	<isinclude template="checkout/components/billingandshippinginfo" />
+	<isinclude template="checkout/components/ordertotalinfo" />
+	
+		
+	
+		
+	
+	<script type="text/javascript">
+		jQuery(document).ready(function() {
+			jQuery("#btnPlaceOrder").click(function() {
+				//some validation;
+				jQuery("#CCForm").submit();
+			});
+		});
+	</script>	
+	<script language="javascript" src="https://t4.mgplatform.com/gr/skinnyswitch_sr.js"></script>
+	<isset name="OmniturePage" value="PlaceOrder" scope="pdict">
+	
+</isdecorate>
+		

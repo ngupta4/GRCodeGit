@@ -1,0 +1,199 @@
+<!--- TEMPLATENAME: crosssellrecommendation.isml --->
+<isscript> var upsellProducts : dw.util.ArrayList = new dw.util.ArrayList();
+  var upsellRecommendationsIter : dw.util.Iterator ;
+  upsellRecommendationsIter = coreProd.getOrderableRecommendations(6).iterator();
+  var cookie : dw.web.Cookie = pdict.CurrentRequest.httpCookies['upsellLastID'];
+  var upsellcookie : String='';  
+  if(null!=cookie){
+  upsellcookie = decodeURIComponent(cookie.value);
+  }
+  while( upsellRecommendationsIter.hasNext() )
+  {
+  var recommendation : dw.catalog.Recommendation = upsellRecommendationsIter.next();
+  var recommendedProduct : dw.catalog.Product = recommendation.getRecommendedItem();
+  upsellProducts.add( recommendedProduct );
+  if (upsellcookie!='' && upsellcookie.indexOf("[" + recommendedProduct.ID + "]")  != -1){
+  showRecommendationPopup='false';
+  }
+  } </isscript>
+<isif condition="${!empty(upsellProducts) && upsellProducts != null}">
+<div class="vita" 
+<isif condition="${showVitamin=='false'}"> style="display:none"</isif>
+>
+<isset name="upsellLastID" value="${pdict.CurrentRequest.httpCookies['upsellLastID']}" scope="page" />
+<isset name="upsellForHopUp" value="" scope="page" />
+<isloop items="${upsellProducts}" alias="recommendation" status="loopstate">
+ 	<isset name="product" value="${recommendation}" scope="page"/>
+	<isset name="selectedVitProductId" value="${product.ID}" scope="page" />
+	<isif condition="${pdict.CurrentForms.personinf.creditcard.type.htmlValue == 'PayLater'}">
+		<isset name="recommendationType" value="${12}" scope="page" />	
+		<isset name="aProduct" value="${ProductMgr.getProduct(selectedVitProductId)}" scope="page" />
+		<isset name="recommendIter" value="${aProduct.getRecommendations(recommendationType)}" scope="page" />	
+		<isset name="recommendedVitProduct" value="" scope="page" />
+		<isloop items="${recommendIter}" alias="recommendL" status="loopstate">		
+			<isset name="recommendedVitProduct" value="${recommendL.getRecommendedItem()}" scope="page" />
+		</isloop>
+		<isset name="selectedVitProductId" value="${recommendedVitProduct.ID}" scope="page" />
+	</isif>
+	
+	<iscomment>Log File Fix (Null check for details field of recommendation)</iscomment>
+	<isset name="recomDetailsHtmlName" value="" scope="page"/>
+	<isif condition=" ${'details' in recommendation && recommendation.details.htmlName != null}"> 
+	    <isset name="recomDetailsHtmlName" value="${recommendation.details.htmlName}" scope="page"/>
+	</isif>
+	
+  <input type="hidden" name="crossSellID" class="crossSellID" value="${selectedVitProductId}" />
+  <input type="hidden" name="crossSellPLSwap" class="crossSellPLSwap" value="${product.ID}" />
+  <isif condition="${empty(upsellLastID) || (!empty(upsellLastID) && empty(upsellForHopUp))}">
+    <isset name="upsellForHopUp" value="${product}" scope="page" />
+  </isif>
+  
+  <iscomment>Log File Fix (Null check for title field of upsellForHopUp)</iscomment>
+	<isset name="upsellForHopUpTitle" value="" scope="page"/>
+	<isif condition=" ${'title' in upsellForHopUp  &&  upsellForHopUp.title != null}"> 
+	    <isset name="upsellForHopUpTitle" value="${upsellForHopUp.title}" scope="page"/>
+	</isif>
+  
+  
+  <isobject object="${product}" view="detail">
+    <div class="relatedProduct vitaminProduct" id="upsell-${product.ID}">
+      <div class="productimage"><!-- Product Image -->
+        <isif condition="${product.master && pdict.CurrentVariationModel && CurrentVariationModel.variants.size() > 0}">
+          <isset name="imageProduct" value="${CurrentVariationModel.variants[0]}" scope="page"/>
+          <iselse/>
+          <isset name="imageProduct" value="${product}" scope="page"/>
+        </isif>
+        <isif condition="${!empty(imageProduct.getImage('alternateSelect',0))}">
+          <isset name="imageUrl" value="${imageProduct.getImage('alternateSelect',0).url}" scope="page"/>
+          <isset name="imageAlt" value="${imageProduct.getImage('alternateSelect',0).alt}" scope="page"/>
+          <isset name="imageTitle" value="${imageProduct.getImage('alternateSelect',0).title}" scope="page"/>
+          <iselse/>
+          <isset name="imageUrl" value="${URLUtils.staticURL('/images/noimagesmall.png')}" scope="page"/>
+          <isset name="imageAlt" value="${product.name}" scope="page"/>
+          <isset name="imageTitle" value="${product.name}" scope="page"/>
+        </isif>
+        <img src="${imageUrl}" alt="${imageAlt}" title="${imageTitle}"/> </div>
+      <div class="upsellcontent">
+        <isprint value="${product.custom.interstitialOfferTitle}" encoding="off" />
+        <div class="moreInfo">
+          <isprint value="${Resource.msg('cart.refresh.customers.only.info','locale',null)}" encoding="off" />
+          <a class="details_link" href="javascript:void(0);" class="${recomDetailsHtmlName}" title="${Resource.msg('cart.refresh.global.more.info','locale',null)}">${Resource.msg('cart.refresh.global.more.info','locale',null)}</a></div>
+        <div class="upsell_details_content upsell_details_inactive">
+          <isprint value="${upsellForHopUp.custom.upgradeOfferCallout}" encoding="off" />
+        </div>       
+        <button class="details" type="submit" name="${recomDetailsHtmlName}" style="display: none;"></button>
+        <div class="upselldescription" style="display: none;" >
+          <isset name="imageAlt" value="${product.name}" scope="page"/>
+          <isset name="imageTitle" value="${product.name}" scope="page"/>
+          <isif condition = "${'catalogShortDescription' in product.custom}">
+            <isprint value="${product.custom.catalogShortDescription}" encoding="off"/>
+          </isif>
+        </div>
+        <!-- END: shortDescription -->
+        
+        <div class="addtocart_btn"> <a class="addtocartbtn addbutton" href="javascript:void(0);"><span>${Resource.msg('cart.upsell.addtocartplus', 'rendering', null)}</span></a> </div>
+      </div>
+    </div>
+    <script type="text/javascript">
+		<!--
+			jQuery('${"#"}upsell-${product.ID}' + ' .addtocartbtn').click(function(){
+				var campaignCode = '${pdict.CurrentCampaignConfig['campaignCode']}';
+				s.linkTrackVars='prop56,eVar56';
+				s.prop56=campaignCode+":AddVitamin";
+			    s.eVar56=s.prop56;
+			    s.tl(this,'o',"add vitamin");
+		           appendUpsellProductToCookie('${product.ID}');
+		       });			   
+		-->
+	</script> 
+  </isobject>
+</isloop>
+<isif condition="${typeof upsellForHopUp != 'undefined' && !empty(upsellForHopUp)}">
+  <div id="popupOverlay"></div>
+  <div class="hopup" id="upsellForHopUp">
+    <div class="hopupheader"></div>
+    <div class="hopupbody">
+      <div class="hopupbodyinner">
+        <div class="hopupclosebtn"> <a href="#close" class="closebtn" title="${Resource.msg('cart.upsell.close', 'rendering', null)}"><span>${Resource.msg('cart.upsell.close', 'rendering', null)}</span></a> </div>
+        <div class="hopuptitle">
+          <div class="hopuoptitleinner">
+            <isprint value="${upsellForHopUp.custom.interstitialOfferTitle}" encoding="off" />
+          </div>
+        </div>
+        <div class="hopupimage">
+          <isset name="hopUpImage" value="${upsellForHopUp.getImage('large', 0)}" scope="page" />
+          <isif condition="${!empty(hopUpImage)}"> <img alt="${hopUpImage.alt}" src="${hopUpImage.url}" title="${hopUpImage.title}" />
+            <iselse>
+            <img alt="${upsellForHopUpTitle}" src="${URLUtils.staticURL('images/noimagelarge.png')}" title="${upsellForHopUpTitle}" /> </isif>
+        </div>
+        <div class="hopupdetails">
+          <isprint value="${upsellForHopUp.custom.interstitialOfferDescription}" encoding="off" />
+        </div>
+        <div class="hopupcontrols"> <a href="#no-thanks" class="nothanksbtn" title="${Resource.msg('cart.upsell.acquisition.nothanks', 'rendering', null)}"><span>${Resource.msg('cart.upsell.acquisition.nothanks', 'rendering', null)}</span></a>
+          <button type="submit" class="addtocartbtn addbutton" title="${Resource.msg('cart.upsell.addtoorder', 'rendering', null)}" value="upsell-${upsellForHopUp.ID}"><span>${Resource.msg('cart.upsell.addtoorder', 'rendering', null)}</span></button>
+        </div>
+      </div>
+    </div>
+    <div class="hopupfooter"></div>
+  </div>
+</isif>
+<isif condition="${typeof upsellForHopUp != 'undefined'}">
+  <iscomment>If we don't have any upsells to show then we don't need a script for them</iscomment>
+  <script type="text/javascript">
+	<!--
+	jQuery(document).ready(function () {
+		
+		var hopUpID = '${"#"}upsellForHopUp';
+        var hopUpItemID = '${"#"}upsell-${upsellForHopUp.ID}';
+        var upsellSectionID = '${"#"}upsellSection';
+        var overlayID = '${"#"}popupOverlay';
+ 
+        if (!jQuery('.related_product:visible', upsellSectionID).size()) {
+               jQuery(upsellSectionID).hide();
+        }
+
+        /* Click on those must close the upsell hop-up */
+        jQuery(hopUpID).find('.closebtn, .nothanksbtn, .addtocartbtn').add(overlayID).click(function() {
+            // Hide the hop-up
+            jQuery(hopUpID).add(overlayID).fadeOut('slow');
+            // Show the upsell block in the left panel
+            jQuery(hopUpItemID).add(upsellSectionID).fadeIn('slow');
+
+            // If "No thanks" link was clicked then we need to set cookie
+            // which will indicate that we don't need to show this upsell next time
+   			appendUpsellProductToCookie('${upsellForHopUp.ID}');
+            return false;
+        });
+        
+        jQuery(hopUpID).find('.addtocartbtn').click(function() {
+            setCookie('upsellLastID', '${upsellForHopUp.ID}');            
+            // Add upsell to the shopping cart
+            jQuery(hopUpItemID + ' .addtocartbtn').click();
+
+            return false;
+        });
+		
+		/* Details link click handler */
+		<isif condition="${showRecommendationPopup != 'false'}">
+		   jQuery(hopUpItemID).hide();
+		   
+			// Display upsell hop-up 2 seconds after page loads
+			setTimeout(function() {
+				var hopUp = jQuery(hopUpID);
+				var posLeft = jQuery(document).width() / 2 - hopUp.width();
+				
+				//hopUp.css({'left' : posLeft});
+				hopUp.css({'left' : '230px'}); // IE is not calculating consistent widths
+	
+				jQuery(overlayID).css({opacity : 0}).show().animate({opacity : .5}, 'slow')
+				hopUp.add(overlayID).fadeIn('slow');
+			}, 4000);
+		<iselse>
+			appendUpsellProductToCookie('${upsellForHopUp.ID}');
+		</isif>
+	});
+	//-->
+	</script> 
+</isif>
+</div>
+</isif>

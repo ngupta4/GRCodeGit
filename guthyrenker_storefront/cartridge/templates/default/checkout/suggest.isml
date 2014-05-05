@@ -1,0 +1,160 @@
+<isdecorate template="content/checkout/pt_checkout">
+<iscomment>
+	This template is created before the 'wrapper' template, so we can set
+	up the template configuration for the 'pt_checkout' template right here.
+</iscomment>
+<isscript>
+	importPackage(dw.object);
+	importPackage(dw.catalog);
+	
+	var CCC : Object = pdict.CurrentCampaignConfig;
+	var campaignCode : String = CCC.campaignCode;
+	
+	var showHeader : boolean = CCC.showHeader;
+	var showFooter : boolean = CCC.showFooter;
+	var showNav : boolean = CCC.showNav;
+	var showOrderButton : boolean = CCC.showOrderButton;
+	
+	var category : dw.catalog.Category = CCC.getCampaignCategory();
+</isscript>
+
+<isinclude template="util/modules"/>
+<isinclude template="util/reporting/ReportBasket.isml"/>
+	<isif condition=${pdict.multiCheckout}>
+		<ischeckoutbreadcrumbs type="multi" step="2" />
+	<iselse>
+		<ischeckoutbreadcrumbs type="simple" step="2" />
+	</isif>
+		
+	<div class="content_box_outer_pdp">
+		<div class="content_box_inner_sp">
+		
+			<p class="suggest_text">${Resource.msg('suggest.text','rendering',null)}</p>
+			
+			<form action="${URLUtils.continueURL()}" method="post" id="${pdict.CurrentForms.advertise.htmlName}">
+				<div class="upsell_box">
+					<isloop items="${pdict.CurrentForms.advertise.suggest}" alias="suggest" status="loopstate">
+						<isset name="product" value="${suggest.object}" scope="page"/>
+						<isobject object="${product}" view="detail">
+							<div class="upsell_header">
+								<isif condition="${!empty(product.custom.interstitialOfferTitle)}">
+									<isprint value="${product.custom.interstitialOfferTitle}" encoding="off"/>
+								<iselse/>								
+									<div class="upsell_name">
+										<h2><isprint value="${product.name}"/></h2> 
+									</div><!-- END: upsell_name -->
+									<div class="upsell_shortDescription">									
+										<isprint value="${product.shortDescription}" encoding="off"/>
+									</div><!-- END: upsell_shortDescription -->								
+								</isif>
+							</div><!-- END: upsell_header -->
+							
+							<div class="upsell_content">
+								<div class="upsell_productimage"><!-- Product Image -->
+									<isif condition="${product.master && pdict.CurrentVariationModel && CurrentVariationModel.variants.size() > 0}">
+										<isset name="imageProduct" value="${CurrentVariationModel.variants[0]}" scope="page"/>
+									<iselse/>
+										<isset name="imageProduct" value="${product}" scope="page"/>
+									</isif>
+								
+									<isif condition="${!empty(imageProduct.getImage('large',0))}">
+										<isset name="imageUrl" value="${imageProduct.getImage('large',0).url}" scope="page"/>
+										<isset name="imageAlt" value="${imageProduct.getImage('large',0).alt}" scope="page"/>
+										<isset name="imageTitle" value="${imageProduct.getImage('large',0).title}" scope="page"/>
+									<iselse/>
+										<isset name="imageUrl" value="${URLUtils.staticURL('/images/noimagelarge.png')}" scope="page"/>
+										<isset name="imageAlt" value="${Product.name}" scope="page"/>
+										<isset name="imageTitle" value="${Product.name}" scope="page"/>
+									</isif>
+									<img src="${imageUrl}" alt="${imageAlt}" title="${imageTitle}"/>
+								</div><!-- END: upsell_productimage -->
+							
+								<div class="upsell_longDescription">		
+									<isprint value="${product.longDescription}" encoding="off"/>
+								</div><!-- END: upsell_shortDescription -->								
+								
+								<div class="upsell_bottom">
+								
+									<div class="upsell_promo">
+										<iscomment>Render information on active product promotions</iscomment>
+										<isset name="promos" value="${dw.campaign.PromotionMgr.activeCustomerPromotions.getProductPromotions(product)}" scope="page"/>
+										<isif condition="${!empty(promos)}">
+											<isloop items="${promos}" alias="promo">
+												<div class="promotionalMessage">
+													<isprint value="${promo.calloutMsg}" encoding="off"/>
+												</div>
+											</isloop>
+										</isif>
+									</div><!-- END: upsell_promo -->
+									
+									<div class="agree">
+										<isif condition=${!pdict.multiCheckout}>
+											<isinputfield formfield="${pdict.CurrentForms.advertise.agree}" type="checkbox" attribute1="requiredmesage" value1="${Resource.msg('forms.checkout.agree.value-error','forms',null)}">																					
+										</isif>
+										<div class="upgrade_order_btn">										
+											<button type="submit" value="${Resource.msg('global.add','locale',null)}" name="${suggest.addtobasket.htmlName}" ></button>
+										</div>
+									</div>
+								
+								</div><!-- END: upsell_bottom -->
+								
+								<a class="no_thanks" id="nothanks" href="${URLUtils.httpsContinue()}" name="${suggest.nothanks.htmlName}">${Resource.msg('nothanks.label','rendering',null)}</a>
+								<button class="nothanks" type="submit" value="${Resource.msg('global.remove','locale',null)}" name="${suggest.nothanks.htmlName}" style="display: none;"></button>								
+							</div><!-- END: upsell_content -->
+							
+						</isobject>
+						<isbreak>
+					</isloop>
+				</div><!-- END: upsell_box -->
+				<button id="createorder" type="submit" name="${pdict.CurrentForms.advertise.createorder.htmlName}" style="display: none;"></button>
+			</form>
+			
+		</div>
+	</div>
+	
+	<isset name="OmniturePage" value="CheckoutInterstitial" scope="pdict">
+	
+</isdecorate>
+<script type="text/javascript">
+jQuery(document).ready(function () {
+	jQuery("#nothanks").bind("click", function(event){
+		event.preventDefault();
+		jQuery("button.nothanks").click();
+		return false;
+	});
+		
+});
+
+</script>
+<isif condition="${!multiCheckout}"> 
+<script type="text/javascript">
+	jQuery(document).ready(function () {
+		var inFormOrLink = false;
+		var isTimeOutCretion = false;
+		$('a').live('click', function() { inFormOrLink = true; });
+		$('form').bind('submit', function() { inFormOrLink = true; });
+		
+		jQuery(window).bind("beforeunload", function() {
+			if(isTimeOutCretion){
+				return true;
+			}
+			var state =  inFormOrLink ;
+			//confirm use for testing(will be removed)
+			//if(!state && confirm("Do you really want to create order?")){
+			if(!state){
+				jQuery("button[name='${pdict.CurrentForms.advertise.createorder.htmlName}']").click();	
+				//creatOrderByAjax();
+			}
+		    return state; 
+		})
+		
+		setTimeout(
+			function(){
+				isTimeOutCretion = true;
+				jQuery("button[name='${pdict.CurrentForms.advertise.createorder.htmlName}']").click();
+			},
+		300000);
+			
+	});
+</script>
+</isif>

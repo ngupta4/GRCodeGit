@@ -1,0 +1,87 @@
+/**
+*   @input hashKey : String
+*   @input sessionId :String  //CurrentSession.sessionID
+*   @input ipAddress :String   //CurrentRequest.httpRemoteAddress
+*  	@input Request : dw.system.Request
+*   @input details : String     	
+*	@output responseXMLObject:XML
+*	@output email:String
+*	@output mwId:String
+*	@output status:String
+*/
+importPackage( dw.customer );
+importPackage( dw.system );
+importPackage( dw.util );
+importPackage( dw.web );
+importPackage( dw.io );
+importPackage( dw.net );
+
+importScript('int_gutheyrenker:grmiddleware/libGRMiddleware.ds');
+importScript('int_gutheyrenker:common/libUtils.ds');
+
+function execute( args : PipelineDictionary ) : Number
+{
+  	//	Create the Request URL
+  	var request:Request = args.Request;
+    var uid:String = getCustomerUID(request);
+  	var transactionID = getTransactionID();
+	var RequestURL : String=getServiceURL(args.hashKey,uid,transactionID,args.details);
+	
+	// Call GR Service
+	var http : HTTPClient = new HTTPClient();
+	http.setRequestHeader('Content-Type','text/xml');
+    http = callMWAPI(http, "GET", RequestURL);
+    
+    //Code to Parse Response XML
+	//Parse Reaponse
+	var response : String = http.text;
+	if(response!=null){
+		response=dw.util.StringUtils.trim(http.text);
+	}
+	
+	var errorResponse : String = http.errorText;
+	if(errorResponse!=null){
+		errorResponse=dw.util.StringUtils.trim(http.errorText);
+	}
+	var responseXML : XML = null;
+	
+	if( !empty(errorResponse) ) {
+		response = errorResponse;
+	}
+	responseXML = new XML(response);
+	
+	if( !empty(responseXML) ) 
+	{
+		var status = responseXML.status.toString();
+		args.status = status;
+		if(status == '200'){
+			// success 
+		}else {
+			getErrorResponse(responseXML);
+			return PIPELET_ERROR;
+		}
+	}else {
+			getErrorResponse(responseXML);
+			return PIPELET_ERROR;
+	}
+	
+	args.responseXMLObject = responseXML;
+	args.email = responseXML.responseData.customer.profile.email.toString();
+	args.mwId = responseXML.responseData.customer.profile.mwid.toString();
+	return PIPELET_NEXT;
+	
+}
+
+
+//getServiceURL(args.hashKey,uid,transactionID,args.details);
+function getServiceURL(hashKey : String, uid : String, trans: String, details: String) {
+
+//https://grws.grdev.com/customer/auto-login/hash/<hash>/details/<details>/brand/<brandId>/uid/<uid>/trans/<transactionID>
+
+        var baseURL : String = Site.current.getCustomPreferenceValue("middlewareAPIURL");
+		var brandID = Site.current.getCustomPreferenceValue("GRMProductLine");
+        baseURL= baseURL + "/customer/auto-login/hash/"+ hashKey +"/details/" + details + "/brand/"+brandID+"/uid/"+ uid +"/trans/"+trans;        
+
+        return baseURL;
+
+}

@@ -1,0 +1,81 @@
+<isscript>
+importPackage(dw.util);
+importScript("guthyrenker_core:common/libUtils.ds")
+
+	function getContentAssetMap(rootFolderId:String):HashMap{
+		var retentionRootFolder:Folder=dw.content.ContentMgr.getFolder(rootFolderId);
+		var contentMap:HashMap = getFolderContent(retentionRootFolder,new HashMap());
+	  	return contentMap;
+	}
+	var isLoggedIn : boolean = isLoggedIn();
+</isscript>
+<isscript>
+	var folder : dw.content.Folder = pdict.Content.folders.iterator().next();
+	while(folder.parent.ID!='retention-primary-navigation'){
+		folder= folder.parent;
+	}
+</isscript>
+<script type="text/javascript">
+<!--
+var folderId = '${folder.ID}'
+jQuery('#'+folderId).addClass('active');
+//-->
+</script>
+<!--start tertiary nav-->
+<isset name="ContentMap" value="${getContentAssetMap('retention-primary-navigation')}" scope="page"/>
+<isif condition="${!empty(RootFolder.getOnlineSubFolders())}">
+<div id="secondarynavtap" class="secondarynavtap"> 
+<ul >
+<isset name="OnlineSubFolders" value="${getPrimaryNavigation(isLoggedIn,'retention-primary-navigation')}" scope="page" />
+<isset name="ContentMap" value="${getContentAssetMap('retention-primary-navigation')}" scope="page"/>
+<isset name="SecFolders" value="${RootFolder.getOnlineSubFolders()}"  scope="page"/>
+		<isloop items="${SecFolders}" var="aFolder2" status="navstat2">
+	  	 
+	  <isif condition="${ContentMap.get(aFolder2.ID)!=null}">
+	  	<isset name="FolderLinkURL2" value="${URLUtils.http('Page-Show','cid',ContentMap.get(aFolder2.ID))}" scope="page" />
+	  <iselse>
+	  	<isset name="FolderLinkURL2" value="${URLUtils.http('Page-Show','cid',aFolder2.ID)}" scope="page" />
+	  </isif>
+  		<isif condition="${'linkHref' in aFolder2.custom && !empty(aFolder2.custom.linkHref)}">					  	  		
+			<isset name="FolderLinkURL2" value="${aFolder2.custom.linkHref}" scope="page" />	  		
+		</isif>
+		<isif condition="${'linkPipeline' in aFolder2.custom && !empty(aFolder2.custom.linkPipeline)}">
+		<isset name="FolderLinkURL2" value="${URLUtils.http(aFolder2.custom.linkPipeline)}" scope="page" />	  		
+	 	 </isif>
+	  <isif condition="${(aFolder2.ID!='retention-fromTheCommunity') || (aFolder2.ID=='retention-fromTheCommunity' && pdict.CurrentCustomer.authenticated)}">
+	  
+	
+		    <li  <isif condition="${pdict.Content.ID == aFolder2.ID}">class="active" </isif>> <a id="${aFolder2.ID}" href='<isprint value="${FolderLinkURL2}" encoding="off" />'><span><isprint value="${aFolder2.displayName}" encoding="off" /></span></a>
+		     
+		     <isset name="TertiaryNav" value="${aFolder2.ID}" scope="page" />
+		     <isset name="TertiaryFolders" value="${getPrimaryNavigation(isLoggedIn,TertiaryNav)}" scope="page" />
+		    
+		     <ul>
+		     	<isloop items="${TertiaryFolders}" var="aFolder3" status="navstat3">
+		     		<isif condition="${'htmlID' in aFolder3.custom && (aFolder3.custom.htmlID == 'ShowOnlyInSiteMap')}">
+		     			<iscontinue/>
+		     		</isif>
+		       		<li  <isif condition="${pdict.Content.ID == aFolder3.ID}">class="active" </isif>>
+		       		  <isif condition="${ContentMap.get(aFolder3.ID)!=null}">
+					  	<isset name="FolderLinkURL3" value="${URLUtils.http('Page-Show','cid',ContentMap.get(aFolder3.ID))}" scope="page" />
+					  <iselse>
+					  	<isset name="FolderLinkURL3" value="${URLUtils.http('Page-Show','cid',aFolder3.ID)}" scope="page" />
+					  </isif>
+					  <isif condition="${'linkHref' in aFolder3.custom && !empty(aFolder3.custom.linkHref)}">					  	  		
+						<isset name="FolderLinkURL3" value="${aFolder3.custom.linkHref}" scope="page" />	  		
+					  </isif>
+					  <isif condition="${'linkPipeline' in aFolder3.custom && !empty(aFolder3.custom.linkPipeline)}">
+						<isset name="FolderLinkURL3" value="${URLUtils.http(aFolder3.custom.linkPipeline)}" scope="page" />	  		
+	 					</isif>
+		       		<a id="${aFolder3.ID}"  href='<isprint value="${FolderLinkURL3}" encoding="off" />'>${aFolder3.displayName}</a>
+		       		</li>
+		       </isloop>
+		     </ul>
+		    
+	   </li>
+	</isif>
+	
+</isloop>
+</ul>
+</div>
+</isif>

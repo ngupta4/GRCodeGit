@@ -1,0 +1,15 @@
+<isset name="bvoffercodes" value="${dw.web.Resource.msg('bv.offer.codes','configuration',null)}" scope="page" />
+<isscript>
+var offersList: dw.util.ArrayList = new dw.util.ArrayList();
+offersList = bvoffercodes.split(",");
+ </isscript>
+<isloop items="${offersList}" var="offerID" status="loopstate" >
+	
+		<isset name="Product" value="${dw.catalog.ProductMgr.getProduct(offerID)}" scope="page"/>
+
+		<div class="${'BVInlineRating'+loopstate.count}" id="${'BVInlineRating'+loopstate.count}" style="display: none;">	
+		<isinclude template="bv/display/rr/catinlineratings"/>Rating: <isprint value="${bvAvgRating+'/'+bvRatingRange}" />
+		</div>
+		
+	
+ </isloop>

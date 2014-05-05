@@ -1,0 +1,100 @@
+/**
+* Demandware Script File
+* Verify the Credit Card data, returns to form or continue
+*
+* @input map : dw.web.HttpParameterMap
+* @output status : dw.system.Status
+* @output tmp : Object
+*
+*/
+importPackage( dw.system );
+importPackage(dw.web);
+importPackage(dw.util);
+
+function execute( pdict : PipelineDictionary ) : Number
+{
+
+	var map : HttpParameterMap = pdict.map;
+	var status : Status = new Status();
+	
+	try{
+		 
+		var cc_type : String = map.cc_type.value;
+		var cc_owner : String;
+		var card_number : String;
+		var card_month : String;
+		var card_year : String;
+		var card_cvn : String;
+		
+		//manage the credit card type
+		if(empty(map.cc_type.value)) status.addItem(new StatusItem(0,Resource.msg('creditcard.wrongtype','locale',null)));
+		
+		//manage the credit card owner
+		if(empty(map.cc_owner.value)){
+			status.addItem(new StatusItem(0,Resource.msg('forms.creditcard.owner.missing-error','forms',null)));
+		} else {
+			cc_owner = map.cc_owner.value;
+		}
+		
+		//manage the credit card number
+		if(empty(map.cc_number.value)){
+			status.addItem(new StatusItem(0,Resource.msg('forms.creditcard.number.missing-error','forms',null)));
+		} else {
+			card_number = map.cc_number.value;
+			
+			//remove all whitespaces from the number
+			card_number = card_number.split(' ').join('');
+							
+			var re = /\d+/.test(card_number);
+			var card_length = card_number.length;
+		
+			//must be between 13 and 16 characters long
+			if((card_length < 11) || (card_length > 16)){
+				status.addItem(new StatusItem(0,Resource.msg('forms.creditcard.number.range-error','forms',null)));
+				status.addItem(new StatusItem(0,Resource.msg('forms.creditcard.number.description','forms',null)));
+			}	
+		}
+		
+
+		if(empty(map.cc_cvn.value)){
+			status.addItem(new StatusItem(0,"The cvn number cannot be empty."));
+		} else {
+			card_cvn = map.cc_cvn.value;
+		}
+		
+		//manage the dates
+		if(empty(map.cc_month.value) || empty(map.cc_year.value)){
+			status.addItem(new StatusItem(0,"The expiration date cannot be empty."));
+		} else {
+			
+			card_month = map.cc_month.value;
+			card_year = map.cc_year.value;
+			
+			//turn month and year into a date and check the expiration
+			var i_month : Number = Number(card_month);
+			var i_year : Number = Number(card_year);
+			
+			var calNow = new Calendar(new Date());
+			var calCardDate = new Calendar(new Date(i_year,(i_month - 1)));
+			
+			if(calCardDate.before(calNow)){
+				status.addItem(new StatusItem(0,"This card is expired."));
+			}			
+		}
+		
+	} catch(e){
+		status.addItem(new StatusItem(10,e));
+	}
+	
+	pdict.tmp = map;
+	
+	//if the number of entries in the Status object is greater than one, go back to the form
+	if(status.getItems().size() > 0){
+		pdict.status = status;
+		return PIPELET_ERROR;
+	} else {
+		return PIPELET_NEXT;
+	}
+
+    return PIPELET_NEXT;
+}

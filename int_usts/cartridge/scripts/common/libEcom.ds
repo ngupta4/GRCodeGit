@@ -1,0 +1,48 @@
+importPackage( dw.system );
+importPackage( dw.crypto );
+importPackage( dw.util );
+importPackage( dw.net );
+importPackage( dw.web);
+
+/** 
+ * Returns an auth code to put in the headers
+ * @param date : Date System date to put in header and auth code hash
+  * @param url : String URL to get the path out of
+ */
+function createAuth(date:Date,url:String):String{
+	//Post method
+	var method:String = "POST";
+	
+	//API Username pull from site pref
+	var user:String = Site.getCurrent().getCustomPreferenceValue("ecom_api_user");
+	
+	//API Key for the ecom system (pull from site pref)
+	var apikey:String = Site.getCurrent().getCustomPreferenceValue("ecom_api_key");
+	
+	//Relative path of url we are calling (pull url from site pref or passed url)
+	var path:String = "/sales"; //TODO use - url.substr(url.lastIndexOf("/"));
+	
+	//Date formatted as such Mon, 11 Jun 2012 23:05:00 GMT
+	var dateStr:String = date.toUTCString();//string or bytes
+	
+	//API specified data format
+	var data:String = user + "\n" + method + "\n" + path + "\n" +dateStr;  // date;
+	//Logger.info ("EcomAPI data: " + data);
+	
+	var apikeyBytes:Bytes = new Bytes(apikey,'ascii');
+	var dataBytes:Bytes = new Bytes(data,'ascii');
+	
+	//API specified signature
+	var signature:String = Encoding.toHex(new Mac(Mac.HMAC_SHA_256).digest(data,apikey));
+	//Logger.info ("EcomAPI signature: " + signature);
+	//Encoding.toHex();
+	//Encoding.toBase64();
+	//Regular expression to replace newlines
+	var regex:RegExp = new RegExp("\n","g");
+	
+	//API specified credentials
+	var credentials:String = Encoding.toBase64(new Bytes(user+":"+signature)).replace(regex,"");
+	
+	//API auth to be included in the headers, CDEF is hard coded string that is expect to be there
+	return "CDEF " + credentials;
+}

@@ -1,0 +1,99 @@
+<!--- TEMPLATENAME: confirmation.isml --->
+<iscache type="relative" minute="30" varyby="price_promotion"/>
+<isinclude template="util/modules" />
+<iscomment>
+	This template is created before the 'wrapper' template, so we can set
+	up the template configuration for the 'pt_storefront' template right here.
+</iscomment>
+
+<isdecorate template="content/checkout/pt_checkout">
+
+<iscookie name="campaign" path="/" value="${}" domain="${request.httpHost}" maxAge="0" />
+<iscookie name="uci" path="/" value="${}" domain="${request.httpHost}" maxAge="0" />
+<iscookie name="secondaryuci" path="/" value="${}" domain="${request.httpHost}" maxAge="0" />
+
+	<isinclude template="util/modules"/>
+	<isinclude template="util/reporting/ReportOrder.isml"/>
+	<isscript>
+		importPackage(dw.object);
+		importPackage(dw.catalog);
+		
+		var CCC : Object = pdict.CurrentCampaignConfig;
+		var campaignCode : String = CCC.campaignCode;
+		
+		var showHeader : boolean = CCC.showHeader;
+		var showFooter : boolean = CCC.showFooter;
+		var showNav : boolean = CCC.showNav;
+		var showOrderButton : boolean = CCC.showOrderButton;
+		
+		var category : dw.catalog.Category = CCC.getCampaignCategory();
+	</isscript>
+
+<iscomment>
+	This template visualizes the order confirmation page. Note, that it
+	uses a different decorator template.
+	It displays the order related information, such as the order number,
+	creation date, payment information, order totals and shipments of
+	the order.
+</iscomment>
+
+	
+	<ischeckoutbreadcrumbs />
+	
+	<div class="checkout_box">
+		<h4>${Resource.msg('order.thankyou','rendering',null)}</h4>
+		<div class="confirmation-page">
+			<span class="transaction upper">${Resource.msgf('order.transactionnumber','rendering',null, pdict.OrderNo)}</span>
+			<span class="arrivaltime upper">${Resource.msg('order.arrivaltime','rendering',null)}</span>
+			<span class="orderhasbeenprocessed upper">${Resource.msg('order.whenorderhasprocessed','rendering',null)}</span>
+			
+			<isinclude template="checkout/components/cartinfo" />
+			<isinclude template="checkout/components/billingandshippinginfo" />
+			
+			<div class="linespace"></div>
+			<div class="service upper">${Resource.msg('order.speakwithcsrep','rendering',null)}</div>
+	
+		</div>
+	</div>
+
+	<isset name="OmniturePage" value="COConfirmation" scope="pdict">
+	<script id="script320" src="https://t4.mgplatform.com/gr/confirm-paulm.js?orderid=${pdict.OrderNo}"></script>
+	<script>document.write('<s'+'cript language="JavaScript" src="https://view.atdmt.com/jaction/grkpmk_McKennaConversion_7/v3/ato.${pdict.OrderNo}/[atm1.${pdict.Order.getAdjustedMerchandizeTotalPrice(true).value + pdict.Order.giftCertificateTotalPrice.value}/atc1.${pdict.Order.getAllProductLineItems()[0].product.brand}/atc2.${pdict.Order.getAllProductLineItems()[0].productID}/atc3.${pdict.Order.custom.uciCode}]"></s'+'cript>')</script><noscript><iframe src="https://view.atdmt.com/iaction/grkpmk_McKennaConversion_7/v3/ato.${pdict.OrderNo}/[atm1.${pdict.Order.getAdjustedMerchandizeTotalPrice(true).value + pdict.Order.giftCertificateTotalPrice.value}/atc1.${pdict.Order.getAllProductLineItems()[0].product.brand}/atc2.${pdict.Order.getAllProductLineItems()[0].productID}/atc3.${pdict.Order.custom.uciCode}]" width="1" height="1" frameborder="0" scrolling="No" marginheight="0" marginwidth="0" topmargin="0" leftmargin="0"></iframe></noscript>
+</isdecorate>
+
+
+	<isscript>
+	  var orderId = pdict.Order.orderNo;
+	  var brand   = 'mckenna';
+	
+	  var qty1  = qty2  = 0;
+	  var kit1  = kit2  = '';
+	  var prod1 = prod2 = '';
+	  var rev1  = rev2  = 0;
+	
+	  var iter = pdict.Order.getAllProductLineItems().iterator();
+	  var loopc = 0;
+	
+	  while (iter.hasNext()) {
+	    var pli = iter.next();
+	
+	      if (loopc == 0) {
+	        qty1  = pli.quantityValue;
+	        kit1  = pli.product.ID;
+	        prod1 = pli.product.name;
+	      } else {
+	        qty2  = pli.quantityValue;
+	        kit2  = pli.product.ID;
+	        prod2 = pli.product.name;
+	      }
+	
+	      brand = pli.product.brand;
+	      loopc = loopc + 1;
+	  }
+	  var revenue = 0;
+	  revenue = pdict.Order.getAdjustedMerchandizeTotalPrice(true).value + pdict.Order.giftCertificateTotalPrice.value;
+	  rev1 = revenue;
+	  
+	  }  
+	  var uci = pdict.Order.custom.uciCode;
+	</isscript>

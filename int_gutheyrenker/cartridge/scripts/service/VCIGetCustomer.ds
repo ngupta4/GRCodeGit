@@ -1,0 +1,120 @@
+/**
+*   @input mwid : String    
+*   @input email : String	
+*   @input brand: String 
+*   @input searchall : String
+*   @input sessionId :String  //CurrentSession.sessionID
+*   @input ipAddress :String   //CurrentRequest.httpRemoteAddress
+*  	@input Request : dw.system.Request
+*	@output responseXMLObject:XML
+*   @output status : String
+*   @output CustomerSegment : String
+*/
+importPackage( dw.customer );
+importPackage( dw.system );
+importPackage( dw.util );
+importPackage( dw.web );
+importPackage( dw.io );
+importPackage( dw.net );
+importPackage( dw.object );
+importScript('grmiddleware/libGRMiddleware.ds');
+importScript('common/libUtils.ds');
+
+function execute( args : PipelineDictionary ) : Number
+{
+  	logInfo ("Entering  VCIGetCustomer.ds");
+  	
+  	//	Create the Request URL
+  	var request:Request = args.Request;
+    var uid:String = getCustomerUID(request);
+  	var transactionID = getTransactionID();
+	var RequestURL : String=getServiceURL(args.mwid,args.email,uid,transactionID,args.searchall);
+		
+  	logDebug ("VCIGetCustomer api URL :"+RequestURL);
+	
+	// Call GR Service
+	var http : HTTPClient = new HTTPClient();
+	http.setRequestHeader('Content-Type','text/xml');
+    http = callMWAPI(http, "GET", RequestURL);
+    
+  	//Code to Parse Response XML
+	//Parse Reaponse
+	var response : String = "";	
+	var responseXML : XML = null;
+      	
+	http = callMWAPI(http, "GET", RequestURL);
+	response = http.text;
+	if(response!=null){
+		response=dw.util.StringUtils.trim(http.text);
+	}
+	
+	var errorResponse : String = http.errorText;
+	if(errorResponse!=null){
+		errorResponse=dw.util.StringUtils.trim(http.errorText);
+	}
+	//var responseXML : XML = null;
+	
+	if( !empty(errorResponse) ) {
+		response = errorResponse;
+	}
+
+
+	responseXML = new XML(response);
+	
+	if( !empty(responseXML) ) 
+	{
+		var status = responseXML.status.toString();
+		args.status = status;
+		if(status == '200'){
+			// success 
+			if(null!=responseXML.responseData.customer.ffc.customerSegment.toString()){
+				args.CustomerSegment = responseXML.responseData.customer.ffc.customerSegment.toString();
+			}
+		}else {
+			getErrorResponse(responseXML);
+		}
+	}else {
+			getErrorResponse(responseXML);
+	}
+	logInfo ("responseXML "+responseXML);
+	logInfo ("response "+response);
+	args.responseXMLObject = responseXML;
+	logInfo ("Exiting  VCIGetCustomer.ds");
+	 return PIPELET_NEXT;
+}
+
+
+
+function getServiceURL(mwid : String, email : String, uid : String, trans: String, searchall: String) {
+
+        //https://grws.grdev.com/customer/online-registration/email/grsmith@aol.com/ brand/PA/uid/VHgNyZ/trans/12233445514
+
+        var baseURL : String = Site.current.getCustomPreferenceValue("middlewareAPIURL");
+		var brandID= Site.current.getCustomPreferenceValue("GRMProductLine");
+		if(mwid != null ){
+       	 baseURL= baseURL + "/customer/info/mwid/"+ mwid +"/brand/"+brandID+"/uid/"+ uid +"/trans/"+trans +"/searchall/"+searchall ;        
+		}else{
+		 baseURL= baseURL + "/customer/info/email/"+ email +"/brand/"+brandID+"/uid/"+ uid +"/trans/"+trans +"/searchall/"+searchall ;        
+		}
+        return baseURL
+
+}
+
+
+function configureProducts(totalProducts : Array){	
+		var productNum : String = "";
+     	var productTitle : String = "";
+     	var productQty : String = "";		
+		var productXml : String = "<products>";
+		for each(product in totalProducts){
+     			var productAttrbtList = product.split("||");
+     			productNum = productAttrbtList[0];
+     			productTitle = productAttrbtList[1];
+     			productQty = productAttrbtList[2];
+     			var tempProdXml = "<product><productNum>"+productNum+"</productNum><title><![CDATA["+productTitle+"]]></title><quantity>"+productQty+"</quantity></product>";
+     			productXml = productXml + tempProdXml;
+     		}
+     	productXml = productXml + "</products>";
+     	return productXml;
+}
+

@@ -1,0 +1,345 @@
+#page_index3g_homepage #container #main{ width: 898px;padding:20px 0px 60px 0px;}
+
+/*---------------------------------------------
+		common properties used
+-----------------------------------------------*/
+/* cart */
+.ch_selected_products{width: 100%; border: none;}
+.ch_selected_products thead tr{background-color: #F2F2F2; height:28px;}
+.ch_selected_products th{padding: 4px; text-align:left;}
+.ch_selected_products th,.ch_selected_products td{vertical-align: top;}
+.ch_selected_products .imagecolumn{width: 178px; text-align:center;}
+.imagecolumn img{max-width: 150px;}
+.ch_selected_products .detailscolumn{width:272px; font-size:11px;}
+
+
+
+/* START:Bazar voice specific css */
+.BVRContainer{background: url("../images/topnav/subnavtop-border.png") no-repeat scroll center 128px transparent;float:left;margin:0;padding:0;width:100%;}
+.BVRContainer .BVRContent{margin:0 auto; padding:0; width:906px;}
+.BVRContainer #pdpTabsDiv.secondarynavtap{background:none;}
+#globalFooter .footerBottom{ clear:left; float:left; width:100%; padding:18px 0px; text-align:center; font-size:10px;}
+#globalFooter .footerBottom .row{ padding: 0px 0 4px 0px;}
+#globalFooter .footerBottom .grLogo{ vertical-align:middle;   padding-right: 28px;}
+#globalFooter .footerBottom .headerlinks{float:left; padding: 1px 0 24px 180px;}
+#globalFooter .footerBottom .headerlinks li{float:left; padding: 5px 7px;}
+#globalFooter .footerBottom .headerlinks li a{color:#fff; font-size:12px; font-weight: bold;text-decoration: none;}
+
+/* START:Bazar voice specific css */
+.BVRContainer{float:left;margin:0;padding:0;width:100%;}
+.BVRContainer .BVRContent{margin:0 auto; padding:0; width:906px;}
+
+/*-----------------------------------------------
+				 Error Message Styles
+------------------------------------------------*/
+.errorclient.success{display: none !important;}
+
+#personinfo{padding: 12px;}
+.checkoutform #personinfo  h4 {font-size: 13px;margin-bottom: 2px;border-bottom: 1px solid #687b09;color: #687b09;padding: 5px 0;font-family: Arial, Helvetica, sans-serif;}
+.checkoutHeader h1 {color: #000000; font: 37px Georgia,Times,serif; margin: 0; padding: 0;}
+.wait{margin-top: 15%; text-align: center;}
+#personinfo .contactinfo .row{width:44%;}
+
+.checkoutform #personinfo .formfield {width: 201px;clear: none;}
+
+/* checkout shipping */
+#cartcontent #cartcontent  .checkoutform #personinfo .row{ width: 200px;}
+#cartcontent .checkoutform .billingShipping .cbBilling,#cartcontent  .checkoutform .billingShipping .cartShipping{float: left; width:340px;}
+#cartcontent .checkoutform .billingShipping .cartShipping{margin-left:5px;}
+#cartcontent .checkoutform .cartShipping .asbilling .checkbox{float:right;margin-left: 15px;}
+#cartcontent .checkoutform .cartShipping .asbilling .checkbox label{padding:0px; float: right;}
+#cartcontent .checkoutform .cartShipping .asbilling .checkbox .checkinput{width:15px;}
+#cartcontent .checkoutform .cartShipping .asbilling .checkbox input,#cartcontent  .checkoutform .cartShipping .asbilling label {float:left;width: auto;}
+#cartcontent .checkoutform input{width: 152px;}
+
+#carttotals{color:#000;}
+#carttotals #agreebox{float: left; width: 200px;}
+#carttotals #agreebox .errormessage{float: left;}
+#carttotals .checkbox input{width:10px;  margin: 3px 0 0;}
+#carttotals .checkbox .requiredindicator{font-size: 9px;font-weight: normal;padding: 0 10px 0 0}
+#carttotals .checkbox label{font-weight: bold;width: 103px;}
+#carttotals #agreebox p{width:200px;float:left;font-size:10px; line-height: 18px;}
+#carttotals #cartsummarycomments{width:400px;float:left; font-size: 10px;  padding-top: 15px;}
+#carttotals #cartpricesummary{width:200px;float:left;padding: 8px 0 0;font: 10px Tahoma;}
+#carttotals #cartpricesummary td{padding: 2px 0;width: 80px;}
+#cartpricesummary .continueBtn.completeBtn {   margin: 10px 0 0;text-indent: -9999px;background: url("../images/wen/btn_completeOrder.png") no-repeat scroll 0 0 transparent; cursor: pointer;height: 30px; width: 203px;}
+#cartcontent #selectyourshipment   {margin-bottom: 7px;text-indent: -9999px;background: url("../images/wen/orderBtnGifts.jpg") no-repeat scroll 0 0 transparent;clear: right;float: left;height: 26px;margin-right: 38px;width: 446px;}
+
+
+/* START: ACQ. check out page */
+#ptChekoutsingle .block.nav .blockContent ul{border-bottom: 1px solid #D6D6D6;font-size: 0.95em;font-weight: bold;}
+#ptChekoutsingle .block.nav .blockContent ul li a {background: none repeat scroll 0 0 transparent;border-top: 1px solid #D6D6D6; display: block;padding: 2px 10px 3px;}
+#ptChekoutsingle strong{font-weight:bold;}
+#ptChekoutsingle #upsellSection .blockContent,#ptChekoutsingle #valueUpsellSection .blockContent{border:1px solid #85980b;}
+#ptChekoutsingle #valueUpsellSection .blockContent{margin-bottom:30px;}
+#ptChekoutsingle .boxTitle{width: 185px; height: 25px; background: url(../images/upsell_title.png) 0 0 no-repeat; text-indent: -5000px;}
+#ptChekoutsingle #upsellSection .relatedProduct,.upsellcontent a{color: #2d323c !important;}
+#ptChekoutsingle .upsellcontent{margin: 10px; padding: 0 10px;width:165px; text-align:center; font-size:14px;border-bottom:1px solid #e2e2e2;}
+#ptChekoutsingle .upsellcontent h4{font: bold 12px georgia;}
+#ptChekoutsingle .upsellcontent .upsell_details_content{font-size:12px;padding-top:10px;text-align: left;}
+#upsellSection .relatedProduct h4{font-weight: bold;}
+#ptChekoutsingle .upsellcontent .addtocartbtn{border: none; margin-top: 5px; background: transparent url('../images/addtocart.png') no-repeat scroll 0 0; cursor: pointer; width: 108px; height: 30px;}
+#ptChekoutsingle .shortDescription .offerCode{font-weight:bold;}
+#ptChekoutsingle .checkout_box h4{background-color: #494D4B; color: white; font-weight: bold; padding: 5px 5px 5px 10px;}
+#ptChekoutsingle .ch_selected_products .detailscolumn{padding:8px 20px 20px 0;font-size:11px;width: 500px; }
+#ptChekoutsingle .ch_selected_products .detailscolumn .name{font-size:13px;font-weight:bold;}
+#ptChekoutsingle .ch_selected_products .quantitycolumn,#ptChekoutsingle .ch_selected_products .itemtotalcolumn{padding-top:8px;font-size:13px;width: 100px;}
+#ptChekoutsingle div.checkout_box td.detailscolumn div.name, #header .primaryNavigation .order, #header a#signInTrigger { display:none; }
+#ptChekoutsingle .order-totals .sub_total{float:right;width:100px;}
+#ptChekoutsingle .orderTotal{width:175px; float:right; margin-top:12px;font-size:11px;font-weight:bold;}
+#ptChekoutsingle .ordertotaldisclaimer{float:right;text-align: right;padding:2px 0px 6px 7px; width:405px;}
+#ptChekoutsingle .orderTotalFinal .cocartContainer{color:#86120D;text-transform: capitalize;font-size:14px; font-weight:bold;margin-top:3px;}
+#ptChekoutsingle .orderTotalFinal #orderTotal_2{float:right;}
+#ptChekoutsingle .cocartPrice{float: right;}
+#ptChekoutsingle .cocartLabel{text-align: right; display: block; float:right;}
+#ptChekoutsingle .shipping_total{text-align: right; padding: 5px;float:left;}
+#ptChekoutsingle .shippingmethodslist{text-align: left; margin-left: 145px;}
+#ptChekoutsingle .shippingmethodslist .labelwrapper{display: block; margin-bottom: 3px; position: relative;}
+#ptChekoutsingle .shippingmethodslist .overnight .shippinglabel{background: url('../images/next-day.png') 0 -15px no-repeat; position: absolute; left: -145px; top: -9px; width: 150px; height: 30px;}
+#ptChekoutsingle .upsell_details_inactive {display: none;}
+#ptChekoutsingle .upsellcontent .addtocartbtn{border: none; margin-top: 5px; background: transparent url('../images/addtocart.png') no-repeat scroll 0 0; cursor: pointer; width: 108px; height: 30px;}
+#ptChekoutsingle .upsellcontent .addtocartbtn span{display: none;}
+
+/* agree box */
+#ptChekoutsingle .agreeBox{float: right; width:385px;clear: both; text-align: right;margin-top:5px;font-size:11px;}
+#ptChekoutsingle .agreeBox .checkbox{float: right; position:relative;margin-top:2px;}
+#ptChekoutsingle .agreeBox .checkbox span.errormessage{ left: -150px; position: absolute; top: 15px; width: 243px;}
+#ptChekoutsingle .agreeBox .checkbox input{margin-top:4px;width:12px;}
+.agreeBox .checkbox label{display:none;}
+#ptChekoutsingle .agreeBox .checkbox input,.agreeBox #termsConditions,.agreeBox .requiredindicator{float: left;}
+#ptChekoutsingle .agreeBox #agreeTerms{cursor: text;width:82px;padding-top:6px;font-size:10px; float: right;}
+#ptChekoutsingle .agreeBox .requiredindicator{float:none;}
+#ptChekoutsingle .agreeBox input{display: inline;}
+#ptChekoutsingle .continueBtn{border: none; height:auto;width: 218px; cursor: pointer;}
+#ptChekoutsingle .complete_order_btn .requiredIndicator{padding:0;width:auto;}
+#ptChekoutsingle .continueBtn .caption {background-position:right 9px; font:bold 14px Arial, Helvetica, sans-serif;float:left;padding: 7px 13px 7px 10px;}
+
+/*START: upsell */
+#ptChekoutsingle .hopupheader{height: 15px;}
+#ptChekoutsingle .hopupbody{text-align: center;padding: 0px 0px 0;min-height: 545px;min-height: 50px; }
+#ptChekoutsingle .hopupfooter{height: 15px;}
+#upsellForHopUp a.closebtn{position: absolute; float: right; background: url('../images/interface/dialog/close.png') no-repeat; width: 25px; height: 25px; display: block; border: none !important; top: -10px; right: -10px;float:right;text-indent: -9999px;}
+#upsellForHopUp .hopupclosebtn a span{display: none;}
+#ptChekoutsingle .hopupbodyinner{background: none repeat scroll 0 0 white; text-align: left;padding: 0;min-height: 425px;border-radius: 0;margin: 0 15px;}
+#ptChekoutsingle .confirmationBox{width: 100%;float: left;margin-top: 22px;}
+#ptChekoutsingle .hopuptitle{background: #6d8c22; border-radius: 5px 5px 0 0; color: white !important; padding: 10px; padding-bottom: 0;border-radius: 0;}
+#ptChekoutsingle .hopuoptitleinner{background-color: #6d8c22;color: white;font: bold 18px Arial, Helvetica, sans-serif;text-align: center;margin-bottom: 10px;text-transform: capitalize;}
+#ptChekoutsingle .hopupimage{text-align: center;}
+#ptChekoutsingle .hopupdetails{float: none; line-height: 14px;}
+#ptChekoutsingle .hopupcontrols{font-size: 11px;line-height: 13px;margin-top: 5px;text-align: left;position: relative;padding: 10px 10px 80px 10px;}
+#ptChekoutsingle .hopupdetails .nothanksbtn{font-size: 12px;margin-top: 10px;display:block; color: #333;outline: none;}
+#ptChekoutsingle #upsellForHopUp{margin-top: 160px;position: absolute;left: 43%;top: 0;z-index: 200;display: none;width: 496px;min-height: -545px;border: solid 1px #9cb269;background: #f1f4ce;}
+#ptChekoutsingle #upsellForHopUp .addtocartbtn{left: 0px;margin: 0;position: relative;top: -5px;background: url(../images/addtocart.png) top left no-repeat;height: 26px;width: 114px;text-indent:-9999px;border:none;cursor: pointer;}
+/*END: upsell */
+
+/* Most Upsell CSS from PA */
+#popupOverlay{background: white; width: 100%; height: 100%; position: fixed; z-index: 100; filter: alpha(opacity=50); opacity: 0.5; -moz-opacity: 0.5; -webkit-opacity: 0.5; top: 0; left: 0; display: none;}
+.upsellarea{}
+.upsellarea .upselldescription{display: none;}
+.upsellrecommendationpopup{display: none;}
+#upsellForHopUp{display: none; position: absolute; z-index: 101; top: 100px; left: 45%; width: 408px;}
+.hopupheader{height: 30px;}
+.hopupbody{min-height: 50px;}
+.hopupfooter{height: 30px;}
+
+#upsellForHopUp .hopupclosebtn a span{display: none;}
+
+.hopupbodyinner{margin: 0 30px; background: white; border-radius: 5px;}
+.hopuptitle{background: green; border-radius: 5px 5px 0 0; color: white !important; padding: 10px; padding-bottom: 0;}
+.hopuoptitleinner{padding: 10px 0;}
+.hopupimage{text-align: center;}
+.hopupdetails{padding: 0 10px; font-size: .9em;}
+.hopupdetails p{font: 11px Arial,sans-serif;}
+.hopupcontrols{padding: 10px;}
+#upsellForHopUp .nothanksbtn{text-decoration: underline !important; border: none !important; color: #4E6780 !important;}
+#upsellForHopUp .nothanksbtn:hover{color: #4e4d4b;}
+#upsellForHopUp .addtocartbtn{margin-top: -5px; float: right; height: 26px; width: 114px; background: url(../images/interface/dialog/popupadd.png) left top no-repeat; border: none;}
+#upsellForHopUp .addtocartbtn:hover{background-position: left -26px;}
+#upsellForHopUp .addtocartbtn span{display: none;}
+/*  END CSS FROM PA */
+
+#ptChekoutsingle{margin:0 auto;padding:0;width:926px;}
+#ptChekoutsingle .offerSidebarLeft {background: none repeat scroll 0 0 transparent;float:left;margin-top:37px;text-align:center;width: 208px;}
+#ptChekoutsingle .checkoutform #personinfo  h4 {font-size: 13px;margin-bottom: 2px;border-bottom: 1px solid #687b09;color: #687b09;padding: 5px 0;font-family: Arial, Helvetica, sans-serif;}
+#ptChekoutsingle .checkoutHeader{ color: #86120D;  font-size: 14px;  font-weight: bold;}
+#ptChekoutsingle .checkoutHeader h1 {color: #000000; font: 37px Georgia,Times,serif; margin: 0; padding: 0;}
+#ptChekoutsingle .checkoutHeader p{margin-top:4px;width:515px;}
+
+/* checkout payment info */
+#ptChekoutsingle .checkoutBox.paymentInfo .paymentMethod,#ptChekoutsingle .checkoutBox.paymentInfo .cardNumber ,#ptChekoutsingle .checkoutBox.paymentInfo .expirationDate,#ptChekoutsingle .checkoutBox.paymentInfo .expirationDate .value{ float: left; width:auto;}
+#ptChekoutsingle .checkoutBox #shippingMessageBlock{padding: 9px 0px 6px 11px; font-size:11px;}
+#ptChekoutsingle .billingShipping .cartShipping .formfield{margin-bottom:10px;}
+#ptChekoutsingle .checkoutBox.paymentInfo .cardNumber{float:left;width:254px;}
+.checkoutBox.paymentInfo .expirationDate .value{width: 160px;}
+#ptChekoutsingle .checkoutBox.paymentInfo .expirationDate{width:185px;}
+#ptChekoutsingle .checkoutBox.paymentInfo .cardNumber input{width: 100px;}
+#ptChekoutsingle .checkoutBox.paymentInfo .paymentMethod select{width: 120px;height: 22px;}
+#ptChekoutsingle .checkoutBox.paymentInfo .expirationDate .month{float:left;width: 120px;}
+#ptChekoutsingle .checkoutBox.paymentInfo .expirationDate .year{ float: left;width: 60px;}
+#ptChekoutsingle .checkoutBox.paymentInfo .expirationDate .month select{width: 110px;height: 18px;}
+#ptChekoutsingle .checkoutBox.paymentInfo .expirationDate .year select{width: 60px;height: 18px;}
+#ptChekoutsingle .cartPromotion{margin:40px 0 33px; padding:0;float:left;}
+#ptChekoutsingle .cartPromotion .cartpromo{margin: 1px 0 9px; padding:0;}
+#ptChekoutsingle .requiredIndicator{float:left;padding-top: 17px;width:100%;}
+#personinfo .paymentInfo{display: block;}
+
+/* Contact Form */
+#ptChekoutsingle .orderByPhone{padding-top:30px;}
+#ptChekoutsingle .orderByPhone,#ptChekoutsingle .cartLeftPromo{font:bold 20px arial; color:#7c8f24;position:relative;}
+#ptChekoutsingle .orderByPhone .orderPhone{text-align: center;padding-left: 15px; padding-top: 15px;font-size: 21px;font-weight: bold; width: 180px;}
+#ptChekoutsingle .orderByPhone .orderText{color: #464646;font-size: 16px;padding-left: 18px;padding-top: 10px;text-align: center; width: 170px;}
+#ptChekoutsingle .blockTop,#ptChekoutsingle .block,#ptChekoutsingle .blockContent,#ptChekoutsingle .blockTopRight,#ptChekoutsingle .blockGrey,#ptChekoutsingle .blockBottomRight,#ptChekoutsingle .blockBottom{background:none; padding:0;overflow:visible;}
+#ptChekoutsingle .productimage{text-align:center; margin-top:10px}
+#ptChekoutsingle .personInfform input[type='text']{height:18px; padding:0; width:215px;}
+#ptChekoutsingle .cbShipping .checkbox{float: right;  width: 113px;}
+#ptChekoutsingle label{font: 12px Arial,Verdana,Helvetica,sans-serif;padding: 0;line-height:15px;}
+#ptChekoutsingle .asbilling label{ float:none; font-weight:bold; color:#FFF;}
+#ptChekoutsingle .contactinfo .phone{padding-top:3px;}
+#ptChekoutsingle .contactinfo .row{width:220px; padding: 7px 8px 4px 0;}
+#ptChekoutsingle .contactinfo .row label{padding: 0px 0 3px 0;}
+#ptChekoutsingle .contactinfo .formfield{margin-bottom: 8px;}
+#ptChekoutsingle #dwfrm_personinf_contact_email,#ptChekoutsingle #dwfrm_personinf_contact_emailconfirm{width:206px;}
+#ptChekoutsingle #daytimePhone,#ptChekoutsingle #eveningPhone{width:160px;}
+#ptChekoutsingle .personInfform h4, #ptChekoutsingle .thankyoumessage h2, #ptChekoutsingle .checkout_box h4, .ptCheckoutRetention .rightsection h2{ font:bold 14px Arial, Helvetica, sans-serif; color:#FFF; padding: 6px 0 5px 9px; position:relative; background: #775F70;}
+#ptChekoutsingle .thankyoumessage{float:left;margin-bottom: 2px;float: left;}
+#ptChekoutsingle .thankyoumessage h2{padding:5px 10px;}
+#ptChekoutsingle .personInfform{float:left;margin:0;padding:0;}
+#ptChekoutsingle #dwfrm_personinf_useAsBillingAddress{float: left;}
+#ptChekoutsingle .billingShipping{float:left; margin-bottom:10px; width:100%;}
+#ptChekoutsingle .checkout_box{border: 1px solid #E3E3E3; background-color: white; margin-bottom: 5px; margin-top:4px; width:663px;}
+#ptChekoutsingle .orderTotalFinal{padding:5px 0; margin:6px 0 0 0; color: #666; text-align: right; font-weight: bold; font-size: 13px; float:right; height:22px; width:100%;}
+
+/* Payment module */
+#ptChekoutsingle .checkoutBox.paymentInfo,#ptChekoutsingle .contactinfo{width:662px}
+#ptChekoutsingle .checkoutBox.paymentInfo{float:left;width:662px; padding:0; margin-bottom:10px;}
+#ptChekoutsingle .checkoutBox.paymentInfo .checkoutBoxInner{float:left; width:100%; padding:9px 0 5px 0;}
+#ptChekoutsingle .checkoutBox.paymentInfo .paymentMethod{clear:both; width:100%;margin-bottom: 26px;}
+#ptChekoutsingle #creditCardNumber{width:240px;}
+#ptChekoutsingle .checkoutBox.paymentInfo .expirationDate .value{margin-top:2px;width:100%;}
+#ptChekoutsingle .checkoutBox .statezip .state{width:130px; float:left; margin-right:22px;}
+#ptChekoutsingle .billingShipping .selectbox{width:130px;}
+#ptChekoutsingle .personInfform .checkoutBox .zip{width:62px; float:left;}
+#ptChekoutsingle .formfield{padding:0 10px; margin-bottom:10px;}
+#ptChekoutsingle .formfield.statezip{margin-top:5px;}
+#ptChekoutsingle .cbBilling,#ptChekoutsingle .cbShipping{float:left;min-height:374px; width:328px}
+#ptChekoutsingle .cbShipping {margin-left:5px;}
+#ptChekoutsingle .cbBilling .formfield.firstName{margin-top:10px;}
+#ptChekoutsingle .cbShipping .formfield{margin-bottom:15px;}
+#ptChekoutsingle .remove_item{color:#86120D; float:left; font-size:10px;text-decoration:none;with:100%;}
+#ptChekoutsingle #shippingMessageBlock p a{color:#86120D;}
+#ptChekoutsingle .contactinfo,#ptChekoutsingle .billingShipping .cbBilling,#ptChekoutsingle .billingShipping .cbShipping{margin-top:12px; float:left;}
+#ptChekoutsingle .contactinfo{margin: 3px 0 0 0; padding:0;}
+#ptChekoutsingle .billingShipping .cbBilling,#ptChekoutsingle .billingShipping .cbShipping{margin-top:8px;} 
+#ptChekoutsingle #cartcontent  .checkoutform .billingShipping .cartShipping { margin-left: 5px;  min-height: 416px;}
+ 
+#ptChekoutsingle .billingShipping .cbBilling .formfield{margin-bottom: 14px;}
+#ptChekoutsingle .billingShipping .cbBilling .formfield label{padding:0 0 3px 0;}
+#ptChekoutsingle .billingShipping .cbBilling .formfield span.errormessage{float:left;width:100%;}
+#ptChekoutsingle .billingShipping .cbBilling .lastName{padding-bottom: 8px;}
+#ptChekoutsingle .billingShipping .cbBilling .statezip{padding-top:0px; margin-top:3px;}
+#ptChekoutsingle .checkoutRight{float: right; width: 665px; background-color: white; margin-top:30px;padding: 0;}
+#ptChekoutsingle .checkoutMainContent{margin-right: 0px; width:665px;}
+#ptChekoutsingle .checkout_box_inner{width:100%;}
+#ptChekoutsingle .ch_selected_products{width:663px;}
+#ptChekoutsingle .ch_selected_products .imagecolumn{width:200px;text-align:left;padding: 8px 15px 0;}
+#ptChekoutsingle .checkoutRight .completeyourorder .reviewContOrder .continueBtn{font:bold 14px Arial, Helvetica, sans-serif; padding:7px 0;}
+
+/* START: accessInfo */
+#ptChekoutsingle .checkoutBox.accessInfo .textinputpw, #ptChekoutsingle .checkoutBox.accessInfo .age input{padding:0;height:18px;} 
+#ptChekoutsingle .checkoutBox.accessInfo .textinputpw{width:170px;}
+#ptChekoutsingle .checkoutBox.accessInfo{float:left; width: 662px;padding: 0;margin:0 0 10px 0;}
+#ptChekoutsingle .checkoutBox.accessInfo .checkoutBoxInner{float: left;padding: 10px 0 0 0px;}
+#ptChekoutsingle .checkoutBox.accessInfo .infoText{font-size:12px;padding-right:5px;} 
+#ptChekoutsingle .checkoutBox.accessInfo label{padding:0 0 3px 0;}
+#ptChekoutsingle .accessInfo h3{float:left;font-size:12px;font-weight:bold;margin:15px 0 10px;width:100%;}
+#ptChekoutsingle .accessInfo .age .textinput#age{width:30px;}
+#ptChekoutsingle .accessInfo .passwordconfirm {padding: 10px 0;}
+#ptChekoutsingle .accessInfo .gender {padding: 8px 0;}
+#ptChekoutsingle .accessInfo .gender .options label{float:left;margin-right:10px;width:auto;}
+
+/* Order summary */
+#ptChekoutsingle .orderConfimationContainer .detailscolumn{font-size:13px;padding:0;width:700px;}
+#ptChekoutsingle #orderConfirmNum{display: inline;}
+#ptChekoutsingle .ordersummary,#ptChekoutsingle .yourinformation{margin:19px 0 0 0;;}
+#ptChekoutsingle .orderConfimationContainer{margin:0; padding:0;border: solid 1px #ccc;}
+#ptChekoutsingle .ordersummary{padding: 10px; margin-bottom: 12px; font-size:14px;}
+#ptChekoutsingle .ordersummaryprice div{padding-top: 1px;margin-bottom:12px;float: right;font-size:13px;clear: right;margin-right:32px;}
+#ptChekoutsingle .ordersummaryprice .merchandiseTotal{display: inline;}
+#ptChekoutsingle .ordersummaryprice .shippingMethod{display: inline;}
+#ptChekoutsingle .ordersummaryprice .totalPrice{display: inline;}
+#ptChekoutsingle .confirmemail,#ptChekoutsingle .orderno{padding-left:10px;}
+#ptChekoutsingle .paymentandshippinginfo{border-top: solid 1px #ccc; padding-top: 10px; margin-top: 10px;}
+#ptChekoutsingle .paymentandshippinginfo h3{font-weight: bold;}
+#ptChekoutsingle .paymentandshippinginfo .paymentinfo{float: left;} 
+#ptChekoutsingle .paymentandshippinginfo .shipptoaddress{float: right; width: 120px;}
+#ptChekoutsingle .paymentandshippinginfo .billtoaddress{float: right; width: 120px;}
+#ptChekoutsingle .campaignPhoneSection .phonevalue{font-size: .95em; font-weight: bold; border-bottom: 1px solid #D6D6D6; padding-left: 10px;}
+#ptChekoutsingle .orderConfimationContainer .quantitycolumn,#ptChekoutsingle .orderConfimationContainer .itemtotalcolumn{font-size:13px;text-align:right;width:75px;}
+#ptChekoutsingle .orderConfimationContainer .ch_selected_products td{padding: 10px 0 0;}
+#ptChekoutsingle .orderConfimationContainer .quantitycolumn .quantityLabel{padding-right:3px;}
+#ptChekoutsingle .custInfo{padding: 20px 0 14px;font-size: 14px;}
+#ptChekoutsingle .completeyourorder .reviewContOrder .continueBtn{font:bold 14px Arial,Verdana,Helvetica,sans-serif;padding:7px 34px; float: right; margin-bottom: 15px;}
+#ptChekoutsingle .selectedMethod{ padding: 10px 0;width: 300px;}
+#ptChekoutsingle .paymentandshippinginfo .paymentinfo .payPalAccount{width:230px;}
+#questionsimage{text-align: center;}
+#ptChekoutsingle .orderConfimationContainer .ordersummary{margin-bottom: 28px;}
+
+/* Confirmation Cross Pop Up */
+.crosssellitem {background: none repeat scroll 0 0 white;  border: 1px solid #CCCCCC;  display: none; float: left; left: 22%; position: absolute; top: 50px; width: auto; z-index: 1000;}
+.crosssellitem-header a { background: url("../images/interface/dialog/close.png") no-repeat scroll center center transparent; height: 24px;margin: -12px -12px 0 0;position: absolute; right: 0; width: 25px; z-index: 10;}
+.crosssellitem-header a span { display: none;}
+.crosssellitem .crosssellitem-header a { background: url("../images/popup_close.gif") no-repeat scroll center center transparent; height: 26px;margin:0px 0px 0 0;position: absolute; right: 0; width: 27px; z-index: 10;}
+.crosssellitem .crosssellitem-header a span { display: none;}
+
+/* Total price */
+#ptChekoutsingle #totalshippingprice{text-align: right; line-height: 16px; height: 16px; float: right; padding-left: 20px; width: 300px;}
+#ptChekoutsingle #shipTotal{display: inline;}
+#ptChekoutsingle #totalshippingprice.loading{background: url(../images/ajax-loader-small.gif) left center no-repeat;}
+#ptChekoutsingle #paymentinfoerrors{clear: left; width:200px;}
+#ptChekoutsingle #paymentinfoerrors .errormessage{float: left; width: 50%;}
+#ptChekoutsingle .order-totals{float:left;font-size:11px; width:100%;}
+#ptChekoutsingle .order-totals .shippingTotalCont{background: none repeat scroll 0 0 #FAF4E5;border-bottom:1px solid #c0c0c0; margin-top:10px;float:left;width:100%;}
+
+/* Order summary */
+#ptChekoutsingle #orderConfirmNum{display: inline;}
+#ptChekoutsingle .orderConfimationContainer{margin:3px 0 0 0;float:left; padding:0 0 20px;border: solid 1px #ccc;width:100%;}
+#ptChekoutsingle .orderConfimationContainer .ch_selected_products{margin-top:10px;width: 613px;}
+#ptChekoutsingle .arrivePeriod, #ptChekoutsingle .ordersummary,#ptChekoutsingle .confirmemail,#ptChekoutsingle .orderno,#ptChekoutsingle .yourinformation{color:#313a40;float:left;font-size:14px;padding:0 5px 0 10px;width: 645px;}
+#ptChekoutsingle .ordersummary h2,#ptChekoutsingle .yourinformation h2{color: #86120d; font-weight:bold;padding-bottom: 9px;font-size:14px; border-bottom: solid 1px #ccc;}
+#ptChekoutsingle .ordersummaryprice{border-top: solid 1px #ccc; margin-top: 10px;padding-top: 13px;float:left;width:100%;}
+#ptChekoutsingle .ordersummaryprice .merchandiseTotal,#ptChekoutsingle .ordersummaryprice .shippingMethod,#ptChekoutsingle .ordersummaryprice .totalPrice{display: inline;float:right;}
+#ptChekoutsingle .ordersummaryprice #orderTotal,#ptChekoutsingle .ordersummaryprice .cocart-label{float:left;font-size:13px;text-transform: capitalize;}
+#ptChekoutsingle .ordersummaryprice .yourTotal{font-weight:bold;}
+#ptChekoutsingle .orderno{margin-top:10px;}
+#ptChekoutsingle .paymentandshippinginfo{border-top: solid 1px #ccc; padding-top: 10px; margin-top: 10px;}
+#ptChekoutsingle .paymentandshippinginfo h3{font-weight: bold;}
+#ptChekoutsingle .paymentandshippinginfo .paymentinfo{float: left;}
+#ptChekoutsingle .paymentandshippinginfo .paymentinfo,#ptChekoutsingle .paymentandshippinginfo .expires,#ptChekoutsingle .paymentandshippinginfo .billtoaddress{float: left; width: 25%;}
+#ptChekoutsingle .paymentandshippinginfo .shipptoaddress{float: right; width: 20%;}
+#ptChekoutsingle .campaignPhoneSection .phonevalue{font-size: .95em; font-weight: bold; border-bottom: 1px solid #D6D6D6; padding-left: 10px;}
+#ptChekoutsingle #questionsimage{text-align: center;}
+#ptChekoutsingle .orderConfimationContainer .serviceMessage{float: left;font-size:13px;margin: 20px 0;width: 650px;}
+
+/* Total price */
+#ptChekoutsingle .checkoutBottom{float:left;width:100%;margin-top:8px;}
+#ptChekoutsingle #totalshippingprice{text-align: right; line-height: 16px; height: 16px; float: right; padding-left: 20px;}
+#ptChekoutsingle #shipTotal{display: inline;}
+#ptChekoutsingle #totalshippingprice.loading{background: url(../images/ajax-loader-small.gif) left center no-repeat;}
+#ptChekoutsingle #paymentinfoerrors{clear: left; width:200px;}
+#ptChekoutsingle #paymentinfoerrors .errormessage{float: left; width: 50%;}
+/* END:ACQ. checkout page */
+
+#totalshippingprice{text-align: right; line-height: 16px; height: 16px; float: right; padding-left: 20px;}
+#shipTotal{display: inline;}
+#totalshippingprice.loading{background: url(../images/ajax-loader-small.gif) left center no-repeat;}
+#paymentinfoerrors{clear: left; width:200px;}
+#paymentinfoerrors .errormessage{float: left; width: 50%;}
+
+.selectedKit li .SelectSidePanel .DetailDescription .l-panel .text2{float: right; min-height: 174px; padding: 0 18px 0 0; width: 197px;}
+.selectedKit li .SelectSidePanel .DetailDescription .l-panel .text2 .headingKit{color: #7C8F24; font: bold 16px arial; margin-bottom: 10px;}
+.selectedKit li .SelectSidePanel .DetailDescription .l-panel .text2 .headingKit span{ color: #717171; font: italic bold 10px arial; padding-left: 2px;}
+.selectedKit li .SelectSidePanel .DetailDescription .l-panel .text2 ul li{ color: #717171; font: 12px/24px arial;}
+.selectedKit li .SelectSidePanel .DetailDescription .l-panel .text2 ul li a{text-decoration: none;color: #717171; background:url(../images/wen/KitContents_LeftArrow.gif) no-repeat left 5px; padding-left:10px;}
+.selectedKit li .SelectSidePanel .DetailDescription .l-panel .text2 ul li a:hover{color: #717171;text-decoration:underline;}
+
+.titleTextIntend{font-size: 0;line-height: 0;margin: 0; padding: 0; text-indent: -9999px; height: 0px !important;}

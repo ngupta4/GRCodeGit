@@ -1,0 +1,28 @@
+/**
+ * Update the given address and copies the address details 
+ * stored in the given address form to the billing address.
+ *
+ * @input Address : dw.order.OrderAddress The address to update.
+ * @input AddressForm : dw.web.FormGroup The address form.
+ */
+importPackage( dw.system );
+importPackage( dw.order );
+importPackage( dw.web );
+
+function execute( pdict : PipelineDictionary ) : Number
+{
+	var address : OrderAddress = pdict.Address;
+	var addressFields : FormGroup = pdict.AddressForm;
+	
+	// copy the address details
+	address.setFirstName( addressFields.firstName.value );
+	address.setLastName( addressFields.lastName.value );
+	address.setAddress1( !empty(addressFields.address1.value)?addressFields.address1.value.replace(/#/,'No.'):'');
+	address.setAddress2( (!empty(addressFields.address2.value)?addressFields.address2.value.replace(/#/,'No.'):''));
+	address.setCity( addressFields.city.value );
+	address.setPostalCode( addressFields.zip.value );
+	address.setStateCode( addressFields.states.stateUS.value );
+	address.setCountryCode( addressFields.country.value );
+		
+    return PIPELET_NEXT;
+}

@@ -1,0 +1,266 @@
+<isset name="pagetitle" value="${Resource.msg('pagetitle.aboutyou','account',null)}" scope="pdict"/>
+<isdecorate template="account/pt_account">
+  <isinclude template="util/modules"/>
+  	<isinclude template="KitCustomizer/kitinclude"/>
+  	<input type="hidden" id="tagetPipeline" value="${pdict.TargetPipeline}"/>
+		<input type="hidden" id="tagetParams" value="${pdict.TargetPipelineParams}"/>
+  <iscomment>Builds a registration page for the user. It provides all input fields for names and address</iscomment>
+   <istabdisplayed  tabid="AY"/>
+ <div class="pageWrapper accountContainer">
+ <iscomment>Include common framework to make tabs</iscomment>
+   
+    <div class="accountForm aboutUs">
+    <h2 class="formTitle">${Resource.msg('account.aboutyou','account',null)}</h2>
+    <isinclude template="util/errordisplay"/>
+      <form action="${URLUtils.httpsContinue()}" method="post" id="AboutYouForm" >
+        <div class="formfields">
+          <div class="genderWrapper regRow">
+            <div class="formfield age">
+              <isinputfield formfield="${pdict.CurrentForms.profile.customer.age}" type="input"/>
+            </div>
+            <div class="formfield gender">
+              <isinputfield formfield="${pdict.CurrentForms.profile.customer.gender}" type="select"/>
+            </div>
+          </div>
+  			
+  			<div class="dateWrapper  regRow">
+          	<label class="topHeading">Birthday</label>
+            <div class="formfield month">
+               <isinputfield formfield="${pdict.CurrentForms.profile.customer.month}" type="select"/>
+            </div>
+            <div class="formfield year">
+              <isinputfield formfield="${pdict.CurrentForms.profile.customer.date}" type="select"/>
+            </div>
+          </div>
+         
+           <div class="formfield reg-row">
+            <div class="label">
+              <isprint value="${Resource.msg('profile.skintone','account',null)}"/>
+            </div>
+          <div class="radio value">
+            <div class="radio-fields">
+                <label><input type="radio" value="Light"
+                  <isif condition="${pdict.CurrentForms.profile.customer.skinTone.value=='Light'}">Checked</isif>
+                  id="${pdict.CurrentForms.profile.customer.skinTone.htmlName}"
+                  name="${pdict.CurrentForms.profile.customer.skinTone.htmlName}">
+                  <isprint value="${Resource.msg('profile.light','account',null)}"/>
+                </label>
+                <div class="clear"></div>
+              </div>
+              <div class="radio-fields">
+                <label><input type="radio" value="Medium"
+                  <isif condition="${pdict.CurrentForms.profile.customer.skinTone.value=='Medium'}">Checked</isif>
+                  id="${pdict.CurrentForms.profile.customer.skinTone.htmlName}"
+                  name="${pdict.CurrentForms.profile.customer.skinTone.htmlName}">
+                  <isprint value="${Resource.msg('profile.medium','account',null)}"/>
+                </label>
+                <div class="clear"></div>
+              </div>
+              <div class="radio-fields">
+                <label><input type="radio" value="Tan" 
+                  <isif condition="${pdict.CurrentForms.profile.customer.skinTone.value=='Tan'}">Checked</isif>
+                  id="${pdict.CurrentForms.profile.customer.skinTone.htmlName}"
+                  name="${pdict.CurrentForms.profile.customer.skinTone.htmlName}">
+                  <isprint value="${Resource.msg('profile.tan','account',null)}"/>
+                </label>
+                <div class="clear"></div>
+              </div>
+              <div class="radio-fields">
+                <label><input type="radio" value="Dark"
+                  <isif condition="${pdict.CurrentForms.profile.customer.skinTone.value=='Dark'}">Checked</isif>
+                  id="${pdict.CurrentForms.profile.customer.skinTone.htmlName}"
+                  name="${pdict.CurrentForms.profile.customer.skinTone.htmlName}">
+                  <isprint value="${Resource.msg('profile.dark','account',null)}"/>
+                </label>
+                <div class="clear"></div>
+              </div>
+              <div class="clear"></div>
+            </div>
+            </div>
+            <iscomment>         
+              <!-- Dummy form fields should to be replace with dynamic one -->
+          
+          <!-- End of dummy fields -->
+          <div class="skinToneWrapper  regRow">
+          <isinputfield formfield="${pdict.CurrentForms.profile.customer.skinTone}" type="radio"/>
+          </div>
+          <div class="quizfields regRow">
+            <div class="questionLabel">
+              <isprint value="${Resource.msg('profile.hairlength','account',null)}"/>
+            </div>
+              <div class="radioFields">
+                <label><input type="radio" value="short"
+                  <isif condition="${pdict.CurrentForms.profile.customer.hairLength.value=='short'}">Checked</isif>
+                  id="${pdict.CurrentForms.profile.customer.hairLength.htmlName}"
+                  name="${pdict.CurrentForms.profile.customer.hairLength.htmlName}">
+                  <a class="tooltip"><isprint value="${Resource.msg('profile.short','account',null)}"/><div class="tooltip-body shadow"  style="display:none"><div class="tooltipcontainer">${Resource.msg('aboutyou.hairlength.short','account',null)}
+                  </div></div></a>
+                </label>
+              </div>
+              <div class="radioFields">
+                <label><input type="radio" value="medium"
+                  <isif condition="${pdict.CurrentForms.profile.customer.hairLength.value=='medium'}">Checked</isif>
+                  id="${pdict.CurrentForms.profile.customer.hairLength.htmlName}"
+                  name="${pdict.CurrentForms.profile.customer.hairLength.htmlName}">
+                   <a class="tooltip"><isprint value="${Resource.msg('profile.medium','account',null)}"/><div class="tooltip-body shadow"  style="display:none"><div class="tooltipcontainer">${Resource.msg('aboutyou.hairlength.medium','account',null)}
+                  </div></div></a>
+                </label>
+               </div>
+               <div class="radioFields">
+                <label><input type="radio" value="long"
+                  <isif condition="${pdict.CurrentForms.profile.customer.hairLength.value=='long'}">Checked</isif>
+                  id="${pdict.CurrentForms.profile.customer.hairLength.htmlName}"
+                  name="${pdict.CurrentForms.profile.customer.hairLength.htmlName}">
+                  <a class="tooltip"><isprint value="${Resource.msg('profile.long','account',null)}"/><div class="tooltip-body shadow"  style="display:none"><div class="tooltipcontainer">${Resource.msg('aboutyou.hairlength.long','account',null)}
+                  </div></div></a>
+                </label>
+               </div>
+               <div class="radioFields">
+                <label><input type="radio" value="very-long"
+                  <isif condition="${pdict.CurrentForms.profile.customer.hairLength.value=='very-long'}">Checked</isif>
+                  id="${pdict.CurrentForms.profile.customer.hairLength.htmlName}"
+                  name="${pdict.CurrentForms.profile.customer.hairLength.htmlName}">
+                  <a class="tooltip"><isprint value="${Resource.msg('profile.verylong','account',null)}"/><div class="tooltip-body shadow"  style="display:none"><div class="tooltipcontainer">${Resource.msg('aboutyou.hairlength.verylong','account',null)}
+                  </div></div></a>
+                </label>
+               </div>
+            </div>
+            
+            <div class="quizfields regRow">
+            <div class="questionLabel">
+              <isprint value="${Resource.msg('profile.hairtype','account',null)}"/>
+            </div>
+              <div class="radioFields">
+                <label><input type="radio" value="straight"
+                  <isif condition="${pdict.CurrentForms.profile.customer.hairType.value=='straight'}">Checked</isif>
+                  id="${pdict.CurrentForms.profile.customer.hairType.htmlName}"
+                  name="${pdict.CurrentForms.profile.customer.hairType.htmlName}">
+                  <a class="tooltip"><isprint value="${Resource.msg('profile.straight','account',null)}"/><div class="tooltip-body shadow"  style="display:none"><div class="tooltipcontainer">${Resource.msg('aboutyou.typeofhair.straight','account',null)}
+                  </div></div></a>
+                </label>
+               </div>
+              <div class="radioFields">
+                <label><input type="radio" value="wavy" 
+                  <isif condition="${pdict.CurrentForms.profile.customer.hairType.value=='wavy'}">Checked</isif>
+                  id="${pdict.CurrentForms.profile.customer.hairType.htmlName}"
+                  name="${pdict.CurrentForms.profile.customer.hairType.htmlName}">
+                  <a class="tooltip"><isprint value="${Resource.msg('profile.wavy','account',null)}"/><div class="tooltip-body shadow"  style="display:none"><div class="tooltipcontainer">${Resource.msg('aboutyou.typeofhair.wavy','account',null)}
+                  </div></div></a>
+                </label>
+              </div>
+              <div class="radioFields">
+                <label><input type="radio" value="curly"
+                  <isif condition="${pdict.CurrentForms.profile.customer.hairType.value=='curly'}">Checked</isif>
+                  id="${pdict.CurrentForms.profile.customer.hairType.htmlName}"
+                  name="${pdict.CurrentForms.profile.customer.hairType.htmlName}">
+                  <a class="tooltip"><isprint value="${Resource.msg('profile.curly','account',null)}"/><div class="tooltip-body shadow"  style="display:none"><div class="tooltipcontainer">${Resource.msg('aboutyou.typeofhair.curly','account',null)}
+                  </div></div></a>
+                </label>
+              </div>
+              <div class="radioFields">
+                <label><input type="radio" value="very-curly"
+                  <isif condition="${pdict.CurrentForms.profile.customer.hairType.value=='very-curly'}">Checked</isif>
+                  id="${pdict.CurrentForms.profile.customer.hairType.htmlName}"
+                  name="${pdict.CurrentForms.profile.customer.hairType.htmlName}">
+                  <a class="tooltip"><isprint value="${Resource.msg('profile.verycurly','account',null)}"/><div class="tooltip-body shadow"  style="display:none"><div class="tooltipcontainer">${Resource.msg('aboutyou.typeofhair.verycurly','account',null)}
+                  </div></div></a>
+                </label>
+              </div>
+          </div>
+          <div class="quizfields regRow">
+            <div class="questionLabel">
+              <isprint value="${Resource.msg('profile.hairtexture','account',null)}"/>
+            </div>
+              <div class="radioFields">
+                <label><input type="radio" value="fine"
+                  <isif condition="${pdict.CurrentForms.profile.customer.hairTexture.value=='fine'}">Checked</isif>
+                  id="${pdict.CurrentForms.profile.customer.hairTexture.htmlName}"
+                  name="${pdict.CurrentForms.profile.customer.hairTexture.htmlName}">
+                  <a class="tooltip"><isprint value="${Resource.msg('profile.fine','account',null)}"/><div class="tooltip-body shadow"  style="display:none"><div class="tooltipcontainer">${Resource.msg('aboutyou.hairtexture.fine','account',null)}
+                  </div></div></a>
+                </label>
+               </div>
+              <div class="radioFields">
+                <label><input type="radio" value="medium" 
+                  <isif condition="${pdict.CurrentForms.profile.customer.hairTexture.value=='medium'}">Checked</isif>
+                 id="${pdict.CurrentForms.profile.customer.hairTexture.htmlName}"
+                  name="${pdict.CurrentForms.profile.customer.hairTexture.htmlName}">
+                   <a class="tooltip"> <isprint value="${Resource.msg('profile.medium','account',null)}"/><div class="tooltip-body shadow"  style="display:none"><div class="tooltipcontainer">${Resource.msg('aboutyou.hairtexture.medium','account',null)}
+                  </div></div></a>
+                </label>
+              </div>
+              <div class="radioFields">
+                <label><input type="radio" value="coarse"
+                  <isif condition="${pdict.CurrentForms.profile.customer.hairTexture.value=='coarse'}">Checked</isif>
+                  id="${pdict.CurrentForms.profile.customer.hairTexture.htmlName}"
+                  name="${pdict.CurrentForms.profile.customer.hairTexture.htmlName}">
+                   <a class="tooltip"><isprint value="${Resource.msg('profile.coarse','account',null)}"/><div class="tooltip-body shadow"  style="display:none"><div class="tooltipcontainer">${Resource.msg('aboutyou.hairtexture.coarse','account',null)}
+                  </div></div></a>
+                </label>
+              </div>
+          </div>
+          
+           <div class="quizfields regRow">
+            <div class="questionLabel">
+              <isprint value="${Resource.msg('profile.hairvolume','account',null)}"/>
+            </div>
+              <div class="radioFields">
+                <label><input type="radio" value="thin"
+                  <isif condition="${pdict.CurrentForms.profile.customer.hairVolume.value=='thin'}">Checked</isif>
+                  id="${pdict.CurrentForms.profile.customer.hairVolume.htmlName}"
+                  name="${pdict.CurrentForms.profile.customer.hairVolume.htmlName}">
+                  <a class="tooltip"><isprint value="${Resource.msg('profile.thin','account',null)}"/><div class="tooltip-body shadow"  style="display:none"><div class="tooltipcontainer">${Resource.msg('aboutyou.volume.thin','account',null)}
+                  </div></div></a>
+                </label>
+               </div>
+              <div class="radioFields">
+                <label><input type="radio" value="normal" 
+                  <isif condition="${pdict.CurrentForms.profile.customer.hairVolume.value=='normal'}">Checked</isif>
+                 id="${pdict.CurrentForms.profile.customer.hairVolume.htmlName}"
+                  name="${pdict.CurrentForms.profile.customer.hairVolume.htmlName}">
+                  <a class="tooltip"><isprint value="${Resource.msg('profile.normal','account',null)}"/><div class="tooltip-body shadow"  style="display:none"><div class="tooltipcontainer">${Resource.msg('aboutyou.volume.normal','account',null)}
+                  </div></div></a>
+                </label>
+              </div>
+              <div class="radioFields">
+                <label><input type="radio" value="thick"
+                  <isif condition="${pdict.CurrentForms.profile.customer.hairVolume.value=='thick'}">Checked</isif>
+                  id="${pdict.CurrentForms.profile.customer.hairVolume.htmlName}"
+                  name="${pdict.CurrentForms.profile.customer.hairVolume.htmlName}">
+                  <a class="tooltip"><isprint value="${Resource.msg('profile.thick','account',null)}"/><div class="tooltip-body shadow"  style="display:none"><div class="tooltipcontainer">${Resource.msg('aboutyou.volume.thick','account',null)}
+                  </div></div></a>
+                </label>
+              </div>
+          </div>
+           </iscomment>
+          <input type="hidden" name="${pdict.CurrentForms.profile.secureKeyHtmlName}" value="${pdict.CurrentForms.profile.secureKeyValue}"/>
+          <div class="formactions">
+            <button type="submit" value="${Resource.msg('global.apply','locale',null)}" name="${pdict.CurrentForms.profile.save.htmlName}" class="btnColorB aButton">
+            ${Resource.msg('global.apply','locale',null)}
+            </button>
+            <a href="${URLUtils.https('Account-Show')}" title="Cancel" class="aButton">${Resource.msg('profile.cancel','account',null)}</a>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+  
+ <isset name="OmniturePage" value="aboutyou" scope="pdict"/>
+ <script type="text/javascript">
+$(document).ready(function(){				
+	var seldateval = jQuery('#dwfrm_profile_customer_date').val();
+	if(seldateval!= ""){
+		jQuery("#dwfrm_profile_customer_date option[value='']").remove(); 
+	}
+	var selmonthval = jQuery('#dwfrm_profile_customer_month').val();
+	if(selmonthval!= ""){
+		jQuery("#dwfrm_profile_customer_month option[value='']").remove(); 
+	}
+	var selgenderval = jQuery('#dwfrm_profile_customer_gender').val();
+	if(selgenderval!= ""){
+		jQuery("#dwfrm_profile_customer_gender option[value='']").remove(); 
+	}	
+
+});			
+</script>
+</isdecorate>

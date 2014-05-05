@@ -1,0 +1,52 @@
+<!--- TEMPLATENAME: paymentinformation.isml --->
+<div class="checkout_box payment_info">
+	<h4>${Resource.msg('personinformation.paymentinformation.label','rendering',null)}</h4>
+	<div class="checkout_box_inner">
+		
+		<div class="formfield payment_method">
+			<isif condition="${!empty(pdict.CurrentForms.personinf.creditcard.type.options)}">
+				<isset name="selectedOption" value="${pdict.CurrentForms.personinf.creditcard.type.selectedOption}" scope="page"/>
+			</isif>
+			<isif condition=${multiCheckout}>
+	   			<label class="payment_method_text"><span class="requiredindicator">*</span>${Resource.msg('forms.paymentinf.creditcard.type.label','forms',null)}</label>
+				<isloop items="${pdict.CurrentForms.personinf.creditcard.type.options}" var="creditCard">
+					<isset name="radioID" value="${creditCard.value}" scope="page"/>					
+					<isif condition="${!empty(selectedOption) && creditCard.value == selectedOption.value}">
+						<input type="radio" class="required" checked="checked" name="${pdict.CurrentForms.personinf.creditcard.type.htmlName}" value="${creditCard.value}" id="is-${radioID}" requiredmesage="${Resource.msg('forms.paymentinf.creditcard.type.typemissing','forms',null)}"/>
+					<iselse>
+						<input type="radio" class="required" name="${pdict.CurrentForms.personinf.creditcard.type.htmlName}" value="${creditCard.value}" id="is-${radioID}" requiredmesage="${Resource.msg('forms.paymentinf.creditcard.type.typemissing','forms',null)}"/>
+					</isif>
+					<label for="is-${radioID}"><isprint value="${creditCard.label}"></label>
+				</isloop>
+				<span htmlfor="${pdict.CurrentForms.personinf.creditcard.type.htmlName}" generated="true" class="errorclient"></span>
+	   		<iselse>
+				<isinputfield formfield="${pdict.CurrentForms.personinf.creditcard.type}" type="select" attribute1="requiredmesage" value1="${Resource.msg('forms.paymentinf.creditcard.type.typemissing','forms',null)}" attribute2="tabindex" value2="5">
+			</isif>
+	    </div>
+			    
+	    <div class="formfield card_number">
+	    	<isinputfield formfield="${pdict.CurrentForms.personinf.creditcard.number}" type="input" attribute1="requiredmesage" value1="${Resource.msg('forms.paymentinf.creditcard.number.numbermissing','forms',null)}" attribute2="tabindex" value2="6">
+	    </div>
+	    
+	    <div class="formfield expiration_date">
+	    	<label>${Resource.msg('paymentinformation.expiration.label','rendering',null)}<span class="requiredindicator">*</span></label>
+		    <div class="month"><isinputfield formfield="${pdict.CurrentForms.personinf.creditcard.month}" type="select" attribute1="requiredmesage" value1="${Resource.msg('forms.paymentinf.creditcard.month.monthmissing','forms',null)}" attribute2="tabindex" value2="7"></div>
+			<div class="year"><isinputfield formfield="${pdict.CurrentForms.personinf.creditcard.year}" type="select" attribute1="requiredmesage" value1="${Resource.msg('forms.paymentinf.creditcard.year.yearmissing','forms',null)}" attribute2="tabindex" value2="8"></div> 
+		</div>   
+		
+	</div>
+</div>
+<script type="text/javascript">
+jQuery(document).ready(function(){
+	var typeselected = ${empty(selectedOption)};
+	jQuery("select[name=${pdict.CurrentForms.personinf.creditcard.type.htmlName}]").each(function(){
+		if(typeselected!=null && typeselected==true){
+			jQuery(this).prepend(jQuery('<option></option>').val("").html("${Resource.msg('personinformation.paymentinformation.choose','rendering',null)}").attr("selected", "selected"));
+		}else{
+			jQuery(this).prepend(jQuery('<option></option>').val("").html("${Resource.msg('personinformation.paymentinformation.choose','rendering',null)}"));
+		}
+		
+	})
+});
+</script>
+

@@ -1,0 +1,49 @@
+<!--- TEMPLATENAME: tabview.isml --->
+ <div class="secondarynavtap">
+      <ul>
+       <isif  condition="${pdict.tabid=='EP'||pdict.tabid=='AL'||pdict.tabid=='PI'||pdict.tabid=='AY'}">
+ 	        <li class="active"><a href="#" ><span>${Resource.msg('addresslist.accountprofile','account',null)}</span></a></li>
+	        <li><span class="l-corner"></span><a href="${URLUtils.https('OrderHistory-History')}"><span>${Resource.msg('addresslist.orderstatus','account',null)}</span></a></li>
+       <iselse>
+ 	        <li><span class="l-corner"></span><a href="${URLUtils.https('Account-EditProfile')}" ><span>${Resource.msg('addresslist.accountprofile','account',null)}</span></a><span class="r-corner"></span></li>
+            <li class="active"><span class="l-corner"></span><a href="#"><span>${Resource.msg('addresslist.orderstatus','account',null)}</span></a><span class="r-corner"></span></li>
+        </isif>
+      </ul>  
+</div>
+<isif  condition="${pdict.tabid!='OH'}">
+	<div class="clear"></div>
+	    <div class="profiletab">
+	      <ul>
+	        <li  <isif  condition="${pdict.tabid=='EP'}"> class="active first" </isif> ><a href="${URLUtils.https('Account-EditProfile')}">${Resource.msg('addresslist.accountinfo','account',null)}</a><span>|</span> </li>
+	        <li <isif  condition="${pdict.tabid=='AL'}"> class="active first" </isif> > <a href="${URLUtils.https('Address-List')}">${Resource.msg('addresslist.addressbook','account',null)}</a><span>|</span> </li>
+	        <li <isif  condition="${pdict.tabid=='PI'}"> class="active first" </isif> ><a href="${URLUtils.https('PaymentInstruments-List')}">${Resource.msg('addresslist.paymentmethodnew','account',null)}</a> </li>
+	    <iscomment>  Removed About You page For MB 
+	       <li <isif  condition="${pdict.tabid=='AY'}"> class="active first" </isif> > <a href="${URLUtils.https('DisplayDashboard-AboutYou')}">${Resource.msg('addresslist.aboutyou','account',null)}</a></li> 
+	    </iscomment>
+	      </ul>
+	</div>
+</isif>
+
+<script type="text/javascript"><!--
+	jQuery(document).ready(function() {		
+				var isPageChanged=false;
+				jQuery(".formChange input").change(function() {
+					isPageChanged=true;
+				});
+				jQuery(".formChange select").change(function() {
+					isPageChanged=true;
+				});
+	
+				jQuery('.profiletab, .secondarynavtap').click( function() {
+					// if any field is changed in the tabs, then isPageChanged will be updated to true flag
+					if(isPageChanged){
+						var accepted = confirm("${Resource.msg('forms.acount.pageleave.message','forms',null)}");		
+						if(accepted==false) {
+							return false;
+						}else{
+							return true;
+						}	
+					}
+				});
+	});
+//--></script>

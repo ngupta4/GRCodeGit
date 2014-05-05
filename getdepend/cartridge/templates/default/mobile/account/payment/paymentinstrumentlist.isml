@@ -1,0 +1,222 @@
+<isset name="pagetitle" value="${Resource.msg('pagetitle.creditcardinfo','account',null)}" scope="pdict"/>
+<isdecorate template="account/pt_account">
+<isinclude template="util/modules"/>
+<isinclude template="KitCustomizer/kitinclude"/>
+		<input type="hidden" id="tagetPipeline" value="${pdict.TargetPipeline}"/>
+		<input type="hidden" id="tagetParams" value="${pdict.TargetPipelineParams}"/>
+<isset name="instantAccess" value="${pdict.CurrentSession.custom.instantAccess}" scope="page"/>
+    <istabdisplayed  tabid="PI"/>
+   <iscomment>Include common framework to make tabs</iscomment>
+   <div class="accountContainer">
+		<div class="accountForm paymentMethod">
+			<isslot id="account-banner2" description="Banner for My Account pages" context="global" />
+			<h2 class="formTitle">${Resource.msg('addresslist.paymentmethodnew','account',null)}</h2>
+			<isif condition="${null == instantAccess && instantAccess != true}">
+				<div class="btnWraper">
+					<a class="addcreditcardChanged brownButton aButton" id="AddCreditCard" href="${URLUtils.url('PaymentInstruments-Add')}" title="${Resource.msg('paymentinstrumentlist.addnewpaymentcard','account',null)}">
+						<span>${Resource.msg('paymentinstrumentlist.addnewpaymentcard','account',null)}</span>
+				   	</a>
+				</div>
+			</isif>
+			<!-- display the MW API errors -->
+				<isinclude template="util/errordisplay"/>
+				<isif condition="${null!=pdict.SucessMessage}">
+                		<div class="redMessage"> ${pdict.SucessMessage} </div>	
+                </isif>
+		
+			<div class="addressList">
+			<isset name="isContinuityCardAvailable" value="false" scope="page" />
+			<!-- The instantAccess will be used to check the payment method approved from the Middle Ware  -->
+			
+				<!--  start of display the continuity section -->
+				<!-- commented the instantAccess  condition, will be commented out later -->
+				<!--  isif condition="${null!=instantAccess && instantAccess != true}" -->
+					<isif condition="${pdict.PaymentInstruments.size() > 0}">					
+							<isloop items="${pdict.CurrentForms.paymentinstruments.creditcards.storedcards}" var="contCreditcard" status="loopstate">						
+								<!--  check if the Pay Pal is a continuity option -->
+								
+								<isif condition="${contCreditcard.object.custom.CustomerPaymentMethod.value=='2'}">
+									<div class="gr-bg-wraper paypal">
+								          <div class="white-bg">
+								          <div class="top-l-corner"></div>
+								          <div class="top-r-corner"></div>
+								          <div class="bot-l-corner"></div>
+								          <div class="bot-r-corner"></div>	
+											<div class="creditcard">
+											<h3>${Resource.msg('paymentinstrumentlist.wenpaymentmethod','account',null)}</h3>
+												<div class="topLabel">											
+													<span class="InfoTitle">${Resource.msg('change.note','account',null)}</span>
+													<p class="textInfo">${Resource.msg('paymentinstrumentlist.paylater.label1','account',null)} ${Resource.msg('paymentinstrumentlist.paylater.label2','account',null)}</p>
+												</div>
+												<div class="row">
+												<a href="${URLUtils.https('PaymentInstruments-UpdateContinuity', 'uuid', contCreditcard.object.UUID)}" class="gr-btn gr-btn-a">
+														<span class="lc"></span><span>${Resource.msg('paymentinstrumentlist.change','account',null)}</span>
+												</a>
+												</div>
+												</div>
+												</div>
+										</div>
+								<iselseif condition="${contCreditcard.object.custom.CustomerPaymentMethod.value=='1'}">
+									<isif condition="${null == instantAccess && instantAccess != true}">
+										<div class="topLabel">
+											<span class="InfoTitle">${Resource.msg('change.note','account',null)}</span>
+											<p class="textInfo">${Resource.msg('paymentinstrumentlist.paypal.header1','account',null)}
+											</br>${Resource.msg('paymentinstrumentlist.paypal.header2','account',null)} 
+											${Resource.msg('paymentinstrumentlist.paypal.header2.phone','account',null)}</p>
+										</div>
+									<iselse>
+										<div class="topLabel">
+			 								<p class="textInfo">${Resource.msg('instantAccess.message1','account',null)}<br>${Resource.msg('instantAccess.message2','account',null)}</p>
+										</div>
+									</isif>
+									
+										<div class="gr-bg-wraper paypal">
+								          <div class="white-bg">
+								          <div class="top-l-corner"></div>
+								          <div class="top-r-corner"></div>
+								          <div class="bot-l-corner"></div>
+								          <div class="bot-r-corner"></div>	
+											<div class="creditcard">
+											<h3>${Resource.msg('paymentinstrumentlist.wenpaymentmethod','account',null)}</h3>
+												<div class="topHeading">											
+													<img src="${URLUtils.staticURL('/images/paypal-logo.jpg')}" border="0" alt="PayPal-Standard-Logo" width="120">
+												</div>
+												</div>
+												</div>
+												</div>
+								<iselse>
+									<!--  check if the credit card is a continuity option -->
+								
+										<isif condition="${contCreditcard.object.custom.isDefaultCreditCard}">
+											<isif condition="${null == instantAccess && instantAccess != true}">
+												<div class="topLabel">
+												 <span class="InfoTitle">${Resource.msg('paymentinstrumentlist.header1','account',null)}</span>
+												 <p class="textInfo">${Resource.msg('paymentinstrumentlist.header','account',null)}</p>
+											   </div>
+											<iselse>
+												<div class="topLabel">
+		 											<p class="textInfo">${Resource.msg('instantAccess.message1','account',null)}<br>${Resource.msg('instantAccess.message2','account',null)}</p>
+												</div>
+											</isif>
+											
+											<div class="default regRow">
+										          <div class="whiteBg widthwhiteBg">
+										         	<div class="top-l-corner"></div>
+										        	<div class="top-r-corner"></div>
+										          	<div class="bot-l-corner"></div>
+										         	<div class="bot-r-corner"></div>	
+													<div class="creditcard">
+														<div class="topHeading">
+											                 ${Resource.msg('paymentinstrumentlist.wenpaymentmethod','account',null)}
+											                <isset name="isContinuityCardAvailable" value="true" scope="page" />
+															
+														</div>	
+														<isminicreditcard p_card="${contCreditcard.object}" p_show_expiration="${true}"/>
+														<isif condition="${null == instantAccess && instantAccess != true}">
+															<div class="actions">
+															<a href="${URLUtils.https('PaymentInstruments-UpdateContinuity', 'uuid', contCreditcard.object.UUID)}" class="brownButton changeBtn aButton">
+																<span>${Resource.msg('paymentinstrumentlist.change','account',null)}</span>
+																 	
+															</a>
+															</div>
+														</isif>
+													</div>
+												   </div>
+											</div>
+											<isbreak/>
+										</isif>
+									
+								</isif>
+						</isloop>
+						<iscomment>
+						<!-- Display the link Change if no continuity card is available as user can add new continuity card  -->
+							<isif condition="${isContinuityCardAvailable != 'true'}">	
+								<a href="${URLUtils.https('PaymentInstruments-UpdateContinuity', 'uuid', '')}" class="gr-btn gr-btn-a margin0">
+									<span class="lc"></span><span>${Resource.msg('paymentinstrumentlist.add.continuitycard','account',null)}</span>
+								</a>
+							</isif>
+						</iscomment>
+					</isif>
+				<!--  End of the display continuity section -->
+				<!-- /isif -->
+				<!-- End of the instantAccess condition -->
+				
+				<!--  start of display the non continuity section -->
+					
+					<isif condition="${pdict.PaymentInstruments.size() > 0}">
+							<isloop items="${pdict.CurrentForms.paymentinstruments.creditcards.storedcards}" var="creditcard" status="loopstate">
+								<isif condition="${!creditcard.object.custom.isDefaultCreditCard}" >
+							<div class="youSaveAccount">	
+								<div class="default">
+								<isif condition="${pdict.PaymentInstruments.size() == 1 && !empty(pdict.CurrentCustomer.profile.custom.defaultCreditCardID)}">
+								<iselse/>
+									<h4>${Resource.msg('paymentinstrumentlist.savepymentmethods','account',null)}</h4>
+								</isif>
+						          <div class="whiteBg widthwhiteBg">
+						            <div class="top-l-corner"></div>
+						            <div class="top-r-corner"></div>
+						            <div class="bot-l-corner"></div>
+						            <div class="bot-r-corner"></div>	
+									<div class="creditcard">
+									  <isminicreditcard p_card="${creditcard.object}" p_show_expiration="${true}"/>
+										<isif condition="${null == instantAccess && instantAccess != true}">	
+											<div class="actions">
+												<form action="${URLUtils.url('PaymentInstruments-Add')}"  method="post" id="creditcards_${loopstate.count}">
+													<input style="display:none" type="submit" value="Edit Card" name="${creditcard.remove.htmlName}"/>	
+													<a class="editlink grayButton aButton" title="Edit Card">
+														<span>${Resource.msg('account.editcard','account',null)}</span>
+														 
+													</a>
+													<input type="hidden" name="${pdict.CurrentForms.paymentinstruments.secureKeyHtmlName}" value="${pdict.CurrentForms.paymentinstruments.secureKeyValue}"/>
+												</form>														
+												<form action="${URLUtils.url('PaymentInstruments-Delete')}"  method="post" id="creditcards_${loopstate.count}">
+													<input style="display:none" type="submit" value="${Resource.msg('paymentinstrumentlist.deletecard','account',null)}" name="${creditcard.remove.htmlName}"/>	
+													<a class="deletelink darkGrayBtn aButton" title="${Resource.msg('paymentinstrumentlist.deletecard','account',null)}">
+														<span>${Resource.msg('paymentinstrumentlist.deletecard','account',null)}</span>
+													</a>
+													<input type="hidden" name="${pdict.CurrentForms.paymentinstruments.secureKeyHtmlName}" value="${pdict.CurrentForms.paymentinstruments.secureKeyValue}"/>
+												</form>																				
+											</div><!-- END: actions -->	
+										</isif>
+									</div><!-- END: creditcard -->
+									</div>
+									</div>
+								</div>
+						    	</isif>
+					    	</isloop>
+					</isif>
+					
+				<!--  End of the display non continuity section -->
+			</div><!-- END: paymentinstruments -->
+			<isset name="OmniturePage" value="MyAccountPaymentInfo" scope="pdict">	
+		</div><!-- END: accountpaymentinstruments -->
+		
+</div>
+<script type="text/javascript"><!--
+	
+	jQuery(document).ready(function() {
+		jQuery(".deletelink").click(function() {
+			var accepted = confirm("${Resource.msg('forms.paymentinf.creditcard.deletecard','forms',null)}");
+			if(accepted) {
+				var inputButton = jQuery(this).prev();
+				inputButton.click();
+			};	
+		});	
+
+		
+		jQuery(".editlink").click(function() {
+			//var accepted = confirm("${Resource.msg('forms.paymentinf.creditcard.editcardinfo','forms',null)}");		
+			//if(accepted) {
+				var inputButton = jQuery(this).prev();
+				inputButton.click();
+			//};	
+		});
+
+		jQuery(".addcreditcard").click(function() {	
+			app.dialog.open('${URLUtils.url('PaymentInstruments-Add')}','${Resource.msg('paymentinstrumentdetails.header','account',null)}');
+		});	
+
+	});
+
+//--></script>
+</isdecorate>

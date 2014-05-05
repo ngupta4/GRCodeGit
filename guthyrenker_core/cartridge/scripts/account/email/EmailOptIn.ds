@@ -1,0 +1,93 @@
+/**
+* Guthy-Renker Email Opt-In script
+*  Makes Web API call to subscribe to the GR email service
+*
+*
+*   @input Email : String
+*   @input FirstName : String
+*   @input LastName : String 
+*   @input ProductLine : String
+*   @input SiteURL : String
+*   @input CapLocation : String 
+*   @input UserID : String
+*   @input SessionID : String 
+*   @output Success : Boolean
+*
+*/
+importPackage( dw.system );
+importPackage( dw.net );
+
+var log : Log = Logger.getLogger("EmailOptOut.ds");
+
+function execute( args : PipelineDictionary ) : Number
+{
+	var email : String = args.Email;
+	var lastName : String = args.LastName;
+	var firstName : String = args.FirstName;
+	var siteURL : String = args.SiteURL;
+	var capLocation : String = args.CapLocation;
+	var userID : String = args.UserID;
+	var sessionID : String = args.SessionID;
+	
+	var brand : String = args.ProductLine;
+	
+	if( empty(brand) ) {
+	// TODO: Should we create a new, independent site pref, or just re-use the one that already is populated with valid data
+	// Alternatively, maybe LitleCoreBrand should be just CoreBrand. <<<< recommended
+		brand = dw.system.Site.getCurrent().getCustomPreferenceValue('LitleCoreBrand');
+	}
+	log.info('Brand:'+brand);
+	if( empty(email) || empty(brand) ) {
+		log.error("Cannot call EmailOptIn without at least 2 required parameters: Email:{0} and ProductLine: {1}.",email,brand);
+		return PIPELET_ERROR;
+	}
+	
+	var http : HTTPClient = new HTTPClient();
+	var serviceURL : String = getEmailOptInServiceURL(brand,email,lastName,firstName,siteURL,capLocation,userID,sessionID);
+	
+	log.debug('URL:'+serviceURL);
+	
+	http.open("GET", serviceURL);
+	http.send();
+    
+	var response : String = http.getText();
+	
+	Logger.debug("Email optin url call: " + serviceURL);
+	Logger.debug(http.text || http.errorText);
+	
+	if( response.indexOf('<result>SUCCESS</result>')>-1 ) {
+		args.Success = true;		
+	} else {
+		args.Success = false;
+	}
+	
+	return PIPELET_NEXT;
+}
+
+function getEmailOptInServiceURL( brand : String, email : String, lastName : String, firstName : String, siteURL : String, capLocation : String, userID : String, sessionID : String ) : String {
+	var baseURL : String = Site.current.getCustomPreferenceValue("middlewareAPIURL");
+	baseURL += "/mailinglist/subscribe";
+	baseURL+="/productLine/"+brand;
+	baseURL+="/email/"+email;
+	
+	if( !empty(lastName) ) {
+		baseURL+="/lastName/"+lastName;
+	}
+	if( !empty(firstName) ) {
+		baseURL +="/firstName/"+firstName;
+	}
+	if( !empty(siteURL) ) {
+		baseURL +="/siteURL/"+siteURL;
+	}
+	if( !empty(capLocation) ) {
+		baseURL +="/captureLocation/"+capLocation;
+	}
+	if( !empty(userID) ) {
+		baseURL +="/userId/"+userID;
+	}
+	if( !empty(sessionID) ) {
+		baseURL +="/sessionId/"+sessionID;
+	}
+	
+	return baseURL;	
+}

@@ -1,0 +1,13 @@
+//This Script returns the URL of the captcha service used by fetching from site preferences
+importPackage( dw.system );
+
+function links() : Number
+{
+	var obj : dw.util.ArrayList = new dw.util.ArrayList();
+	var recaptchaURL : CustomAttributes = dw.system.Site.getCurrent().preferences.custom.Recaptcha_API;
+	var recaptcha_iframe :  CustomAttributes = dw.system.Site.getCurrent().preferences.custom.Recaptcha_Iframe_URL;
+	
+	obj.add(recaptchaURL);
+	obj.add(recaptcha_iframe);
+   return obj;
+}

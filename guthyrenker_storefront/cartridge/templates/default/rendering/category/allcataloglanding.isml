@@ -1,0 +1,46 @@
+<isset name="DecoratorTemplate" value="search/pt_productsearchresult" scope="page"/>
+
+<isdecorate template="${DecoratorTemplate}">
+<div  id="content"><isset name="rootCategory" value="${dw.catalog.CatalogMgr.getCategory(Resource.msg('search.category.all','search',null))}" scope="page"/>
+<div class="pdpContainer">
+	<div class="productsContainer">
+		<isloop items="${rootCategory.onlineOutgoingCategoryLinks}" var="catLink">
+			<isset name="subCat" value=${catLink.targetCategory} scope="page"/>
+			<h2 class="categoryTitle" id="${subCat.getID()}"><isprint value="${subCat.getDisplayName()}" encoding="off"/></h2>
+			<isset name="products" value="${subCat.getOnlineProducts()}" scope="page"/>
+			<div class="productsDetails productlisting">	
+				<isloop items="${products}" var="Product">		
+					<isinclude template="product/producttiledetailed"/>
+				</isloop>
+			</div>
+		</isloop>
+	 </div><!--END: productContainer -->
+</div><!--END: categoryContainer -->
+<isif condition="${!empty(dw.web.Resource.msg('bazaarvoice.isenabled','bazaarvoice',null)) 
+						&& dw.web.Resource.msg('bazaarvoice.isenabled','bazaarvoice',null) == 'true'}">
+		<isinclude template="bv/display/headerincludes"/>
+</isif>
+</div>
+<script type="text/javascript">
+
+	//Add To Bag for Variant Products
+	 jQuery(".white-bg .addtobag").each(function() {		
+		  jQuery(this).click(function() 
+		  {
+			  var parentObj = jQuery(this).siblings('.swatches');
+			  var productid=  parentObj.find('.addtocartvariation li.selected a').attr('id');
+			  var upsell =  parentObj.find('.addtocartvariation li.selected a').attr('upsell');
+			  app.minicart.addFromCLP(productid, 'true',upsell);
+		 });
+	 });
+	 jQuery(".white-bg .addtokitvar").each(function() {		
+		  jQuery(this).click(function() 
+		  {
+			  var parentObj = jQuery(this).parent().siblings('.swatches');
+			  var productid=  parentObj.find('.addtocartvariation li.selected a').attr('id');
+			  var isKitAdditionAllowedVal =  parentObj.find('.addtocartvariation li.selected input').val();
+			  addProduct(productid,isKitAdditionAllowedVal);
+		 });
+	 });
+ </script>
+</isdecorate>

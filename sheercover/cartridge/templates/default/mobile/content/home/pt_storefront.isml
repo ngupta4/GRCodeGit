@@ -1,0 +1,26 @@
+<!DOCTYPE html> 
+<html> 
+<isinclude template="mobile/components/header/htmlhead"/>
+
+<isscript>
+	importScript('guthyrenker_core:common/libUtils.ds');
+	
+	var CCC : Object = pdict.CurrentCampaignConfig;
+	var category : dw.catalog.Category = CCC.getCampaignCategory();
+</isscript>
+
+<body> 
+<isinclude template="mobile/common/mboxglobal"/>
+<isinclude template="mobile/components/header/header"/>
+<!--  Product Info -->
+<!-- DONE -->
+<div data-role="page" id="product-info" data-theme="d" class="wallpaper">
+<isreplace/>
+<!--- footer --->
+<isinclude template="mobile/components/footer/footer"/>
+<!---  Omniture tracking  --->
+</div><!-- /page -->
+<isinclude template="mobile/common/google_analytics" />
+
+</body>
+</html>

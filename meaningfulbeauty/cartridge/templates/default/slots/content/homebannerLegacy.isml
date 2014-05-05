@@ -1,0 +1,56 @@
+<!--- TEMPLATENAME: homebanner.isml --->
+<iscache type="relative" hour="24" varyby="price_promotion" />
+
+<iscomment>
+	This template renders the slot content of the bottom category landing slot
+	in case the slot content is of type Content Asset.
+	Note, only one content asset is rendered.
+</iscomment>
+
+<isinclude template="util/modules"/>
+<isscript>
+	importScript('guthyrenker_core:common/libUtils.ds');
+	
+	if( empty(slotcontent) ) {
+		slotID = 'no-slot-configured';
+	} else {
+		slotID = slotcontent.slotID;
+	}
+</isscript>
+
+<div id="mainCtn" class="bannerContainer ${slotID}">
+
+	<iscomment>make sure we have content at all</iscomment>
+	<isif condition="${slotcontent != null}">
+		<isif condition="${!empty(slotcontent.content)}">
+			<isloop items="${slotcontent.content}" var="contentAsset" status="ca_status">
+				<div id="asset${ca_status.count}" class="contentBanner ${contentAsset.ID}">
+			  	<div class="contentasset"><!-- dwMarker="content" dwContentID="${contentAsset.UUID}" -->
+				  	<isif condition="${!empty(contentAsset.custom.body)}">
+				  		<isprint value="${contentAsset.custom.body}" encoding="off"/>
+						<iselseif condition="${shouldShowDebugInfo()}"/>
+							The content asset "${contentAsset.ID}" is empty.  It is referenced by content slot "${slotcontent.slotID}" for campaign "${campaignCode}".
+				  	</isif>
+				  </div>
+				</div>
+			</isloop>
+		<iselseif condition="${shouldShowDebugInfo()}"/>
+			<div id="asset1" class="contentBanner no-content-assets">
+			  <h2>No ContentAssets!</h2>
+			  <p>
+					The content slot "${slotcontent.slotID}" has no configured ContentAssets. 
+				</p>
+			</div>
+		</isif>
+	<iselseif condition="${shouldShowDebugInfo()}"/>
+		<div id="asset1" class="contentBanner no-slot-config">
+		  <h2>Unconfigured slot</h2>
+		  <p>
+				The content slot "${slotID}" needs to be configured in the BM or will not render on the live site. 
+			</p>
+		</div>
+	</isif>
+	
+</div>
+
+

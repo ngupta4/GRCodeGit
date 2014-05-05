@@ -1,0 +1,71 @@
+<isscript>
+	importScript("guthyrenker_core:common/libUtils.ds")
+	// get root category of current site's navigation catalog
+	var siteCatalog = dw.catalog.CatalogMgr.getSiteCatalog();
+	var root = null;
+	if(siteCatalog!=null) {root = siteCatalog.getRoot();}
+
+	// get the "sale" category
+	var saleCategory = dw.catalog.CatalogMgr.getCategory('Product-Type');
+</isscript>
+<isset name="OnlineSubFolders" value="${getPrimaryNavigation(isLoggedIn,'primary-navigation')}" scope="page" />
+<isset name="ContentMap" value="${getContentAssetMap('primary-naigation')}" scope="page"/>
+<isloop items="${OnlineSubFolders}" var="aFolder1" status="navstat1">
+	<isif condition="${true || !empty(getCustomerUID(request)) || aFolder1.ID != 'community'}">
+	  <isif condition="${ContentMap.get(aFolder1.ID)!=null}">
+	  	<isset name="FolderLinkURL1" value="${URLUtils.http('Page-Show','cid',ContentMap.get(aFolder1.ID))}" scope="page" />
+	  <iselse>
+	  	<isset name="FolderLinkURL1" value="${URLUtils.http('Page-Show','cid',aFolder1.ID)}" scope="page" />
+	  </isif>	  
+	  <isif condition="${'linkHref' in aFolder1.custom && !empty(aFolder1.custom.linkHref)}">
+	  		<isset name="FolderLinkURL1" value="${aFolder1.custom.linkHref}" scope="page" />	  		
+	  </isif>
+	  <div class="sitemapOrderNow">
+		<ul>
+		 <li id="sitemap-${aFolder1.ID}" class="sitemapMyAccount">
+		 <h4>${aFolder1.displayName}</h4> 
+		<isif condition="${null!=aFolder1.ID && aFolder1.ID=='faqs'}">
+		<ul>
+			<li><a class="omniCustomerService" href='<isprint value="${FolderLinkURL1}" encoding="off" />' title="${Resource.msg('frequently.asked.questions','rendering',null)}">${Resource.msg('frequently.asked.questions','rendering',null)}</a></li>
+		</ul>
+		</isif>
+		<isset name="SecondaryNav" value="${aFolder1.ID}" scope="page" />
+		<isset name="SecFolders" value="${getPrimaryNavigation(isLoggedIn,SecondaryNav)}"  scope="page"/>
+				<ul class="subnav">
+				 	 <isloop items="${SecFolders}" var="aFolder2" status="navstat2">
+				 	 
+   					      <isset name="FolderLinkURL2" value="" scope="page" />
+						 
+						  <isif condition="${ContentMap.get(aFolder2.ID)!=null}">
+						  	<isset name="FolderLinkURL2" value="${URLUtils.http('Page-Show','cid',ContentMap.get(aFolder2.ID))}" scope="page" />
+						  <iselse>
+						  	<isset name="FolderLinkURL2" value="${URLUtils.http('Page-Show','cid',aFolder2.ID)}" scope="page" />
+						  </isif>
+					  	  <isif condition="${'linkHref' in aFolder2.custom && !empty(aFolder2.custom.linkHref)}">					  	  		
+						  		<isset name="FolderLinkURL2" value="${aFolder2.custom.linkHref}" scope="page" />	  		
+						  </isif>
+						  
+							  <li>
+							  	<a href='<isprint value="${FolderLinkURL2}" encoding="off" />' title="${aFolder2.displayName}"><isprint value="${aFolder2.displayName}" encoding="off"/></a>
+							 </li>
+						
+					  </isloop>
+	 			</ul>
+	</isif>
+	 </li>
+	 </ul>
+</div>
+</isloop>
+
+
+<iscomment><div class="sitemapProducts">
+<h4>Products</h4>
+	<ul class="category-nav">
+	<isloop items="${saleCategory.getOnlineSubCategories()}" var="subCat">
+      <li>
+	     <a href="${URLUtils.http('Search-Show', 'cgid', subCat.getID())}"><isprint value="${subCat.getDisplayName()}"/></a>
+     </li>
+    </isloop>
+    </ul>
+</div>
+</iscomment>

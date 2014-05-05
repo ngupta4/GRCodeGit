@@ -1,0 +1,26 @@
+<div class="breadcrumb">
+	<iscomment>HOME BREADCRUMB</iscomment>
+	<a href="${URLUtils.httpHome()}" class="home" title="${Resource.msg('global.home','locale',null)}">${Resource.msg('global.home','locale',null)}</a>
+	
+	<iscomment> SHOW CONTENT NAME </iscomment>
+	<isif condition="${pdict.Content != null}">
+		<isscript>
+			var contentObj: dw.content.Content = pdict.Content;
+			var tempContent : dw.content.Folder=null;
+			var path : dw.util.ArrayList = new dw.util.ArrayList();
+			if( null != contentObj){
+				tempContent = dw.content.ContentMgr.getFolder(contentObj.ID).parent;
+				while( tempContent.ID != 'retention-primary-navigation'){
+					path.addAt(0, tempContent);	
+					tempContent = tempContent.parent;
+				}	
+			}			
+		</isscript>
+		<isloop items="${path}" var="content" status="loopstate">
+			<span class="divider">&nbsp;/&nbsp;&nbsp;</span><a href="${URLUtils.http('Page-Show','cid', content.ID)}"><isprint value="${content.displayName}" encoding="off"/></a>
+		</isloop>
+		<span class="divider">&nbsp;/&nbsp;&nbsp;</span><isprint value="${pdict.Content.name}" encoding="off"/>
+	</isif>
+	
+	
+</div><!-- END: breadcrumb -->

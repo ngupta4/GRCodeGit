@@ -1,0 +1,41 @@
+/**
+* Demandware Script File
+* 
+* If product was found through a product search build the list
+*		of categories with the custom customCSSFile attribute to be
+*		used in loading dynamic CSS.
+*
+* For example:
+*
+*-   @input ExampleIn : String This is a sample comment.
+*-   @output ExampleOut : Number
+*
+*/
+importPackage( dw.system );
+
+function getCategoryFromCSS( productSearchResult : PipelineDictionary ) : dw.util.Collection
+{
+
+		var productSearchResult : ProductSearchResult = productSearchResult;
+		var category : dw.catalog.Category = null;
+		var categoryCustomCSS : dw.util.Collection = new dw.util.ArrayList();
+		
+		// get category from search context
+		if( !empty(productSearchResult) )
+		{
+			category = productSearchResult.category;
+		
+			if (category != null)
+			{
+				while( category.parent != null )
+				{
+					if( category.online && ('customCSSFile' in category.custom) && !empty(category.custom.customCSSFile)) 
+					{
+						categoryCustomCSS.addAt( 0, category );
+					}
+					category = category.parent;
+				}
+			}
+		}
+   return categoryCustomCSS;;
+}

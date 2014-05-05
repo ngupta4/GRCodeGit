@@ -1,0 +1,40 @@
+<div class="title">
+       <isprint value="${Resource.msg('account.yoursystem.title','account',null)}"/>
+</div>
+
+<div class="innerBox">
+        <div class="row">            
+            <isif condition="${'kitProducts' in pdict.CurrentCustomer.profile.custom && !empty(pdict.CurrentCustomer.profile.custom.kitProducts)}"> 
+		            <isscript>
+		    			var products : Array = pdict.CurrentCustomer.profile.custom.kitProducts;
+						var pidArray : Array = new Array();	
+						if(products != null && !empty(products)){
+							for(var i=0; i<products.length; i++){
+								var tempArray : Array = new Array();
+								if(products[i].indexOf(dw.web.Resource.msg('symbol.kit.split','common',null))>=0){
+									tempArray = products[i].split(dw.web.Resource.msg('symbol.kit.split','common',null));
+								}
+								if(tempArray[1] != null)
+									pidArray[i] = tempArray[1].toString();
+								//quantityArray[i] = tempArray[2];
+							}
+						}
+					 </isscript>	         
+	   		
+					<isloop items="${pidArray}" var="test" status="loopstate">
+						 <isif condition="${null!=test}">
+								<isprint value="${loopstate.count}"  formatter="#"/>. <isprint value="${test}" encoding="off"/>
+								<br/>
+						  </isif>
+					</isloop>
+			<iselse/>	
+				<div class="innerBox">
+				   <p class="summry txtWraper"><isprint value="${Resource.msg('account.yoursystem.desc','account',null)}" encoding="off"/></p>
+			  	</div>
+            </isif>             
+          </div>
+            <div class="btn-wraper">
+            	<a class="btnColorB aButton" title="<isprint value="${Resource.msg('account.yoursystem.custBtn','account',null)}" encoding="off"/>" href="${URLUtils.https('KitCustomizer-KitShipDetail')}"><isprint value="${Resource.msg('account.yoursystem.custBtn','account',null)}" encoding="off"/></a>
+            </div>
+              
+</div>

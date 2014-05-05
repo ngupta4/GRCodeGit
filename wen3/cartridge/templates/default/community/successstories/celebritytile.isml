@@ -1,0 +1,13 @@
+<h2><a href="${URLUtils.http('Page-Show','cid',content.ID)}" title="${content.name}"><isprint value="${content.name}"/></a></h2>
+<isif condition="${'afterImg' in content.custom && !empty(content.custom.afterImg)}">
+	<isset name="thumbnailUrl" value="${content.custom.afterImg.url}" scope="page"/>
+<iselse/>
+	<isset name="thumbnailUrl" value="${URLUtils.staticURL('/images/noimagemedium.png')}" scope="page"/>
+</isif>
+<isset name="thumbnailAlt" value="${content.name}" scope="page"/>
+<isset name="thumbnailTitle" value="${content.name}" scope="page"/>
+<a href="${URLUtils.http('Page-Show','cid',content.ID)}" title="${content.name}"><img src="${thumbnailUrl}" alt="${thumbnailAlt}" title="${thumbnailTitle}" /></a>
+<p><isprint value="${content.description}"/></p>
+<a href="${URLUtils.http('Page-Show','cid',content.ID)}" class="read-story-link"><isprint value="${Resource.msg('community.read.story','community',null)}"/></a>
+
+

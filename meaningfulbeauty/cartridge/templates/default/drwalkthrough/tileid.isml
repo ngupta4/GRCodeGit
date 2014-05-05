@@ -1,0 +1,37 @@
+<isinclude template="util/modules"/>
+
+<isset name="tileId" value="${pdict.tileId}" scope="page"/>
+
+<isif condition="${tileId == '01'}">
+	<iscontentasset aid="tile01"/>
+<iselseif condition="${tileId == '02'}">
+	<iscontentasset aid="tile02"/>
+<iselseif condition="${tileId == '03'}">
+	<iscontentasset aid="tile03"/>
+<iselseif condition="${tileId == '04'}">
+	<iscontentasset aid="tile04"/>
+<iselseif condition="${tileId == '05'}">
+	<iscontentasset aid="tile05"/>	
+<iselseif condition="${tileId == '06'}">
+	<iscontentasset aid="tile06"/>
+<iselseif condition="${tileId == '07'}">
+	<iscontentasset aid="tile07"/>
+<iselseif condition="${tileId == '08'}">
+	<iscontentasset aid="tile08"/>			
+<iselseif condition="${tileId == '09'}">
+	<iscontentasset aid="tile09"/>
+<iselseif condition="${tileId == '10'}">
+	<iscontentasset aid="tile10"/>		
+<iselseif condition="${tileId == '11'}">
+	<iscontentasset aid="tile11"/>
+<iselseif condition="${tileId == '12'}">
+	<iscontentasset aid="tile12"/>	
+<iselseif condition="${tileId == '13'}">
+	<iscontentasset aid="tile13"/>
+<iselseif condition="${tileId == 'tile_dayone'}">
+	<iscontentasset aid="tile_dayone"/>	
+<iselseif condition="${tileId == 'tile_comeback'}">
+	<iscontentasset aid="tile_comeback"/>		
+<iselse>
+	<iscontentasset aid="tile_default"/>
+</isif>

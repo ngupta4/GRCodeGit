@@ -1,0 +1,195 @@
+<isinclude template="util/modules" />
+
+<isdecorate template="content/kiosklocator/pt_kiosklocator">
+<div class="kiosk-locator">
+	<div class="pageHead">
+		<h1>${Resource.msg('kiosklocator.showlocation.head','rendering',null)}</h1>
+  		<p class="intro">${Resource.msg('kiosklocator.showlocation.intro','rendering',null)}</p>
+	</div>
+	
+	<isscript>
+		function normalize(o){
+			if(o === null || o === 'null'){
+				return '';
+			}
+			for(var i in o){
+				if(o.hasOwnProperty(i) && (o[i] === 'null' || o[i] === null )){
+					o[i] = '';
+				}
+			}
+			return o;
+		}
+		
+		//This function was created because of isprint tag with attribute formatter="00000" does not work
+		function normalizeZip(zipCode){
+			var zip_=String(zipCode); 
+			return (zipCode && zip_.length<5 && zip_.length>0)?'0'+zip_:normalize(zipCode)
+		}
+		
+		// Stores object, also is a key to distance data
+		var Locations = pdict.NearestLocations.keySet(),			
+			normalizedLocationList : dw.util.ArrayList = new dw.util.ArrayList(), 
+			normalizedLocation,
+			zip = pdict.CurrentForms.kiosklocator.zip.htmlValue;
+			
+		
+	</isscript>
+	<div class="blockGrey">
+		<div class="block"> 
+			<div class="blockTop"><div class="blockTopRight"></div></div>
+
+			
+			<h3><isprint value="${Resource.msgf('kiosklocator.showlocation.searchinfo','rendering',null,pdict.CurrentForms.kiosklocator.radius.htmlValue,zip)}" encoding="off"/><a href="${URLUtils.url('KioskLocator-Locate')}">${Resource.msg('kiosklocator.showlocation.newsearch','rendering',null)}</a></h3>
+			<div class="block-content">
+				<div class='phpGoogleStoreLocator_body'>
+					<div id="map" class="kiosk_map"></div>	
+					<table align="center" cellpadding="0" cellspacing="0" border="0" class="kiosk_results">
+						<thead>
+							<tr>
+								<!-- <th>${'#'}</th> -->
+								<th>${Resource.msg('kiosklocator.showlocation.distance','rendering',null)}</th><th>${Resource.msg('kiosklocator.showlocation.location','rendering',null)}</th><th>${Resource.msg('kiosklocator.showlocation.phone','rendering',null)}</th><th>${Resource.msg('kiosklocator.showlocation.findit','rendering',null)}</th>
+							</tr>
+						</thead>
+						<tbody>	
+							<tr></tr>
+							<isif condition="${Locations.size() > 0}">							
+								<isloop items="${Locations}" alias="location" status="status">
+									<isif condition="${status.count > 25}">
+										<isbreak/>
+									</isif>
+									<isscript>
+										try{
+											
+											normalizedLocation = normalize({
+												id: location.ID,
+												name: location.name,
+												phone: location.phone?location.phone:'N/A',
+												longitude: location.longitude,
+												latitude: location.latitude,
+												address: location.address1,
+												city: location.city,
+												state: location.stateCode,
+												zip: normalizeZip(location.postalCode),
+												country: location.countryCode.value,
+											});
+											normalizedLocationList.push(JSON.stringify(normalizedLocation));
+
+										}catch(e){
+											dw.system.Logger.getRootLogger().error("Kiosk locator: something wrong with object {0}, exception: {1}", location, e);
+										}
+									</isscript>
+								
+									<tr class="store_line">
+
+										<td class="distance" rel="${normalizedLocation.latitude}:${normalizedLocation.longitude}">${pdict.NearestLocations.get(location).toFixed(1)}</td>
+										<td>${normalizedLocation.name}<br>${normalizedLocation.address}<br>${normalizedLocation.city}, ${normalizedLocation.state} <isprint value="${normalizedLocation.zip}" formatter="00000" /> ${normalizedLocation.country}<br></td>
+										<td>${normalizedLocation.phone}</td>
+										<td><a class="gml" target="_blank" href="http://maps.google.com/maps?saddr=${zip}&daddr=${normalizedLocation.address}, ${normalizedLocation.city}, ${normalizedLocation.state} ${normalizedLocation.zip} ${normalizedLocation.country}&hl=en">Map & Directions</a></td>
+									</tr>
+								</isloop>
+							</isif>
+						</tbody>
+					</table> 
+					<div class="clearboth"></div>
+				</div>
+			</div>     
+			<div class="blockBottom"><div class="blockBottomRight"></div></div>
+		</div>
+	</div>
+</div>
+<isscript>
+	var GoogleMapApiKey = request.isHttpSecure()?'GoogleMapApiKeySecure':'GoogleMapApiKey';
+</isscript>
+<iscomment>
+<script src="http://maps.google.com/maps?file=api&amp;v=2.61&amp;key=<isprint value="${dw.system.Site.getCurrent().getCustomPreferenceValue(GoogleMapApiKey)}" encoding="off"/>" type="text/javascript"></script>
+</iscomment>
+
+<script src="https://maps.googleapis.com/maps/api/js?key=<isprint value="${dw.system.Site.getCurrent().getCustomPreferenceValue(GoogleMapApiKey)}" encoding="off"/>&amp;sensor=false" type="text/javascript"></script>
+
+<script type="text/javascript">
+
+	$( document ).ready(function() {
+		
+		var locations = new Array();
+		
+		<isloop items="${normalizedLocationList}" var="location" status="status">
+			try{
+				locations.push(<isprint value="${location}" encoding="off"/>);
+			}catch(e){
+				console.log(e)
+			}
+		</isloop>
+	
+		function createMarker(map){
+			var infowindow = new google.maps.InfoWindow();
+	        
+	        //create empty LatLngBounds object
+	            var bounds = new google.maps.LatLngBounds();
+	        
+	        var marker, i;
+	        
+	     // put the pin as per patitude and longitude
+	        for(var i=0,l=locations.length;i<l;i++){
+	            try{
+	                //createMarker(locations[i]);
+	                
+	                marker = new google.maps.Marker({
+	                    position: new google.maps.LatLng(locations[i].latitude, locations[i].longitude),
+	                    map: map
+	                });
+	                
+	                //extend the bounds to include each marker's position
+	                    bounds.extend(marker.position);
+	                    
+	                google.maps.event.addListener(marker, 'mouseover', (function(marker, i) {
+	                    return function() {
+	                      infowindow.setContent(
+	                                            locations[i].address + ', <br />'
+	                                            + locations[i].city + ', ' + locations[i].state + ', ' + locations[i].country + '(' + locations[i].zip + ')' + ', <br />'
+	                                            + 'Phone: ' + locations[i].phone + ' <br />'
+	                                            );
+	                      infowindow.open(map, marker);
+	                    }
+	                })(marker, i));
+	                
+	                 
+	                
+	                // assuming you also want to hide the infowindow when user mouses-out
+	                    google.maps.event.addListener(marker, 'mouseout', function(marker, i) {
+	                        infowindow.close(map, marker);
+	                    });
+	                    
+	            }catch(e){console.log(e)}
+	        }//FOR END
+	        
+	        
+	            
+	        //now fit the map to the newly inclusive bounds
+	            map.fitBounds(bounds);
+	            
+	            
+	        //(optional) restore the zoom level after the map is done scaling
+	        var listener = google.maps.event.addListener(map, "idle", function () {
+	            map.setZoom(11);
+	            google.maps.event.removeListener(listener);
+	        });
+		}//function createMarker() END
+		
+		function initialize() {
+	        var map = new google.maps.Map(
+	          document.getElementById("map"), {
+	            //center: new google.maps.LatLng(37.4419, -122.1419),
+	            zoom: 13,
+	            mapTypeId: google.maps.MapTypeId.ROADMAP
+	        });
+	      
+	          // Set the pin on the map
+	              createMarker(map);
+	      }//Function END
+	      
+		google.maps.event.addDomListener(window, 'load', initialize);
+	});
+</script>
+
+
+</isdecorate>

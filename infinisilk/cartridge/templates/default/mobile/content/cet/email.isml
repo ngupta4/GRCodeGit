@@ -1,0 +1,15 @@
+<!--- TEMPLATENAME: email.isml --->
+<iscontent type="text/plain" />
+Name: ${pdict.CurrentForms.cet.firstname.value} ${pdict.CurrentForms.cet.lastname.value}<br />
+Email: ${pdict.CurrentForms.cet.email.value}<br />
+Address: ${pdict.CurrentForms.cet.address.value}<br />
+City: ${pdict.CurrentForms.cet.city.value}<br />
+State: ${Resource.msg(pdict.CurrentForms.cet.states.state.selectedOption.label, 'forms', null) || ''}<br />
+Zip: ${pdict.CurrentForms.cet.zip.value}<br />
+Phone: ${pdict.CurrentForms.cet.phone.value}<br />
+Account ${"#"}: ${pdict.CurrentForms.cet.accountnumber.value || ''}<br />
+<br />
+Case<br />
+==============<br />
+${pdict.CurrentForms.cet.complaint.value}<br />
+<br />

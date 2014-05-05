@@ -1,0 +1,26 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<isinclude template="util/modules"/>
+<head>
+<iscomment>
+Include all important information globally , e.g. meta-data, link information, and javascript.
+</iscomment>
+<isinclude template="components/header/htmlhead"/>
+<iscomment>Add page specific header information here.</iscomment>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<isif condition="${'customCSSFile' in pdict.Content.custom && !empty(pdict.Content.custom.customCSSFile)}">
+<link href="${pdict.Content.custom.customCSSFile.URL}" type="text/css" rel="stylesheet" />
+</isif>
+</head>
+<body class="pt_unsubscribe">
+<iscomment>Cookies and Javascript enabled check</iscomment>
+<isinclude template="components/browsertoolscheck"/>
+<isset name="showNav" value="${true}" scope="page" />
+<isset name="showOrderButton" value="${true}" scope="pdict" />
+
+<isinclude template="components/header/header"/>
+<isreplace/>
+<isinclude template="components/footer/footer"/>
+<isslot id="ClickTrackingSlot" context="global" description="ClickTrackingSlot" />
+</body>
+</html>

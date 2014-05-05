@@ -1,0 +1,226 @@
+/**
+* Demandware Script File
+* To get the variant list of a specific product on CLP page.
+*
+*/
+importPackage( dw.system );
+importPackage( dw.catalog );
+
+importScript( "catalog/libCompareList.ds" );
+importScript( "common/libJson.ds" );
+importScript('int_gutheyrenker:common/libUtils.ds'); 
+
+/**
+*  Method returns the list containing color and size variants. 
+*/
+function getVariantList( product : PipelineDictionary, productHit :  PipelineDictionary) : dw.util.ArrayList
+{
+		logInfo("Entering ProductTileScript:getVariantList");
+		var returnList: dw.util.ArrayList = new dw.util.ArrayList();
+		var selectableColors : dw.util.Collection = new dw.util.ArrayList();
+		var product: dw.catalog.Product = product;
+		var productHit = productHit;
+		var varAttrColor : dw.catalog.ProductVariationAttribute = null;
+		if( product.master )
+		{
+			var varModel : dw.catalog.ProductVariationModel = product.variationModel;
+			varAttrColor = varModel.getProductVariationAttribute("color");
+			if( varAttrColor != null )
+			{
+				selectableColors = varModel.getAllValues( varAttrColor );
+			}
+		}
+		
+		var selectableSizes : dw.util.Collection = new dw.util.ArrayList();
+		var varAttrSize : dw.catalog.ProductVariationAttribute = null;
+		
+		if( product.master )
+		{
+			var varModel1 : dw.catalog.ProductVariationModel = product.variationModel;
+			varAttrSize = varModel1.getProductVariationAttribute("size");
+	
+			if( varAttrSize != null )
+			{
+				selectableSizes = varModel1.getAllValues( varAttrSize );
+			}
+		}
+
+	returnList[0] = selectableColors;
+	returnList.add(varAttrColor);
+	returnList.add(selectableSizes);
+	returnList.add(varAttrSize);
+	
+	logInfo("Exiting ProductTileScript:getVariantList");
+   return returnList;
+}
+
+
+/*
+* Return the product id corresponding to variant id passed as argument.
+* if corresponding id is not found then master product's id will be returned.
+*
+*/
+function getProductIDForVariantID(product: PipelineDictionary,varID : PipelineDictionary, varAttrColor : PipelineDictionary) : String
+{
+	logInfo("Entering ProductTileScript:getVariantForVariantID");
+	var allVariants: dw.util.Collection =  null;
+	
+	allVariants = product.variationModel.getVariants();
+	var retProdID : String = product.ID;
+	if( null != allVariants){
+		logDebug("ProductTileScript:getVariantForVariantID variant count : "+allVariants.length);
+		for(var i=0; i<allVariants.length; i++){
+			var variationValue = product.variationModel.getVariationValue(allVariants[i] , varAttrColor);
+			logDebug("ProductTileScript:getVariantForVariantID variation value is null : " + (null != variationValue));
+			if( null != variationValue){
+				if(variationValue.ID == varID){
+					retProdID = allVariants[i].ID;
+					break;
+				}
+			} 
+		}
+	}
+	/*var strID : String =varID;
+	var map : dw.util.HashMap = new dw.util.HashMap();
+	map.put(varAttrColor.ID, strID);
+	var vari = product.variationModel.getVariants(map);*/
+	logInfo("Exiting ProductTileScript:getVariantForVariantID");
+	return retProdID;
+}
+
+
+/*
+* Return the product id corresponding to variant id passed as argument.
+* if corresponding id is not found then master product's id will be returned.
+*
+*/
+function getProductForVariantID(product: PipelineDictionary,varID : PipelineDictionary, varAttrColor : PipelineDictionary) : dw.catalog.Product
+{
+	logInfo("Entering ProductTileScript:getVariantForVariantID");
+	var allVariants: dw.util.Collection =  null;
+	
+	allVariants = product.variationModel.getVariants();
+	var retProd : dw.catalog.Product = product;
+	if( null != allVariants){
+		logDebug("ProductTileScript:getVariantForVariantID variant count : "+allVariants.length);
+		for(var i=0; i<allVariants.length; i++){
+			var variationValue = product.variationModel.getVariationValue(allVariants[i] , varAttrColor);
+			logDebug("ProductTileScript:getVariantForVariantID variation value is null : " + (null != variationValue));
+			if( null != variationValue){
+				if(variationValue.ID == varID){
+					retProd = allVariants[i];
+					break;
+				}
+			} 
+		}
+	}
+	/*var strID : String =varID;
+	var map : dw.util.HashMap = new dw.util.HashMap();
+	map.put(varAttrColor.ID, strID);
+	var vari = product.variationModel.getVariants(map);*/
+	logInfo("Exiting ProductTileScript:getVariantForVariantID");
+	return retProd;
+}
+
+
+
+function isCompareEnabled( productSearchResult: PipelineDictionary ): Boolean
+{
+	var productSearchResult = productSearchResult;
+	var cat = productSearchResult.category, enableCompare	= false;
+				
+				while (cat != null) {
+					if ('enableCompare' in cat.custom && cat.custom.enableCompare) {
+						enableCompare = true;
+						break;
+					}
+					cat = cat.parent;
+				}
+				
+	return enableCompare;
+}
+
+
+function markCompareChecked(productSearchResult: PipelineDictionary) : String
+{
+	
+		// mark the compare checkbox checked if the current product is 
+		// in the current comparison list for the current category
+		
+		var productSearchResult = productSearchResult;
+
+
+		var comparison = GetProductCompareList();
+		// Set the category
+		comparison.setCategory(productSearchResult.category.ID);
+
+		var comparisonProducts = null;
+		
+		if (comparison) {
+			comparisonProducts = comparison.getProducts();
+		}
+		
+		var checkedStr = '';
+		
+		if (!empty(comparisonProducts)) {								
+			var pIt = comparisonProducts.iterator();
+			var productId = null;
+			
+			while (pIt.hasNext()) {
+				productId = pIt.next();									
+				if (productId == Product.ID) {
+					checkedStr = 'checked=true';
+					break;
+				}
+			}
+		}
+		return checkedStr;		
+	
+}
+
+
+
+
+
+/**
+*  Method returns the list containing color and size variants for a particular product. 
+*/
+function getVariantListForProduct( product : PipelineDictionary) : dw.util.ArrayList
+{
+		logInfo("Entering ProductTileScript:getVariantList");
+		var returnList: dw.util.ArrayList = new dw.util.ArrayList();
+		var selectableColors : dw.util.Collection = new dw.util.ArrayList();
+		var product: dw.catalog.Product = product;
+		var productHit = productHit;
+		var varAttrColor : dw.catalog.ProductVariationAttribute = null;
+		var varModel : dw.catalog.ProductVariationModel = product.variationModel;
+		if( product.master )
+		{
+			varAttrColor = varModel.getProductVariationAttribute("color");
+			if( varAttrColor != null )
+			{
+				selectableColors = varModel.getAllValues( varAttrColor );
+			}
+		}
+		
+		var selectableSizes : dw.util.Collection = new dw.util.ArrayList();
+		var varAttrSize : dw.catalog.ProductVariationAttribute = null;
+		
+		if( product.master )
+		{
+			varAttrSize = varModel.getProductVariationAttribute("size");
+	
+			if( varAttrSize != null )
+			{
+				selectableSizes = varModel.getAllValues( varAttrSize );
+			}
+		}
+
+	returnList[0] = selectableColors;
+	returnList.add(varAttrColor);
+	returnList.add(selectableSizes);
+	returnList.add(varAttrSize);
+	
+	logInfo("Exiting ProductTileScript:getVariantList");
+   return returnList;
+}

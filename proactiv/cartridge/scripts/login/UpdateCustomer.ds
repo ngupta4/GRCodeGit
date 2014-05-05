@@ -1,0 +1,381 @@
+/**
+*	@input currentCustomer:dw.customer.Customer
+*	@input sourceXML:XML
+*	@input webserviceSource:String
+*	@output ccType : String
+*	@output ccNumber : String
+*	@output ccExpirationMonth : String
+*	@output ccExpirationYear : String
+*	@output sequenceNumber : String
+*	@output customerPaymentMethod : Number
+*/
+importPackage( dw.system );
+importPackage( dw.customer );
+importPackage( dw.util );
+importPackage( dw.web );
+importPackage( dw.io );
+importPackage( dw.order );
+importScript( "guthyrenker_businesslogic:account/Utils.ds" );
+
+function execute( args : PipelineDictionary ) : Number
+{
+
+ // Code for updation of the Current Customer attributes with the data coming in the source xml
+	
+	// ------------------------------Profile attributes --------------------------
+	var responseXMLData : XML = args.sourceXML.responseData;
+	var getChildXMLData : XML;
+	var stringXml=responseXMLData.toXMLString();
+	if(args.webserviceSource == "login" || args.webserviceSource == "registration")
+	{
+	 	getChildXMLData= responseXMLData.customer;
+	}else if(args.webserviceSource == "vci"){
+		getChildXMLData= responseXMLData.customer;		
+		//Change the email ID If needed.
+		if(args.currentCustomer.profile.email != getChildXMLData.profile.email)
+		{
+			args.currentCustomer.profile.email= getChildXMLData.profile.email;
+			var creds : dw.customer.Credentials = args.currentCustomer.profile.credentials;
+			if( !empty( creds ) ) {
+				creds.setLogin( getChildXMLData.profile.email, dw.web.Resource.msg( 'login.defaultpassword', 'common', null ) );
+			}
+		}
+	}
+	
+	//Update the Membership Flag of a user
+	if(null!=responseXMLData.login.member && responseXMLData.login.member=="true")
+		args.currentCustomer.profile.custom.member = true;
+	else
+		args.currentCustomer.profile.custom.member = false;
+		
+	
+	if(null!=getChildXMLData.profile.firstName && !empty(getChildXMLData.profile.firstName) && getChildXMLData.profile.firstName.stringValue!="")
+	{
+		args.currentCustomer.profile.firstName = getChildXMLData.profile.firstName;
+	}
+	if(null!=getChildXMLData.profile.lastName && !empty(getChildXMLData.profile.lastName) && getChildXMLData.profile.lastName.stringValue!="")
+	{
+		args.currentCustomer.profile.lastName = getChildXMLData.profile.lastName;
+	}
+	if(null!=getChildXMLData.profile.mwid && !empty(getChildXMLData.profile.mwid) && getChildXMLData.profile.mwid.stringValue!="")
+	{
+		args.currentCustomer.profile.custom.mwid = getChildXMLData.profile.mwid;
+	}
+	if(null!=getChildXMLData.profile.account && !empty(getChildXMLData.profile.account) && getChildXMLData.profile.account.stringValue!="")
+	{
+		args.currentCustomer.profile.custom.accountNumber = getChildXMLData.profile.account;
+	}
+	
+	
+	if('dayPhone' in getChildXMLData.profile.phones)
+	{
+		var dayPhone : String = getChildXMLData.profile.phones.dayPhone;
+		var dayPhone1 : Array = dayPhone.split("-");
+		dayPhone = dayPhone1[0]+dayPhone1[1]+dayPhone1[2];
+		args.currentCustomer.profile.phoneHome = dayPhone;
+	}
+	
+	if('eveningPhone' in getChildXMLData.profile.phones)
+	{
+		var eveningPhone : String = getChildXMLData.profile.phones.eveningPhone;
+		var eveningPhone1 : Array = eveningPhone.split("-");
+		eveningPhone = eveningPhone1[0]+eveningPhone1[1]+eveningPhone1[2];
+		args.currentCustomer.profile.phoneBusiness =  eveningPhone;
+	}
+	
+	/***********************************USER ATTRIBUTES*************************************/
+	
+	var userAttributes: ArrayList = getChildXMLData.profile.userAttributes;
+	if(null!=getChildXMLData.profile.userAttributes && !empty(getChildXMLData.profile.userAttributes))
+	{	
+			for (var i=0;i<userAttributes.userAttribute.length();i++)
+			{
+				var field = userAttributes.userAttribute[i].fieldName;
+				var value : String = userAttributes.userAttribute[i].fieldValue;
+				if(field == "age")
+				{
+					args.currentCustomer.profile.custom.age = new Number (value);
+				}	
+				else if(field == "skinType")
+				{
+					args.currentCustomer.profile.custom.skinType = value.toLowerCase();
+				}
+				else if (field == "severity")
+				{
+					args.currentCustomer.profile.custom.acneSeverity = value.toLowerCase();
+				}
+				else if (field == "skinTone")
+				{
+					args.currentCustomer.profile.custom.skinTone = value.toLowerCase();
+				}
+				else if (field == "gender")
+				{
+					if(value == "male")
+						args.currentCustomer.profile.gender=1;
+					else
+						args.currentCustomer.profile.gender=2;
+				}
+			}	
+	}
+	
+	
+	/***********************************END OF USER ATTRIBUTES*******************/
+	
+	
+	/*********************************FFC****************************************/
+	if(null!=getChildXMLData.ffc.instantAccess && !empty(getChildXMLData.ffc.instantAccess))
+	{
+		args.currentCustomer.profile.custom.ffcOrderId = getChildXMLData.ffc.instantAccess.ffcOrderId;
+		args.currentCustomer.profile.custom.ffcTransactionId = getChildXMLData.ffc.instantAccess.ffcTransactionId;
+	}
+	
+	if(null!=getChildXMLData.ffc.customerStatus && !empty(getChildXMLData.ffc.customerStatus) && getChildXMLData.ffc.customerStatus.stringValue!="")
+	{
+		args.currentCustomer.profile.custom.customerStatus = getChildXMLData.ffc.customerStatus;
+	}
+	if(null!=getChildXMLData.ffc.customerSegment && !empty(getChildXMLData.ffc.customerSegment) && getChildXMLData.ffc.customerSegment.stringValue!="")
+	{
+		args.currentCustomer.profile.custom.customerSegment = getChildXMLData.ffc.customerSegment;
+	}
+	
+	//-------------------------- Update Kit -------------------------------------
+	if(empty(args.currentCustomer.profile.custom.isKitChanged)||null == args.currentCustomer.profile.custom.isKitChanged || args.currentCustomer.profile.custom.isKitChanged==false)
+	{
+			if(null!=getChildXMLData.ffc.continuityShipments.nextShipment[0])
+			{
+		 			var kitProducts:Array = new Array();
+					var products: ArrayList = getChildXMLData.ffc.continuityShipments.nextShipment.products;
+					var count : Number = 0;	
+					for (var i=0;i<products.product.length();i++)
+					{
+						var productNum : String;
+						var tempKitProduct=getProductUPC(products.product[i].productNum.toString());
+						
+						if(tempKitProduct == null){
+							productNum = products.product[i].productNum;
+						} else {
+							productNum = tempKitProduct.ID;
+						}
+						var productTitle = products.product[i].title;
+						var productQuantity : Number = new Number(products.product[i].quantity);
+						for(var j=0;j<productQuantity;j++)
+						{
+							var kitEntry :String = productNum +Resource.msg('symbol.kit.split', 'common', null)+ productTitle +Resource.msg('symbol.kit.split', 'common', null)+ count;
+							kitProducts[count]=kitEntry;
+							count++;
+						}
+					  
+					}
+					args.currentCustomer.profile.custom.kitProducts = kitProducts;
+			}
+	}
+	if(null!=getChildXMLData.ffc.continuityShipments.firstOrderDate && !empty(getChildXMLData.ffc.continuityShipments.firstOrderDate))
+	{
+		args.currentCustomer.profile.custom.firstOrderDate = new Date(getChildXMLData.ffc.continuityShipments.firstOrderDate);
+	}
+	
+	if('lastShipmentDate' in getChildXMLData.ffc.continuityShipments && null!=getChildXMLData.ffc.continuityShipments.lastShipmentDate && !empty(getChildXMLData.ffc.continuityShipments.lastShipmentDate))
+	{
+		args.currentCustomer.profile.custom.lastShipDate = new Date(getChildXMLData.ffc.continuityShipments.lastShipmentDate);
+	}
+	
+	if(null!=getChildXMLData.ffc.continuityShipments.maxKitSize && !empty(getChildXMLData.ffc.continuityShipments.maxKitSize))
+	{
+		args.currentCustomer.profile.custom.maxKitSize = new Number(getChildXMLData.ffc.continuityShipments.maxKitSize);
+	}
+	if(null!=getChildXMLData.ffc.continuityShipments.nextShipment[0]){
+		args.currentCustomer.profile.custom.kitName = getChildXMLData.ffc.continuityShipments.nextShipment[0].kitName;
+		args.currentCustomer.profile.custom.shipdate = new Date(getChildXMLData.ffc.continuityShipments.nextShipment[0].shipDate);
+		/*Added A Flag during Kit Customer Enhancements : If customer's previous shipping is pending */
+		 if("isShipNow" in getChildXMLData.ffc.continuityShipments.nextShipment[0] && null!=getChildXMLData.ffc.continuityShipments.nextShipment[0].isShipNow && getChildXMLData.ffc.continuityShipments.nextShipment[0].isShipNow!="" && String (getChildXMLData.ffc.continuityShipments.nextShipment[0].isShipNow)=="1" )
+		 {
+		 	//Set customers ShipNow Pending Flag as True in profile 
+		 	args.currentCustomer.profile.custom.isShipNowPending = true;
+		 }else{
+		 	args.currentCustomer.profile.custom.isShipNowPending = false;
+		 } 
+		args.currentCustomer.profile.custom.kitStatus = getChildXMLData.ffc.continuityShipments.nextShipment[0].status;
+		args.currentCustomer.profile.custom.weeksBetweenShipments = Number(getChildXMLData.ffc.continuityShipments.weeksBetweenShipments);
+	}
+	//--------------------------End Update Kit -------------------------------------
+	
+	
+	//-------------------------- Address Book -------------------------------------	
+	    var addressXML : XML = getChildXMLData.ffc.addresses.children();
+        var addressStr : String = addressXML.toString();
+        if(addressStr!=null && !empty(addressStr) && addressStr!="")
+        {
+        	/*	Intially remove the shipping and billing checks.
+        	*	1. Check if there is shipping and billing address ID in Profile? 
+			*	2. Yes Then update the existing one by fething it by ID, and over write.
+			*	3. No , then Add new Address. On ID -> ProactivShippingID and BillingID
+				4. Check the corresponding Shipping and Billing flags
+				5. Update the Shipping AddressID and Billing AddressID in customer's profile.
+				6. Update the Billing Zip code in Customer's billing zip profile field. 
+        	*/
+        	
+        	var addressBook : AddressBook = args.currentCustomer.profile.addressBook;
+				
+				/*Remove Continuity Shipping and Billing address checks, before*/
+				var address : CustomerAddress = null;
+				for each(address in addressBook.addresses)
+				{
+					if(address.custom.shippingAddress == true){
+						address.custom.shippingAddress = false;
+					}
+					if(address.custom.billingAddress == true){
+						address.custom.billingAddress = false;
+					}
+				}
+        	
+        	/********************************UPDATING BILLING ADDRESS***********************************/
+        	if(null!=args.currentCustomer.profile.custom.billingAddressID && !empty(args.currentCustomer.profile.custom.billingAddressID))
+        	{
+        		var isBillingAddress : Boolean = true;
+        		var isCreate : Boolean = false;
+        		//Update the Address in the Existing Address Fields containers of the Billing Address.
+        		UpdateAddress(args.currentCustomer , args.currentCustomer.profile.custom.billingAddressID,getChildXMLData.ffc.addresses.billingAddress,isBillingAddress,isCreate);
+        	}else{
+        		//Else Create new Address and Update it.
+        		
+        		var newAddresId :String = "ProactivBillingID";
+        		var isCreate : Boolean = true;
+        		var	isBillingAddress : Boolean = true;
+        		UpdateAddress(args.currentCustomer , newAddresId,getChildXMLData.ffc.addresses.billingAddress,isBillingAddress,isCreate);        		
+        	}
+        	
+        	
+        	/********************************UPDATING SHIPPING ADDRESS***********************************/
+        	if(null!=args.currentCustomer.profile.custom.shippingAddressID && !empty(args.currentCustomer.profile.custom.shippingAddressID))
+        	{
+        		var isBillingAddress : Boolean = false;
+        		var isCreate : Boolean = false;
+        		//Update the Address in the Existing Address Fields containers of the Billing Address.
+        		UpdateAddress(args.currentCustomer , args.currentCustomer.profile.custom.shippingAddressID,getChildXMLData.ffc.addresses.shippingAddress,isBillingAddress,isCreate);
+        	}else{
+        		//Else Create new Address and Update it.
+        		
+        		var newAddresId :String = "ProactivShippingID";
+        		var	isBillingAddress : Boolean = false;
+        		var isCreate : Boolean = true;
+        		UpdateAddress(args.currentCustomer , newAddresId,getChildXMLData.ffc.addresses.shippingAddress,isBillingAddress,isCreate);        		
+        	}
+        	
+        	/**********************************Update the flag of shipping same as billing address*********/
+				if(getChildXMLData.ffc.addresses.shippingSameAsBilling=="true")
+					args.currentCustomer.profile.custom.shippingSameAsBilling = true;
+				else
+					args.currentCustomer.profile.custom.shippingSameAsBilling = false;
+    				
+        }//End of outer If
+        
+        
+		/*----------------START OF UPDATING PAYMENT METHODS---------------*/
+		if('paypal' in getChildXMLData.ffc.payment)
+		{
+				args.customerPaymentMethod = 1;
+		}else if('creditCard' in getChildXMLData.ffc.payment){
+			
+				if(null!=getChildXMLData.ffc.payment.creditCard.cardType && !empty(getChildXMLData.ffc.payment.creditCard.cardType) && getChildXMLData.ffc.payment.creditCard.cardType.stringValue!="")
+				{
+					args.ccType = new String(getChildXMLData.ffc.payment.creditCard.cardType);
+				}
+				if(null!=getChildXMLData.ffc.payment.creditCard.ccLastFour && !empty(getChildXMLData.ffc.payment.creditCard.ccLastFour))
+				{
+					args.ccNumber= new String (getChildXMLData.ffc.payment.creditCard.ccLastFour);
+				}
+				if(null!=getChildXMLData.ffc.payment.creditCard.expMonth && !empty(getChildXMLData.ffc.payment.creditCard.expMonth))
+				{
+					args.ccExpirationMonth=new String (getChildXMLData.ffc.payment.creditCard.expMonth);
+				}
+				if(null!=getChildXMLData.ffc.payment.creditCard.expYear && !empty(getChildXMLData.ffc.payment.creditCard.expYear))
+				{
+					args.ccExpirationYear=new String (getChildXMLData.ffc.payment.creditCard.expYear);
+				}
+				if(null!=getChildXMLData.ffc.payment.creditCard.sequenceNumber && !empty(getChildXMLData.ffc.payment.creditCard.sequenceNumber))
+				{
+					args.sequenceNumber = new String (getChildXMLData.ffc.payment.creditCard.sequenceNumber);
+				}		
+			args.customerPaymentMethod = 0;
+		} 
+		else if('eCheck' in getChildXMLData.ffc.payment)
+			{
+				args.ccType=new String(getChildXMLData.ffc.payment.eCheck.bankAccountType);
+			args.customerPaymentMethod = 3;
+			args.ccNumber= new String(getChildXMLData.ffc.payment.eCheck.accountNumLastFour);
+		}
+		else{
+			args.customerPaymentMethod = 2;
+		}
+		
+	return PIPELET_NEXT;    
+    
+}
+
+ 
+function UpdateAddress(currentCustomer : Customer , addressID : String,xmlData : XML ,isBillingAddress : Boolean,isCreate : Boolean)
+{
+		var address : CustomerAddress = null;
+		var addressBook : AddressBook = currentCustomer.profile.addressBook;
+		
+		if(isCreate==true){
+			address=addressBook.createAddress(addressID);
+			if(isBillingAddress==true)
+				currentCustomer.profile.custom.billingAddressID = addressID;
+			else
+				currentCustomer.profile.custom.shippingAddressID = addressID;
+		}else{
+			address= addressBook.getAddress(addressID);
+		}
+		var firstName : String = xmlData.firstName;
+		address.setFirstName(firstName);
+		address.setLastName(xmlData.lastName);
+		address.setAddress1( xmlData.address[0]);
+		if(null!=xmlData.address[1] && !empty(xmlData.address[1]) && xmlData.address[1]!='null')
+		{ 
+			address.setAddress2( xmlData.address[1]);
+		}
+		address.setCity(xmlData.city);
+		address.setStateCode(xmlData.state);
+		address.setPostalCode(xmlData.postalCode);
+		address.setCountryCode(xmlData.countryCode);
+		
+		//Clearing the older values of Day and Evening phone number
+		address.setPhone("");
+		address.custom.eveningPhone = "";
+		
+		
+		if('dayPhone' in xmlData.phones)
+		{
+			
+			var dayPhone : String = xmlData.phones.dayPhone;
+
+			
+			if(null!=dayPhone && dayPhone!='')
+			{
+				var dayPhone1 : Array = dayPhone.split("-");
+				dayPhone = dayPhone1[0]+dayPhone1[1]+dayPhone1[2];
+				address.setPhone(dayPhone);
+			}
+		
+		}
+		if('eveningPhone' in xmlData.phones)
+		{
+			var eveningPhone : String = xmlData.phones.eveningPhone;
+			if(null!=eveningPhone && eveningPhone!='')
+			{
+				var eveningPhone1 : Array = eveningPhone.split("-");
+				eveningPhone = eveningPhone1[0]+eveningPhone1[1]+eveningPhone1[2];
+				address.custom.eveningPhone = eveningPhone;
+			}
+		}
+		
+		if(isBillingAddress == true)
+		{
+			address.custom.billingAddress= true;
+			currentCustomer.profile.custom.billingZipCode=xmlData.postalCode.toString();
+		}else{
+			address.custom.shippingAddress= true;
+		}
+		
+}

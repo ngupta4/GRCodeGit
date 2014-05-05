@@ -1,0 +1,37 @@
+<iscache type="relative" hour="24"/>
+
+<iscomment>
+	This template renders the slot content of the bottom category landing slot
+	in case the slot content is of type Content Asset.
+	Note, only one content asset is rendered.
+</iscomment>
+
+<isinclude template="util/modules"/>
+<isscript>
+	importScript('guthyrenker_core:common/libUtils.ds');
+	
+	if( empty(slotcontent) ) {
+		slotID = 'no-slot-configured';
+	} else {
+		slotID = slotcontent.slotID;
+	}
+</isscript>
+
+
+	
+
+		<iscomment>make sure we have content at all</iscomment>
+		<isif condition="${slotcontent != null}">
+			<isif condition="${!empty(slotcontent.content)}">
+				<isloop items="${slotcontent.content}" var="contentAsset" status="ca_status">
+					<div class="contentasset ${ca_status.count} ${contentAsset.ID}"><!-- dwMarker="content" dwContentID="${contentAsset.UUID}" -->
+						<isif condition="${!empty(contentAsset.custom.body)}">
+						<isprint value="${contentAsset.custom.body}" encoding="off"/>
+						</isif>
+					 </div>		
+				</isloop>			
+			</isif>			
+		</isif>
+			
+	
+	

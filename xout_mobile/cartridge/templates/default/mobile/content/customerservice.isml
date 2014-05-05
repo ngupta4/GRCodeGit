@@ -1,0 +1,22 @@
+<isinclude template="mobile/util/modules">
+<isdecorate template="mobile/pt_mobile">
+
+<div id="customerservice" class="mobilecontent">
+	<p><iscontentasset aid="cs-landing"></p>
+	<isif condition="${!empty(pdict.CustomerServiceLinks)}">
+	<div>
+		<isloop items="${pdict.CustomerServiceLinks.keySet()}" var="links">
+			<div>
+				<h5><isprint value="${links}"/></h5>
+				<ul>
+				<!-- Loop Through Customer Service Libraries -->
+				<isloop items="${pdict.CustomerServiceLinks.get(links)}" var="ContentAsset" status="loopcounter">
+						<li><a href="${URLUtils.url('mPage-Show','cid', ContentAsset.ID)}" ><isprint value="${ContentAsset.name}"/></a></li>
+				</isloop>
+				</ul>
+			</div><!-- END: customerservicesection -->
+		</isloop>
+	</div><!-- END: customerservice_directory -->
+	</isif>
+</div><!-- END: customerservice -->
+</isdecorate>

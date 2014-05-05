@@ -1,0 +1,69 @@
+<!--- TEMPLATENAME: cartproduct.isml --->
+<isscript>
+/* Used to access getSortedShipmentLineItems() call. */
+importScript('guthyrenker_businesslogic:checkout/Utils.ds');
+</isscript>
+
+<iscomment>Set the flag specifuing that we can show Upsells section</iscomment>
+<isset name="ShowUpsells" value="${true}" scope="pdict" />
+<isset name="showVitamin" value="true" scope="page">
+<div class="ch_selected_products" summary="Cart">
+
+	<iscontentasset aid="60-day-money-back-guarantee"/>
+
+	<iscomment>LOOP TO SEPARATE DIFFERENT SHIPMENTS ex: Gift Registry Shipments Etc.</iscomment>
+	<isloop items="${pdict.CurrentForms.cart.shipments}" var="Shipment" status="loopstate">
+		<iscomment>Put core offer first in new array</iscomment>						
+		<isloop items="${Shipment.items}" alias="FormLi" status="loopstate">
+			<isset name="lineItem" value="${FormLi.object}" scope="page"/>
+			<isscript>
+				var isInWishList = false;
+			</isscript>
+			
+			<iscomment>Product Area!</iscomment>
+			<isif condition="${lineItem.bonusDiscountLineItem == null}">
+			<!-- Product item -->
+			<isif condition="${lineItem.product.custom.coreItem}">
+			<isset name="coreProd" value="${lineItem.product}" scope="page" />			
+				<div class="tablerow"<isif condition="${lineItem.product.custom.coreItem}"> id="coreOffer"</isif>>
+					<div class="imagecolumn ${lineItem.product.ID}">
+						<iscomment>Try to get product image (of type "small")</iscomment>
+						<isset name="productImage" value="${lineItem.product.getImage('medium', 0)}" scope="page" />
+	
+						<isif condition="${!empty(productImage)}">
+							<img src="${productImage.url}" alt="${productImage.alt}" title="${productImage.title}"/>
+						<iselse>
+							<img width="192px" src="${URLUtils.staticURL('/images/noimagemedium.png')}" alt="${lineItem.productName}" title="${lineItem.productName}"/>
+						</isif>
+						
+						<isif condition="${lineItem.bonusProductLineItem}">
+							<span class="bonusitem">${Resource.msg('global.bonus', 'locale', null)}</span>
+						</isif>
+					</div>
+					<div class="detailscolumn herosection">
+						<iscomment>Call module to render product</iscomment>
+						
+						<!-- Static Title --><h4>${Resource.msg('you.selected','locale',null)}</h4><!-- Static Title -->
+						
+						<div class="name">
+							<isprint value="${lineItem.productName}"  encoding="off" />
+						</div><!-- END: name -->
+						<div class="shortDescription">
+							<isprint value="${lineItem.product.custom.orderButtonCallout}" encoding="off"/>
+							
+						</div><!-- END: shortDescription -->
+					
+					</div>
+					
+				</div>
+			<iselse>
+				<isset name="showVitamin" value="false" scope="page">
+			</isif>
+			
+			<!-- END product item -->
+					
+			</isif>
+		</isloop>
+	</isloop>
+</div>	
+	

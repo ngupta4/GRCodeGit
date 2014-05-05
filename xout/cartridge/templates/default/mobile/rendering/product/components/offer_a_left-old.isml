@@ -1,0 +1,105 @@
+<!--- TEMPLATENAME: offer_a_left.isml --->
+<isscript>
+importPackage( dw.system );
+importPackage( dw.util );
+importPackage( dw.object );
+importPackage( dw.web );
+importPackage( dw.catalog );
+importPackage( dw.content );
+importScript('guthyrenker_core:common/libUtils.ds');
+importScript("sas/offergrab.ds");
+
+var leftOffers : Array = getLeftOffersA();
+
+</isscript>
+
+<iscomment> Debug div
+<div style="position:absolute;top:200px;left:0px;">
+left ${leftOffers}
+</div>
+</iscomment>
+
+<div class="pdpTag pdpLeftBase">
+<iscomment>Start fixing your face and<br/>freeing up your life.</iscomment>
+</div>
+
+<div class="pdpLeftBase pdpLeftCopyContainer" style="width: 528px;top: 120px;left: 44px;">
+  <span class="bigHeadline" style="font-size: 21px;color:#000;font-weight: bold;">Only $19.95 per month with our auto-ship program.</span><br/>
+  <span class="pdpDesc" style="font-size: 15px;padding-top: 20px;width: 494px;line-height: 1.7;">Receive our individually packaged Cleansing Wipes for on-the-go treatment (a $28 value) and Free Shipping and Handling (a $5.99 value) when you sign up for our auto-ship program.</span><br/>
+</div>
+  <div class="popupContainer washInCommentBLeft" style="display:none;">
+	<div class="popupTitle">X Out&trade; Acne Wash-In Treatment</div>
+	<div class="popupDesc">The all-in-one X Out Wash-In Acne Treatment that works as a face wash, a spot treatment, and a mask.</div>
+	<a class="popupClose" onclick="jQuery('.washInCommentBLeft').hide();">x close</a>
+  </div> 
+
+<div class="otherOfferBLeft feb2012"  style="top: 303px;left: 31px;width: 530px;height: 198px;">
+	<style type="text/css">
+	.ribbonText {position:absolute;top: 258px;height: 115px;color: #fff;font-size: 17px;line-height: 1.4;width: 500px;}
+	div.ribbonText.oneTime {display:none;}
+	label {display:block;font-size:20px;line-height: 2;}
+	select {width:240px;}
+	</style>
+	<div class="offerBorderLeft" style="width: 500px;text-align: center;">
+		<label for="paymentOption" style="padding-left:30px;">Payment Option:
+			<select name="paymentOption" id="paymentOption">
+				<option value="${leftOffers[0]}" class="sixtyDay">$19.95 Monthly</option>
+				<option value="${leftOffers[1]}" class="oneTime">$40 Per Shipment</option>
+			</select>
+		</label>
+		<label for="shippingFrequency">Shipping Frequency:
+			<select name="shippingFrequency" id="shippingFrequency">
+				<option value="${leftOffers[0]}" class="sixtyDay">Every 60 Days</option>
+				<option value="${leftOffers[1]}" class="oneTime">One Time</option>
+			</select>
+		</label>
+		<a class="productLink" href="${URLUtils.https('COCart-AddProduct', 'pid', Product.ID)}" style="position: absolute;left: 100px;top: 121px;">
+			<img src="${URLUtils.staticURL('/images/offerA_processOrder.jpg')}"/>
+		</a>
+	</div>
+	<div class="ribbonText oneTime">
+		<p>By selecting "One-Time" purchase, you will not be receiving the FREE BONUSES of our amazing Cleansing Wipes ($28 value) or Free Shipping and Handling ($5.99 value) on the first shipment. Remember, as an Auto-Ship member you can cancel or customize your shipments at any time. If you are not satisfied with your purchase simply give us a call at ${Resource.msg('contact.us.phone','rendering',null)}.  You will be making a one-time payment of $40 plus $5.99 Shipping & Handling which will be conveniently billed to the card you provide today. Every order comes with our 60-Day Money Back Guarantee (less S & H). </p>
+	</div>
+	<div class="ribbonText sixtyDay">
+		<p>Selecting shipping frequency of "<b>Every 60 Days</b>" to be enrolled in our Auto-Ship program and receive X Out&trade; Acne Wash-In Treatment PLUS our amazing Cleansing Wipes ($28 value) every 60 days.  You’ll also receive a one-time bonus of <b>Free Shipping and Handling</b> on the first shipment.  Remember, as an Auto-Ship member you can cancel or customize your shipments at any time. If you are not satisfied with your purchase simply give us a call at ${Resource.msg('contact.us.phone','rendering',null)}.  You’ll receive a 60-day supply of X Out&trade; Acne Wash-In Treatment and Cleansing Wipes every 2 months at the low price of $19.95, per month plus $5.99 Shipping and Handling per shipment, which will conveniently be billed to the card you provide today unless you call to cancel.  Every order comes with our 60-day Money Back Guarantee (less S &amp; H).</p>
+	</div>
+</div>
+
+<script type="text/javascript"><!--
+  jQuery(document).ready(function() {
+	  jQuery("#paymentOption").live('change',function(){
+		  var url = jQuery('.productLink').attr('href');
+		  var urlParts = url.split('?');
+		  var selectedClass = $("#paymentOption option:selected").attr('class');
+		  jQuery('.productLink').attr('href', urlParts[0] + '?pid=' + jQuery(this).val());
+		  if (selectedClass == "sixtyDay") {
+			  jQuery("div.ribbonText.oneTime").hide();
+			  jQuery("div.ribbonText.sixtyDay").show();
+			  jQuery("#shippingFrequency option.sixtyDay").attr("selected","selected");
+		  } else {
+			  jQuery("div.ribbonText.oneTime").show();
+			  jQuery("div.ribbonText.sixtyDay").hide();
+			  jQuery("#shippingFrequency option.oneTime").attr("selected","selected");
+		  }
+	  });
+	  jQuery("#shippingFrequency").live('change',function(){
+		  var url = jQuery('.productLink').attr('href');
+		  var urlParts = url.split('?');
+		  jQuery('.productLink').attr('href', urlParts[0] + '?pid=' + jQuery(this).val());
+		  var selectedClass = $("#shippingFrequency option:selected").attr('class');
+		  if (selectedClass == "sixtyDay") {
+			  jQuery("div.ribbonText.oneTime").hide();
+			  jQuery("div.ribbonText.sixtyDay").show();
+			  jQuery("#paymentOption option.sixtyDay").attr("selected","selected");
+		  } else {
+			  jQuery("div.ribbonText.oneTime").show();
+			  jQuery("div.ribbonText.sixtyDay").hide();
+			  jQuery("#paymentOption option.oneTime").attr("selected","selected");
+		  }
+	  });
+  });
+--></script>
+<style type="text/css">
+#alternate-offer.pdp_offer_right{display:none !important;}
+.content_box_outer_pdp {padding-top:0 !important}
+</style>

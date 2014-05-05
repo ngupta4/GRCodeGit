@@ -1,0 +1,35 @@
+<!--- TEMPLATENAME: inlineratings.isml --->
+<isscript>
+     importScript('int_bazaarvoice:libBazaarvoice.ds');
+     importPackage( dw.io );
+     
+     var inlineRatingEnabled : Boolean = dw.system.Site.getCurrent().getCustomPreferenceValue("bvEnableInlineRatings");
+     if (inlineRatingEnabled && (Product != null)) {
+        var masterProduct : Product = (Product.variant) ? Product.variationModel.master : Product;
+        var bvAvgRating : String = masterProduct.custom.bvAverageRating;
+        var bvRatingRange : String = masterProduct.custom.bvRatingRange;
+        var bvReviewCount : String = masterProduct.custom.bvReviewCount;
+        //var bvQACount : String = masterProduct.custom.bvQACount;
+        <!-- Try to parse the strings into numbers -->
+        var bvAvgRatingNum : Number = new Number(bvAvgRating);
+        var bvRatingRangeNum : Number = new Number(bvRatingRange);
+        var bvReviewCountNum : Number = new Number(bvReviewCount);
+        //var bvQACountNum : Number = new Number(bvQACount);
+        var starsFile : String = null;
+        <!-- Don't display anything if any of our numbers won't parse into finite legal values -->
+        if (isFinite(bvAvgRatingNum) && bvAvgRating 
+            && isFinite(bvRatingRangeNum) && bvRatingRange 
+            && isFinite(bvReviewCountNum) && bvReviewCount) {
+            
+            starsFile = "rating-" + bvAvgRatingNum.toFixed(1).toString().replace('.','_') + ".gif";
+        }
+     }
+</isscript>
+
+<isif condition="${starsFile && inlineRatingEnabled}">
+    <div id="BVInlineRatings"  class="stars-imgnew">
+        <img alt="" src="${ URLUtils.webRoot() + '/images/stars/' + starsFile }"/>
+    </div>
+<iselse>
+<div class="stars-imgnew"><img alt="" src="${URLUtils.absStatic('/images/stars/rating-0_0.gif')}"/></div>
+</isif>

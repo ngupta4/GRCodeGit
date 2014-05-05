@@ -1,0 +1,110 @@
+/**
+* Demandware Script File
+* Fills a intermediate form object for cart log with basket and current customer's data
+* This will be used to update the CartLog Custom Object
+*
+*   @input Basket : dw.order.Basket
+*   @input Customer : dw.customer.Customer
+*   @input Request : dw.system.Request
+*   @input  ValidationErrors : Array
+*   @input Source : String Calling Page name
+*   @input SameAsShipping : Boolean
+*   @output LogData : dw.util.Map
+*
+*/
+ 
+importPackage( dw.system );
+importPackage( dw.web );
+importPackage( dw.util );
+importPackage( dw.order );
+
+function getBasketCreditCardNumber(basket:Basket):String{
+    var intstumentList:Collection = basket.getPaymentInstruments();
+    if(intstumentList.empty){
+        return null;
+    }
+    
+    var instrumet:PaymentInstrument =  intstumentList.iterator().next();
+    var creditCardNumber:String = instrumet.creditCardNumber;
+    if(empty(creditCardNumber)){
+        return null;
+    }
+    
+    if(creditCardNumber.length < 8){
+        return creditCardNumber;
+    }else{
+        var matches = creditCardNumber.match(/^(....)(.*)(....)$/);
+        return matches[1] + matches[2].replace(/./g, "*") + matches[3];
+    }
+}
+
+function execute( args : PipelineDictionary ) : Number
+{
+	var basket : dw.order.Basket = args.Basket;
+	var customer : dw.customer.Customer = args.Customer;
+	var request : dw.system.Request = args.Request;
+	var shippingAddress : OrderAddress = basket.defaultShipment.getShippingAddress();
+	var billingAddress : OrderAddress = basket.getBillingAddress();
+	var paymentInstruments : Collection = basket.getPaymentInstruments();
+	var cc : PaymentInstrument =  paymentInstruments.iterator().next();
+	
+	if(null == basket || null == customer){
+		return PIPELET_ERROR;
+	}
+	
+	
+	
+	var basketCCN =  getBasketCreditCardNumber(basket);
+	
+	var map : Map = new HashMap();
+    
+    map.put("submission_state",  args.Source); //map.put("submission_state",  "ORDERSUBMIT");
+    
+    map.put("form_email",  customer.profile.email);
+    map.put("form_dphone", shippingAddress.phone);
+    map.put("form_ephone", shippingAddress.custom.eveningPhone);
+    map.put("card_fname",  billingAddress.firstName);
+    map.put("card_lname",  billingAddress.lastName);
+    map.put("address",     billingAddress.address1);
+    map.put("suppadr",     billingAddress.address2);
+    map.put("address2",    billingAddress.address2);
+    map.put("city",        billingAddress.city);
+    map.put("state",       billingAddress.stateCode);
+    map.put("zip",         billingAddress.postalCode);
+    
+    map.put("sameasbilling", args.SameAsShipping == true ? "y" : "n");
+    map.put("ship_fname",  shippingAddress.firstName);
+    map.put("ship_lname",  shippingAddress.lastName);
+    map.put("s_address",   shippingAddress.address1);
+    map.put("s_suppard",   shippingAddress.address2);
+    map.put("s_city",      shippingAddress.city);
+    map.put("s_state",     shippingAddress.stateCode);
+    map.put("s_zip",       shippingAddress.postalCode);
+    
+    //map.put("formpwd",      account.password.htmlValue);
+    //map.put("retypformpwd", account.passwordconfirm.htmlValue);
+    map.put("age",          customer.profile.custom.age);
+    map.put("gender",       customer.profile.gender);
+    
+    map.put("paytype",     cc.creditCardType);
+    map.put("card_number", basketCCN);
+    map.put("card_month",  cc.creditCardExpirationMonth);
+    map.put("card_year",   cc.creditCardExpirationYear);
+    
+    if(args.Source == "ORDERSUBMIT" && null != args.ValidationErrors){
+    	var error_list:String = "";
+	    for(var i = 0; i < args.ValidationErrors.length; i++){
+	        if(i != 0){
+	            error_list += ",";
+	        }
+	        error_list += args.ValidationErrors[i].code;
+	    }
+	    
+	    map.put("errors",   args.ValidationErrors.length);
+	    map.put("error_list",   error_list);
+    }
+    
+    
+	args.LogData = map;
+	return PIPELET_NEXT;
+}

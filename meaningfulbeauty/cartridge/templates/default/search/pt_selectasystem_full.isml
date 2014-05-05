@@ -1,0 +1,108 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<isinclude template="util/modules"/>
+
+<iscomment>This page must be cachable. It inherits the caching attributes by the decorated template.</iscomment>
+
+<isscript>
+	importPackage(dw.content);
+	importScript('guthyrenker_core:common/libUtils.ds');
+	
+	var CurrentFolder : Folder = null;
+	var CurrentContent : Content = null;
+	
+	if( "fdid" in pdict.CurrentHttpParameterMap && !empty(pdict.CurrentHttpParameterMap.fdid.value) ) {
+		CurrentFolder = ContentMgr.getFolder(pdict.CurrentHttpParameterMap.fdid.stringValue);
+	}
+	
+	if( "cid" in pdict.CurrentHttpParameterMap && !empty(pdict.CurrentHttpParameterMap.cid.value) ) {
+		CurrentContent = ContentMgr.getContent(pdict.CurrentHttpParameterMap.cid.stringValue);
+	}
+	
+	if( empty(CurrentContent) && !empty(CurrentFolder) && !empty(CurrentFolder.onlineContent) ) {
+		CurrentContent = CurrentFolder.onlineContent[0];
+	}
+	if( empty(CurrentFolder) && !empty(CurrentContent) && !empty(CurrentContent.classificationFolder) ) {
+		CurrentFolder = CurrentContent.classificationFolder;
+	}
+	if( empty(CurrentFolder) && !empty(CurrentContent) && !empty(CurrentContent.folders) ) {
+		CurrentFolder = CurrentContent.folders[0];
+	}
+	
+	var CurrentFolderPath : String = CurrentContent.ID;
+	var RootFolder = CurrentFolder;
+	while( !empty(RootFolder.parent) && RootFolder.parent.ID!='primary-navigation') {
+		CurrentFolderPath += " "+RootFolder.ID;
+		RootFolder = RootFolder.parent;
+	}
+	CurrentFolderPath += " body_"+RootFolder.ID+" "+RootFolder.ID;
+	
+	/* TODO: This will have to be customized, based on the campaign (I think) */
+	CurrentFolderPath += " select3g";
+	CurrentFolderPath += " "+KitQtyClass;
+	
+	var PageID : String = "page_";
+	
+	if( empty(CurrentContent) ) {
+		PageID += CurrentFolder.ID;
+	} else {
+		PageID += CurrentContent.ID;
+	}
+	
+	/* TODO: This will have to be customized, based on the campaign (I think) */
+	PageID += "_select3g";
+</isscript>
+
+
+<head>
+	<iscomment>
+		Include all important information globally , e.g. meta-data, link information, and
+		javascript.
+	</iscomment>
+	<isinclude template="components/header/htmlhead"/>
+
+	<iscomment>Add page specific header information here.</iscomment>
+	
+	<isinclude template="bv/display/headerincludes"/>
+	
+</head>
+<body id="${PageID}" class="${CurrentFolderPath}">
+<isinclude template="common/mboxglobal"/>
+ <isset name="showOrderButton" value="${false}" scope="pdict"/>
+ 
+
+<isinclude template="components/header/header"/>
+<div id="pageContext" style="display:none;">
+{
+	"pageTitle"	:	"Customer Service",
+	"pageType"	:	"CustomerService"		
+}
+</div>
+<div class="mboxDefault"></div>
+<script type="text/javascript">mboxCreate("MB_SAS_Tracker",'pageName='+"${mboxPageName}",'pageUCI='+ "${mboxUCI}");</script>
+	<div id="container">
+		<div id="idMainWide" class="mainWide">
+		  <div id="content">
+				<div id="primaryContent" class="index">
+					<isreplace/>
+				</div><!-- END: content -->
+			</div> <!-- END: main -->
+		</div>
+		
+	
+		<isinclude template="components/footer/footer"/>
+		<isinclude template="components/footer/pixels"/>
+	</div>
+	<div id="popupBG">&nbsp;</div>
+	<isif condition="${shouldShowDebugInfo()}">
+		<iscomment>this is the template rendering the homepage
+		<pre><!-- +1.888.553.9216 --><!--This phone is a requirement to support existing Gomez monitor of SiteGenesis. Demadware customers can remove this.-->
+			
+		Campaign Code:${pdict.CurrentCampaignConfig.campaignCode}
+		Session Code:${session.privacy.campaignID}
+		</pre></iscomment>
+	</isif>
+	
+	<isinclude template="common/google_analytics" />
+</body>
+</html>

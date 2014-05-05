@@ -1,0 +1,72 @@
+/**
+* Demandware Script File
+* To define input and output parameters, create entries of the form:
+*
+* @<paramUsageType> <paramName> : <paramDataType> [<paramComment>]
+*
+* where
+*   <paramUsageType> can be either 'input' or 'output'
+*   <paramName> can be any valid parameter name
+*   <paramDataType> identifies the type of the parameter
+*   <paramComment> is an optional comment
+*
+* For example:
+*
+*	 @input currentKit : Array
+*	 @input newFormula : String
+*    @output response : String
+*	 @output updatedKit : Array
+*
+*/
+importPackage( dw.system );
+importPackage( dw.catalog );
+
+function execute( args : PipelineDictionary ) : Number
+{
+	var kit : Array = new Array();
+	var newFormula = args.newFormula;
+    if (args.currentKit == null || args.currentKit.length ==0 || args.currentKit.length == 1 ) {
+      // Default to either the contents of the 60 day Extra Strength kit or the New (3G) 3 piece kit
+      // TODO update offer codes
+      var kitProduct1 :String = Site.getCurrent().getCustomPreferenceValue("updateKitStrengthProduct1");
+      var kitProduct2 :String = Site.getCurrent().getCustomPreferenceValue("updateKitStrengthProduct2");
+      var kitProduct3 :String = Site.getCurrent().getCustomPreferenceValue("updateKitStrengthProduct3");
+      kit.push(kitProduct1);
+      kit.push(kitProduct2);
+      kit.push(kitProduct3);
+    } 
+    else{ 
+    	kit= args.currentKit;
+    	var responseJson = '';
+	 	for(var i=0; i<kit.length; i++){
+		 	var productArray = kit[i].split(dw.web.Resource.msg('symbol.kit.split','common',null));
+		 	var product : Product = ProductMgr.getProduct(productArray[0]);
+		 	var strengthProduct : Product;
+		 	var strength :String = new String();
+		 	if(product.custom.isCustomizableFlag){
+			 		if(newFormula=="extra"){		 		
+			 			strength = product.custom.hsProductID;
+			 		}
+			 		else if(newFormula=="regular"){
+			 			strength = product.custom.lsProductID;
+			 		}	
+			 		else{
+			 			responseJson += '"Error' + '":';
+				      	responseJson += '"Invalid parameter specified"';
+				      	args.response = JSON.stringify(JSON.parse("[{"+responseJson+"}]"));
+				      	return PIPELET_ERROR;
+			 		}	
+			 		if(null!=strength){
+			 			strengthProduct = ProductMgr.getProduct(strength);
+			 			var newProduct : String = strengthProduct.ID + dw.web.Resource.msg('symbol.kit.split','common',null) + strengthProduct.name + dw.web.Resource.msg('symbol.kit.split','common',null)+"1";
+				 		kit[i]=newProduct;
+			 		}
+				 	
+			 	}	
+		 	 }
+	  }
+	responseJson = '"Success":"The Kit has been updated successfully."';
+	args.response = JSON.stringify(JSON.parse("[{"+responseJson+"}]"));
+	args.updatedKit = kit;
+    return PIPELET_NEXT;
+}

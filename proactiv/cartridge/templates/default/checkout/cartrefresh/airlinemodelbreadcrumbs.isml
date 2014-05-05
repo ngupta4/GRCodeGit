@@ -1,0 +1,116 @@
+
+<isif condition="${pdict.CurrentCampaignConfig['cartID']==100}">
+
+
+<isset name="cartType" value="${pdict.CurrentCampaignConfig['cartID']}" scope="page" >
+
+<isscript>
+	var stepNames : dw.util.ArrayList = new dw.util.ArrayList();
+	stepNames.add('billingshipping');
+	stepNames.add('confirmation');	
+</isscript>	
+	<div class="breadcrumb panelC">
+		<div class="refreshLogo"><a href="${URLUtils.httpHome()}" title="Proactiv"><img src="${URLUtils.staticURL('images/cartRefresh/proactivLogo.png')}" alt="Proactiv" /></a></div>
+		<ul>
+			<isloop items="${stepNames}" var="orderStep" status="loopstate">
+				<li class="step${loopstate.count}<isif condition="${orderStep == step}"> active</isif>">
+					<a href="javascript:void(0)"  class="inActive"><span><isprint value="${loopstate.index + 1}" formatter="#,#00"></span>
+					${Resource.msg('cart.breadcrumbs.' + orderStep + '.label', 'rendering', null)}</a>
+				</li>
+			</isloop>
+		</ul>
+	</div>
+<iselseif condition="${pdict.CurrentCampaignConfig['cartID']==102}">
+	
+	<div class="breadcrumb panelC">
+		<div class="refreshLogo"><a href="${URLUtils.httpHome()}" title="Proactiv"><img src="${URLUtils.staticURL('images/cartRefresh/proactivLogo.png')}" alt="Proactiv" /></a></div>
+		<ul>
+			<li class="step1 <isif condition="${orderStep == 1}"> active</isif>">
+				<a <isif condition="${orderStep > 1}"> href="${URLUtils.http('Page-Show','cid','order')}" <iselse> href="javascript:void(0)" class="inActive" </isif>><span>01</span>
+				${Resource.msg('cart.breadcrumbs.freegift.label', 'rendering', null)}</a>
+			</li>
+			<li class="step2 <isif condition="${orderStep == 2}"> active</isif>">
+				<a <isif condition="${orderStep > 2}"> href="${URLUtils.http('Airline-Show','step','02','pid',pdict.CurrentSession.custom.pid1)}"  <iselse> href="javascript:void(0)" class="inActive"</isif>><span>02</span>
+				${Resource.msg('cart.breadcrumbs.upgradeyourkit.label', 'rendering', null)}</a>
+			</li>
+			<li class="step3 <isif condition="${orderStep == 3}"> active</isif>">
+				<a <isif condition="${orderStep > 3}"> href="${URLUtils.http('Airline-Show','step','03','pid',pdict.CurrentSession.custom.pid2)}" <iselse> href="javascript:void(0)" class="inActive" </isif>><span>03</span>
+				${Resource.msg('cart.breadcrumbs.selectyoursupply.label', 'rendering', null)}</a>
+			</li>
+			<li class="step4 <isif condition="${orderStep == 4}"> active</isif>">
+				<a href="javascript:void(0)"  <isif condition="${orderStep != 4}">class="inActive"</isif>><span>04</span>
+				${Resource.msg('cart.breadcrumbs.checkout.label', 'rendering', null)}</a>
+			</li>
+		</ul>
+	</div>
+<iselseif condition="${pdict.CurrentCampaignConfig['cartID']==101}">
+
+	<div class="breadcrumb panelC">
+		<div class="refreshLogo"><a href="${URLUtils.httpHome()}" title="Proactiv"><img src="${URLUtils.staticURL('images/cartRefresh/proactivLogo.png')}" alt="Proactiv" /></a></div>
+		<ul>
+			<li class="step1 <isif condition="${orderStep == 1}"> active</isif>">
+				<a <isif condition="${orderStep > 1}"> href="${URLUtils.https('Page-Show','cid','order')}" <iselse> href="javascript:void(0)"  </isif>><span>01</span>
+				${Resource.msg('cart.breadcrumbs.selectsystem.label', 'rendering', null)}</a>
+			</li>
+			<li class="step2 <isif condition="${orderStep == 2}"> active</isif>">
+				<a <isif condition="${orderStep > 2}"> href="${URLUtils.http('Airline-Show','step','02','pid',pdict.CurrentSession.custom.pid1)}" <iselse> href="javascript:void(0)"  </isif>><span>02</span>
+				${Resource.msg('cart.breadcrumbs.selectfreegift.label', 'rendering', null)}</a>
+			</li>
+			<li class="step3 <isif condition="${orderStep == 3}"> active</isif>">
+				<a <isif condition="${orderStep > 3}"> href="${URLUtils.http('Airline-Show','step','03','pid',pdict.CurrentSession.custom.pid2)}" <iselse> href="javascript:void(0)"  </isif>><span>03</span>
+				${Resource.msg('cart.breadcrumbs.selectsupply.label', 'rendering', null)}</a>
+			</li>
+			<li class="step4 <isif condition="${orderStep == 4}"> active</isif>">
+				<a href="javascript:void(0)" ><span>04</span>
+				${Resource.msg('cart.breadcrumbs.checkout.label', 'rendering', null)}</a>
+			</li>
+		</ul>
+	</div>
+</isif>
+<iscomment>This is for omniture click tracking</iscomment>
+<isif condition="${pdict.CurrentCampaignConfig['cartID']==102}">
+<isif condition="${orderStep >= 1}">
+	<script type="text/javascript">
+	var campaignCode = '${pdict.CurrentCampaignConfig['campaignCode']}';
+	$("li.step1 a").click(function() {
+		   s.linkTrackVars='prop56,eVar56';
+		   s.prop56=campaignCode+":SelectFreeGift";
+		   s.eVar56=s.prop56;
+		   s.tl(this,'o',"Select a Free Gift");
+	});
+	</script>
+</isif>
+ <isif condition="${orderStep >= 2}">	
+	<script type="text/javascript">
+	var campaignCode = '${pdict.CurrentCampaignConfig['campaignCode']}';
+	$("li.step2 a").click(function() {
+		   s.linkTrackVars='prop56,eVar56';
+		   s.prop56=campaignCode+":SelectSystem";
+		   s.eVar56=s.prop56;
+		   s.tl(this,'o',"Select a System");
+	});
+	</script>
+</isif>
+<isif condition="${orderStep >= 3 }">		
+	<script type="text/javascript">
+	var campaignCode = '${pdict.CurrentCampaignConfig['campaignCode']}';
+	$("li.step3 a").click(function() {
+		   s.linkTrackVars='prop56,eVar56';
+		   s.prop56=campaignCode+":SelectSuppy";
+		   s.eVar56=s.prop56;
+		   s.tl(this,'o',"Select Supply");
+	});
+	</script>
+	</isif>
+	<isif condition="${orderStep >= 4 }">	
+	<script type="text/javascript">
+	var campaignCode = '${pdict.CurrentCampaignConfig['campaignCode']}';
+	$("li.step4 a").click(function() {
+		   s.linkTrackVars='prop56,eVar56';
+		   s.prop56=campaignCode+":Checkout";
+		   s.eVar56=s.prop56;
+		   s.tl(this,'o',"Checkout");
+	});
+	</script>	
+	</isif>
+</isif>

@@ -1,0 +1,293 @@
+/**
+ * Special styles for the JavaScript on scenario
+ */
+
+#infopanel_loggedout.infoPanel,
+#infopanel_remember.infoPanel,
+#infopanel_loggedin.infoPanel.remember #welcome li.signIn  {
+  	top:-75px;
+	padding:40px 20px 0 0;
+	background:url(/img/interface/signinbox.png) no-repeat top right;
+	
+}
+
+#signInTrigger,
+body #header #welcome ul.accountLinks li.signOut a{
+  	padding-top: 27px;
+  	width: 98px;
+  	height: 0 !important;
+  	height /**/:27px;
+  	overflow: hidden;
+  	position: absolute;
+  	top: 0;
+  	right: 15px;
+  	background-image: url(../../images/interface/nav-sign-in-out.png);
+  	z-index: 90;
+}
+
+#signInTrigger.open {
+  	background-position: 0 -27px;
+}
+
+
+body #header #welcome ul.accountLinks li.signOut  {
+  	background: none;
+  	position: relative;
+  	right: -3px;
+  	top: -13px;
+  	padding-left: 2px;
+
+}
+
+body #header #welcome ul.accountLinks li.signOut a {
+	background-position: 0 -54px;
+}
+
+
+body #header #welcome ul.accountLinks li.signOut a {
+	position: relative;
+	top: 0; 
+	left: 0;
+	text-indent: -9999px;
+}
+
+body #header #infopanel_loggedin.infoPanel.remember #welcome {
+	padding-right: 100px;
+}
+
+#header .infoPanel #emailGroup {
+	left:48px;
+}
+#header #emailGroup span label {
+	left:35px;
+}
+#header #passwordGroup span label {
+	left:58px;
+}
+
+/* =Homepage logged in - display
+-----------------------------------------------------*/
+
+
+#main .loggedIn #primaryContent .scroller div.previousInactive, 
+#main .loggedIn #primaryContent .scroller div.nextInactive, 
+#main .loggedIn #primaryContent .scroller a.previous, 
+#main .loggedIn #primaryContent .scroller a.next {
+	display: block;
+}
+
+#main .loggedIn #primaryContent .scroller a.previous_nojs, 
+#main .loggedIn #primaryContent .scroller a.next_nojs {
+	display: none;
+	visibility: hidden;
+}
+
+
+/* =Related Links
+-----------------------------------------------------*/
+/*Hides the panels on load; then a dynamically added css class displays them again*/
+#panel1-body, 
+#panel1 p {
+	display: none;
+}
+
+.linksLoaded #panel1-body, 
+.linksLoaded #panel1 p {
+	display: block;
+}
+
+/* =Video Player
+-----------------------------------------------------*/
+/*hides no JS messages so it doesn't flash*/
+
+div.noJSMessage,
+div.noJS {
+	display: none; 
+	visibility: hidden;
+}
+
+#footer {
+	width:960px;
+	left:0px;
+}
+
+#footer ul li.last a {
+}
+
+body #footer li.kiosk{
+	display:list-item;
+}
+
+/* =4.0 - Order Your System 
+-----------------------------------------------------*/
+/*styles to make tabbed view work*/
+
+#page_select #main #primaryContent .pageHead {
+	padding:0pt 0pt 35px;
+}
+
+#page_select #main #primaryContent .tabBlock .tabs { 
+	display: block;
+	visibility: visible;
+}
+
+#page_select #main #primaryContent .tabBlock .tabContent {
+	height: 300px;
+	overflow: hidden !Important;
+}
+
+#page_select #main #primaryContent .tabBlock .tabContent #tabMask{
+	width: 5000px;
+	height: 300px;
+	position: absolute;
+}
+
+#page_select #main #primaryContent .tabBlock .tabContent #tab1wideContent,
+#page_select #main #primaryContent .tabBlock .tabContent #tab2wideContent,
+#page_select #main #primaryContent .tabBlock .tabContent #tab3wideContent,
+#page_select #main #primaryContent .tabBlock .tabContent #tab4wideContent,
+#page_select #main #primaryContent .tabBlock .tabContent #tab5wideContent{
+	float:left;
+	width: 645px;
+}
+
+#page_select #main #primaryContent .tabBlock .tabContent #tab1wideContent h3,
+#page_select #main #primaryContent .tabBlock .tabContent #tab2wideContent h3,
+#page_select #main #primaryContent .tabBlock .tabContent #tab3wideContent h3,
+#page_select #main #primaryContent .tabBlock .tabContent #tab4wideContent h3,
+#page_select #main #primaryContent .tabBlock .tabContent #tab5wideContent h3{
+	display: none; 
+	visibility: hidden;
+}
+
+
+/* =5.0 - Real Stories 
+-----------------------------------------------------*/
+/*styles to Real Stories scroller work*/
+
+#page_stories .thumbArea{
+	height: 230px;
+	position: relative;
+}
+
+#page_stories .thumbArea .previous, 
+#page_stories .thumbArea .next {
+	display: block;
+	visibility: visible;
+}
+
+#page_stories .smScroller {
+	overflow:hidden;
+	width:475px;
+	left: 9px;
+	margin: 18px auto 0;
+	padding: 0;
+}
+
+#page_stories .smScroller ul {
+	float:left;
+	width: 475px;
+	margin-left: 0;
+	margin-right: 5px;
+}
+
+#page_stories .smScroller li{
+	margin: 0 18px 8px 0;
+}
+
+#page_stories #thumbMask{
+	width: 10000px;
+}
+
+/* =5.1 - Real Stories Gallery
+-----------------------------------------------------*/
+.galleryController {
+	border-bottom:1px solid #ccc;
+	height:17px;
+	margin: 0 0 20px 0;
+	padding:6px 0px;
+}
+#galleryMask #galleryHolder {
+	margin-left: 10px;
+	width: 100020px;
+}
+#galleryHolder ul {
+	float:left;
+	width: 660px;
+	margin-right: 100px;
+}
+#galleryHolder ul li {
+	width: 215px;
+	margin: 0 5px 5px 0;
+}
+#page_customer #galleryMask #galleryHolder ul li h3 span {
+	display:inline;
+	float:none;
+	cursor:pointer;
+}
+#galleryHolder ul p {
+	min-width: 190px;
+	height: 27px;
+}
+#page_customer #galleryMask #galleryHolder ul li h3 img {
+display:inline;
+margin: 0px;
+
+
+	float:none;
+}
+#galleryHolder ul li .blockContent {
+height:151px;
+}
+#galleryHolder .profileImg {
+	margin: 0 0 6px 23px;
+	position: relative;
+}
+
+body #footer #countryList li.hideable{
+	position:relative;
+}
+/* =8.11 - Refer a Friend 
+-----------------------------------------------------*/
+
+.RAFtabBlock {
+	margin: 20px 0 5px 0;
+	position: relative;
+}
+
+.RAFtabBlock .tabs {
+	display: block;
+	visibility: visible;
+}
+
+#main #primaryContent .shareMultiple {
+	display: block;
+	visibility: visible;
+}
+
+/* =Footer
+-----------------------------------------------------*/
+/*hides non-js version of country selector*/
+
+body #footer #locale_selector {
+	display: none;
+	visibility: hidden;
+}
+
+body #footer #countryselector{
+	display:list-item;
+	width:200px;
+	margin-top: 0px;
+}
+
+body #footer #countryselector label{
+	padding: 3px 9px 3px 18px;
+	color: #ffffff;
+	background-image: none;
+}
+
+body #footer #countryselector,
+body #footer .copyright{
+	left:0;
+	position:static;
+}

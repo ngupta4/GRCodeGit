@@ -1,0 +1,47 @@
+<!--- TEMPLATENAME: cartinformation.isml --->
+<div class="blockGrey">
+	<div class="block">
+		<div class="blockTop">
+			<div class="blockTopRight"></div>
+		</div>
+		<div class="blockContent">
+			<form action="${URLUtils.httpsContinue()}" method="post" id="${pdict.CurrentForms.cart.htmlName}" class="checkoutform">
+				<isif condition="${!empty(pdict.CurrentHttpParameterMap.ExistingData.stringValue)}">
+					<script type="text/javascript">
+						jQuery(function(){
+							var existingData = "<isprint value="${pdict.CurrentHttpParameterMap.ExistingData.stringValue}" encoding="off"/>".split('&'), key, value, kv;
+							for( var i=0, ii=existingData.length; i<ii; i++ ) {
+								kv = existingData[i].split('=');
+								key = kv[0];
+								value = kv[1];
+								
+								if(key != "dwfrm_cart_shippingMethodID"){
+									jQuery("[name='"+key+"']").val(decodeURIComponent(value));
+								}
+							}
+						});
+					</script>
+				</isif>
+				<isif condition="${showOrderFormAndTotals}">
+					<iscomment>Include a customer cart</iscomment>
+					<isinclude template="checkout/cart/cocart" />
+				</isif>
+				
+				<isif condition="${!showOrderFormAndTotals}">
+					<iscomment>Include order form</iscomment>
+					<isinclude template="checkout/components/perriconeorderform" />
+				</isif>
+				
+				<isif condition="${showOrderFormAndTotals}">
+					<iscomment>Include a details form</iscomment>
+					<isinclude template="checkout/personinformation/personinformation" />
+				<iselse/>
+					<isinclude template="checkout/personinformation/perriconepersoninformation" />
+				</isif>
+			</form>
+		</div>
+		<div class="blockBottom">
+			<div class="blockBottomRight"></div>
+		</div>
+	</div>
+</div>

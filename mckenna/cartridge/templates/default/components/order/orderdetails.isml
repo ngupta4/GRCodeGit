@@ -1,0 +1,101 @@
+<iscomment>
+	Displays order details, such as order number, creation date, payment information,
+	order totals and information for each contained shipment.
+	This template module can be used in order confirmation pages as well as in the
+	order history to render the details of a given order. Depending on the context
+	being used in, one might omit rendering certain information.
+
+	Parameters:
+
+	order		: the order whose details to render
+	orderstatus	: if set to true, the order status will be rendered
+	              if set to false or not existing, the order status will not be rendered
+</iscomment>
+<isset name="Order" value="${pdict.order}" scope="page"/>
+<isset name="billingAddress" value="${pdict.Order.billingAddress}" scope="page"/>
+
+<div class="confirmation_box order_summary">
+	<h3>${Resource.msg('orderdetails.ordersummary.label','rendering',null)}</h3>	
+	<table>
+		<isloop items="${Order.shipments}" var="shipment" status="shipmentloopstate">
+			<isif condition="${shipment.productLineItems.size() > 0}">
+				<isloop items="${shipment.productLineItems}" var="productLineItem" status="pliloopstate">
+					<tr>
+						<td class="name">
+							<iscomment><isdisplayliproduct p_productli="${productLineItem}" p_editable="${false}"/></iscomment>
+							<isprint value="${productLineItem.productName}"/>
+						</td>
+						<td class="qty">${Resource.msg('global.qty','locale',null)}. <isprint value="${productLineItem.quantity}"/></td>
+						<td class="price">
+							<isprint value="${productLineItem.adjustedPrice}"/>				    						            
+				            <isif condition="${productLineItem.optionProductLineItems.size() > 0}">
+								<isloop items="${productLineItem.optionProductLineItems}" var="optionLI">
+									<p>+ <isprint value="${optionLI.adjustedPrice}"/></p>
+								</isloop>
+							</isif>
+						</td>
+					</tr>
+				</isloop>
+			</isif>
+	    </isloop>		
+	</table>
+	<div class="total review-totals">
+		<div class="coupon">
+			<isslot id="confirmation-page-offer" context="global" description="Confirmation Page Coupon" />
+		</div>
+		<isordertotals p_lineitemctnr="${pdict.Order}" p_showshipmentinfo="${false}" p_shipmenteditable="${false}" p_totallabel="${Resource.msg('cart.ordertotal.label','rendering',null)}">
+	</div>
+</div>
+
+<div class="confirmation_box shipment_summary">
+	<h3>${Resource.msg('orderdetails.information.label','rendering',null)}</h3>
+	<div class="personal_info">
+		<p>${billingAddress.fullName}</p>
+		<p>${Order.customerEmail}</p>
+	</div>
+	<table>
+		<tr>
+			<th class="payment_method">${Resource.msg('orderdetails.paymentmethod','components',null)}</th>
+			<th class="expires">${Resource.msg('paymentinstrumentdetails.expires','account',null)}</th>
+			<th class="billing_address">${Resource.msg('orderdetails.billingaddress','components',null)}</th>
+			<th class="shipping_address">${Resource.msg('orderdetails.shippingaddress','components',null)}</th>
+		</tr>
+		<tr>			
+			<td>				
+				<isloop items="${Order.getPaymentInstruments(dw.order.PaymentInstrument.METHOD_CREDIT_CARD)}" var="paymentInstr" status="piloopstate">
+					<isminicreditcard p_card="${paymentInstr}" p_show_expiration="${false}"/>						
+				</isloop>
+			</td>
+			<td>
+				<isloop items="${Order.getPaymentInstruments(dw.order.PaymentInstrument.METHOD_CREDIT_CARD)}" var="paymentInstr" status="piloopstate">
+					<isminicreditcard p_card="${paymentInstr}" p_show_expiration="${true}"/>						
+				</isloop>
+			</td>
+			<td>
+				<isloop items="${Order.shipments}" var="shipment" status="shipmentloopstate">
+					<isif condition="${shipment.productLineItems.size() > 0}">
+						<isloop items="${shipment.productLineItems}" var="productLineItem" status="pliloopstate">
+							<isif condition="${pliloopstate.first}">
+								<isminiaddress p_address="${Order.billingAddress}"/>						    	
+						    </isif>
+					    </isloop>
+				    </isif>
+			    </isloop>
+			</td>
+			<td>
+				<isloop items="${Order.shipments}" var="shipment" status="shipmentloopstate">
+					<isif condition="${shipment.productLineItems.size() > 0}">
+						<isloop items="${shipment.productLineItems}" var="productLineItem" status="pliloopstate">
+							<isif condition="${pliloopstate.first}">
+						    	<isminishippingaddress p_shipment="${shipment}" p_editable="${false}" p_showmethod="${false}" p_showpromos="${false}"/>
+						    </isif>
+					    </isloop>
+				    </isif>
+			    </isloop>
+			</td>
+		</tr>
+	</table>
+	<div class="confirmation_footer">
+		<isslot id="confirmation-page-footer" context="global" description="Confirmation Page Footer" />	 
+	</div>
+</div>

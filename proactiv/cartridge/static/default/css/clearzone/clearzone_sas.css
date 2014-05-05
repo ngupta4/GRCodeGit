@@ -1,0 +1,298 @@
+body {
+	color: #4e4d4b;
+	background: #fff;
+	font-family: Helvetica, Arial, sans-serif;
+	margin: 0;
+}
+#czSAS h1, #czSAS h2 {
+	font-size: 30px !important;
+        line-height:1 !important;
+	font-weight: normal;
+background: none !important;
+}
+#czSAS {
+	width: 889px;
+	margin: 0 auto;
+	background: url(images/clearzone/cz_sas_bg.png?$staticlink$) no-repeat 0 0;
+}
+#sasHeader {
+	display: block;
+	position: relative;
+	width: 100%;
+	height: 140px;
+        font-size: 12px !important;
+}
+#sasHeader h1 {
+	margin: 26px 0 0;
+}
+#sasHeader p {
+	margin: 0;
+}
+#sasHeader .directions {
+	position: absolute;
+	left: 320px;
+	top: 98px;
+}
+#sasContainer {
+	width: 889px;
+	height: 659px;
+	position: relative;
+}
+#sasContainer h3 {
+	font-size: 18px !important;
+	font-weight: normal !important;
+	margin: 7px 0 0 20px !important;
+	text-align: left !important;
+	color: inherit !important;
+	border: none !important;
+}
+#sasNav {
+	height: 147px;
+	width: 879px;
+	margin: 4px 0 0 8px;
+}
+#sasNav a {
+	background-image: url(images/clearzone/cz_sas_navSprite.jpg?$staticlink$);
+	display: inline-block;
+	height: 125px;
+	width: 267px;
+	margin: 11px;
+	text-decoration: none;
+}
+#sasNav.deluxe .deluxeLink {
+	background-position: left top;
+}
+#sasNav.teen .teenLink {
+	background-position: center top;
+}
+#sasNav.core .coreLink {
+	background-position: right top;
+}
+#sasNav.deluxe .teenLink,
+#sasNav.core .teenLink {
+	background-position: center bottom;
+}
+#sasNav.deluxe .coreLink,
+#sasNav.teen .coreLink {
+	background-position: right bottom;
+}
+#sasNav.teen .deluxeLink,
+#sasNav.core .deluxeLink  {
+	background-position: left bottom;
+}
+#sasProduct {
+	display: inline-block;
+	width: 454px;
+	height: 455px;
+	margin: 0 0 0 6px;
+}
+#sasProductImg h2 {
+	margin: 16px 0 0 13px !important;
+        text-indent: 0 !important;
+        height: auto !important;
+}
+#sasProductImg h2 sup {
+	font-size: 17px !important;
+        vertical-align: top;
+}
+#sasProductImg .productImg {
+	background-image: url(images/clearzone/cz_sas_productSprite.png?$staticlink$);
+	background-repeat: no-repeat;
+	width: 430px;
+	height: 310px;
+	display: block;
+	margin: 0 0 0 14px;
+}
+#sasProduct.deluxe .productImg {
+	background-position: left top;
+}
+#sasProduct.teen .productImg {
+	background-position: left center;
+}
+#sasProduct.core .productImg {
+	background-position: left bottom;
+}
+#sasProductDesc {
+	display: block;
+	width: 408px;
+	height: 192px;
+	position: absolute;
+	left: 463px;
+	top: 154px;
+}
+#sasProductDesc h4 {
+	font-size: 14px !important;
+	font-weight: normal !important;
+	margin: 10px !important;
+	height: 30px !important;
+}
+#sasProductDesc h3 sup {
+font-size: 10px !important;
+vertical-align: top;
+line-height: 1;
+}
+#sasProductDesc .popups {
+	
+}
+#sasProductDesc .popups .content {
+	float: left;
+	clear: left;
+	width: 170px;
+	margin: 0 0 0 10px;
+}
+#sasProductDesc .popups .extras{
+	float: right;
+	width: 160px;
+font-size: 12px !important;
+}
+#sasProductDesc .popups li a {
+	font-size: 11px !important;
+	color: #354e67;
+	border-bottom: 1px dotted #354e67;
+	text-decoration: none;
+}
+#sasProductDesc ul.productList {
+	margin: 0 0 0 3px;
+	padding: 0;
+	list-style: none;
+}
+#sasProductDesc  ul.productList li {
+	padding-left: 15px;
+line-height: 15px;
+}
+
+ul.productList li.aqua {
+    background: url(images/clearzone/bullet-prodcolor.png?$staticlink$) no-repeat scroll 0 -395px transparent;
+}
+ul.productList li.blue {
+    background: url(images/clearzone/bullet-prodcolor.png?$staticlink$) no-repeat scroll 0 -296px transparent;
+}
+ul.productList li.brown {
+    background: url(images/clearzone/bullet-prodcolor.png?$staticlink$) no-repeat scroll 0 -196px transparent;
+}
+ul.productList li.green {
+    background: url(images/clearzone/bullet-prodcolor.png?$staticlink$) no-repeat scroll 0 4px transparent;
+}
+ul.productList li.navy {
+    background: url(images/clearzone/bullet-prodcolor.png?$staticlink$) no-repeat scroll 0 -496px transparent;
+}
+ul.productList li.orange {
+    background: url(images/clearzone/bullet-prodcolor.png?$staticlink$) no-repeat scroll 0 -96px transparent;
+}
+ul.productList li.pink {
+    background: url(images/clearzone/bullet-prodcolor.png?$staticlink$) no-repeat scroll 0 -696px transparent;
+}
+ul.productList li.red {
+    background: url(images/clearzone/bullet-prodcolor.png?$staticlink$) no-repeat scroll 0 -596px transparent;
+}
+ul.productList li.black.clearzone {
+    background: url(images/clearzone/bullet-prodcolor.png?$staticlink$) no-repeat scroll 0 -788px transparent;
+    padding-bottom: 4px;
+}
+ul.productList li.teen {
+	display: none;
+}
+#sasFooter {
+	position: absolute;
+	bottom: 0;
+	width: 885px;
+	height: 62px;
+	text-align: center;
+}
+#sasFooter p {
+	margin-top: 17px;
+        font-size: 12px !important;
+}
+#sasContainer .gifts {
+	position: absolute;
+	left: 463px;
+	top: 354px;
+	width: 408px;
+	height: 159px;
+}
+#sasContainer .gifts h2 {
+	
+}
+#sasContainer .gifts #giftSelect {
+	margin: 15px 0 0 14px;
+}
+#sasContainer .gifts #giftSelect span {
+	height: 112px;
+	width: 124px;
+	display: inline-block;
+	position: relative;
+	cursor: pointer;
+	background-image: url(images/clearzone/cz_sas_giftSprite.png?$staticlink$);
+}
+#sasContainer .gifts #giftSelect.rm .rmLink {
+	background-position: left -1px;
+}
+#sasContainer .gifts #giftSelect.rm .dcwLink {
+	background-position: center bottom;
+}
+#sasContainer .gifts #giftSelect.rm .dscLink {
+	background-position: right bottom;
+}
+#sasContainer .gifts #giftSelect.dcw .rmLink {
+	background-position: left bottom;
+}
+#sasContainer .gifts #giftSelect.dcw .dcwLink {
+	background-position: center -1px;
+}
+#sasContainer .gifts #giftSelect.dcw .dscLink {
+	background-position: right bottom;
+}
+#sasContainer .gifts #giftSelect.dsc .rmLink {
+	background-position: left bottom;
+}
+#sasContainer .gifts #giftSelect.dsc .dcwLink {
+	background-position: center bottom;
+}
+#sasContainer .gifts #giftSelect.dsc .dscLink {
+	background-position: right -1px;
+}
+#sasContainer .gifts #giftSelect span a {
+	font-size: 11px;
+	position: absolute;
+	bottom: 10px;
+	left: 10px;
+	color: #897448;
+	text-decoration: none;
+}
+#sasContainer .gifts #giftSelect span a:hover {
+	text-decoration: underline;
+}
+#sasContainer #sasPrice {
+	position: absolute;
+	left: 479px;
+	top: 526px;
+	width: 378px;
+	height: 51px;
+	vertical-align: middle;
+	text-align: center;
+}
+#sasContainer #sasPrice .payTitle {
+	text-transform: uppercase;
+	float: left;
+	margin: 19px 0 0 12px;
+	font-weight: bold;
+font-size: 12px;
+}
+#sasContainer #sasPrice .payTotal {
+	margin: 7px 0;
+	display: inline;
+	float: left;
+}
+#sasContainer #sasPrice .payTotal h2 {
+	margin: 2px 10px;
+	font-weight: bold;
+        text-indent: 0 !important;
+}
+#sasContainer #sasPrice .sasCTA {
+	background: url(images/clearzone/cz_sas_cta.png?$staticlink$) no-repeat;
+	float: right;
+	height: 26px;
+	width: 118px;
+	margin: 12px 3px 0 0;
+	text-indent: -999em;
+}

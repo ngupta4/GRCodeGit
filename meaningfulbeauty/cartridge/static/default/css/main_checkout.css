@@ -1,0 +1,52 @@
+.shippingmethodslist{text-align: left; margin-left: 160px;}
+.shippingmethodslist .labelwrapper{display: block; margin-bottom: 3px; position: relative;}
+.shippingmethodslist .overnight .shippinglabel{background: url('../images/next-day.png') 0 -15px no-repeat; position: absolute; left: -145px; top: -9px; width: 150px; height: 30px;}
+.seedetails{display: inline; position: relative;}
+.seedetails .shippingdetailspopup{position: absolute; background-color: white; display: none; padding: 5px; border: solid 1px silver; border-radius: 5px; color: #4E4D4B; left: -100px; width: 250px; z-index: 5; font-size: .9em; line-height: 1.2em;}
+.seedetails a:hover .shippingdetailspopup{display: block;}
+
+.ordertotalfinal{padding: 5px; margin-bottom: 10px; border-bottom: 1px solid #CCC; color: #666; text-align: right; font-weight: bold; font-size: 13px;}
+
+.age_and_gender{border: solid 1px silver; padding: 10px; margin-top: 10px; width: 50%;}
+.card_number{width: 50%; float: left;}
+.expiration_date{width: 50%; margin-left: 51%;}
+.month .label, .year .label{display: none;}
+.month, .year{float: left; margin-right: 10px;}
+
+.backtoshopping{margin-top: 1.5em; border-top: solid 1px #ccc; padding-top: 10px;}
+.backtoshopping a{display: block; width: 200px; height: 24px; padding-left: 20px; background: url(../images/interface/btn-circles-blue.png) 0 -800px no-repeat; font-weight: bold;}
+.backtoshopping a:hover{background-position: -300px -800px;}
+
+/* valueUpsell */
+#valueUpsellSection #boxTitle{width: 187px; height: 36px; background: url(../images/order/valueUpsell_title.jpg) 0 0 no-repeat; text-indent: -5000px;}
+#valueUpsellSection .related_product h4{font-weight: bold;}
+#valueUpsellSection .related_product{color: gray; margin-top: 10px;}
+#valueUpsellSection .productimage{margin-left: 20px;}
+#valueUpsellSection .valueUpsell_topImage{background-image: url(../images/order/valueUpsell_freerush.jpg); width: 168px; height: 90px; margin: 5px;}
+
+#popupOverlay{background: white; width: 100%; height: 100%; position: fixed; z-index: 100; filter: alpha(opacity=50); opacity: 0.5; -moz-opacity: 0.5; -webkit-opacity: 0.5; top: 0; left: 0; display: none;}
+
+.upsellarea .upselldescription{display: none;}
+.upsellrecommendationpopup{display: none;}
+
+.hopupbody{min-height: 50px; background: transparent url(../images/interface/dialog/dialog-bkd-center.png) left top repeat-y;}
+
+/* Cross-sell */
+.crosssellitem{display: none; position: absolute; top: 50px; left: 120px; background: white; width: auto; border: solid 1px #ccc; z-index: 1000; float: left;}
+.crosssellitem-header a{margin: -12px -12px 0 0; width: 25px; height: 24px; background: transparent url(../images/interface/dialog/close.png) center center no-repeat; position: absolute; right: 0; z-index: 10;}
+.crosssellitem-header a span{display: none;}
+
+/* I3 fixes */
+.singlepage-right{float: right; width: 160px;}
+.checkout-maincontent{margin-right: 0px;}
+.imagecolumn img{max-width: 150px;}
+
+/* Replicating Legacy presentation */
+div.checkout_box td.detailscolumn div.name, 
+#header .primaryNavigation .order, 
+#header a#signInTrigger { display:none;}
+
+.errorform{border: solid 1px red; color: red; padding: 5px; margin: 5px 5%;}
+
+.upsell_details_inactive {display: none;}
+.upsell_text {border-top: 1px solid #bbbbbb; padding: 5px 10px;font-size: 10px;}

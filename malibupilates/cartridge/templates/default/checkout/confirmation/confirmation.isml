@@ -1,0 +1,221 @@
+<!--- TEMPLATENAME: confirmation.isml --->
+<iscache type="relative" minute="30" varyby="price_promotion"/>
+
+<iscomment>
+	This template is created before the 'wrapper' template, so we can set
+	up the template configuration for the 'pt_storefront' template right here.
+</iscomment>
+
+<isdecorate template="content/checkout/pt_checkout">
+	<isset name="noBackground" value="true" scope="page"/>
+
+<iscookie name="campaign" path="/" value="${}" domain="${request.httpHost}" maxAge="0" />
+<iscookie name="uci" path="/" value="${}" domain="${request.httpHost}" maxAge="0" />
+<iscookie name="secondaryuci" path="/" value="${}" domain="${request.httpHost}" maxAge="0" />
+
+	<link href="${URLUtils.staticURL('/css/checkout.css')}" type="text/css" rel="stylesheet" />
+	<isinclude template="util/modules"/>
+	<isinclude template="util/reporting/ReportOrder.isml"/>
+	<isscript>
+		importPackage(dw.object);
+		importPackage(dw.catalog);
+		
+		var CCC : Object = pdict.CurrentCampaignConfig;
+		var campaignCode : String = CCC.campaignCode;
+		
+		var showHeader : boolean = CCC.showHeader;
+		var showFooter : boolean = CCC.showFooter;
+		var showNav : boolean = CCC.showNav;
+		var showOrderButton : boolean = CCC.showOrderButton;
+		
+		var category : dw.catalog.Category = CCC.getCampaignCategory();
+	</isscript>
+
+<iscomment>
+	This template visualizes the order confirmation page. Note, that it
+	uses a different decorator template.
+	It displays the order related information, such as the order number,
+	creation date, payment information, order totals and shipments of
+	the order.
+</iscomment>
+
+<div class="checkoutPage">
+	
+		<isif condition=${pdict.multiCheckout}>
+			<ischeckoutbreadcrumbs type="multi" step="3" />
+		<iselse>
+			<ischeckoutbreadcrumbs type="simple" step="2" />
+		</isif>
+		
+		<div class="content_box_outer_pdp">
+			<div class="content_box_inner_sp">
+				<isif condition="${(!empty(pdict.AVSError) && pdict.AVSError) ||!empty(pdict.PlaceOrderError)}">
+					<div class="errorform">${Resource.msg('global.unable.to.process','locale',null)}</div>
+				</isif>
+				
+				<div class="confirmation_header">
+					<h2>${Resource.msg('confirmation.thankyou','checkout',null)}</h2>
+					<p>${Resource.msg('orderdetails.ordernumber','rendering',null)} <isprint value="${pdict.Order.orderNo}"/></p>
+					<p>${Resource.msg('orderdetails.ship.text','rendering',null)}</p>
+					<p>${Resource.msgf('orderdetails.email.text','rendering',null)}</p> 
+				</div>
+				
+				<isorderdetails order="${pdict.Order}"/>
+				
+			</div>
+		</div>
+		
+		<div class="mcafee_logo">
+			<iscontentasset aid="cart-comfort-copy" />
+		</div>		
+		
+	
+	
+</div><!-- END: checkoutPage -->
+	<isset name="OmniturePage" value="COConfirmation" scope="pdict">
+	<isset name="pixel_content_asset" value="pixels_confirmation" scope="request">
+
+<isscript>
+  var kit1  = '';
+
+  var iter = pdict.Order.getAllProductLineItems().iterator();
+  var loopc = 0;
+
+  while (iter.hasNext()) {
+    var pli = iter.next();
+
+      if (loopc == 0) {
+        kit1  = pli.product.ID;
+      }
+
+      loopc = loopc + 1;
+  }
+
+  var cookiesUCI : Cookie = request.httpCookies['uci'];
+</isscript>
+
+    <script type="text/javascript">
+      var pixelOrderid = "${pdict.Order.orderNo}",
+          pixelBrand   = "malibupilates",
+          pixelKit     = "${kit1}",
+          //pixelUCI     = "${pdict.CurrentSession.privacy.campaignUCIID}";
+          pixelUCI     = "${cookiesUCI.value}";
+    </script>
+</isdecorate>
+
+<isscript>
+
+
+  var orderId = pdict.Order.orderNo;
+  var brand   = 'malibupilates';
+
+  var qty1  = qty2  = 0;
+  var kit1  = kit2  = '';
+  var prod1 = prod2 = '';
+  var rev1  = rev2  = 0;
+
+  var iter = pdict.Order.getAllProductLineItems().iterator();
+  var loopc = 0;
+
+  while (iter.hasNext()) {
+    var pli = iter.next();
+
+      if (loopc == 0) {
+        qty1  = pli.quantityValue;
+        kit1  = pli.product.ID;
+        prod1 = pli.product.name;
+      } else {
+        qty2  = pli.quantityValue;
+        kit2  = pli.product.ID;
+        prod2 = pli.product.name;
+      }
+
+      brand = pli.product.brand;
+      loopc = loopc + 1;
+  }
+  var revenue = 0;
+  revenue = pdict.Order.getAdjustedMerchandizeTotalPrice(true).value + pdict.Order.giftCertificateTotalPrice.value;
+
+  if (prod1.indexOf("Vitamins") != -1) {  
+    rev1 = 0;
+    rev2 = revenue;
+  } else {
+    rev1 = revenue;
+    rev2 = 0;
+  }  
+
+</isscript>
+
+
+
+
+<!--Begin LinkShare Tagging-->
+<script type="text/javascript">
+<!--
+var brnd_pfix = "MP";
+var brnd_name = "Malibu Pilates:";
+var LSmsg = "";
+var LSord = "ord=" + brnd_pfix + "${pdict.Order.orderNo}";
+var LSsku = "skulist=";
+var LSqty = "qlist=";
+var LSamt = "amtlist=";
+var LSname = "namelist=";
+
+function addLSitem(ls1,ls2,ls3,ls4) {
+  LSsku = LSsku + brnd_pfix + escape(ls1) + "|";
+  LSqty = LSqty + ls2 + "|";
+  ls3 = ls3 * ls2 * 100;
+  ls3 = ls3.toFixed(0);
+  LSamt = LSamt + ls3 + "|";
+  LSname = LSname + escape(brnd_name) + escape(ls4) + "|";
+}
+
+//Call AddLSitem(SKU Number, Qty Purchased, Item Unit Price, Item Name) for each item purchased.
+addLSitem(
+        "${kit1}",
+        "${qty1}",
+        "${rev1}",
+        "${prod1}"
+);
+
+if (${loopc} > 1) {
+addLSitem(
+        "${kit2}",
+        "${qty2}",
+        "${rev2}",
+        "${prod2}"
+);
+}
+
+
+
+
+
+LSmsg = "mid=2637&cur=USD&" + LSord + "&" + LSsku + "&" + LSqty + "&" + LSamt + "&" + LSname;
+document.write('<img src="https://track.linksynergy.com/ep?' + LSmsg + '" border="0" width="1px" height="1px" alt="">');
+//-->
+</script>
+<!--End LinkShare Tagging-->
+
+<!-- Google Code for Order Conversion Page -->
+<script type="text/javascript">
+/* <![CDATA[ */
+var google_conversion_id = 1046920367;
+var google_conversion_language = "en";
+var google_conversion_format = "2";
+var google_conversion_color = "ffffff";
+var google_conversion_label = "DDRBCOf3pwEQr_ma8wM";
+var google_conversion_value = 0;
+/* ]]> */
+</script>
+<script type="text/javascript" src="https://www.googleadservices.com/pagead/conversion.js">
+</script>
+<noscript>
+<div style="display:inline;">
+<img height="1" width="1" style="border-style:none;" alt="" src="https://www.googleadservices.com/pagead/conversion/1046920367/?label=DDRBCOf3pwEQr_ma8wM&amp;guid=ON&amp;script=0"/>
+</div>
+</noscript>
+
+<!--  MS AdCenter -->
+<script type="text/javascript"> if (!window.mstag) mstag = {loadTag : function(){},time : (new Date()).getTime()};</script> <script id="mstag_tops" type="text/javascript" src="//flex.atdmt.com/mstag/site/70a86561-5e94-4373-b67e-068e5b19aa84/mstag.js"></script> <script type="text/javascript"> mstag.loadTag("analytics", {dedup:"1",domainId:"238918",type:"1",actionid:"41691"})</script> <noscript> <iframe src="//flex.atdmt.com/mstag/tag/70a86561-5e94-4373-b67e-068e5b19aa84/analytics.html?dedup=1&domainId=238918&type=1&actionid=41691" frameborder="0" scrolling="no" width="1" height="1" style="visibility:hidden;display:none"> </iframe> </noscript>
+

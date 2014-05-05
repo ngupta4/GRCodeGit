@@ -1,0 +1,77 @@
+/**
+ * ValidateAvailabilityForCheckout.ds
+ *
+ * This script checks that all product line items have inventory 
+ * available for purchase.
+ *
+ * @input  Basket : dw.order.Basket
+ * @output BasketAvailabilityStatus : dw.system.Status
+ */
+
+ importPackage( dw.system );
+ importPackage( dw.web );
+ importPackage( dw.value );
+ importPackage( dw.util );
+ importPackage( dw.order );  
+ importPackage( dw.catalog ); 
+
+/**
+ * Function: execute
+ *
+ * Main function of the validation script. 
+ */
+function execute( pdict : PipelineDictionary ) : Number
+{
+    // ===================================================
+	// =====     	PROCESS INPUT PARAMETERS 		 ===== 
+    // ===================================================
+
+	var basket : Basket = pdict.Basket;
+
+    // ===================================================
+	// =====   VALIDATE PRODUCT AVAILABILITY         ===== 
+    // ===================================================
+	// Check if all products in basket have enough inventory
+	// for purchase 
+	var productAvailability = validateProductAvailability(basket);
+	
+	if(!productAvailability)
+	{
+		// there are one or more line items that
+		// don't have enough inventory
+		pdict["BasketAvailabilityStatus"] = new Status(Status.ERROR);
+		return PIPELET_ERROR;
+	}
+
+    // ===================================================
+	// =====            DONE                         =====
+    // ===================================================
+	
+	pdict["BasketAvailabilityStatus"] = new Status(Status.OK);
+    return PIPELET_NEXT;
+}
+
+/**
+ * FUNCTION: validateProductAvailability
+ */
+function validateProductAvailability(basket : Basket)
+{
+	var productLineItems : Iterator = basket.getAllProductLineItems().iterator();
+	while(productLineItems.hasNext())
+	{
+		var productLineItem : ProductLineItem = productLineItems.next();
+		
+		if (!productLineItem.bonusProductLineItem && productLineItem.product != null) {
+			
+			var quantity : Quantity = productLineItem.quantity;
+			var product : Product = productLineItem.product;
+			var levels : ProductAvailabilityLevels = product.availabilityModel.getAvailabilityLevels(quantity.value);
+			
+			if (levels.notAvailable.value > 0) {
+				return false;
+			}	
+		}
+	}
+	
+	return true;
+}

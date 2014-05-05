@@ -1,0 +1,12 @@
+<!--- TEMPLATENAME: cartempty.isml --->
+<isset name="ShowUpsells" value="${false}" scope="pdict" />
+<div class="emptyCartBlock">
+<div class="emptyCartTitle"><h1>${Resource.msg('cart.cartempty.pageTitle', 'rendering', null)}</h1></div>	
+	<!-- <div class="cartempty">${Resource.msg('cart.cartempty', 'rendering', null)}</div>-->
+	<p class="cartempty">Return to cart page:</p>		
+	<div class="backToShopping">
+		<a href="${URLUtils.http('Page-Show','cid','order')}" title="${Resource.msg('cart.continueshopping', 'rendering', null)}" rel="noindex, nofollow" class="btnColorB aButton">
+			${Resource.msg('cart.continueshopping', 'rendering', null)}
+		</a>
+	</div
+</div>

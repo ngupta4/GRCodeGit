@@ -1,0 +1,67 @@
+<!--- TEMPLATENAME: faqbrowsefoldersidebar.isml --->
+
+<!--- TEMPLATENAME: browsefoldersidebar.isml --->
+
+<isscript>
+importScript("guthyrenker_core:common/libUtils.ds")
+</isscript>
+
+<!--start tertiary nav-->
+<isif condition="${!empty(RootFolder.getOnlineSubFolders())}">
+	<div class="block nav faq">
+		<div class="blockTop"><div class="blockTopRight"></div></div>
+		<div class="blockContent"> 
+			<iscomment><h5 class="sidebarTitle altimg">${RootFolder.displayName}</h5></iscomment>
+			<ul class="faqbrowse">
+				<isloop items="${RootFolder.getOnlineSubFolders()}" var="aFolder" status="navstat">
+					<li class="${aFolder.ID}<isif condition="${aFolder.ID==CurrentFolder.ID||aFolder.ID==CurrentContent.ID}"> selected</isif>  <isif condition="${navstat.last}">last</isif>">
+						<isset name="FolderLinkURL" value="${URLUtils.url('FAQSearch-ShowContent','fdid',aFolder.ID,'psortb1', 'sorting')}" scope="page"/>
+						<a href="<isprint value="${FolderLinkURL}" encoding="off"/>" class="alt-img">${aFolder.displayName}</a>
+					</li>
+				</isloop>
+				<li> 
+					<a href="${URLUtils.url('CustomerService-ContactUs')}">${Resource.msg('search.faqbrowsesidebar.customerservice','search',null)}</a>
+				</li>
+			</ul>
+		</div>
+		<div class="blockBottom"><div class="blockBottomRight"></div></div>
+	</div><!--//end block-->
+</isif>
+<isif condition="${pdict.isCustomerRetention}">
+<isif condition="${!isLoggedIn()}">
+<div class="block nav">
+	<div class="blockTop"><div class="blockTopRight"></div></div>
+	<div class="blockContent">
+
+		<h5 class="sidebarTitle altimg">${Resource.msg('search.faqbrowsesidebar.orderbyphone','search',null)}</h5>
+		<ul>
+			<li class="l1"><a style="color: rgb(78, 79, 77); background: none repeat scroll 0% 0% white; cursor: default;" onclick="return false;" href="${'#'}"><strong>${CCC.phone}</strong></a></li>
+		</ul>
+
+	</div>
+  <div class="blockBottom"><div class="blockBottomRight"></div></div>
+</div><!-- end block -->
+</isif>
+
+<isscript>
+    var contentInfo    = getCurrentContentInfo(pdict.CurrentHttpParameterMap);
+    var folderPathInfo = getFolderPathInfo(contentInfo);  
+    var CurrentFolder  : Folder = contentInfo.folder;
+    var CurrentContent : Content = contentInfo.content;   
+</isscript>
+
+<isif condition="${pdict.ShowOptionalMenu == null || isTrue(pdict.ShowOptionalMenu)}">
+<isslot id="static-promo-menu" description="static-promo-menu on static content pages, left nav" context="global" />
+</isif>
+
+<isif condition="${pdict.ShowRelatedLinks == null || isTrue(pdict.ShowRelatedLinks)}">
+    <isslot id="static-related-links" description="static-promo-menu on static content pages, left nav" context="global" />
+</isif>
+<isif condition="${isTrue(pdict.ShowProactiv365Sidebar)}">
+    <isif condition="${isLoggedIn()}">
+        <isslot id="proactiv-365-sidebar-loggedin" description="proactiv 365 sidebar for the authorized user" context="global" />
+    <iselse/>
+        <isslot id="proactiv-365-sidebar-anonymous" description="proactiv 365 sidebar for the unauthorized user" context="global" />
+    </isif>
+</isif>
+</isif>

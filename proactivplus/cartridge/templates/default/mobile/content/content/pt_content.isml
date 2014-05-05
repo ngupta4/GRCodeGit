@@ -1,0 +1,17 @@
+<!DOCTYPE html> 
+<html> 
+<isinclude template="util/modules"/>
+<head>
+<isinclude template="mobile/components/header/htmlhead"/>
+<isif condition="${!empty(pdict.Content) &&  'customCSSFile' in pdict.Content.custom && !empty(pdict.Content.custom.customCSSFile)}">
+<link href="${pdict.Content.custom.customCSSFile.URL}" type="text/css" rel="stylesheet" />
+</isif>
+</head>
+<body>
+	<isinclude template="mobile/components/header/header"/>
+	<isinclude template="mobile/common/mboxglobal"/>
+	<isreplace/>
+	<isinclude template="analytics/omniture/omniture"/>
+	<isinclude template="mobile/common/google_analytics" />
+</body>
+</html>

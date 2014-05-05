@@ -1,0 +1,74 @@
+<iscache status="off"/>
+<isscript>
+	importScript("guthyrenker_core:common/libUtils.ds")
+	var loggedIn : boolean = isLoggedIn();
+	
+	var sessionID = null;
+	
+	if( !empty(pdict.CurrentHttpParameterMap.pactvid) && !empty(pdict.CurrentHttpParameterMap.pactvid.stringValue) ) {
+		sessionID = pdict.CurrentHttpParameterMap.pactvid.stringValue;
+	}
+	
+</isscript>
+<iscomment>
+	This template displays a 3-level category tree as top navigation.
+	Only categories marked with showInMenu are shown.
+</iscomment>
+
+<isset name="PHPSESSID" value="${!empty(pdict.CurrentRequest.httpCookies['PHPSESSID']) ? pdict.CurrentRequest.httpCookies['PHPSESSID'].value : (!empty(sessionID)?sessionID:'')}" scope="page" />
+
+<isset name="pactvid" value="${empty(PHPSESSID)?'':'?pactvid='+PHPSESSID}" scope="page"/>
+
+<isset name="isLoggedIn" value="${loggedIn}" scope="page"/>
+<iscomment>RM11297 | WEN Legacy Retention User with 'Remember Me' Set will see invalid Soft Login experience with Wen 2 On Demandware</iscomment>
+<isif condition="${pdict.CurrentCustomer.authenticated || pdict.CurrentRequest.httpCookies['rememberMe']}">
+	<isset name="isLoggedIn" value="${1}" scope="page"/>
+</isif>
+<iscomment>
+	<isset name="HomeLink" value="${(!isLoggedIn?URLUtils.httpHome():dw.system.Site.current.getCustomPreferenceValue('GRLoggedInHome')+(!empty(PHPSESSID)?'?pactvid='+PHPSESSID:''))}" scope="page"/>
+</iscomment>
+<isset name="HomeLink" value="${URLUtils.httpHome()}" scope="page"/>
+
+<isif condition="${ null != pdict.CurrentHttpParameterMap.loggedin && !empty(pdict.CurrentHttpParameterMap.loggedin) && pdict.CurrentHttpParameterMap.loggedin.stringValue=='true'}">
+   <isset name="loggedin" value="${true}" scope="page"/>
+<iselse>
+ 	<isset name="loggedin" value="${false}" scope="page"/>
+ </isif>
+
+<div class="subHeader">
+   	<div class="pageWidth loginbox">	
+	 	<isif condition="${pdict.CurrentCustomer.authenticated || (pdict.CurrentRequest.httpCookies['rememberMe']!=null)  || pdict.CurrentSession.custom.cRememberMe}">
+	      <div id="minicartOuter">
+	      	<isinclude url="${URLUtils.url('Cart-MiniCart')}"/>
+	      </div>
+	 	</isif>  
+	 
+		<isinclude url="${URLUtils.url('Home-IncludeHeaderCustomerInfo')}"/>	  
+ 	</div> 
+</div>
+
+<div class="mainHeader">
+	<div class="pageWidth">
+	<div id="Navigation">
+	 <div id="logo" ><a href="${HomeLink}" title="${Resource.msg('global.logo','locale',null)}" ></a></div>
+		<ul class="primaryNavigation"> 
+		<isinclude url="${URLUtils.url('Home-IncludeLoggedOutNav')}"/>	
+			<iscomment><isif condition="${isLoggedIn}">
+				<isinclude url="${URLUtils.url('Home-IncludeLoggedInNav')}"/>
+			<iselse/>
+				<isinclude url="${URLUtils.url('Home-IncludeLoggedOutNav')}"/>		
+			</isif></iscomment>
+			<isif condition="${(!(pdict.CurrentCustomer.authenticated || pdict.CurrentSession.custom.cRememberMe || pdict.CurrentRequest.httpCookies['rememberMe'])) && showOrderButton}">
+					<li class="btnOrdernow"><a title="ORDER PROACTIV+ NOW" href="${URLUtils.url('Page-Show','cid','order')}">ORDER NOW</a></li>
+			</isif>		
+		</ul>
+	</div>
+	<isif condition="${pdict.CurrentSession.userAuthenticated || pdict.CurrentCustomer.registered || pdict.CurrentSession.custom.cRememberMe || loggedin}">
+	    	<isinclude template="search/simplesearch"/>	
+	</isif>
+	</div>
+</div>
+ 
+<isif condition="${pdict.CurrentSession.userAuthenticated || pdict.CurrentCustomer.registered || pdict.CurrentSession.custom.cRememberMe || loggedin}">
+	<isinclude url="${URLUtils.url('Home-IncludeHeaderCategories')}"/>
+</isif>

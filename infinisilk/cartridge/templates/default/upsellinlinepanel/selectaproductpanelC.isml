@@ -1,0 +1,146 @@
+<!--- TEMPLATENAME: selectaproductpanelC.isml --->
+<isinclude template="util/modules"/>
+<div class="productSelection">
+<div class="sasProduct">
+<isloop items="${offersList}" var="product" status="offers_status">
+	<isscript>
+		importScript('infinisilk:product/GetProductMap.ds');
+		importPackage(dw.util);
+		importPackage(dw.catalog);
+		
+		if( !empty(product) ) {
+			var upsellProductsMale : dw.util.ArrayList = getProductDetails(product.ID,"Gender","male");
+			var upsellProductsFemale : dw.util.ArrayList = getProductDetails(product.ID,"Gender","female");
+			var arrAssets : Array =product.custom.altAssetID.split(",");
+			var sizeChartFemale:String="";
+			var sizeChartMale:String="";
+			if(arrAssets.length>1)
+			{
+				sizeChartFemale=arrAssets[0];
+				sizeChartMale=arrAssets[1];
+			}	
+		}	  
+	    var params : String = "";
+	    var paramArray : Array ;
+	    var supply : String = "";	
+		</isscript>
+ 		<isscript> 		
+			var index:Number=1;
+			var genderIndex:Number=1;
+			var titleIndex:Number=1;
+		</isscript>
+		
+		<isloop items="${upsellProductsMale}" var="offer" status="product_status">
+			<isset name="male" value="${offer.custom.Gender}" scope="page" />
+		</isloop>
+		<isloop items="${upsellProductsFemale}" var="offer" status="product_status">
+			<isset name="female" value="${offer.custom.Gender}" scope="page" />	
+		</isloop>
+		
+	
+		<isif condition="${null!=upsellProductsFemale && !empty(upsellProductsFemale)  &&  null!=upsellProductsMale && !empty(upsellProductsMale)}">
+			<div class="genderSelection" id="system${offers_status.count}genderSelection">
+				<h2 class="pageTitle">${Resource.msg('gender.title','locale',null)}</h2>
+				<ul class="gender">	
+					<isscript> 		
+				         params   = upsellProductsFemale.get(0).custom.defaultKitSelectionParameters;
+				         supply =  getQueryString(params, "Gender");
+				   </isscript> 					
+					<li id="system${offers_status.count}subsys${genderIndex.toFixed()}female" class="${upsellProductsFemale.get(0).ID}  updatecartbtn ${supply} female"><a href="javascript:void(0);" class="female"><isprint value="${female}" encoding="off" /></a></li>			
+					<isscript>  genderIndex++; 
+						 params   = upsellProductsMale.get(0).custom.defaultKitSelectionParameters;
+				         supply =  getQueryString(params, "Gender");
+				     </isscript>						
+					<li id="system${offers_status.count}subsys${genderIndex.toFixed()}male" class="${upsellProductsMale.get(0).ID} updatecartbtn ${supply}  male "><a href="javascript:void(0);" class="male" ><isprint value="${male}" encoding="off" /></a></li>									
+				</ul>
+			</div>
+		</isif>
+				
+		<div ID="system${offers_status.count}genderBox" class="gender-size-box">
+		<h2 class="pageTitle">${Resource.msg('select.your.size.title','locale',null)}</h2>
+		<isif condition="${null!=upsellProductsFemale && !empty(upsellProductsFemale)}">
+		<div id="system${offers_status.count}subsys${index.toFixed()}Product"	class="${product.ID} system${offers_status.count}subsys${index.toFixed()}femaleProduct female genderSelectionProduct">
+			
+			<ul>
+				<isloop items="${upsellProductsFemale}" var="offer"	status="product_status">
+					<isscript> 		
+				         params   = upsellProductsFemale.get(product_status.count-1).custom.defaultKitSelectionParameters;
+				         supply =  getQueryString(params, "Gender");
+				    </isscript> 
+				<li	id="system${offers_status.count}subsys${index.toFixed()}Product${product_status.count}"	class="${offer.ID} ${offer.custom.size} ${supply} updatecartbtn"><a
+					href="javascript:void(0);" class="${offer.custom.size}"> ${offer.custom.size}</a></li>
+				</isloop>
+			</ul>
+			
+			<isscript> index++; </isscript>
+		</div>
+		<isif condition="${!empty(sizeChartFemale)}">
+			<div  id="system${offers_status.count}genderSelectionfemalesizeTable" class="sizeChartTable female">
+					<iscontentasset aid="${sizeChartFemale}">
+		 	</div>
+		 	<iselse>
+		 	<div  id="system${offers_status.count}genderSelectionfemalesizeTable" class="sizeChartTable female">
+					<iscontentasset aid="${product.custom.altAssetID}">
+		 	</div>
+		 	
+		</isif>
+		
+		</isif>
+		<isif condition="${null!=upsellProductsMale && !empty(upsellProductsMale)}">
+
+		<div id="system${offers_status.count}subsys${index.toFixed()}Product" class="${product.ID} system${offers_status.count}subsys${index.toFixed()}maleProduct male genderSelectionProduct" style="display: none;">
+			
+			<ul>
+				<isloop items="${upsellProductsMale}" var="offer"
+					status="product_status">
+					<isscript> 		
+				         params   = upsellProductsMale.get(product_status.count-1).custom.defaultKitSelectionParameters;
+				         supply =  getQueryString(params, "Gender");  
+		            </isscript> 
+					<li	id="system${offers_status.count}subsys${index.toFixed()}Product${product_status.count}" class="${offer.ID} ${offer.custom.size} ${supply} updatecartbtn">
+				
+					<a href="javascript:void(0);" class="${offer.custom.size}"> ${offer.custom.size} </a></li>
+				</isloop>
+			</ul>
+		</div>
+		
+			<isif condition="${!empty(sizeChartMale)}">
+				<div  id="system${offers_status.count}genderSelectionmalesizeTable" class="sizeChartTable male">
+						
+						<iscontentasset aid="${sizeChartMale}">
+			 	</div>
+			 <iselse>
+			 	<div  id="system${offers_status.count}genderSelectionmalesizeTable" class="sizeChartTable male">
+						<iscontentasset aid="${product.custom.altAssetID}">
+			 	</div>
+			</isif>
+		</isif>
+		</div>
+	
+</isloop>
+
+</div>  
+	 	 <isscript>
+	        var supplyButton : Boolean ;
+	        var masterkit=  Resource.msg('campaign.master.kit', 'rendering', null);
+            if(omnPageURL.indexOf(masterkit) >-1)
+             {
+	    	   httpQuery1 = httpQuery + Resource.msg('campaign.param.default.supply', 'rendering', null);
+	    	   supplyButton = true;
+	    	 } 
+	    	else 
+	         {
+	    		 httpQuery2 = httpQuery + Resource.msg('campaign.param.default.supply.checkout', 'rendering', null);
+	    	     supplyButton = false;
+	    	 }	    		
+	    </isscript> 	    
+<isif condition="${supplyButton}">
+	 <div class="bottomPanel select-supply">
+		<a href="${httpQuery1}" class="medOrngBtn" id="step3">${Resource.msg('next.select','locale',null)}</a>
+	</div>
+<iselse>
+<div class="bottomPanel checkout supply">
+	<a href="${httpQuery2}" class="medOrngBtn" id="step3">${Resource.msg('next.select','locale',null)}</a>
+</div>
+</isif>
+</div>

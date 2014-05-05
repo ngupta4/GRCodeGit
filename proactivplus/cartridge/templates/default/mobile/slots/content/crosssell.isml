@@ -1,0 +1,41 @@
+<!--- TEMPLATENAME: crosssell.isml --->
+<div class="crosssell-container">
+	<isif condition="${!empty(slotcontent)}">
+		<div id="overlay"></div>
+        <isloop iterator="${slotcontent.content}" alias="contentAsset">
+            <div class="crosssellitem">
+            	<div class="crosssellitem-header"><a href="#close"><span>${Resource.msg('crosssell.close.label', 'rendering', null)}</span></a></div>
+            	<div class="crosssellitem-body">
+            		<isprint value="${contentAsset.custom.body}" encoding="off" />
+            	</div>
+            </div>
+		</isloop>
+		
+		<script type="text/javascript"><!--
+		jQuery(function() {
+			// Bind handler to close popup on click on X or on overlay
+			jQuery('${"#"}overlay, .crosssellitem-header a').click(function() {
+				jQuery('${"#"}overlay, .crosssellitem').fadeOut('slow');
+
+				return false;
+			});
+
+			// Display cross-sell popup 2 seconds after page loads
+			setTimeout(function() {
+				var container = jQuery('.crosssellitem');
+				var cbody = jQuery('.crosssellitem-body', container);
+				
+				jQuery('${"#"}overlay').css('opacity', 0).show().animate({opacity : .5}, 'slow');
+
+				container.css('opacity', 0).show();
+				container.css({
+					'left' : (jQuery('.mainWide').width() - cbody.width()) / 2
+				});
+
+				container.animate({opacity : 1}, 'slow');
+			}, 2000);
+		});
+		//-->
+		</script>
+	</isif>
+</div>

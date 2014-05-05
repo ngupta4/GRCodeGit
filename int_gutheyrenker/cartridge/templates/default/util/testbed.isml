@@ -1,0 +1,57 @@
+<!--- TEMPLATENAME: testbed.isml --->
+<isscript>
+	function valueOrDefault(value, defaultValue) {
+		return value || defaultValue || "";
+	}
+</isscript>
+<form action="${URLUtils.url('Service-Test')}" method="POST">
+	<p>
+		<label for="url">URL:</label>
+		<input size="50" type="text" name="url" value="${valueOrDefault(pdict.MessageURL,dw.system.Site.getCurrent().getCustomPreferenceValue('middlewareAPIURL'))}" />
+	</p>
+	<p>
+		<label for="messagePath">Path:</label>
+		<input size="50" type="text" name="messagePath" value="${valueOrDefault(pdict.MessagePath)}" />
+	</p>
+	<p>
+		<label for="contentType">Content Type:</label>
+		<input size="50" type="text" name="contentType" value="${valueOrDefault(pdict.ContentType,'application/x-www-form-urlencoded')}" />
+	</p>
+	<p>
+		<label for="messageBody">MessageBody:</label>
+		<textarea name="messageBody" cols="60" rows="8">${valueOrDefault(pdict.MessageBody)}</textarea>
+	</p>
+	<p>
+		<label for="messageMethod">Method:</label>
+		<select name="messageMethod">
+			<option <isif condition="${empty(pdict.MessageMethod) || pdict.MessageMethod=='GET'}">selected="selected" </isif>value="GET">GET</option>
+			<option <isif condition="${pdict.MessageMethod=='PUT'}">selected="selected" </isif>value="PUT">PUT</option>
+			<option <isif condition="${pdict.MessageMethod=='POST'}">selected="selected" </isif>value="POST">POST</option>
+			<option <isif condition="${pdict.MessageMethod=='DELETE'}">selected="selected" </isif>value="DELETE">DELETE</option>
+		</select>
+	</p>
+	<button name="messageSubmit" type="submit">Submit</button>
+</form>
+
+<h3>Results from last message</h3>
+
+<h4>Authorization Header</h4>
+<p>
+	Authorization: ${pdict.MessageRequestHeader} 
+</p>
+<h4>Response Headers</h4>
+<p>
+	${pdict.MessageResponseHeaders} 
+</p>
+<h4>Response Status</h4>
+<p>
+	${pdict.MessageStatus} 
+</p>
+<h4>Response Text</h4>
+<pre>
+	<isprint value="${pdict.MessageResponse}" encoding="on" />
+</pre>
+<h4>Signature String</h4>
+<pre>
+	||<isprint value="${pdict.SignatureString}" encoding="off" />||
+</pre>

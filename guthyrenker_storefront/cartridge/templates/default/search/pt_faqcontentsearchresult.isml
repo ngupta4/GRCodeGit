@@ -1,0 +1,103 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<isinclude template="util/modules"/>
+
+<iscomment>This page must be cachable. It inherits the caching attributes by the decorated template.</iscomment>
+
+<head>
+	<iscomment>
+		Include all important information globally , e.g. meta-data, link information, and
+		javascript.
+	</iscomment>
+	<isinclude template="components/header/htmlhead"/>
+
+	<iscomment>Add page specific header information here.</iscomment>
+
+	<iscomment>search specific javascript</iscomment>
+	<script src="${URLUtils.staticURL('/js/searchresults.js')}" type="text/javascript"></script>
+	<link rel="stylesheet" type="text/css" href="${URLUtils.staticURL(URLUtils.CONTEXT_LIBRARY,null,'css/faq/faqsearch.css')}" />
+</head>
+<body id="FAQcontent">
+<isscript>importPackage(dw.content);
+  importPackage(dw.util);
+  importPackage(dw.catalog);
+  
+  importScript('guthyrenker_core:common/libUtils.ds');
+  
+  var contentInfo    = getCurrentContentInfo(pdict.CurrentHttpParameterMap);
+  var folderPathInfo = getRetentionFolderPathInfo(contentInfo);
+  
+  var CurrentFolder  : Folder = contentInfo.folder;
+  var CurrentContent : Content = contentInfo.content;
+  
+  var CurrentFolderPath : String = folderPathInfo.folderPath;
+  var RootFolder        : Folder = folderPathInfo.rootFolder;
+  
+  CurrentFolderPath += " body_"+RootFolder.ID+" "+RootFolder.ID;
+  
+  var PageID : String = "page_";
+  
+  if( empty(CurrentContent) ) {
+  PageID += CurrentFolder.ID;
+  } else {
+  PageID += CurrentContent.ID;
+  }
+  
+  var CCC : Object = pdict.CurrentCampaignConfig;</isscript>
+<isinclude template="common/mboxglobal"/>
+<isinclude template="components/header/header"/>
+<div style="clear:both;"></div>
+
+ 
+<isset name="RootFolder" value="${dw.content.ContentMgr.getFolder('get-advice')}" scope="page">
+<isset name="isCustomerRetention" value="${true}" scope="pdict">
+<isset name="ShowOptionalMenu" value="${!isLoggedIn()}" scope="pdict">
+						
+<isinclude template="search/components/contentStaticNavigation"/>
+<script>
+	$('#retention-faq').parent().addClass('active');
+</script>
+<div id="container" class="pt_contentsearchresult">
+	<div class="mainWide">
+	  	<div class="clearfix" id="main">
+		  	<div id="content">
+		  		<div class="center">
+		  		
+		  		<div class="faq_titlebar">${Resource.msg('search.faqbrowsesidebar.frequentlyaskedquestions','search',null)}</div>
+		  		
+					<div class="leftsection faqLeftSection">
+					   <div class="faqmiddle">
+						<isset name="RootFolder" value="${dw.content.ContentMgr.getFolder(Resource.msg('search.fid.faq','search',null))}" scope="page">
+						
+						<isinclude template="search/components/faqbrowsefoldersidebar"/>
+					 </div>	
+					</div><!-- END: rightcolumn -->
+					<div class="rightsection faqRightSection">
+					<isif condition="${empty(pdict.Content) && pdict.CurrentHttpParameterMap.fdid.stringValue==null && pdict.CurrentHttpParameterMap.q.stringValue==null}">
+						<iscontentasset aid="customer-service-header"/>
+					</isif>
+						<form class="searchagain" action="${URLUtils.url('FAQSearch-ShowContent')}" method="get">
+							<fieldset>
+								<isscript>
+									var searchQuery:String=pdict.CurrentHttpParameterMap.q.stringValue;
+  									if (searchQuery==null){ searchQuery=""; }
+								</isscript>
+								<input type="text" name="q" value="${searchQuery}"/>
+								<button class="btnHeadLogin" type="submit" value="${Resource.msg('global.go','locale',null)}" name="simplesearch">${Resource.msg('search.faq.go','search',null)}</button>
+							</fieldset>
+						</form>
+						
+						<isreplace/>
+	
+						
+					</div><!-- END: leftsection -->
+
+		  		</div>
+		  	</div>
+		</div> <!-- END: main -->
+	</div>
+	<isinclude template="components/footer/footer"/>
+	<isinclude template="components/footer/pixels"/>
+</div><!-- END: container -->
+</body>
+</html>

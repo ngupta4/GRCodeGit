@@ -1,0 +1,72 @@
+<!--- TEMPLATENAME: howitworks.isml --->
+<iscache status="off"/>
+
+<iscomment>
+	This template is created before the 'wrapper' template, so we can set
+	up the template configuration for the 'pt_storefront' template right here.
+</iscomment>
+
+
+<isdecorate template="content/home/pt_storefront">
+	<isinclude template="util/modules"/>
+	<isscript>
+		importPackage(dw.object);
+		importPackage(dw.catalog);
+		
+		var CCC : Object = pdict.CurrentCampaignConfig;
+	
+		var campaignCode : String = CCC.campaignCode;
+		
+		var showHeader : boolean = CCC.showHeader;
+		var showFooter : boolean = CCC.showFooter;
+		var showNav : boolean = CCC.showNav;
+		var showOrderButton : boolean = CCC.showOrderButton;
+		
+		var category : dw.catalog.Category = CCC.getCampaignCategory();
+		
+	</isscript>
+	<div id="primary-content">
+			
+			<div class="contents_details">
+			
+				<div class="contents-how-it-works hiw-block">
+					<iscontentasset aid="how-it-works" />
+				</div>
+				
+				<div class="contents-how-product hiw-block">
+					<div class="contents-how-jane">
+						<iscontentasset aid="how-jane-seymour-uses" />
+					</div>
+					<div class="contents-product-usage">
+						<iscontentasset aid="product-usage" />
+					</div>
+				</div>
+				
+				<div class="contents-bonus-gifts hiw-block">
+					<iscomment><iscontentasset aid="bonus-gifts" /></iscomment>
+					<isslot id="bonus-gifts" context="category" description="Bonus Gifts (Page How It Works)" context-object="${category}"/>
+				</div>
+				
+				<div class="contents-retinol hiw-block">
+					<iscontentasset aid="retinol" />
+				</div>
+				
+				<div class="contents-microsponge hiw-block">
+					<iscontentasset aid="microsponge" />
+				</div>
+				
+			</div>
+			
+			<div class="sidebar_right">
+				<div class="content_box_outer_sp">
+					<div class="content_box_inner_sp">
+						<isslot id="offer-sidebar" context="category" description="Offer Sidebar Right Content Slot" context-object="${category}"/>
+						<iscontentasset aid="static-amazing-results" />
+					</div>
+				</div>
+				<iscontentasset aid="money-back-guarantee" />
+			</div>
+			
+				
+			</div><!-- END: content -->
+</isdecorate>

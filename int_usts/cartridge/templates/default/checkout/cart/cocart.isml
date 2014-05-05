@@ -1,0 +1,11 @@
+<!--- TEMPLATENAME: simplecheckout.isml --->
+<isinclude template="util/modules"/>
+<isset name="enableCheckout" value="${pdict.EnableCheckout}" scope="page"/>	
+<isset name="multiCheckout" value="${pdict.multiCheckout}" scope="page"/>
+<isset name="ShowCartQuestions" value="${true}" scope="pdict" />
+<isset name="ShowCartPhone" value="${true}" scope="pdict" />	
+
+<iscomment>show the basket when we have data </iscomment>
+<div class="checkout_box">
+	<isinclude template="checkout/cart/carttable" />
+</div>

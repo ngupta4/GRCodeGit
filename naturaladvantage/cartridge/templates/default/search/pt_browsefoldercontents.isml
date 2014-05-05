@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html>
+<isinclude template="util/modules"/>
+
+<iscomment>This page must be cachable. It inherits the caching attributes by the decorated template.</iscomment>
+
+<isscript>
+	importPackage(dw.content);
+	importPackage(dw.util);
+	importPackage(dw.catalog);
+	
+	importScript('guthyrenker_core:common/libUtils.ds');
+	
+	var CurrentFolder : Folder = null;
+	var CurrentContent : Content = null;
+	
+	if( "fdid" in pdict.CurrentHttpParameterMap && !empty(pdict.CurrentHttpParameterMap.fdid.value) ) {
+		CurrentFolder = ContentMgr.getFolder(pdict.CurrentHttpParameterMap.fdid.stringValue);
+	}
+	
+	if( "cid" in pdict.CurrentHttpParameterMap && !empty(pdict.CurrentHttpParameterMap.cid.value) ) {
+		CurrentContent = ContentMgr.getContent(pdict.CurrentHttpParameterMap.cid.stringValue);
+	}
+	
+	if( empty(CurrentContent) && !empty(CurrentFolder) && !empty(CurrentFolder.onlineContent) ) {
+		CurrentContent = CurrentFolder.onlineContent[0];
+	}
+	if( empty(CurrentFolder) && !empty(CurrentContent) && !empty(CurrentContent.classificationFolder) ) {
+		CurrentFolder = CurrentContent.classificationFolder;
+	}
+	if( empty(CurrentFolder) && !empty(CurrentContent) && !empty(CurrentContent.folders) ) {
+		CurrentFolder = CurrentContent.folders[0];
+	}
+	
+	var CurrentFolderPath : String = CurrentContent.ID;
+	var RootFolder = CurrentFolder;
+	while( !empty(RootFolder.parent) && RootFolder.parent.ID!='primary-navigation') {
+		CurrentFolderPath += " "+RootFolder.ID;
+		RootFolder = RootFolder.parent;
+	}
+	CurrentFolderPath += " body_"+RootFolder.ID+" "+RootFolder.ID;
+	
+	var PageID : String = "page_";
+	
+	if( empty(CurrentContent) ) {
+		PageID += CurrentFolder.ID;
+	} else {
+		PageID += CurrentContent.ID;
+	}
+	
+	var headerContent : Content = dw.content.ContentMgr.getContent(CurrentContent.ID+"-header");
+</isscript>
+
+<iscomment>
+<isset name="showHeader" value="${true}" scope="page" />
+<isset name="showFooter" value="${true}" scope="page" />
+<isset name="showNav" value="${true}" scope="page" />
+</iscomment>
+
+<head>
+	<iscomment>
+		Include all important information globally , e.g. meta-data, link information, and
+		javascript.
+	</iscomment>
+	<isinclude template="components/header/htmlhead"/>
+
+	<isif condition="${!empty(RootFolder)}">
+		<link href="${URLUtils.staticURL('/css/main_'+RootFolder.ID+'.css')}" type="text/css" rel="stylesheet" />
+	</isif>
+
+	<iscomment>Add page specific header information here.</iscomment>
+
+	<iscomment>search specific javascript
+	<script src="${URLUtils.staticURL('/js/searchresults.js')}" type="text/javascript"></script>
+	</iscomment>
+</head>
+<body id="${PageID}" class="${CurrentFolderPath} ${bodyclass}">
+	<div id="container" class="pt_browsefoldercontents ${CCC.getContainerClasses()}">
+	  <div id="main">
+	  	<iscomment><iscontentasset aid="${CurrentContent.ID+"-header"}" /></iscomment>
+			
+			<div class="contents_banner">
+				<iscontentasset aid="${"contents-"+CurrentContent.ID+"-banner"}" />
+			</div>
+	  	
+			<div id="primary-content">
+			
+				<iscomment><isreplace/></iscomment>				
+				<iscomment><iscontentasset aid="end-page-cta" /></iscomment>
+				
+				<div class="contents_details">
+					<iscontentasset aid="${"contents-"+CurrentContent.ID+"-details"}" />
+				</div>
+				
+				<div class="sidebar_right">
+					<div class="content_box_outer_sp">
+						<div class="content_box_inner_sp">
+							<isslot id="offer-sidebar" context="category" description="Offer Sidebar Right Content Slot" context-object="${category}"/>
+							<iscontentasset aid="static-amazing-results" />
+						</div>
+					</div>
+					<iscontentasset aid="money-back-guarantee" />
+				</div>
+				
+				
+			</div><!-- END: content -->
+			
+			<iscomment><div id="secondary-content"></div></iscomment>
+			
+		</div>
+		
+		<isinclude template="components/header/header"/>
+		
+		<isif condition="${CCC.showFooter}">
+			<isinclude template="components/footer/footer"/>
+		</isif>
+	</div>
+	<div id="popupBG">&nbsp;</div>
+	<isif condition="${shouldShowDebugInfo()}">
+		<iscomment>this is the template rendering the homepage</iscomment>
+		<pre><!-- +1.888.553.9216 --><!--This phone is a requirement to support existing Gomez monitor of SiteGenesis. Demadware customers can remove this.-->
+			
+		LandingTemplate: ${CCC.landingTemplate}
+		Campaign Code:${CCC.campaignCode}
+		Campaign ID:${getCurrentCampaignCode()}
+		ShowHeader?:${CCC.showHeader}
+		ShowFooter?:${CCC.showFooter}
+		ShowNav?:${CCC.showNav}
+		ShowOrderButton?:${CCC.showOrderButton}
+		Phone:${CCC.phone}
+		
+		</pre>
+	</isif>
+	
+	<isinclude template="common/google_analytics" />
+</body>
+</html>

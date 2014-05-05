@@ -1,0 +1,16 @@
+<!DOCTYPE html> 
+<html> 
+<isinclude template="mobile/components/header/htmlhead"/>
+<body> 
+<isinclude template="mobile/common/mboxglobal"/>
+<isif condition="${'confirmation' == pdict.CheckoutStep}">
+<div data-role="page" id="checkout-confirmation" data-theme="d">
+<iselse>
+<div data-role="page" id="checkout-one" data-theme="d">
+</isif>
+	<isreplace/>
+	<isinclude template="mobile/components/footer/footer"/>
+</div>
+<isinclude template="mobile/common/google_analytics" />
+</body>
+</html>

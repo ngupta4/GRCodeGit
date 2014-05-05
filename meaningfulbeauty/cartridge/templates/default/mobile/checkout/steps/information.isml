@@ -1,0 +1,15 @@
+<!--- TEMPLATENAME: info.isml --->
+<isinclude template="util/modules"/>
+<isinclude template="util/reporting/ReportBasket.isml"/>
+
+<form action="${URLUtils.httpsContinue()}" method="post" id="${pdict.CurrentForms.cart.htmlName}" class="checkoutform">
+	<div class="personinfform">
+		<div class="content_box_outer_pdp">
+			<div class="content_box_inner_sp">
+				<isinclude template="checkout/personinformation/personinformation" />
+			</div>
+		</div>
+	</div>
+</form>
+
+<isset name="OmniturePage" value="CheckoutInformation" scope="pdict">

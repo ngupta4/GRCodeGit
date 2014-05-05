@@ -1,0 +1,64 @@
+<!--- TEMPLATENAME: stories.isml 
+Embeds the container that Stories are injected to and the javascript that accesses the Story content.
+--->
+
+<isscript>
+     importScript('int_bazaarvoice:libBazaarvoice.ds');
+     importPackage( dw.io );
+     importPackage( dw.util );
+     
+     var syEnabled : boolean = dw.system.Site.getCurrent().getCustomPreferenceValue("bvEnableSY");
+     
+     // Determine if we are rendering on a product or category page.
+     var bvSubject : Object = getBazaarVoiceHelper().getExternalSubjectForPage(pdict);
+     
+     // Obtain SmartSEO content
+     var smartSEOPageType : String = dw.system.Site.getCurrent().getCustomPreferenceValue("bvSYSmartSEOPageFormat");      
+     var content : String = getBazaarVoiceHelper().getSmartSEOContent(pdict, "stories", bvSubject, smartSEOPageType);  
+</isscript>
+<isif condition="${syEnabled}">
+    <!-- Stories -->
+    <div id="BVSYContainer">
+        <isif condition="${content}">
+            <isprint value="${content}" encoding="off" >
+        </isif>
+    </div>
+    <script type="text/javascript" language="javascript">
+        function getSYDisplayCode() {
+            try {
+                <isprint value="${dw.system.Site.getCurrent().getCustomPreferenceValue('bvSYDisplayCodeJavascript')}" encoding="off" >
+            }catch(e){
+                //The JS in the try-catch above is user-definable.  Catch and suppress any errors and just return a default.
+            }
+            var oldDisplay = "${'old_display' in pdict ? pdict.old_display : false }";
+
+        	if(oldDisplay == "true"){
+        		return "${Resource.msg('bazaarvoice.old.displaycode','bazaarvoice','0570paaasy')}";
+        	}else{
+        		return "${dw.system.Site.getCurrent().getCustomPreferenceValue('bvSYDefaultDisplayCode')}";
+        	}
+        }
+        function getStoriesDisplayFormat() {
+            try {
+                <isprint value="${dw.system.Site.getCurrent().getCustomPreferenceValue('bvSYDisplayFormatJavascript')}" encoding="off" >
+            } catch (e) {
+                //The JS in the try-catch above is user-definable.  Catch and suppress any errors and just return a default.
+            }
+            return "show_stories"; 
+        }
+	
+       	configData.displayCode = getSYDisplayCode();
+        
+        configData.summaryContainerDiv = "BVSYSummaryContainer";
+        configData.contentContainerDiv = "BVSYContainer";
+        configData.subjectType = "${dw.web.Resource.msg('story.category','bazaarvoice',null)}";//"${bvSubject.bvSubjectType}";
+        configData.productId = "${pdict.catID}";
+        configData.onEvent = function(json) {
+            <isprint value="${dw.system.Site.getCurrent().getCustomPreferenceValue('bvSYOnEventJavascript')}" encoding="off" >
+        };
+        if($BV != null){
+        	$BV.ui("sy", getStoriesDisplayFormat(), configData);
+        }
+    </script>       
+    <!-- End Stories -->
+</isif>

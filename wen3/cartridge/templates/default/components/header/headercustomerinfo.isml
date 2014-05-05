@@ -1,0 +1,101 @@
+<iscache status="off"/>
+
+<iscomment>
+	This template displays a 3-level category tree as top navigation.
+	Only categories marked with showInMenu are shown.
+</iscomment>
+
+<isscript>
+	importScript('int_gutheyrenker:common/libEncoding.ds');
+	
+	var sessionID = null;
+	
+	if( !empty(pdict.CurrentHttpParameterMap.pactvid) && !empty(pdict.CurrentHttpParameterMap.pactvid.stringValue) ) {
+		sessionID = pdict.CurrentHttpParameterMap.pactvid.stringValue;
+	}
+</isscript>
+
+<isset name="RememberMe" value="${pdict.CurrentRequest.httpCookies['rememberMe']}" scope="page" />
+<isset name="SharedSession" value="${pdict.CurrentRequest.httpCookies['sharedsession']}" scope="page" />
+<isset name="LoggedIn" value="${pdict.CurrentRequest.httpCookies['loggedin']}" scope="page" />
+
+<isset name="PHPSESSID" value="${!empty(pdict.CurrentRequest.httpCookies['PHPSESSID']) ? pdict.CurrentRequest.httpCookies['PHPSESSID'].value : (!empty(sessionID)?sessionID:'')}" scope="page" />
+
+<isset name="RememberUserFirstName" value="${''}" scope="page" />
+<isset name="RememberUserLastName" value="${''}" scope="page" />
+<isset name="RememberUserEmail" value="${''}" scope="page" />
+
+<isif condition="${!empty(SharedSession) && !empty(SharedSession.value)}">
+	<isset name="Parts" value="${JSON.parse(decodeURIComponent(SharedSession.value))}" scope="page"/>
+	<isset name="RememberUserFirstName" value="${Parts['firstName']}" scope="page" />
+	<isset name="RememberUserLastName" value="${Parts['lastName']}" scope="page" />
+	<isset name="RememberUserEmail" value="${Parts['email']}" scope="page" />
+</isif>
+<isif condition="${pdict.CurrentCustomer.authenticated}">
+	<div id="member-logedin">
+	 	<span class="welcomemessage">${Resource.msg('headercustomerinfo.welcome','common',null)}</span> 
+	 	<a href="${URLUtils.https('Account-Show')}" title="${Resource.msg('global.accountlink','locale',null)} ${pdict.CurrentCustomer.profile.firstName} " class="username">
+	   		<span class="username"><isprint value="${pdict.CurrentCustomer.profile.firstName}"/>!</span>
+	    </a>		    
+	 	<span class="divider"> |</span>		 	
+	</div>     
+	<div class="accountnav"><a href="${URLUtils.https('Account-Show')}" class="account"> Your Account</a>
+	
+	
+	   <div class="dropdownbox">
+	  	 	<ul>
+			    	<li><a href="${URLUtils.https('Account-EditProfile')}">${Resource.msg('addresslist.accountinfo','account',null)}</a> </li>
+			        <li> <a href="${URLUtils.https('Address-List')}">${Resource.msg('addresslist.addressbook','account',null)}</a></li>
+			        <li> <a href="${URLUtils.https('PaymentInstruments-List')}">${Resource.msg('addresslist.paymentmethod','account',null)}</a> </li>
+			        <li> <a href="${URLUtils.https('DisplayDashboard-AboutYou')}">${Resource.msg('addresslist.aboutyou','account',null)}</a></li>
+			   		<li><a href="${URLUtils.https('OrderHistory-History')}">${Resource.msg('addresslist.orderstatus','account',null)}</a></li>
+			  		<li><a href="${URLUtils.https('Community-Profile')}">Your Community Profile</a></li>
+			  		<li><a href="${URLUtils.https('KitCustomizer-LearnMore','showKit','true')}"><isprint value="${Resource.msg('kit.header.dropdown','account',null)}"/></a></li>
+		</ul>
+		<div class="sign-out"><a href="${URLUtils.url('Login-Logout')}">Sign Out</a></div>
+	   </div>
+	 
+	</div>       
+<iselseif condition="${(!empty(RememberMe) && !empty(RememberMe.value)) && ( (!empty(LoggedIn) && LoggedIn.value == '1')  || loggedin ) }">
+	 <isif condition="${(!empty(RememberMe) && !empty(RememberMe.value)) ||(!empty(LoggedIn) && LoggedIn.value == '1')}">
+	  <div id="member-logedin">
+		    <span class="welcomemessage">${Resource.msg('headercustomerinfo.welcome','common',null)}</span> 
+		  	<a href="${URLUtils.https('Account-Show')}" title="${Resource.msg('global.accountlink','locale',null)} ${RememberUserFirstName} " class="username">
+		    	<span class="username"><isprint value="${RememberUserFirstName}"/>!</span>
+		    </a>
+		   <iscomment>
+		   	<span class="unauthenticated">(<a title="${Resource.msg('global.login','locale',null)}${RememberUserFirstName} ${RememberUserLastName}" href="${URLUtils.https('Account-Show')}" class="userlogin">${Resource.msg('headercustomerinfo.pleaselogin','components',null)}</a>)</span>
+		   </iscomment>
+		   <span class="divider"> |</span>	 
+	  </div>
+	  </isif>
+	<div class="accountnav"><a href="${URLUtils.https('Account-Show')}" class="account"> Your Account</a>
+	   <div class="dropdownbox">
+	  	 	<ul>
+	    	<li><a href="${URLUtils.https('Account-EditProfile')}">${Resource.msg('addresslist.accountinfo','account',null)}</a> </li>
+	        <li> <a href="${URLUtils.https('Address-List')}">${Resource.msg('addresslist.addressbook','account',null)}</a></li>
+	        <li> <a href="${URLUtils.https('PaymentInstruments-List')}">${Resource.msg('addresslist.paymentmethod','account',null)}</a> </li>
+	        <li> <a href="${URLUtils.https('DisplayDashboard-AboutYou')}">${Resource.msg('addresslist.aboutyou','account',null)}</a></li>
+	   		<li><a href="${URLUtils.https('OrderHistory-History')}">${Resource.msg('addresslist.orderstatus','account',null)}</a></li>
+	  		<li><a href="${URLUtils.https('Community-Profile')}">Your Community Profile</a></li>
+	  		<li><a href="${URLUtils.https('KitCustomizer-LearnMore','showKit','true')}"><isprint value="${Resource.msg('kit.header.dropdown','account',null)}"/></a></li>
+		</ul>
+		<div class="sign-out"><a href="${URLUtils.url('Login-Logout')}">Sign Out</a></div>
+	   </div>
+	</div>   	  
+<iselse>
+    <div id="member-login">
+	      <isif condition="${pdict.CurrentRequest.locale != 'default'}">
+	       <a href="${URLUtils.url(new dw.web.URLAction('Home-Show', dw.system.Site.getCurrent().ID, 'default')).abs()}">English</a>
+	      <iselse>
+	      <a href="${URLUtils.url(new dw.web.URLAction('Home-Show', dw.system.Site.getCurrent().ID, 'es','grcid','espanol')).abs()}">Proactiv en Español</a>
+	      </isif>
+	     <span class="divider"> | </span>
+	    <a title="${Resource.msg('global.login','locale',null)}" href="${URLUtils.https('Account-Show')}" class="userlogin">${Resource.msg('global.login','locale',null)}</a>
+	    <span class="divider"> | </span>
+	    <a title="${Resource.msg('global.register','locale',null)}" href="${URLUtils.https('Account-StartRegister')}" class="userregister">${Resource.msg('global.register','locale',null)}</a>
+    </div>
+</isif>
+
+<!-- END: headercustomerinfo -->
+

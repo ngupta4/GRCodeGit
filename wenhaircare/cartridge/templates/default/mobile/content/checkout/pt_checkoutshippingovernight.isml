@@ -1,0 +1,169 @@
+<!--- TEMPLATENAME: pt_checkoutshippingovernight.isml --->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+	<isinclude template="util/modules"/>
+	<!-- To keep track of referred friend -->
+<isinclude template="checkout/referafriendlandingpage"/>
+	<isscript>
+		importScript('guthyrenker_core:common/libUtils.ds');
+	
+		importPackage(dw.object);
+		importPackage(dw.catalog);
+		
+		var CCC : Object = pdict.CurrentCampaignConfig;
+		var campaignCode : String = CCC.campaignCode;
+		
+		var showHeader : boolean = CCC.showHeader;
+		var showFooter : boolean = CCC.showFooter;
+		var showNav : boolean = CCC.showNav;
+		var showOrderButton : boolean = CCC.showOrderButton;
+		
+		var category : dw.catalog.Category = CCC.getCampaignCategory();
+		
+		var w : Number =CCC.sasOfferCodes.length>0?Number(400 / CCC.sasOfferCodes.length):400;
+		var campaignCode1=campaignCode;
+		if(CCC.sasOfferCodes[0]!= null && campaignCode.indexOf(CCC.sasOfferCodes[0])>-1){
+			campaignCode1= campaignCode.replace("-"+CCC.sasOfferCodes[0],"");
+		}
+		
+	</isscript>
+			
+	<head>
+		<isinclude template="components/header/htmlhead"/>
+	<isif condition="${!empty(CCC) && !empty(CCC.cssStyle)}">
+		<link rel="stylesheet" type="text/css" href="${URLUtils.staticURL(URLUtils.CONTEXT_LIBRARY,null,CCC.cssStyle)}" />
+	</isif>
+		
+		<script type="text/javascript" src="${URLUtils.staticURL('js/proactiv.js')}"></script>
+		
+		<iscomment>including see why js & setting up initial variables</iscomment>
+		<isinclude template="checkout/steps/initseewhy" />
+		
+		<iscomment>js for value change event on text fields.</iscomment>
+		<isinclude template="checkout/steps/triggerseewhy" />
+	</head>
+	
+	
+	<body id="cart${campaignCode1}" >
+	<isanalyticsoff> 
+	<iscomment>Mbox Redirect</iscomment>
+	<isinclude template="common/mboxglobal"/>	
+	
+	<iscomment>This Showing header of SLP pages</iscomment>
+	<isslot id="cart-promo-header" description="Cart Header Promo Area" context="category" context-object="${category}" />
+	
+			
+			<div class="wrapper">
+				<div id="checkoutheader">
+					<isslot id="overnight-shipment-cart-header" description="Overnight shipment cart header" context="category" context-object="${category}" />
+					
+					
+				</div>
+				
+				<div class="leftArea">
+						<isslot id="cart-left-promo-area" description="Cart Left Promo Area" context="category" context-object="${category}" />
+						
+					
+						<isslot id="overnight-shipment-cart-center" description="Overnight shipment cart center" context="category" context-object="${category}" />
+					</div>
+					
+					<iscomment>Show options for each gift sku
+					<isif condition="${CCC.enableSlpSas}"></iscomment>
+						<div id="slpsas">
+						<script language="javascript">
+
+				    	function swapProducts(prodid)
+				    	{
+
+				    
+					    		//hide all yes
+					    		jQuery('.slp-sas-yes').hide()
+					    		
+					    		//show all nos (except right one
+					    		jQuery('.slp-sas-no').show()
+					    		
+					    		//show the right yes
+					    		jQuery('#'+prodid +'-src-no').hide()
+					    		jQuery('#'+prodid +'-src-yes').show()
+					    		
+						 		jQuery.getJSON("${URLUtils.url('COCart-JsonAddProduct')}", {'pid':prodid,'campaignid':"${campaignCode}"}, function(json){
+							    	//$('#ajaxDrivenProductContent').html('<div class="offer_disc">'+json.offerdesc+json.offer+'</div><div class="product_image"><img src="images/'+json.cartimage+'" width="100" height="100" alt="Intro Kit Picture" /></div>');
+							    	//cartitems .celldescription .name 
+							    	//shortDescription
+							    	//console.log(json)
+							    	//cellprice contentasset img src //replace with new content asset maybe...
+							    	$('.cartitems .celldescription .name').html(json.update.productInfo.name);
+							    	$('.cartitems .celldescription .shortDescription').html(json.update.productInfo.shortDescription);
+							    	$('.cartitems .cellimage').html(json.update.productInfo.imageSrc);
+							    	//$('.cartitems .cellimage img').attr("alt",json.update.productInfo.imageAlt);
+							    	$('.cartitems .celldescription .offerCode').html(json.update.productInfo.offerCode);
+							    	$('.cartitems .cellprice').html(json.update.productInfo.priceContent);
+									
+									$('#merchandizeTotal').html(json.update.merchandiseTotal.stringValue);
+									$('#shippingTotalPrice').html(json.update.shipping.stringValue);
+									$('#basketTotalPrice').html(json.update.totalPrice.stringValue);
+							    	});
+							    	
+							    	return false; 
+					    }
+					    
+				    	
+				    	$('.selectProductContainer').click(function(){
+				    		$(this).find('.selectRadioBox input').attr('checked', true);
+				    		var proId = $(this).find('.selectRadioBox input').attr('value');
+				    		//alert(proId);
+				    		swapProducts(proId);
+		                    cy.CUSTOM3 =  proId;
+		                        
+				    	    //Change product in seeWhy Product is undefined
+							if ((typeof cy.CUSTOM3 != "undefined") && (cy.CUSTOM3 != "")){
+								cy.CUSTOM3 =  proId;
+							};
+						})
+						//swapProducts();
+						
+						</script>
+						<iscomment>
+						<isloop items="${CCC.sasOfferCodes}" var="item" status="stat">
+						<a id="box-link" href="javascript:void(0)" onclick="swapProducts('${item}');" style="width:${100/CCC.sasOfferCodes.length}%;">
+								<isif condition="${!empty(pdict.Basket.getProductLineItems(item))}">
+									<img class="slp-sas-yes" id="${item}-src-yes" src="${URLUtils.staticURL('/images/sas/yes_dot.png')}" alt="${item}"/>
+									<img  class="slp-sas-no"  id="${item}-src-no" style="display:none" src="${URLUtils.staticURL('/images/sas/no_dot.png')}" alt="${item}"/>
+								<iselse>
+									<img  class="slp-sas-yes"  id="${item}-src-yes" style="display:none" src="${URLUtils.staticURL('/images/sas/yes_dot.png')}" alt="${item}"/>
+									<img class="slp-sas-no"  id="${item}-src-no" src="${URLUtils.staticURL('/images/sas/no_dot.png')}" alt="${item}"/>
+								</isif>
+						</a>
+						</isloop></iscomment>
+						</div>
+					<iscomment></isif></iscomment>
+				
+				
+				<div id="cartcontent">
+					<isreplace/>
+					
+					
+				</div>
+				</div>
+				<div id="cartfooter">
+					<div id="cartfooterinner">
+						<isslot id="cart-bottom-promo-area" description="Cart Bottom Promo Area" context="category" context-object="${category}" />
+					</div>
+				</div>
+			</div>
+			<div class="footerContainer">
+			<isslot id="cart-promo-footer" description="cart Promo footer" context="category" context-object="${category}" />
+			</div>
+			
+
+		
+		<isinclude template="analytics/omniture/omniture"/>
+		<iscomponent pipeline ="Tealium-FooterInclude"
+pid=${pdict.CurrentHttpParameterMap.pid.stringValue}
+searchterm=${pdict.CurrentHttpParameterMap.q.stringValue}
+searchresultscount=${pdict.ProductSearchResult.count+''}
+orderno=${pdict.OrderNo}
+contentsearchresultscount=${pdict.ContentSearchResult.count+''}
+pagecgid=${pdict.CurrentHttpParameterMap.cgid.stringValue} />
+	</body>
+</html>

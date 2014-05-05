@@ -1,0 +1,67 @@
+/**
+ * Gets only payment methods that have cartID value as in current Campaign Configuration
+ *
+ * @input httpParameters : dw.web.HttpParameterMap
+ * @output PaymentMethods : dw.util.ArrayList
+ */
+importPackage( dw.system );
+importPackage( dw.util );
+importPackage( dw.order );
+importPackage( dw.web );
+importPackage( dw.order );
+
+
+
+function execute( args : PipelineDictionary ) : Number
+{
+	var httpParameters = args.httpParameters;
+	var showPP 	: Boolean 	= httpParameters.showPP;
+	var showCC	: Boolean	= httpParameters.showCC;
+	var showPL	: Boolean	= httpParameters.showPL;
+	var showEC	: Boolean	= httpParameters.showEC;
+	var allMethodsList : List = PaymentMgr.getActivePaymentMethods();
+	var methodsList : ArrayList = new ArrayList();
+	
+	
+	/* Set the cards to be in output*/
+	for each (var paymentMethod : PaymentMethod in allMethodsList)
+	{
+		//Ignore Payment if not in Response
+		if(paymentMethod.ID == "PayPal" && showPP=='false'){
+			continue;
+		}else if(paymentMethod.ID == Resource.msg('payMethods.paylater.ID', 'configuration', null) && showPL=='false'){
+			continue;
+		}else if(paymentMethod.ID == Resource.msg('payMethods.echeck.ID', 'configuration', null) && showEC=='false'){
+			continue;
+		}else if(paymentMethod.ID == "CREDIT_CARD" && showCC=='false'){
+			continue;
+		}
+		
+		// Add method cards
+		if (paymentMethod.getActivePaymentCards().size() > 0)
+		{
+			for each (var paymentCard : PaymentCard in paymentMethod.getActivePaymentCards())
+			{
+				methodsList.add({
+					'cardType' : paymentCard.cardType,	// Type
+					'methodID' : paymentMethod.ID,		// Preserve the method ID
+					'name' : paymentCard.name 			// Name
+				});
+			}
+		}
+		// Add method itself
+		else
+		{
+			methodsList.add({
+				'cardType' : paymentMethod.ID,
+				'methodID' : paymentMethod.ID,
+				'name' : paymentMethod.name
+			});
+		}
+	}
+	
+	// return the methods list
+	args.PaymentMethods = methodsList;
+	
+	return PIPELET_NEXT;
+}

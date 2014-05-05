@@ -1,0 +1,37 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<isinclude template="util/modules"/>
+<head>
+<link href="${URLUtils.staticURL('/css/account.css')}" type="text/css" rel="stylesheet" />
+	<iscomment>Include all important information globally , e.g. meta-data, link information, and javascript.</iscomment>
+	<isset name="pagetitle" value="Proactiv&reg; Solution - My Account " scope="pdict">
+	<isinclude template="components/header/htmlhead"/>
+	<script src="${URLUtils.staticURL('/js/kitcustomizer/kitSessionDataManager.js')}" type="text/javascript"></script>
+	<script src="${URLUtils.staticURL('/js/kitcustomizer/kit.js')}" type="text/javascript"></script>
+	<script src="${URLUtils.staticURL('/js/kitcustomizer/kitwidget.js')}" type="text/javascript"></script>
+	<script src="${URLUtils.staticURL('/js/kitcustomizer/jstorage.min.js')}"></script>
+	
+</head>
+<body>
+<isinclude template="common/mboxglobal"/>
+<div id="container" class="pt_account">
+	<isinclude template="components/header/header"/>
+	
+				<isreplace/>
+			
+	<isinclude template="components/footer/footer"/>
+	<isinclude template="components/footer/pixels"/>
+	<input type="hidden" value="${pdict.CurrentHttpParameterMap.showKit.stringValue}" id="showKit"/>
+	<isif condition = "${pdict.CurrentHttpParameterMap.showKit.stringValue == 'true'}">
+		<script type="text/javascript">
+			//var widget = new KitCustomizer();
+			widget.startWidget();
+			widget.showKit();
+			var contParam = "${pdict.CurrentHttpParameterMap.kitcontinue.stringValue}";
+			if(contParam != null && contParam != '')
+				widget.checkContinuation(contParam);
+		</script>
+	</isif>
+</div><!-- END: container -->
+</body>
+</html>

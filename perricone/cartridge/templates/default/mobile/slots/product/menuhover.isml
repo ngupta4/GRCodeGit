@@ -1,0 +1,30 @@
+<iscomment>Renders the products selected for a particular slot. 
+Renders the product selected for a category on mouse over.
+</iscomment>
+
+<isinclude template="util/modules"/>
+<div class="productlisting product_1x4">
+	<isloop items="${slotcontent.content}" var="product" begin="0" end="${dw.system.Site.getCurrent().getCustomPreferenceValue('MaxProdOnCategMouseOver')}">
+		<isobject object="${product}" view="recommendation">
+			<isset name="imageProduct" value="${product}" scope="page"/>
+		
+			<isif condition="${!empty(imageProduct.getImage('large',0))}">
+				<isset name="imageUrl" value="${imageProduct.getImage('large',0).url}" scope="page"/>
+				<isset name="imageAlt" value="${imageProduct.getImage('large',0).alt}" scope="page"/>
+				<isset name="imageTitle" value="${imageProduct.getImage('large',0).title}" scope="page"/>
+			<iselse/>
+				<isset name="imageUrl" value="${URLUtils.staticURL('/images/noimagelarge.png')}" scope="page"/>
+				<isset name="imageAlt" value="${pdict.Product.name}" scope="page"/>
+				<isset name="imageTitle" value="${pdict.Product.name}" scope="page"/>
+			</isif>
+			<div class="productimage"><!-- Product Image -->
+					<img src="${imageUrl}" alt="${imageAlt}" title="${imageTitle}"/>
+			</div>
+			<isprint value="${product.name}" encoding="off"/>
+		<a href="${URLUtils.url('Product-Show','pid', product.ID)}" title="${product.name}">${Resource.msg('menuhover.learnmore','product',null)}</a>
+		</isobject>
+	</isloop>
+	<iscomment>Setting of category is still pending task. It will be done once category context slot creation is done</iscomment>
+	<a href="${URLUtils.http('Search-Show')}" ><span>${Resource.msg('menuhover.seemore','product',null)}</span></a>
+	<div class="clear"><!-- FLOAT CLEAR --></div>
+</div><!-- END: product_1x4 -->

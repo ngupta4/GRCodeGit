@@ -1,0 +1,12 @@
+<isinclude template="util/modules"/>
+<div class="pageWidth">
+<ul class="celebListings">
+	<isset name="celebContentList" value="${pdict.ContentPagingModel.pageElements}" scope="page"/>
+	<isloop items="${celebContentList}" var="content">
+		<li>
+			<isinclude template="community/successstories/celebritytile"/>
+		</li>
+	</isloop> 
+</ul>
+</div>
+

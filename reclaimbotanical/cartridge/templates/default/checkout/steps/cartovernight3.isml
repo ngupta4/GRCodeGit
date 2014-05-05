@@ -1,0 +1,127 @@
+<!--- TEMPLATENAME: cartovernight.isml --->
+<isinclude template="util/modules" />
+
+<form action="${URLUtils.httpsContinue()}" method="post" class="checkoutform" id="checkout-shipmentovernight">
+	<iscomment>Cart</iscomment>
+	<div class="rounded" id="cartsection">
+		<iscomment>Cart items list</iscomment>
+		<div id="carttable">
+			<table class="cartitems">
+				<isloop items="${pdict.Basket.getAllProductLineItems()}" var="pli">
+					<tr>
+						<td class="cellimage">
+							<iscontentasset aid="${'cart-product-' +campaignCode +"-"+pli.product.ID}" />
+						</td>
+						<td class="celldescription">											
+							<div class="shortDescription">
+								<isprint value="${pli.product.custom.cartDescription || pli.product.shortDescription}" encoding="off"/>
+							</div><!-- END: shortDescription -->
+							
+							<div class="offerCode">${pli.product.ID}</div>
+
+							<input type="hidden" name="pid" class="coreid" value="${pli.productID}" />
+						</td>
+						</tr>
+				</isloop>
+			</table>
+		</div>
+		
+
+	</div>
+	
+	<div class="rounded" id="personinfo">
+			<isinclude template="checkout/components/errors" />
+			<div id="contactinfo">
+				<iscomment>Contact information</iscomment>
+				<isinclude template="checkout/personinformation/contactinformation" />
+				
+			</div>
+			
+			<iscomment>Some fields will be hidden for now</iscomment>
+			<isinputfield formfield="${pdict.CurrentForms.personinf.account.password}" type="hidden" />
+			<isinputfield formfield="${pdict.CurrentForms.personinf.account.passwordconfirm}" type="hidden" />
+			<isinputfield formfield="${pdict.CurrentForms.personinf.account.age}" type="hidden" />
+			<isinputfield formfield="${pdict.CurrentForms.personinf.account.gender}" type="hidden" />
+			
+			<iscomment>Billing and shipping</iscomment>
+			<div class="billingShipping">
+				<isinclude template="checkout/personinformation/billinginformation3" />
+				
+				<div class="checkoutBox cartShipping">
+					<h4 class="asbilling">
+						<isif condition="${pdict.CurrentForms.personinf.useAsBillingAddress.value === false}">
+							<isinputfield formfield="${pdict.CurrentForms.personinf.useAsBillingAddress}" type="checkbox" attribute1="checked" value1="checked" attribute2="tabindex" value2="16" />
+						<iselse>
+							<isinputfield formfield="${pdict.CurrentForms.personinf.useAsBillingAddress}" type="checkbox" attribute2="tabindex" value2="16" />
+						</isif>
+						<span>${Resource.msg('personinformation.shippinginformation.label', 'rendering', null)}</span>
+					</h4>
+					<div class="checkoutBoxInner">
+				<isinclude template="checkout/personinformation/shippinginformation3" />	
+				</div>				
+				</div>
+			
+			</div>
+			
+			<iscomment>Payment information</iscomment>
+			<isinclude template="checkout/personinformation/paymentinformation" />
+			
+			<script type="text/javascript">
+			<!--
+			jQuery(".payment_info").show();
+			//-->
+			</script>
+			
+			<div id="carttotals">
+			
+				<div id="agreebox">
+				<h4>${Resource.msg('wstone.sign', 'rendering', null)}</h4>
+					<isinputfield formfield="${pdict.CurrentForms.personinf.agree}" type="checkbox" attribute1="requiredmesage" value1="${Resource.msg('forms.checkout.agree.value-error','forms',null)}" attribute2="tabindex" value2="28" />
+					<p><span>${Resource.msg('cart.agreetext2', 'rendering', null)}</span> <a href="${URLUtils.url('Page-Show', 'cid', 'terms-and-condition')}">${Resource.msg('cart.agreetext3', 'rendering', null)}</a> ${Resource.msg('cart.agreetext4', 'rendering', null)}</p>
+				</div>
+				<div id="cartpricesummary">
+				<h4>${Resource.msg('wstone.confirmorder', 'rendering', null)}</h4>
+					<table>
+						<tr>
+							<td><div><isprint encoding="off" value="${Resource.msg('checkout.overnight.itemtotal.label2', 'rendering', null)}"></isprint></div></td>
+							<td id="merchandizeTotal"><isprint value="${pdict.Basket.getAdjustedMerchandizeTotalPrice(false)}" style="MONEY_LONG" /></td>
+						</tr>
+						<tr>
+							<td><div>${Resource.msg('checkout.overnight.shipping-price.label2', 'rendering', null)}</div></td>
+							<td id="shippingTotalPrice"><isprint value="${pdict.Basket.shippingTotalPrice}" style="MONEY_LONG" /></td>
+						</tr>
+						<tr class="bold">
+							<td><div>${Resource.msg('checkout.overnight.totalprice.label2', 'rendering', null)}</div></td>
+							<td id="basketTotalPrice"><isprint value="${pdict.Basket.getTotalNetPrice()}" style="MONEY_LONG" /></td>
+						</tr>
+					</table>
+					
+					<button class="continueBtn completeBtn" type="submit" value="Checkout" name="dwfrm_personinf_apply" tabindex="29"><span>${Resource.msg('checkout.submit', 'rendering', null)}</span></button>
+				</div>
+				
+				<div id="cartsummarycomments" class="clearfix">
+					<p>* ${Resource.msg('cart.requiredtext', 'rendering', null)}</p>
+					<p>${Resource.msg('cart.ordertotal.note', 'rendering', null)}</p>
+				</div>
+			</div>
+	</div>
+</form>
+
+<script type="text/javascript"><!--
+app.proactiv.resources.set({
+	'cartFormID' : 'checkout-shipmentovernight',
+	'verifyEmailLimit' : ${pdict.CurrentSession.privacy.verifyemaillimit},
+	'verifyEmailUrl' : '<isprint value="${URLUtils.url('GRMiddleware-VerifyEmail')}" encoding="off"/>',
+	'billingEqualsShipping' : '${pdict.CurrentForms.personinf.useAsBillingAddress.value}',
+	'billingEqualsShippingCheckbox' : '${pdict.CurrentForms.personinf.useAsBillingAddress.htmlName}',
+	'paymentAlwaysVisible' : true,
+	'updateShippingPriceUrl' : '${URLUtils.url("COCart-SetShippingMethod")}',
+	'updateQtyUrl' : '${URLUtils.url("COCart-UpdateProductQty")}',
+	'subtotal-selector' : '${"#"}merchandiseTotal',
+	'shipping-price-selector' : '${"#"}shippingTotalPrice',
+	'total-price-selector' : '${"#"}basketTotalPrice'
+});
+
+// Initialize the Proactiv API
+app.proactiv.checkout.init();
+//--></script>

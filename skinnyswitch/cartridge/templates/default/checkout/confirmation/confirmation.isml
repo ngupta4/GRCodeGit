@@ -1,0 +1,153 @@
+<!--- TEMPLATENAME: confirmation.isml --->
+<iscache type="relative" minute="30" varyby="price_promotion"/>
+
+<iscomment>
+	This template is created before the 'wrapper' template, so we can set
+	up the template configuration for the 'pt_storefront' template right here.
+</iscomment>
+
+<isdecorate template="content/home/pt_storefront">
+
+<iscookie name="campaign" path="/" value="${}" domain="${request.httpHost}" maxAge="0" />
+<iscookie name="uci" path="/" value="${}" domain="${request.httpHost}" maxAge="0" />
+<iscookie name="secondaryuci" path="/" value="${}" domain="${request.httpHost}" maxAge="0" />
+
+	<isinclude template="util/modules"/>
+	<isinclude template="util/reporting/ReportOrder.isml"/>
+	<isscript>
+		importPackage(dw.object);
+		importPackage(dw.catalog);
+		
+		var CCC : Object = pdict.CurrentCampaignConfig;
+		var campaignCode : String = CCC.campaignCode;
+		
+		var showHeader : boolean = CCC.showHeader;
+		var showFooter : boolean = CCC.showFooter;
+		var showNav : boolean = CCC.showNav;
+		var showOrderButton : boolean = CCC.showOrderButton;
+		
+		var category : dw.catalog.Category = CCC.getCampaignCategory();
+	</isscript>
+
+<iscomment>
+	This template visualizes the order confirmation page. Note, that it
+	uses a different decorator template.
+	It displays the order related information, such as the order number,
+	creation date, payment information, order totals and shipments of
+	the order.
+</iscomment>
+
+	<div class="place-order">
+		<isslot id="hp-top" context="category" description="Home Page Top" context-object="${category}"/>
+	</div>
+	
+	<div class="confirmation-page">
+		<h1>${Resource.msg('order.thankyou','rendering',null)}</h1>
+		<span class="transaction">${Resource.msgf('order.transactionnumber','rendering',null, pdict.OrderNo)}</span>
+		<span class="arrivaltime">${Resource.msg('order.arrivaltime','rendering',null)}</span>
+		<span class="orderhasbeenprocessed">${Resource.msg('order.whenorderhasprocessed','rendering',null)}</span>
+		<a href="${URLUtils.http('Home-7DaysToSkinny')}" id="btn7DaysToSkinny" target="_blank"><img src="${URLUtils.staticURL('../images/btn7DaysToSkinny.png')}" /></a>
+
+		<isinclude template="checkout/components/cartinfo" />
+		<isinclude template="checkout/components/billingandshippinginfo" />
+		<isinclude template="checkout/components/ordertotalinfo" />
+
+	</div>
+	
+	<isset name="OmniturePage" value="COConfirmation" scope="pdict">
+	
+	<script id="script310" src="https://t4.mgplatform.com/gr/confirm-skinnyswitch.js?orderid=${pdict.Order.orderNo}"></script>
+	
+</isdecorate>
+
+<isscript>
+  var orderId = pdict.Order.orderNo;
+  var brand   = 'xout';
+
+  var qty1  = qty2  = 0;
+  var kit1  = kit2  = '';
+  var prod1 = prod2 = '';
+  var rev1  = rev2  = 0;
+
+  var iter = pdict.Order.getAllProductLineItems().iterator();
+  var loopc = 0;
+
+  while (iter.hasNext()) {
+    var pli = iter.next();
+
+      if (loopc == 0) {
+        qty1  = pli.quantityValue;
+        kit1  = pli.product.ID;
+        prod1 = pli.product.name;
+      } else {
+        qty2  = pli.quantityValue;
+        kit2  = pli.product.ID;
+        prod2 = pli.product.name;
+      }
+
+      brand = pli.product.brand;
+      loopc = loopc + 1;
+  }
+  var revenue = 0;
+  revenue = pdict.Order.getAdjustedMerchandizeTotalPrice(true).value + pdict.Order.giftCertificateTotalPrice.value;
+
+  if (prod1.indexOf("Vitamins") != -1) {  
+    rev1 = 0;
+    rev2 = revenue;
+  } else {
+    rev1 = revenue;
+    rev2 = 0;
+  }  
+
+</isscript>
+
+
+
+
+<!--Begin LinkShare Tagging-->
+<script type="text/javascript">
+<!--
+var brnd_pfix = "NA";
+var brnd_name = "Natural Advantage:";
+var LSmsg = "";
+var LSord = "ord=" + brnd_pfix + "${pdict.Order.orderNo}";
+var LSsku = "skulist=";
+var LSqty = "qlist=";
+var LSamt = "amtlist=";
+var LSname = "namelist=";
+
+function addLSitem(ls1,ls2,ls3,ls4) {
+  LSsku = LSsku + brnd_pfix + escape(ls1) + "|";
+  LSqty = LSqty + ls2 + "|";
+  ls3 = ls3 * ls2 * 100;
+  ls3 = ls3.toFixed(0);
+  LSamt = LSamt + ls3 + "|";
+  LSname = LSname + escape(brnd_name) + escape(ls4) + "|";
+}
+
+//Call AddLSitem(SKU Number, Qty Purchased, Item Unit Price, Item Name) for each item purchased.
+addLSitem(
+        "${kit1}",
+        "${qty1}",
+        "${rev1}",
+        "${prod1}"
+);
+
+if (${loopc} > 1) {
+addLSitem(
+        "${kit2}",
+        "${qty2}",
+        "${rev2}",
+        "${prod2}"
+);
+}
+
+
+
+
+
+LSmsg = "mid=2637&cur=USD&" + LSord + "&" + LSsku + "&" + LSqty + "&" + LSamt + "&" + LSname;
+document.write('<img src="https://track.linksynergy.com/ep?' + LSmsg + '" border="0" width="1px" height="1px" alt="">');
+//-->
+</script>
+<!--End LinkShare Tagging-->

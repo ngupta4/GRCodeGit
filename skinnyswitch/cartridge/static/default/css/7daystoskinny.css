@@ -1,0 +1,296 @@
+/* #layout
+
+================================================== */
+#wrapper {
+	width:920px;
+	margin:0 auto;
+}
+header {
+	height:133px;
+	width:100%;
+}
+.logo {
+	margin-top:13px;
+}
+/* #banner
+================================================== */
+.banner_box {
+	width:920px;
+	margin:0 auto;
+	-webkit-box-shadow: #ccc 0px 1px 6px;
+	-moz-box-shadow: #ccc 0px 1px 6px;
+	box-shadow: #ccc 0px 1px 6px;
+	background: #fff;
+	margin-bottom:15px;
+	behavior: url(js/PIE.htc);
+}
+.banner_box .inner {
+	padding:25px;
+}
+.banner_box:after {
+	content: ".";
+	display: block;
+	height: 0;
+	clear: both;
+	visibility: hidden;
+}
+.banner_box h2 {
+	color:#e06a25;
+	font-size: 19px;
+	text-align:center;
+	padding-bottom:20px;
+}
+.banner_box .col_left {
+	width:530px;
+	margin-right: 20px;
+	float:left;
+}
+.banner_box .col_right {
+	float:left;
+	width:293px;
+	height:224px;
+	background: url(../images/7daystoskinny/bg_video.jpg) top center no-repeat;
+}
+/* #content
+================================================== */
+.main_box {
+	width:920px;
+	margin:0 auto;
+	-webkit-box-shadow: #ccc 0px 1px 6px;
+	-moz-box-shadow: #ccc 0px 1px 6px;
+	box-shadow: #ccc 0px 1px 6px;
+	background: #fff;
+	behavior: url(js/PIE.htc);
+}
+.main_box:after {
+	content: ".";
+	display: block;
+	height: 0;
+	clear: both;
+	visibility: hidden;
+}
+.intro_text {
+	font-size:14px;
+}
+.main_box .col_left {
+	width:547px;
+	margin: 30px;
+	float:left;
+	padding-bottom:40px;
+}
+.main_box .col_right {
+	float:right;
+	width:296px;
+	background:#fff url(../images/7daystoskinny/bg_rhc.jpg) top center no-repeat;
+}
+.main_box .col_right .inner {
+	padding:0 5px 0 20px;
+}
+ul.tips {
+	margin:2px 0 0 10px;
+	background:none;
+}
+.tips li {
+	padding:0px 0px 2px 25px;
+	line-height:23px;
+	font-size:15px;
+}
+.one {
+	background: url(../images/7daystoskinny/numbers.png) top center no-repeat;
+	background-position: -0px 2px;
+}
+.two {
+	background: url(../images/7daystoskinny/numbers.png) top center no-repeat;
+	background-position: -0px -23px;
+}
+.three {
+	background: url(../images/7daystoskinny/numbers.png) top center no-repeat;
+	background-position: -0px -48.5px;
+}
+.four {
+	background: url(../images/7daystoskinny/numbers.png) top center no-repeat;
+	background-position: -0px -74.5px;
+}
+.five {
+	background: url(../images/7daystoskinny/numbers.png) top center no-repeat;
+	background-position: -0px -99.5px;
+}
+.six {
+	background: url(../images/7daystoskinny/numbers.png) top center no-repeat;
+	background-position: -0px -124.5px;
+}
+.seven {
+	background: url(../images/7daystoskinny/numbers.png) top center no-repeat;
+	background-position: -0px -149.5px;
+}
+.products {
+	margin:15px 0 2px 6px;
+}
+.rhc_intro_text {
+	font-size:16px;
+	line-height:17.5px;
+	padding:0 0 15px 8px;
+}
+.caveat {font-family:Times New Roman;color:#000;}
+.asterisk {color:green;font-weight:bold;}
+/* #accordian
+================================================== */
+.container {
+	margin: 0 auto;
+	color:#8c8d8e;
+	padding-top:15px;
+}
+p {
+	font-size:13px;
+}
+a.meal_link {
+	color:#0371dc;
+	font-size:14px;
+	font-weight:bold;
+}
+h4 {
+	font-size:14px;
+	font-weight:bold;
+	color:#8c8d8e;
+}
+h2.acc_trigger {
+	padding: 0;
+	margin:0;
+	background: url(../images/7daystoskinny/h2_trigger_a.gif) no-repeat;
+	height: 31px;
+	width: 500px;
+	margin-top:15px;
+	float: left;
+}
+h2.acc_trigger a {
+	color: #4d3293;
+	text-decoration: none;
+	display: block;
+	padding:3px 0 0 23px;
+	font-size:22px;
+	letter-spacing:-.8px;
+}
+h2.acc_trigger a:hover {
+	color: #ccc;
+}
+h2.active {
+	background-position: left bottom;
+}
+.acc_container {
+	margin: 0;
+	padding: 0;
+	overflow: hidden;
+	font-size: 1.2em;
+	width: 500px;
+	clear: both;
+}
+.acc_container .block {
+	padding: 20px;
+}
+.acc_container .block p {
+	padding: 4px 0;
+	margin:0;
+}
+.acc_container h3 {
+	font: 2.5em normal Georgia, "Times New Roman", Times, serif;
+	margin: 0 0 10px;
+	padding: 0 0 5px 0;
+	border-bottom: 1px dashed #ccc;
+}
+.acc_container img {
+	float: left;
+	margin: 10px 15px 15px 0;
+	padding: 5px;
+	background: #ddd;
+	border: 1px solid #ccc;
+}
+.block embed {margin-top:8px;width:75%;}
+ul.shopping_list {padding: 12px 0;margin:0;list-style:none;}
+.shopping_list li {border:none;
+  display:block;
+  float:left;
+
+  position:relative;
+
+}
+li.first {border:none;
+  display:block;
+  float:left;
+  margin:0;
+  padding-right:110px;
+  position:relative;
+  
+
+}
+
+.shopping_list:after {
+	content: ".";
+	display: block;
+	height: 0;
+	clear: both;
+	visibility: hidden;
+}
+
+/* #Reset & Basics (Inspired by E. Meyers)
+================================================== */
+	html, body, div, span, applet, iframe, h1, h2, h3, h4, h5, h6, p, blockquote, pre, a, abbr, acronym, address, big, cite, code, del, dfn, em, img, ins, kbd, q, s, samp, small, strike, strong, sub, sup, tt, var, b, u, i, center, dl, dt, dd, ol, ul, li, fieldset, form, label, legend, table, caption, tbody, tfoot, thead, tr, th, td, article, aside, canvas, details, figure, figcaption, footer, header, hgroup, menu, nav, output, ruby, section, summary, time, mark, audio, video {
+		margin: 0;
+		padding: 0;
+		border: 0;
+		font-size: 100%;
+		font: inherit;
+		vertical-align: baseline; }
+	article, aside, details, figcaption, figure, footer, header, hgroup, menu, nav, section {
+		display: block; }
+	body {
+		line-height: 1; }
+	ol, ul {
+		list-style: none; }
+	blockquote, q {
+		quotes: none; }
+	blockquote:before, blockquote:after,
+	q:before, q:after {
+		content: '';
+		content: none; }
+	table {
+		border-collapse: collapse;
+		border-spacing: 0; }
+.visuallyhidden { border: 0; clip: rect(0 0 0 0); height: 1px; margin: -1px; overflow: hidden; padding: 0; position: absolute; width: 1px; }
+.visuallyhidden.focusable:active, .visuallyhidden.focusable:focus { clip: auto; height: auto; margin: 0; overflow: visible; position: static; width: auto; }
+
+/* #Basic Styles
+================================================== */
+	body {
+		font: 13px/1.3 "HelveticaNeue", "Helvetica Neue", Helvetica, Arial, sans-serif;
+		color: #8c8d8e;
+		-webkit-font-smoothing: antialiased; /* Fix for webkit rendering */
+		-webkit-text-size-adjust: 100%; }
+
+footer {margin:15px 0 20px 10px;}
+
+/* #Typography
+================================================== */
+h1, h2, h3, h4, h5, h6 {
+	color: #111;
+	font-weight: bold;
+}
+
+h1 			{ font-size: 60px; line-height: 1.1; }
+h2 			{ font-size: 48px; line-height: 1.2; }
+h3 			{ font-size: 22px; line-height: 1.3;color:#e06a25;text-transform:uppercase;font-weight:bold; }
+h4 			{}
+h5 			{ font-size: 21px; line-height: 1.5; }
+h6 			{ font-size: 18px; line-height: 1.6; }
+.purple {color:#4d3293;}
+.skyblue {color:#00aeef;}
+
+p 			{ margin: 0 0 15px 0; }
+em 			{ font-style: italic; }
+strong 	{ font-weight: bold; }
+hr 			{ border: solid #ddd; border-width: 1px 0 0; clear: both; margin: 10px 0 30px; height: 0; }
+
+
+/* #Links
+================================================== */
+	a {color:#0371dc;font-size:14px;font-weight:bold; text-decoration: underline; outline: 0; }
+	a:hover, a:focus { color: #000; }

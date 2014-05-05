@@ -1,0 +1,1184 @@
+/*---------- Global CSS ----------*/
+html, body, div, span, applet, object, iframe, h1, h2, h3, h4, h5, h6, p, blockquote, pre, a, abbr, acronym, address, big, cite, code,
+del, dfn, em, img, ins, kbd, q, s, samp, small, strike, sub, sup, tt, var, b, u, i, center, dl, dt, dd, ol, ul, li,
+fieldset, form, label, legend, table, caption, tbody, tfoot, thead, tr, th, td, article, aside, canvas, details, embed, figure, figcaption, footer, header, hgroup, menu, nav, output, ruby, section, summary, time, mark, audio, video, button, select { margin: 0; padding: 0; border: 0; font-size: 100%; font: inherit; vertical-align: baseline; outline:none;}
+/* HTML5 display-role reset for older browsers */
+article, aside, details, figcaption, figure,
+footer, header, hgroup, menu, nav, section { display: block;}
+
+body { line-height: 1; font-family: "museo-sans", Helvetica, Verdana, sans-serif; font-size: 12px; font-weight: normal; color: #333333;}
+
+ol, ul { list-style: none;}
+blockquote, q { quotes: none;}
+blockquote:before, blockquote:after,
+q:before, q:after { content: ''; content: none;}
+table { border-collapse: collapse; border-spacing: 0;}
+
+p strong { font-weight: bold; }
+p { margin:0px 0px 15px 0px; line-height: 1.3em;}
+
+caption, th, td { text-align: left; font-weight: normal; vertical-align: top;}
+blockquote, q { quotes: none;}
+h1,h2, h3, h4, h5, h6{ font-weight: bold;font-family: "museo-sans",Arial,Helvetica,sans-serif;}
+:focus { outline: 0;}
+
+.txtAlignL{ text-align: left;}
+.txtAlignC{ text-align: center;}
+.txtAlignR{ text-align: right;}
+
+ins { text-decoration: none;}
+del { text-decoration: line-through;}
+
+.cSlot {padding-top: 57px; clear:both}
+.fItalic {font-style:italic;}
+.dNone{display:none !important}
+
+em, em *{ font-style: italic;}
+
+sup{position: relative; top: -0.3em; font-size: .7em;}
+.dag{font-size: 7px; top: -5px;}
+.clear, .clearIt, .cBoth {clear:both;}
+.clearFix:after { clear: both; content: "."; display: block; height: 0; line-height: 0; visibility: hidden; width: 0;}
+
+a{ color:#5c7f5f; text-decoration: none; cursor:pointer}
+a:link, a:visited { color:#5c7f5f}
+a:hover { color: #5c7f5f; text-decoration:none;}
+
+.row {width: 100%; float: left;	display: block;}
+.inBlock{ width: 100%; display: inline-block; clear:both;}
+
+.valignT{ vertical-align:top;}
+.valignM{ vertical-align:middle;}
+.valignB{ vertical-align:bottom;}
+
+.hideit{display: none;}
+
+.pageWrapper, .checkOutContent{ clear:both; width:940px; margin:0px auto;}
+.pageWrapper{width:950px;}
+.pageWrapper:after, .checkOutContent:after{ clear: both; content: "."; display: block; height: 0; line-height: 0; visibility: hidden; width: 0;}
+
+strong{font-weight:bold;}
+.strikeout {text-decoration: line-through;}
+
+.noBG{ background:none !important;}
+
+#container, .headerWraper, .mainWrapper, #footer{ clear:both; width:100%; float:left;}
+
+h1.pageTitle{color: #48423B; font-size: 35px;  margin-bottom: 10px; font-weight:normal;}
+.sasTopBanner h1.pageTitle{color: #6EB979;float: left;font-size: 40px;font-weight: 300; margin-left: 5px;padding: 58px 0 6px;width:auto;}
+.shoppingcartpage h1.pageTitle{color: #6EB979;float: left;font-size: 40px;font-weight: 300;margin-left: 5px;padding: 58px 0 6px;margin-bottom:0px;}
+.ptChekout h1.pageTitle{color: #6EB979;float: left;font-size: 40px;font-weight: 300;margin-left: 5px;padding: 58px 0 6px;margin-bottom:0px;}
+h4{ color: #48423B; line-height: 20px;}
+
+.vSeprator{border-right:1px solid #cbcbcb;float:left;height:967px;width:26px; margin-top:30px;}
+
+/* Forms css start */
+.formfield {float: left;padding: 3px 0;}
+input[type="text"], input[type="password"], select { border: 1px solid #B7B7B7; background:#fff url(../images/layout/textboxbg.png) repeat-x; color: #666666; font-size: 12px; min-height: 18px; padding: 2px;}
+input[type="radio"], input[type="checkbox"]{ margin: 0px 3px; vertical-align: bottom;}
+select, .selectbox{padding:2px; border:1px solid #B7B7B7; color: #666666; font-size: 12px; height: 25px;}
+
+input[disabled="disabled"], select[disabled="disabled"],
+input[disabled=""], select[disabled=""]{ background:#d8d8d8;}
+
+label, div.label{ float:left; color:#4E4D4B; font-size:12px; width: 100%; padding: 3px 0;}
+textarea{ border: 1px solid #b7b7b7; color: #666666; font-size:12px; padding: 2px;}
+button{ cursor:pointer; outline:0px;}
+.requiredindicator {color: #FF0000;}
+.requiredIndicator { margin:5px 3px;}
+input.errormessage,select.errormessage{ color:#000;}
+
+.textinput.errormessage, .textinputpw.errormessage, .textbox.errormessage, .selectbox.errormessage{ border: 1px solid #ff0000;}
+p.errormessage, span.errormessage, span.errorclient, div.errorclient, div.errormessage, .error, .errorform{ color: #ff0000; display: block; font-size: 11px; line-height:normal;font-style:normal; float:left;}
+.errorform{padding-bottom:10px;font-size:12px;}
+.sizeErr{ margin-bottom: 15px; margin-top:-10px; color:#ff0000;}
+div.errormessage span{ font-weight:bold;}
+.selectbox.errormessage{ color:#666666;}
+span.errorclient strong, div.errorclient strong{ font-weight: bold;}
+/* Forms css end */
+
+/* -- Button Styles -- */
+.orngBtn{ font-family: "museo-sans",Arial, Helvetica, sans-serif; text-align:center; float:right; width: 177px; height: 27px; padding:5px 0px 6px 0px; background:url(../images/saspage/order-btnbg.png) left top no-repeat; display:inline-block; font-size:18px; font-weight:bold; color:#ffffff !important; text-shadow:1px 1px 1px #da5425; text-transform:uppercase; line-height: 25px;}
+
+/* We need the to remove these classes finally from all buttons and please remove related images also from layout folder */
+#contYourOrder.greenButton{background:url("../images/checkoutpage/continue-order-button.png") left top no-repeat; height: 43px; width: 305px; margin-left: 15px;}
+#contYourOrder.greenButton:hover{background-position:left -44px;}
+#contYourOrder.greenButton.completBtn {background:url("../images/checkoutpage/complete-order-button.png") left top no-repeat; height: 43px; width: 305px; margin-left: 12px;}
+#contYourOrder.greenButton.completBtn:hover{background-position:left -44px;}
+#contYourOrder-disable1.greenButton.completBtn.disable{ display:none; float:left;}
+
+
+.caption{background:url("../images/layout/right_direction.png") right 2px no-repeat; font:bold 14px Arial, Helvetica, sans-serif;font-size:14px;  padding:0 13px 0 0;color:#fff; font-weight:bold;text-transform: uppercase;}
+/* We need the to remove these classes finally from all buttons : End */
+
+.orangeBtn, a.orangeBtn, input.orangeBtn, button.orangeBtn{ float: right; display: block; margin-right: -8px;}
+.orangeBtn span, a.orangeBtn span, input.orangeBtn span, button.orangeBtn span{ padding:8px 22px 6px 0px; height: 24px; background:url(../images/layout/orange-btn.png) right -44px no-repeat; font-family: "museo-sans",Arial, Helvetica, sans-serif; text-align:center; display:block; float:left; font-size:18px; font-weight:bold; color:#ffffff !important; text-shadow:1px 1px 0px #da5425; text-transform:uppercase; white-space: nowrap;}
+.orangeBtn span.lftOrng, a.orangeBtn span.lftOrng, input.orangeBtn span.lftOrng, button.orangeBtn span.lftOrng{ padding:8px 0px 6px 14px; background:url("../images/layout/orange-btn.png") left top no-repeat ; width:1px !important;}
+.orangeBtn:hover span{ background:url(../images/layout/orange-btn.png) right -148px no-repeat; }
+.orangeBtn:hover span.lftOrng{ background:url(../images/layout/orange-btn.png) left -104px no-repeat; }
+
+/* Common class for all buttons */
+.aButton, a.aButton, input.aButton, button.aButton{ background: #acacac url("../images/layout/btnSprite.png") left top repeat-x; font-size:11px; font-family:Arial,Helvetica,sans-serif; font-weight:bold; padding:5px 10px; color:#FFFFFF; border:1px solid #767676; text-align: center; float: left; white-space:nowrap; border-radius:3px; outline:0; text-decoration: none; margin-right: 10px; display:block; text-transform:capitalize; cursor:pointer;}
+.accountContainer .addressList .actions .editlink{background-position:left -296px; background-color:#838383; border:1px solid #838383;}
+.accountContainer .addressList .actions .editlink:hover{background-position:left -110px; background-color:#757575; border:solid 1px #757575;}
+.aButton:hover{ background-position:left -39px; background-color:#9a9a9a; border:1px solid #767676;}
+/* Common class for all buttons end */
+
+.btnDark, a.btnDark, input.btnDark, button.btnDark{ background-position:left -73px; background-color:#8c8c8c;}
+.btnDark:hover{ background-position:left -111px; background-color:#757575;}
+/* Dark Shade of grey color in this class : End */
+
+.btnColorA, a.btnColorA, input.btnColorA, button.btnColorA{ background-position:left -221px; background-color:#f89359; border:1px solid #db3e03;}
+.btnColorA:hover{ background-position:left -258px; background-color:#f97d40; border:1px solid #db3e03;}
+/* This class is used for orange button with common button class : End */
+
+.btnColorB, a.btnColorB, input.btnColorB, button.btnColorB{ background-position:left -149px; background-color:#c78e8e; border:1px solid #954a4a;}
+.btnColorB:hover{ background-position:left -187px; background-color:#b47171; border:1px solid #954a4a;}
+/* This class is used for pink button with common button class : End */
+
+.buttonDisable{opacity: 0.3;-ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=30)";}
+
+@-moz-document url-prefix() {
+    a.aButton {padding:6px 10px ;}
+}
+
+h1.titleTextIntend{ display: none;}
+/* -- Button Styles : End -- */
+
+/*---------- Global CSS end ----------*/
+
+/*---------- start: headerWrapper ----------*/
+/* start: topStrip before login */
+.topStrip{ background: url(../images/layout/hdr-topstrip.gif) 0px 0px repeat-x #f9f9fa; display:inline-block; width: 100%;}
+.topStrip .customerlinks{ float:right; min-width: 435px;}
+
+.topStrip .customerlinks ul li{list-style:none; display:inline-block; background:url(../images/layout/toplinkbg.png) left top repeat-x #7a5e72;}
+.topStrip .customerlinks ul li a{ color: #FFFFFF; text-decoration: none; text-transform: uppercase; display:block; padding: 3px 4px; font-size: 11px;}
+.topStrip .customerlinks ul li.myAccount{ position:relative; z-index:4;}
+.topStrip .customerlinks ul li.myAccount,
+.topStrip .customerlinks ul li.custServLink{ border-radius:0px 0px 5px 5px; cursor:pointer; float:right; margin-left:3px;}
+.topStrip .customerlinks ul li:hover,
+.topStrip .customerlinks ul li.myAccount:hover{ background: url(../images/layout/toplinkbg.png) 0px -36px repeat-x #7a5e72;}
+.topStrip .customerlinks ul li.myAccount a,
+.topStrip .customerlinks ul li.custServLink a{ color:#fff; font-size:12px; padding:5px 14px; display:inline-block; height:24px; line-height:24px; font-weight:bold;}
+.topStrip .customerlinks ul li.myAccount a span.icon{ height:15px; width:15px; display:inline-block; vertical-align:middle; background: url("../images/layout/myAccIcon.png") 0px 0px no-repeat; margin-bottom:2px; margin-left:5px;}
+.topStrip .customerlinks ul li.myAccount a:hover,
+.topStrip .customerlinks ul li.custServLink a:hover{ text-decoration:none;}
+/* end: topStrip before login */
+
+/* start: topStrip after login */
+.topStrip .welcomecoloum{ min-width:175px; float:right; height: 38px;}
+.topStrip .welcomecoloum #member-logedin{ float:right; position: relative; float: left; padding:16px 0px 10px 3px; text-transform: uppercase; font-weight: bold; color: #5c7f5f; font-family: "museo-sans",Arial,Helvetica,sans-serif;}
+.topStrip .welcomecoloum #member-logedin .welcomemessage{padding-left:2px;}
+.topStrip .welcomecoloum #member-logedin .username{}
+.topStrip .welcomecoloum #member-logedin .divider{  color: #5c7f5f; padding:0 0px 0 10px;}
+
+.topStrip .welcomecoloum .accountnav{ float:left; position: relative; z-index: 999; font-family: "museo-sans",Arial,Helvetica,sans-serif;}
+.topStrip .welcomecoloum .account{  color: #5c7f5f; display:inline-block; padding:16px 22px 10px 10px; text-transform: uppercase; font-weight: bold;background: url(../images/layout/top-link-arrow.png) 105px 20px no-repeat; }
+.topStrip .welcomecoloum .account:hover,
+.topStrip .welcomecoloum .accountnav:hover .account { background: url(../images/layout/myAccLink.gif) left top no-repeat #7b5d73; color:#FFFFFF;}
+
+.topStrip .welcomecoloum .accountnav .dropdownbox{ display: none; padding-top:8px; box-shadow:0 9px 9px 0 #929292;}
+.topStrip .welcomecoloum .accountnav .dropdownbox ul{ padding:0 0 8px 0}
+
+.topStrip .welcomecoloum .accountnav.active .dropdownbox,
+.topStrip .welcomecoloum .accountnav:hover .dropdownbox{ display:block; z-index: 99999; top: 38px; right:0px; background:url("../images/layout/transbg-white.png") left top; position: absolute; padding:15px 8px; z-index: 9999;}
+
+.topStrip .welcomecoloum .accountnav .dropdownbox li{text-align: right; width: 220px;  background: none;}
+.topStrip .welcomecoloum .accountnav .dropdownbox li a{color: #5c7f5f; text-transform: capitalize; padding:5px;}
+.topStrip .welcomecoloum .accountnav .dropdownbox li a:hover{ background: #f2d2d1;}
+.topStrip .welcomecoloum .accountnav .dropdownbox .sign-out{ text-align: right; margin-right:5px; color:#3f838d; font-weight: bold; padding: 8px 0 0; text-transform: uppercase;}
+.topStrip .welcomecoloum .accountnav .dropdownbox .sign-out a{color: #5c7f5f;}
+.topStrip .welcomecoloum .accountnav .dropdownbox .sign-out a:hover{color:#5c7f5f; text-decoration:underline;}
+/* end: topStrip after login */
+
+.headerWraper .navBar{ height:79px; }
+.headerWraper .pageWrapper{ position: relative;}
+.headerWraper .navBar{ background: url(../images/layout/topnavbg.gif) 0px 0px repeat-x #ffffff; border-bottom:1px solid #aaddb1; float: left; width: 100%; padding-top: 7px;}
+.headerWraper .navBar #logo{ float:left; display: inline-block; position: absolute; left:0px; right:0px; width:180px; height:126px;margin-left:3px}
+.headerWraper .navBar #logo a, .headerWraper .navBar #logo.nolink{background: url(../images/layout/logo.png) no-repeat scroll 0 0; display: block; height: 126px; width:180px;}
+
+.headerWraper ul.topNav{ float:right; display:inline-block; font-family: "museo-sans",Arial,Helvetica,sans-serif;}
+.headerWraper ul.topNav > li{ float:left; display:inline-block; position:relative; border-left:1px solid #98dba1;}
+.headerWraper ul.topNav > li:last-child {border-right: 1px solid #98dba1;}
+.headerWraper ul.topNav > li > a{ height:79px; line-height:79px; display:block; font-size:27px;font-weight:100; color:#464b38; padding:0px 20px; white-space:nowrap; text-decoration:none;}
+
+.headerWraper ul.topNav > li:hover > a,
+.headerWraper ul.topNav > li.active > a{ background: url(../images/layout/topnav-hover.gif) left top repeat-x;}
+
+.headerWraper ul.topNav .btnOrdernow{ border-left: 0px; margin-bottom: -10px;}
+.headerWraper ul.topNav > li.btnOrdernow {border-right: 0px;}
+.headerWraper ul.topNav .btnOrdernow a{ background: url(../images/layout/order-button-topnav.png) left top no-repeat; width:165px; height:87px; overflow:hidden; text-indent:-999em;}
+.headerWraper ul.topNav .btnOrdernow a:hover{ background: url(../images/layout/order-button-topnav.png) left -92px no-repeat;}
+
+.headerWraper ul.subnav { background-color:#e7f6e9; position: absolute; top:78px; display:none; border-radius: 0px 0px 5px 5px; left:-1px; z-index:99998; width:208px; border-right:1px solid #aaddb1; border-left:1px solid #aaddb1; border-bottom:1px solid #aaddb1;}
+.headerWraper ul.subnav li{ clear:both; display:block; padding-left: 5px; background: url(../images/layout/subnav-li-bg.gif) left top no-repeat; border-top:1px solid #aaddb1;}
+.headerWraper ul.subnav a{ display:block; height: 25px; line-height:25px; font-size: 18px; padding:10px 0 10px 18px; color:#4b4b4b; white-space:nowrap; }
+.headerWraper ul.subnav li:hover,
+.headerWraper ul.subnav li.active{ background:url(../images/layout/subnav-li-bg.gif) left bottom no-repeat;}
+.headerWraper ul.subnav li:hover a,
+.headerWraper ul.subnav li.active a{ text-decoration: none; background:url(../images/layout/subnav-link-bg.gif) left top #cdebd1 repeat-x;}
+.headerWraper ul.topNav > li:hover .subnav{ display:block;}
+/*---------- end: headerWrapper ----------*/
+
+/*---------- start: mainWrapper ----------*/
+.mainWrapper{ min-height:450px;}
+.leftsection, .leftColumn{ float: left; margin-right: 20px; width: 700px;}
+.rightsection, .rightColumn{ float: right; width: 220px;}
+
+.pageHead{ background:url(../images/layout/bannerBackground.png) center top repeat-x #f1f2f2; min-height: 113px; width:100%; float:left; border-bottom: 1px solid #cfcecd;}
+.pageHead .pageWrapper{ padding: 5px 0px;}
+.pageHead h2.pageTitle{ font-size: 40px; padding: 58px 0px 6px 0px; color: #6eb979; font-weight: 300; float: left;margin-left:5px;}
+.contentPages .pageHead h2.pageTitle{width:100%}
+.pageHead h3.pageHeadLine{font-size:18px; font-weight:400; color:#464545; padding:2px 0px 15px 0px; float:left;width:93%;margin-left:8px;line-height:20px;}
+.contentPages .pageHead sup{font-size: 20px;top: -14px;}
+.pageHead h3.intro{ color: #4b4a4a; font-size: 18px; font-weight: 300; margin:75px 0px 0px 18px; float: left;}
+
+.pageBody{ background:url(../images/layout/pagebody-bg.png) left top repeat-x #ffffff; }
+#terms-and-condition .pageBody, #privacy .pageBody, #money-back-guarantee .pageBody{ background:none; }
+/*---------- end: mainWrapper ----------*/
+
+/* SAS Page css*/
+#selectasystem .sasHead .mbgGuarantee{ float: right;}
+#selectasystem .sasTabs{ width:440px; float: left; position: relative;}
+#selectasystem .sasTabs .orderNowSideBySide h5{padding:0;}
+#selectasystem .sasTabs p{ color:#454545; line-height:20px; padding: 15px 8px 15px 15px;font-size:16px}
+#selectasystem .sasTabs.tab2{ margin-right: 32px; float: right;}
+#selectasystem .selectedKit2 .kitSummary h5{ padding:8px 15px 0;}
+#selectasystem .sasWrap,
+#selectasystem .selectedKit2 .theKits,
+#selectasystem .selectedKit2 .kitSummary,
+#selectasystem .selectedKit2 .productImage,
+#selectasystem .selectedKit2 .productDetails,
+#selectasystem .selectedKit2 .orderNowSideBySide{ clear:both;  width:100%; }
+
+#selectasystem .selectedKit2 .theKits{ background:url("../images/saspage/deluxekit-column-bg.png") right top repeat-y; padding-bottom: 48px; padding-top: 22px; height:1335px; width: 975px;}
+#selectasystem .sasTabs .kitInclude h5{padding:20px 0px 8px 17px;color: #3D3D3D;}
+#selectasystem .selectedKit2{ float: left; width: 100%;}
+/* #selectasystem .selectedKit2 .kitRating{ min-height:46px;} */
+#selectasystem .selectedKit2 .kitSummary{ line-height: normal; font-family: "museo-sans",Arial, Helvetica, sans-serif; font-size: 14px; width: 440px;}
+#selectasystem .selectedKit2 .kitDesc .orderNowSideBySide{float: left; margin-left: 2px; width: 438px; border: 1px solid #CCCCCC;box-shadow: 0px 5px 10px #ccc;}
+#selectasystem .selectedKit2 .orderNowSideBySide h5{ background: url(../images/layout/silver-border.gif) center top no-repeat #a0a0a0; padding-top: 3px;}
+#selectasystem .selectedKit2 .orderNowSideBySide h5 span{ background: url(../images/layout/heading-bg1.gif) left top repeat-x; color: #535a53; font-size: 14px; display: block; width:100%; height: 25px; line-height: 25px; text-indent: 15px;}
+#selectasystem .selectedKit2 .productDetails .orderNowSideBySide{float: left; margin-left: 0; width: 438px;}
+
+
+#selectasystem .detailDescription h4{ font-size: 22px; color: #74b77f; background: #dff1e2; border-bottom: 1px solid #d4d4d4; font-weight: 200; text-align: center; height: 50px; padding: 10px 0px; border-radius:8px 8px 0px 0px;}
+#selectasystem .detailDescription h4 .kitInfo{ font-size: 18px; color: #4d4d4d;}
+#selectasystem .detailDescription h4 sup{ top: -0.5em;}
+#selectasystem .detailDescription .productDesc{ display: inline-block; width: 100%;}
+#selectasystem .detailDescription .productDesc .kitDesc{ float: left; width: 445px;}
+#selectasystem .detailDescription .productImage{text-align: center;height: 296px; margin-bottom: -5px;margin-left: -1px;text-align: center;width: 447px;}
+#selectasystem .detailDescription .productImage img{ width: 100%;}
+#selectasystem .detailDescription .productDetails{ min-height: 805px; border-top:2px solid #775f70; border-bottom:2px solid #775f70; display:inline-block; font-family: "museo-sans",Arial, Helvetica, sans-serif; font-size: 14px; border:1px solid #D4D4D4; background: #ffffff; width: 438px; border-radius:8px 8px 0px 0px;margin-left: 2px;box-shadow: 0px 0px 10px #ccc;}
+#selectasystem .detailDescription .productDetails .kitInclude{ min-height:367px;}
+#selectasystem .detailDescription .productDetails .leftCol{ width: 150px; float: left;}
+#selectasystem .detailDescription .productDetails .leftCol h5{ line-height: 18px; font-size:15px;}
+#selectasystem .detailDescription .productDetails .rightCol{ width:265px; float: right; font-size: 12px;}
+
+#selectasystem .detailDescription .productDetails h3{ font-size:17px; color:#5c7f5f; font-weight:700; margin-bottom:30px; line-height:29px;}
+
+#selectasystem .discTypeList h3.ui-accordion-header{color:#555555;font-weight:500;clear: both; margin-bottom: 0px; font-size: 12px;padding-left:10px; border:none; border-top:1px solid #ccc; border-bottom:1px solid #ccc;text-transform: uppercase;margin-top:-1px;}
+h3.ui-accordion-header:hover{cursor:pointer;}
+#selectasystem .discTypeList h3.ui-accordion-header span{color:#5c7f5f;font-weight:900;font-style: italic;}
+#selectasystem .discTypeList h3.ui-accordion-header.ui-state-active{color: #5c7f5f;font-weight:900;border-radius:0px;}
+#selectasystem .bonusGifts .discTypeList h3.ui-accordion-header {background-color:#F2F9F2;}
+#selectasystem .bonusGifts .discTypeList h3.ui-accordion-header.ui-state-active {background-color:#F2F9F2;}
+#selectasystem .discTypeList .ui-accordion-content{background: url(../images/saspage/expandbg.png) left bottom repeat-x #e2e2e2;clear: both; color: #5E5E5E; font-size: 14px; padding:10px 10px 10px 30px;border-radius:0px;}
+#selectasystem .discTypeList ui-accordion-content-active{border-top:1px solid #ccc;}
+#selectasystem .discTypeList h3.ui-accordion-header .ui-icon{ float: left; margin-top: 3px;}
+
+#selectasystem .detailDescription .productDetails ul{ padding-bottom:0; margin-bottom:0; }
+#selectasystem .detailDescription .productDetails ul li{line-height: 1.2em;font-size:14px;}
+#selectasystem .detailDescription .productDetails ul li strong{ text-transform: uppercase;font-size:14px}
+#selectasystem .detailDescription .productDetails .kitInclude{ float:left; width:100%;}
+#selectasystem .detailDescription .productDetails .bonusGifts{ clear:both; float:left; width:100%;}
+#selectasystem .detailDescription .productDesc .orderVarButtonWraper{ width: 100%; float:left; background: url(../images/saspage/order-now-bg.png) left top no-repeat; margin-bottom: 12px; margin-left:-1px; width: 445px;}
+#selectasystem .detailDescription .orderVarButtonWraper{background: url("../images/saspage/order-now-bg.png") no-repeat scroll left top transparent;float: left;margin-bottom: 12px;margin-left: 0;width: 445px;margin-left:-1px}
+#selectasystem .detailDescription .OrderSubline{ font-size: 18px; font-weight: normal; text-align: center; padding-top:3px; width:100%; float:left;}
+#selectasystem .detailDescription .priceBlock{ padding:0px; clear:both; display:inline-block; width:100%; height: 60px;}
+#selectasystem .detailDescription .priceBlock .orderBtn{ width:256px; padding-left: 21px; height: 60px; float: left; color: #FFFFFF; font-size: 32px; line-height:60px; font-weight: 700; text-shadow:1px 1px 1px #bf5a00; display: block;background: url("../images/saspage/buttonbg.png") no-repeat scroll right 3px transparent;margin-right:-2px;}
+#selectasystem .detailDescription .priceBlock .orderBtn:hover{background-position:right -59px;}
+
+#selectasystem .detailDescription .kitselectionul{width:100%; float:left; min-height: 80px;}
+#selectasystem .detailDescription .kitselectionul li{ border-top: 1px solid #e6e6e6; font-size:14px; padding:10px; font-weight: normal; padding: 7px 10px; color: #606060;}
+#selectasystem .detailDescription .kitselectionul li.selected{ color: #272727;}
+#selectasystem .detailDescription  .SAS-disclaimer{float: left;font-size: 10px;margin: -12px 0 0 7px;}
+#selectasystem .detailDescription .kitselectionul li .opText{ padding:5px 0px; font-family: "museo-sans",Arial, Helvetica, sans-serif; }
+#selectasystem .detailDescription .kitselectionul li input{ float: left; margin: 5px 8px 0 0;}
+#selectasystem .detailDescription .deluxeOrderHeader{ clear: both; float: left; font-size: 18px; font-weight: 700; line-height:24px;  margin-bottom: 0px; color:#5c7f5f;  width:100%;}
+
+.bottomModule .sas-guarantee-bottom{ height: 131px; padding-left: 150px; background: url(../images/saspage/moneybck-guarantee-banner.png) left top no-repeat; clear: both; margin-left: -10px; margin-bottom: 25px; text-indent: -999em; overflow:hidden;}
+#selectasystem .showPrice{ height: 60px; font-size: 29px; line-height: 18px; font-weight: 300; width: 168px; display: inline-block; text-transform: uppercase; color: #535353; text-shadow: 0px 0px 2px #cccccc; float: left; text-align: center; padding-top: 15PX;}
+#selectasystem .contentasset.SAS-price { font-size: 13px; font-weight: 400; padding-left: 3px; padding-top: 2px;}
+#selectasystem .showPrice strong{font-weight:300;}
+#selectasystem .kitQuest{ float: left; color: #434343; text-decoration: underline;}
+#selectasystem #BVCustomerRatings{ float: right; width: 252px;}
+#selectasystem #BVCustomerRatings .BVRRRatingNormalImage{ float: right;}
+#selectasystem .BVRRAverageRatingFrom{ color: #434343;}
+
+#selectasystem .ui-dialog .ui-dialog-titlebar-close span{ background: url("../images/layout/closebtn.png") no-repeat 0 0; height: 26px; position: absolute; right: 17px; text-indent: -9999px; top: 30px;  width: 85px;}
+/* SAS Page css end*/
+
+/*---------- Footer css Start ----------*/
+#footer{color:#686868;font-family: "museo-sans",Arial,Helvetica,sans-serif;}
+#footer a{ color:#3b473d;}
+#footer a:hover{ color:#3b473d; text-decoration:underline;}
+
+#footer .socialBar{ background:url(../images/layout/footer-lft-grd.gif) left top repeat-y #e5e5e5; float: left; width: 100%;}
+#footer .socialBar .rightShade{ clear:left; float:left; width:100%; padding:7px 0px 0px 0px; height:75px; text-align:center;  background:url(../images/layout/footer-rht-grd.gif) right top repeat-y;}
+#footer .socialBar .rightTxt,#footer .socialBar .leftTxt{ float: left; display: inline-block; margin-top: 18px; font-size: 28px;}
+#footer .socialBar a.facebook{ background: url("../images/layout/facebook-icon.png") no-repeat scroll left top transparent; width: 67px; height: 67px; display:inline-block; float: left; margin: 0px 8px;}
+#footer .socialBar a.facebook:hover{ background: url("../images/layout/facebook-icon.png") no-repeat scroll left -67px transparent; }
+#footer .socialBar .rightTxt, #footer .socialBar .leftTxt {display: inline-block;float: left;font-size: 28px; margin-top: 18px;}
+
+#footer .customerCareBar{ background:#40393E; clear:left; float:left; width:100%; padding:10px 0; position: relative;}
+#footer .customerCareBar h2{ font-size:22px; color:#ffffff; float:left; text-transform: lowercase; font-weight:normal; margin-top: 5px; width:186px;}
+#footer .customerCareBar .needHelp{ color: #FFFFFF; float: left; font-size: 11px; padding: 12px 14px 9px 46px;}
+#footer .customerCareBar .callus{ float: left; padding: 5px 18px 0 6px;}
+#footer .customerCareBar .callusno{ font-size: 11px; font-weight: normal; padding-left: 0; padding-top: 12px; float: left; color:#ffffff;}
+#footer .customerCareBar .callusno span{ font-weight: bold; color: #A18C9B;}
+
+#footer .mainFooter{ background: url(../images/layout/mainfooter-bg.gif) 0px 0px repeat-x #9ec2a2; clear:both; min-height:190px; padding:22px 0px; width: 100%;}
+#footer .mainFooter p{ margin-bottom: 0px; color: #3c483d; font-size: 16px;font-weight:300;}
+#footer .mainFooter a.logo{ display:inline-block; width:180px; height:25px; overflow:hidden; text-indent:-9999em; background:url(../images/layout/sheercover-logo-ftr.png) left 0px no-repeat;}
+
+#footer .footerBottom{width:940px; margin:0px auto; padding: 15px 0px 5px;}
+#footer .footerBottom .grLogo{background: url("../images/layout/gr-logo.png") left 0 no-repeat; display: inline-block; float: left; height: 30px; overflow: hidden; text-indent: -9999em; width: 165px;}
+#footer .footerBottom p{font-size:9px; margin-left: 185px; display: block; margin-top: 5px;font-family:helvetica,Arial,Verdana, sans-serif;}
+#footer .footerBottom p span.registered{position:relative; top:-1px; font-size:10px;}
+
+#footer .footerLinks{ min-height:110px; width:398px; padding:0 2%; float:left; background: url(../images/layout/divider-line-ftr.gif) 0px 0px no-repeat;}
+#footer .footerBox{ height:auto; min-height: 180px; float:left; padding-left:12px;}
+#footer .footerBox h3{ color:#354337; font-weight:900; font-size:18px; line-height:normal; clear: both;}
+#footer .footerBox h3 span.registered{ position:relative; top:-6px; font-size: 11px;}
+#footer .footerBox ul{width:100%; float:left; margin: 10px 0px;}
+#footer .footerBox li{width:100%; float:left; margin-bottom:6px;}
+#footer .footerBox ul li a{font-size:14px;color: #3B473D;font-weight:400;}
+#footer .footerBox p{margin:0px; padding:0px;}
+
+#footer .moneyBackGurantee{ padding-left: 0px; padding-right: 15px;}
+#footer .moneyBackGurantee p{margin-top:10px;}
+
+#footer .pageLinks,
+#footer .helpfulLinks{ width:212px; background:url(../images/layout/footerDivider.gif) left top no-repeat;}
+#footer .helpfulLinks p{ font-size: 14px;margin-top: 5px;}
+
+#footer .beforeAfter{ width:305px; height:auto; float:right; background:url(../images/layout/footerDivider.gif) left top no-repeat;}
+#footer .beforeAfter img{ float: left; margin-right:5px;margin-left:-7px;margin-top: -2px;}
+#footer .beforeAfter p{margin-top:5px;}
+
+#footer .mainFooter1{ background:#ffffff; clear:both; min-height:60px; padding:0px; width: 100%;}
+
+.productDetails .bonusGifts .title{ background:url("../images/saspage/ribbon.png") no-repeat; color:#fff; font-weight:100; font-size:24px; height:25px; margin-left:-7px; padding:13px; width:429px;text-indent: -999px;}
+
+.ui-state-default, .ui-widget-content .ui-state-default { background:none; background-color:transparent; border:none; border-bottom:1px solid #D3D3D3; border-top:1px solid #D3D3D3;}
+.ui-icon-triangle-1-e{background-position: -15px -126px;}
+.ui-icon-triangle-1-s{background-position: -47px -126px;}
+
+.shoppingcartpage .pageBody{background: url(../images/layout/pagebody-bg.png) left 90px repeat-x #ffffff;}
+#ptChekoutsingle{margin:0 auto;padding:0;width:940px;}
+#ptChekoutsingle .offerSidebarLeft{width:221px; height:auto; float:left;}
+#ptChekoutsingle .offerSidebarLeft #valueUpsellSection,#ptChekoutsingle .offerSidebarLeft .offerImage{width:100%; float:left;}
+#ptChekoutsingle .offerSidebarLeft #valueUpsellSection .boxTitle{display:none;}
+#ptChekoutsingle .checkoutform #personinfo  h4 {font-size: 13px;margin-bottom: 2px;border-bottom: 1px solid #687b09;color: #687b09;padding: 5px 0;font-family: Arial, Helvetica, sans-serif;}
+#ptChekoutsingle .checkoutHeader{width:100%; height:auto; float:left;}
+.cart-header-text-billing-details{width:100%; height:auto; float:left;}
+#ptChekoutsingle .checkoutHeader h3{color:#333;font-size:18px; font-weight:bold; margin:0; padding:18px 0 14px;text-transform:uppercase;width:100%;}
+#ptChekoutsingle .checkoutHeader h2{color:#8c668c;font-size:36px; font-weight:200; margin:0; padding:0 0 20px;width:100%;}
+#ptChekoutsingle .checkoutHeader p{color: #333333;font-size: 17px;font-weight: bold;line-height: 24px; margin-bottom:0px;}
+
+#personinfo .paymentInfo{display: block;}
+/* Contact Form */
+#ptChekoutsingle .orderByPhone{padding-top:30px;}
+#ptChekoutsingle .orderByPhone,#ptChekoutsingle .cartLeftPromo{font:bold 20px arial; color:#7c8f24;position:relative;}
+#ptChekoutsingle .orderByPhone .orderPhone{text-align: center;padding-left: 15px; padding-top: 15px;font-size: 21px;font-weight: bold; width: 180px;}
+#ptChekoutsingle .orderByPhone .orderText{color: #464646;font-size: 16px;padding-left: 18px;padding-top: 10px;text-align: center; width: 170px;}
+#ptChekoutsingle .blockTop,#ptChekoutsingle .block,#ptChekoutsingle .blockContent,#ptChekoutsingle .blockTopRight,#ptChekoutsingle .blockGrey,#ptChekoutsingle .blockBottomRight,#ptChekoutsingle .blockBottom{background:none; padding:0;overflow:visible;}
+#ptChekoutsingle .productimage{text-align:center; margin-top:24px;margin-left: 3px;}
+#ptChekoutsingle .personInfform input[type='text']{height:26px;line-height:26px; verticle-align:middle; padding:0; width:310px;padding: 0 0 0 5px;}
+#ptChekoutsingle .cbShipping .checkbox{float: right;  width: 113px;}
+#ptChekoutsingle label{font-size: 13px;padding:12px 0 8px; color:#555;}
+#ptChekoutsingle .asbilling label{ float:none; font-weight:bold; color:#FFF;}
+#ptChekoutsingle .contactinfo .row{width:220px; padding: 4px 20px 4px 0;}
+#ptChekoutsingle .contactinfo .row.phonecontainer{float:right;padding-right:0;width:230px;}
+#ptChekoutsingle .contactinfo .formfield{margin-bottom:2px;}
+#ptChekoutsingle #dwfrm_personinf_contact_email,#ptChekoutsingle #dwfrm_personinf_contact_emailconfirm{width:218px;}
+#ptChekoutsingle #daytimePhone,#ptChekoutsingle #eveningPhone{width:218px;}
+#ptChekoutsingle .contactinfo .age.row{ width:60px;}
+
+#ptChekoutsingle .thankyoumessage{float:left;margin-bottom: 2px;float: left; font-family:"museo-sans",Arial,Helvetica,sans-serif;}
+#ptChekoutsingle .thankyoumessage h2{font-weight:bold;padding:12px 10px 10px;font-size:20px;font-weight:700;}
+#ptChekoutsingle .orderConfimationContainer .thankyoumessage h2{margin-bottom: 24px;}
+#ptChekoutsingle #dwfrm_personinf_useAsBillingAddress{display: block; margin:2px; }
+#ptChekoutsingle .billingShipping{float:left; width:666px; padding:0 15px;border: 1px solid #E0E0E0;border-radius: 0 0 5px 5px;}
+
+#ptChekoutsingle .orderTotalFinal{color:#333;float: right;font-size: 24px;font-weight:900;height: auto;margin: 6px 0 0; padding: 0 14px 0 0;text-align: right; width: auto;}
+#ptChekoutsingle .orderTotalFinal .cocartLabel{font-weight:300;}
+#ptChekoutsingle .orderTotalFinal.ordertotalfinal{width:50%;}
+/* Payment module */
+
+#ptChekoutsingle .checkoutBox.paymentInfo{border-radius:7px; float:left;width:696px; padding:0; margin:30px 0 10px;}
+#ptChekoutsingle .checkoutBox.paymentInfo .checkoutBoxInner{float:left; width:100%; padding:0px 0px 3px 0px;border: 1px solid #CCCCCC; border-radius: 0 0 5px 5px;}
+#ptChekoutsingle .checkoutBox.paymentInfo label.blockheading{margin-bottom:15px}
+#ptChekoutsingle .checkoutBox.paymentInfo .checkoutBoxInner .paymentMethod.formfield{ padding: 25px 14px 9px;}
+#ptChekoutsingle .checkoutBox.paymentInfo .checkoutBoxInner .carddetails{border-top: 1px solid #D4D4D4;float: left;padding-left: 15px;width: 682px;}
+#ptChekoutsingle .checkoutBox.paymentInfo .paymentMethod{clear:both; width:100%;margin-bottom: 17px;}
+#ptChekoutsingle #creditCardNumber{width:240px;}
+#ptChekoutsingle .checkoutBox.paymentInfo .expirationDate .value{margin-top:0px;width:100%;}
+#ptChekoutsingle .checkoutBox .statezip .state{width:133px; float:left; margin-right:22px;}
+#ptChekoutsingle .billingShipping .selectbox{width:130px; height:28px;padding:5px;}
+#ptChekoutsingle .personInfform .checkoutBox .zip{width:134px; float:left;}
+#ptChekoutsingle .formfield{padding:0px; margin-bottom:10px;}
+#ptChekoutsingle .formfield.statezip{margin-top:5px;}
+#ptChekoutsingle .cbBilling,#ptChekoutsingle .cbShipping{float:left; min-height:374px; width:327px; padding: 0 0 25px;}
+#ptChekoutsingle .cbShipping {padding-left:15px; width:300px;}
+#ptChekoutsingle .cbBilling .formfield.firstName{margin-top:10px;}
+#ptChekoutsingle .cbShipping .formfield{margin-bottom:15px;}
+#ptChekoutsingle .remove_item{color: #5E5E5E; float: left; font-size: 12px; margin-top: 7px; text-decoration: underline;}
+#ptChekoutsingle .remove_item:hover{text-decoration:none;}
+#ptChekoutsingle #shippingMessageBlock p a{color:#86120D;}
+#ptChekoutsingle #shippingMessageBlock p{margin-bottom:0px;font-weight: 900;font-size: 14px;}
+#ptChekoutsingle .billingShipping .cbBilling,#ptChekoutsingle .billingShipping .cbShipping{position:relative; }
+#ptChekoutsingle .billingShipping .cbShipping{ border-left: 1px solid #E0E0E0; min-height: 440px;}
+#ptChekoutsingle .billingShipping .cbBilling{border-right: 1px solid #E0E0E0;margin-right:-1px}
+#ptChekoutsingle #cartcontent  .checkoutform .billingShipping .cartShipping { margin-left: 5px;  min-height: 416px;}
+#ptChekoutsingle .checkoutSteps, .ptCheckoutRetention .checkoutSteps,.ptCheckOutOrder .checkoutSteps{height:auto;float:left; width:100%;}
+#ptChekoutsingle .billingShipping .cbBilling .formfield{margin-bottom:3px;}
+#ptChekoutsingle .billingShipping .cbBilling .formfield label, #ptChekoutsingle .checkoutBox.accessInfo .checkoutBoxInner .password.row, #ptChekoutsingle .checkoutBox.paymentInfo .expirationDate, #ptChekoutsingle .checkoutBox.paymentInfo .cardNumber{font-style: italic; font-weight: 500; padding: 12px 0 8px;}
+#ptChekoutsingle .checkoutBox.paymentInfo .cardNumber,
+#ptChekoutsingle .billingShipping .cbBilling .formfield span.errormessage{float:left;width:100%;}
+#ptChekoutsingle .billingShipping .cbBilling .lastName{padding-bottom:3px;}
+#ptChekoutsingle .billingShipping .cbBilling .statezip{padding-top:0px; margin-top:3px;}
+#ptChekoutsingle .checkoutRight .completeyourorder{font-size: 0;height: 40px;position: absolute;right: 20px;text-indent: -9999px;top:80px;width: 247px;}
+#ptChekoutsingle .checkoutRight .completeyourorder button{width:247px; height:40px; float:left; text-indent:-9999px; font-size:0px; background:url(../images/completeYourOrder.png) no-repeat left top; padding:0px;}
+#ptChekoutsingle .checkoutMainContent{margin-right: 0px; width:665px;}
+#ptChekoutsingle .checkout_box_inner{width:100%;border: 1px solid #E0E0E0;}
+#ptChekoutsingle .ch_selected_products{width:696px;font-family: "museo-sans",Arial,Helvetica,sans-serif;}
+#ptChekoutsingle .ch_selected_products .imagecolumn{width:160px;text-align:left;padding: 8px 15px 0;}
+#ptChekoutsingle .checkoutRight .completeyourorder .reviewContOrder .continueBtn{font:bold 14px Arial, Helvetica, sans-serif; padding:7px 0;}
+.moneyBackGuaranteeBox{width:100%; height:auto; float:left; left:-10px;position:relative;}
+.actressCelebritiesDetail{width:100%; float:left;}
+.actressCelebrities{width:220px; height:auto; float:left; padding-bottom:30px; background:url(../images/leftBoxBottom.gif) no-repeat left bottom #fff;}
+.actress-celebrities-left .actressCelebrities .actressCelebritiesDetail p{color:#323335;font-size:18px;line-height:23px;width:194px; margin-top:15px; padding-left:15px;}
+.actress-celebrities-left .actressCelebrities .actressCelebritiesDetail p span{color:#8E668B;float:left;font-size:11px;font-weight:bold;letter-spacing:0.9px;padding-left:12px;text-transform:uppercase;width:100%;}
+.actress-celebrities-left .actressCelebrities .actressCelebritiesDetail a{width:212px; height:30px; float:left; margin-top:9px;margin-bottom:14px; position:relative; left:-10px; background:url(../images/meetMoreCelebritiesBtn.gif) no-repeat left bottom; text-indent:-9999px; font-size:0px;}
+.actress-celebrities-left .actressCelebrities .actressCelebritiesDetail a:hover{background-position:left top;}
+/* START: accessInfo */
+#ptChekoutsingle .checkoutBox.accessInfo .textinputpw, #ptChekoutsingle .checkoutBox.accessInfo .age input{padding:0;height:26px;}
+#ptChekoutsingle .checkoutBox.accessInfo .textinputpw{width:218px; height:26px;}
+#ptChekoutsingle .checkoutBox.accessInfo, #ptChekoutsingle .checkoutBox.agreeTerms{float: left;width: 666px;padding: 15px;border: 1px solid #E0E0E0; border-radius:0 0 5px 5px}
+#ptChekoutsingle .checkoutBox.accessInfo.agre{width:470px; border:none;font-size: 14px;font-weight: 300;padding:0px 0px 0px 5px;color:#2d2d2d;margin-bottom:10px}
+#ptChekoutsingle .checkoutBox.accessInfo.agre .agreeTermsBox .checkbox {float: left; margin-right: 5px;}
+#ptChekoutsingle .checkoutBox.accessInfo.agre .agreeTermsBox  a#agreeTerms{color:#2d2d2d; cursor:auto;font-weight:300;}
+#ptChekoutsingle .checkoutBox.accessInfo .checkoutBoxInner{float: left;padding: 10px 0 0 0px;}
+#ptChekoutsingle .checkoutBox.accessInfo .checkoutBoxInner .password.row{width:220px; height:auto; float:left; margin-right:20px;}
+#ptChekoutsingle .checkoutBox.accessInfo .checkoutBoxInner .passwordconfirm.row{width:220px; height:auto; float:left;padding: 10px 0 13px;}
+#ptChekoutsingle .checkoutBox.accessInfo .infoText{font-size: 16px; padding: 0; margin: 0; line-height: 32px;}
+#ptChekoutsingle .checkoutBox.accessInfo .infoText sup{top: -0.5em;}
+#ptChekoutsingle .checkoutBox.accessInfo label{padding:0 0 10px 3px; font-weight:700; font-style:italic;}
+#ptChekoutsingle .accessInfo h3{float:left;font-size:12px;font-weight:bold;margin:15px 0 10px;width:100%;}
+#ptChekoutsingle .accessInfo .access-your-account h3{margin: 0 0 17px 0;text-transform: uppercase;font-size: 13px;font-weight: 900;}
+#ptChekoutsingle .accessInfo .age .textinput#age{width:58px;}
+#ptChekoutsingle .accessInfo .passwordconfirm {padding: 10px 0;}
+#ptChekoutsingle .accessInfo .gender {padding: 8px 0;}
+#ptChekoutsingle .accessInfo .gender .options label{float:left;margin-right:10px;width:auto;}
+/* Order summary */
+#ptChekoutsingle .orderConfimationContainer .ch_selected_products td.detailscolumn{font-size:13px;padding:0;width:700px;padding:10px 0 4px 18px}
+#ptChekoutsingle .orderConfimationContainer .ch_selected_products td.detailscolumn .name{color:#6a6a6a;font-size:18px;font-weight:300;}
+
+#ptChekoutsingle #orderConfirmNum{display: inline;}
+#ptChekoutsingle .ordersummary,#ptChekoutsingle .yourinformation{display: block; float: left;margin: 11px 0 0; position: relative; width: 698px;}
+#ptChekoutsingle .contactinfo .options.row label {font-style: normal; margin-right: 10px; }
+#ptChekoutsingle .ordersummary{ font-size:14px;margin-bottom: 40px; }
+#ptChekoutsingle .ordersummaryprice div{padding-top: 1px;float: right;font-size:13px;clear: right;margin-right:32px;}
+#ptChekoutsingle .ordersummaryprice .merchandiseTotal{display: inline;}
+#ptChekoutsingle .ordersummaryprice .shippingMethod{display: inline;}
+#ptChekoutsingle .ordersummaryprice .totalPrice{display: inline;}
+
+#ptChekoutsingle .paymentandshippinginfo{border-top: solid 1px #ccc; padding-top: 10px; margin-top: 10px;}
+#ptChekoutsingle .paymentandshippinginfo h3{font-weight: bold;}
+#ptChekoutsingle .paymentandshippinginfo .paymentinfo{float: left;}
+#ptChekoutsingle .paymentandshippinginfo .shipptoaddress{float: right; width: 120px;}
+#ptChekoutsingle .paymentandshippinginfo .billtoaddress{float: right; width: 120px;}
+#ptChekoutsingle .campaignPhoneSection .phonevalue{font-size: .95em; font-weight: bold; border-bottom: 1px solid #D6D6D6; padding-left: 10px;}
+#ptChekoutsingle .orderConfimationContainer .quantitycolumn,#ptChekoutsingle .orderConfimationContainer .itemtotalcolumn{font-size:13px;text-align:right;width:75px;}
+#ptChekoutsingle .orderConfimationContainer .ch_selected_products td{padding: 10px 0 4px 9px;font-size:18px;}
+#ptChekoutsingle .orderConfimationContainer .ch_selected_products td.quantitycolumn{ padding-top:14px;padding-right:8px; text-transform:uppercase;font-size:14px;color:#6a6a6a;}
+#ptChekoutsingle .orderConfimationContainer .ch_selected_products td.itemtotalcolumn{font-size:20px;text-align:right;width:90px;padding-right:10px;padding-top:13px;}
+#ptChekoutsingle .orderConfimationContainer .quantitycolumn .quantityLabel{padding-right:3px;}
+#ptChekoutsingle .custInfo{font-size: 14px;}
+#ptChekoutsingle .completeyourorder .reviewContOrder .continueBtn{font:bold 14px Arial,Verdana,Helvetica,sans-serif;padding:7px 34px; float: right; margin-bottom: 15px;}
+#ptChekoutsingle .selectedMethod{ padding: 10px 0;width: 300px;}
+#ptChekoutsingle .paymentandshippinginfo .paymentinfo .payPalAccount{width:230px;}
+#questionsimage{text-align: center;}
+
+
+#ptChekoutsingle .orderConfimationContainer .ordersummary .ordersummaryprice{border-top: 1px solid #ccc; font-family:"museo-sans",Arial,Helvetica,sans-serif;}
+#ptChekoutsingle .orderConfimationContainer .ordersummary .ordersummaryprice .cocart-container{font-size: 14px;margin-right: 0; padding:4px 10px 5px 5px;text-transform: uppercase;width:97.7%;display: block;text-align: right;border-bottom:1px solid #ccc}
+#ptChekoutsingle .orderConfimationContainer .ordersummary .ordersummaryprice .cocart-container .cocart-label{font-size:15px;text-align:right;text-transform:uppercase;width:128px;}
+#ptChekoutsingle .orderConfimationContainer .ordersummary .ordersummaryprice .cocart-container span.cocart-label{float: left;padding-left: 462px;padding-top: 3px;color:#6A6A6A}
+#ptChekoutsingle .orderConfimationContainer .ordersummary .ordersummaryprice .cocart-container.yourTotal{padding:13px 10px 15px 5px;}
+#ptChekoutsingle .orderConfimationContainer .ordersummary .ordersummaryprice .cocart-container.yourTotal span.cocart-label{float:left;padding-left:93px;padding-top:3px;color:#212121}
+
+#ptChekoutsingle .orderConfimationContainer .yourinformation .custInfo{line-height:22px; font-family:"museo-sans",Arial,Helvetica,sans-serif;}
+#ptChekoutsingle .orderConfimationContainer .yourinformation .paymentandshippinginfo{ float:left; border-top:none; font-family:"museo-sans",Arial,Helvetica,sans-serif;border-top: 1px solid #CCCCCC;width: 97.5%;margin-bottom:10px}
+#ptChekoutsingle .orderConfimationContainer .yourinformation .paymentandshippinginfo h3{margin-bottom:5px;text-transform:uppercase;color:#87ad8c;font-weight:900;}
+#ptChekoutsingle .orderConfimationContainer .yourinformation .paymentandshippinginfo div{ font-size: 14px; line-height: 20px;}
+#ptChekoutsingle .orderConfimationContainer .yourinformation .paymentandshippinginfo .paymentinfo {margin-right:50px; width: auto;}
+#ptChekoutsingle .orderConfimationContainer .yourinformation .paymentandshippinginfo .billtoaddress{width:190px;margin-right:10px;}
+#ptChekoutsingle .orderConfimationContainer .yourinformation .paymentandshippinginfo .shipptoaddress{width:190px;}
+#ptChekoutsingle .orderConfimationContainer .yourinformation .paymentandshippinginfo span.cardname{text-transform:uppercase;font-weight:700;color:#404040; }
+#ptChekoutsingle .orderConfimationContainer .yourinformation .paymentandshippinginfo .paymentinfo .expires span{text-transform:uppercase;font-weight:700;color:#404040;}
+#ptChekoutsingle .orderConfimationContainer .yourinformation .paymentandshippinginfo .billtoaddress .addressname,
+#ptChekoutsingle .orderConfimationContainer .yourinformation .paymentandshippinginfo .shipptoaddress .addressname{font-weight: 700;color: #404040;}
+#ptChekoutsingle .orderConfimationContainer .yourinformation .paymentandshippinginfo .billtoaddress .addressphone{margin-top:5px;}
+/* Confirmation Cross Pop Up */
+.crosssellitem {background: none repeat scroll 0 0 white;  border: 1px solid #CCCCCC;  display: none; float: left; left: 22%; position: absolute; top: 50px; width: auto; z-index: 1000;}
+.crosssellitem-header a { background: url("../images/interface/dialog/close.png") no-repeat scroll center center transparent; height: 24px;margin: -12px -12px 0 0;position: absolute; right: 0; width: 25px; z-index: 10;}
+.crosssellitem-header a span { display: none;}
+.crosssellitem .crosssellitem-header a { background: url("../images/popup_close.gif") no-repeat scroll center center transparent; height: 26px;margin:0px 0px 0 0;position: absolute; right: 0; width: 27px; z-index: 10;}
+.crosssellitem .crosssellitem-header a span { display: none;}
+
+/* Total price */
+#ptChekoutsingle #totalshippingprice{text-align: right; line-height: 16px; height: 16px; float: right; padding-left: 20px; width: 300px;}
+#ptChekoutsingle #shipTotal{display: inline;}
+#ptChekoutsingle #totalshippingprice.loading{background: url(../images/ajax-loader-small.gif) left center no-repeat;}
+#ptChekoutsingle #paymentinfoerrors{clear: left; width:200px;}
+#ptChekoutsingle #paymentinfoerrors .errormessage{float: left; width: 50%;}
+#ptChekoutsingle .order-totals{float:left;font-size:11px; width:100%;}
+
+/* Order summary */
+#ptChekoutsingle #orderConfirmNum{display: inline;}
+
+#ptChekoutsingle .orderConfimationContainer .ch_selected_products{margin:24px 0 20px;width: 698px;color: #555;font-family: "museo-sans",Arial,Helvetica,sans-serif;}
+#ptChekoutsingle .arrivePeriod, #ptChekoutsingle .ordersummary,#ptChekoutsingle .confirmemail,#ptChekoutsingle .orderno{color:#767676;float:left;font-size:14px;width: 698px;}
+#ptChekoutsingle .thankyoumessage .orderno{color:#4d4d4d;font-weight:900;font-size:14px;padding-left:17px;}
+#ptChekoutsingle .thankyoumessage .orderno, #ptChekoutsingle .thankyoumessage .confirmemail{margin-top:0px;width:95%;}
+#ptChekoutsingle .thankyoumessage .orderno #orderConfirmNum{color: #728E76;font-weight: 900;}
+#ptChekoutsingle .ordersummary h2,#ptChekoutsingle .yourinformation h2{background: url("../images/checkoutpage/heading-bg.png") repeat-x scroll 0 0 transparent;font-size: 16px; font-weight: bold;height:12px;padding:9px 9px 9px 15px;text-transform:uppercase;border-bottom: 1px solid #CCCCCC;border-top: 1px solid #CCCCCC;color:#5D5D5D  }
+#ptChekoutsingle .ordersummaryprice{border-top: solid 1px #ccc; margin-top: 10px;float:left;width:100%;}
+#ptChekoutsingle .ordersummaryprice .merchandiseTotal,#ptChekoutsingle .ordersummaryprice .shippingMethod,#ptChekoutsingle .ordersummaryprice .totalPrice{display: inline;float:right;padding-right: 5px;}
+#ptChekoutsingle .ordersummaryprice #orderTotal,#ptChekoutsingle .ordersummaryprice .cocart-label{font-size:13px;text-transform: capitalize;}
+#ptChekoutsingle .ordersummaryprice .yourTotal{font-weight:bold;background-color:#F2F9F2;}
+#ptChekoutsingle .orderno{margin-top:10px; margin-bottom:6px;}
+#ptChekoutsingle .paymentandshippinginfo{border-top: solid 1px #ccc; padding:11px 0px 2px 18px; margin-top: 10px;}
+#ptChekoutsingle .paymentandshippinginfo h3{font-weight: bold;}
+#ptChekoutsingle .paymentandshippinginfo .paymentinfo{float: left;}
+#ptChekoutsingle .paymentandshippinginfo .paymentinfo,#ptChekoutsingle .paymentandshippinginfo .expires,#ptChekoutsingle .paymentandshippinginfo .billtoaddress{float: left;min-width:190px;}
+#ptChekoutsingle .paymentandshippinginfo .shipptoaddress{float: left; width: 21%; line-height:22px;}
+#ptChekoutsingle .campaignPhoneSection .phonevalue{font-size: .95em; font-weight: bold; border-bottom: 1px solid #D6D6D6; padding-left: 10px;}
+#ptChekoutsingle #questionsimage{text-align: center;}
+#ptChekoutsingle .orderConfimationContainer .serviceMessage{float: left;font-size:13px;margin: 20px 0;width: 650px;}
+span#subTotal,span#shipTotal,span#orderTotal{font-size:20px;width:86px;color:#212121;font-weight:700;}
+#ptChekoutsingle .orderConfimationContainer .ordersummary .ordersummaryprice .cocart-container .cocart-message{font-size:12px;width:368px;float:left;font-weight:300;line-height:14px;}
+#ptChekoutsingle .ordersummaryprice #orderTotal{font-size:20px;font-weight:900;color:#212121}
+/* Total price */
+
+#ptChekoutsingle #totalshippingprice{text-align: right; font-family: "museo-sans",Arial,Helvetica,sans-serif; font-size: 15px; line-height: 16px; height: 16px; float: right; padding-left: 20px;}
+#ptChekoutsingle #shipTotal{display: inline;color:#878787;font-weight:300;}
+#ptChekoutsingle #totalshippingprice.loading{background: url(../images/ajax-loader-small.gif) left center no-repeat;}
+#ptChekoutsingle #paymentinfoerrors{clear: left; width:200px;}
+#ptChekoutsingle #paymentinfoerrors .errormessage{float: left; width: 50%;}
+/* END:ACQ. checkout page */
+
+/* popup close btn */
+.quickViewDialog-close span.ui-icon {background-image: url("../images/layout/video-quick-close.jpg");background-position: center center;height: 22px;  position: absolute;right: 17px;top: 20px;width: 66px;}
+.ui-widget-content #terms,.ui-widget-content #privacypolicy{padding:0px;}
+.ui-widget-content #terms .terms-and-condition,.ui-widget-content #privacypolicy .privacy{padding:0px 14px; background:#fff;}
+#ui-dialog-title-terms,#ui-dialog-title-privacypolicy, #ui-dialog-title-security{padding:.5em 0 0.2em 1em;}
+.ui-dialog .crossViewDialog-close{margin:-6px 17px 0;position:relative;float:right;z-index: 999;}
+.ui-dialog .crossViewDialog-close span{background: url("../images/layout/close.png") 0 0 no-repeat;height: 26px;position: absolute; width: 35px;text-indent: -9999px;}
+.ui-dialog-title-cross{display:none;}
+/* popup close btn */
+
+/*soft login box starts here*/
+#persistcartdialog{float:left; padding:30px 63px 34px 34px; color: #4E4D4B; border:1px #bcbbb7 solid; }
+#persistcartdialog .head-popup{font: bold 14px/18px arial;}
+#persistcartdialog .head-text{font: 12px/18px arial;}
+#persistcartdialog a{margin-top:20px;}
+#checkoutlogincontent{height: auto;   padding: 25px; width: auto;}
+
+.accountlogin.box{ float: left; width:100%;}
+.accountlogin.box .loginCustomers{ border-right: 1px solid #D6D6D6; float: left; width: 315px;}
+.accountlogin.box .loginCustomers h3{ color: #262626; font-size: 14px; font-weight: normal; padding-bottom: 18px;}
+.accountlogin.box .loginCustomers input[type=text],.accountlogin .loginCustomers input[type=password]{width: 276px;}
+
+.accountlogin.box .logincustomers .formfield{  float: left; margin-top: 0; padding: 3px 0; width: 100%;}
+.accountlogin.box .logincustomers .formfield .checkbox input{ float: left; margin: 2px 3px 0 0;}
+.accountlogin.box .logincustomers .formfield .checkbox label{ float:none; font-size: 11px; width: auto; display:inline-block;}
+.accountlogin.box .logincustomers  .brownButton{text-transform: uppercase; font-weight: bold;font-family: arial; font-size: 14px; font-weight: bold;  padding-left: 15px;
+    padding-right: 10px; margin-top: 10px;}
+.accountlogin.box .logincustomers  .brownButton .rightDirection{margin: 0; padding: 4px 10px 0 0;}
+.accountlogin.box .logincustomers .forgotpassword a{ border-bottom: medium none;   color: #775F70; font: 11px arial;padding-top: 15px; float: left;}
+.accountlogin.box .logincustomers .requiredtexttext{ padding-top: 21px;font-size: 12px;}
+.ui-dialog .ui-dialog-titlebar-close span{ background: url("../images/layout/closebtn.png") no-repeat 0 0; height: 26px; position: absolute; right: 17px!important; text-indent: -9999px; top: 30px;  width: 85px;}
+
+.accountlogin.box .logincustomers .username{  margin-bottom: 5px;}
+.accountlogin.box #inqC2C5ImgContainer{float: right; width:209px; height:200px;background: url("../images/live-chat.jpg") no-repeat scroll 0 0 transparent; }
+.accountlogin.box .rightcoloum{float: right; width: 207px;}
+.wapper-dialog-error{  border: 1px solid #bcbbb7;padding: 0;}
+.wapper-dialog-error #ui-dialog-title-qty_limit{padding: 0;}
+
+.wapper-dialog-error #qty_limit .title,
+.wapper-dialog-error #li_limit .title,
+.wapper-dialog-error #qty_li_limit .title{color: #C10100; font-size: 14px;font-weight: bold;}
+
+.wapper-dialog-error #qty, .wapper-dialog-error #li_limit, .wapper-dialog-error #qty_li_limit {color: #C10100; font-size: 12px; padding:6px 38px 25px;}
+.wapper-dialog-error #qty_limit .text, .wapper-dialog-error #li_limit .text, .wapper-dialog-error #qty_li_limit .text{line-height:18px;}
+.ui-dialog .ui-dialog-titlebar-close span{right:-17px;}
+
+.contactusThankyou h1{ font:41px CenturyGothic, AppleGothic, sans-serif bold; text-transform:uppercase; line-height:34px; padding:10px 0px 20px 0px;}
+.contactusThankyou{ clear: both; margin: 0 auto; padding-bottom: 120px; padding-top:10px; width: 925px;min-height: 500px;}
+.contactusThankyou .contactus.messagesent{float: left; padding:12px 0 0 6px;position:relative;}
+.contactusThankyou .contactus.messagesent p{font-size:14px; line-height:18px;}
+.callUs{width:100%; height:auto; float:left; padding:16px 0 18px 0;}
+.callUs h5.widgetTitle{text-transform:uppercase; color:#fff; font-weight:bold; font-size:16px;}
+.callUs .phoneNum{color:#fff; font-weight:normal; font-size:19px; margin-top:5px;}
+.ptProductDetails .productReviews{margin-top: 0;}
+.ptProductDetails .productReviews #pdpReviewsTab #Select300_Bazaar{ width: 100%;}
+.ptProductDetails .productReviews #pdpReviewsTab{padding:0;}
+
+
+.mainWrapper .contentasset.privacy h3,.mainWrapper .contentasset.terms-and-condition h3{font-size: 22px;font-weight: bold;line-height: 24px;margin: 20px 0;padding: 0;text-transform: uppercase;}
+.mainWrapper .contentasset.privacy h4,.mainWrapper .contentasset.terms-and-condition h4{color: #48423B;font-size: 15px;line-height: 20px;}
+.mainWrapper .contentasset.privacy p,.mainWrapper .contentasset.terms-and-condition p,.mainWrapper .contentasset.money-back-guarantee p{color: #555;font-size: 16px;line-height:20px;margin: 0 0 19px;padding:0;}
+.mainWrapper .contentasset.privacy a,.mainWrapper .contentasset.terms-and-condition a{color: #FF6611;text-decoration: underline;}
+.guarLeft{float:left;height:auto;left:-20px;padding:22px 0;position:relative;width:530px;}
+.guarRight{width:360px; height:auto; float:left; text-align:left; margin-top:66px; padding: 0 0 22px;}
+.mainWrapper .contentasset.money-back-guarantee .guarRight h4{color:#353535;font-size:18px;font-weight:normal;line-height:23px;margin-bottom:15px;}
+.mainWrapper .contentasset.money-back-guarantee .guarRight h3{color:#775F70;font-size:36px;font-weight:normal;margin:0 0 7px;padding:0;width:100%; line-height:38px;}
+.mainWrapper .contentasset.money-back-guarantee .guarRight p{margin:0 0 16px;}
+.mainWrapper .contentasset.money-back-guarantee .guarRight p span.registered{position:relative;top:-3px;font-size:10px;}
+
+/* SAS Page css*/
+/* SAS Page css end*/
+
+/* kitCustomizer css begin */
+.accountContainer .cmmWrapper{float:left; background: url("../images/layout/ret-hmpg-topstrip.gif") center top repeat-x #ffffff; border-left:1px solid #dbd4d9; border-top:1px solid #a793ab; border-right:1px solid #dbd4d9; padding:30px 29px 0px 29px; width: 880px;  margin-top: 30px;}
+.accountContainer .cmmWrapper h2{font-size: 34px; font-weight: normal; color: #826379; margin:15px 0 2px 0;}
+.accountContainer .cmmWrapper p.changeFrequencyTopText{font-size:18px; color:#333; width:100%; float:left; margin:0px; padding:0px;}
+.accountContainer .cmmWrapper .deliveryFrequency{background:url("../images/customizeBottomBg.gif") no-repeat left bottom #75586C;float:left;height:auto;left:-40px;padding:25px 0 30px;position:relative;text-align:center;width:960px;margin:26px 0 10px;}
+.accountContainer .cmmWrapper .deliveryFrequency h3{font-size:28px; margin:0px; padding:0px; color:#fff; line-height:32px; font-weight:normal;text-shadow: 0 -1px 0 #3C2D39;}
+.accountContainer .cmmWrapper .deliveryFrequency h3 span{font-size:14px;}
+.accountContainer .cmmWrapper .deliveryFrequency h3 span.callNo{color:#FF9455; font-size:23px; line-height:18px; padding-bottom:12px;}
+.kitCustomizer{ width: 100%;}
+.customize-studio-kit{width:100%; height:auto; float:left; margin-top:40px;}
+.kitCustomizeImg{width:100%; float:left; text-align:center; margin:6px 0 10px;}
+#kitCustomizer .kitCustomizer{background:url("../images/kitCustomizeBg.png") right top no-repeat; position:relative; height:606px;}
+.kitCustomizerLeftImg{margin:17px 0 0 68px;}
+.kitCustomizerRight{width:360px; height:auto; position:absolute; top: 80px; left:55px;}
+#kitCustomizer .kitCopy{font-size: 14px;margin-bottom:26px; line-height:19px;}
+#kitCustomizer .kitTitle{margin-bottom:25px; font-size:35px; font-weight:bold;}
+.changeFrequencyMain{width:100%; float:left; position:relative; min-height:415px;}
+.changeFrequency{border-right:1px solid #D9C5D3; background-color:#ffffff; margin:0 16px 0 14px; padding:0 50px 0 0; width:375px; float:left;}
+.changeFrequency.last{border:medium none;margin-right:0;padding-right:0;}
+.changeFrequencyTopText{ font-size:14px; line-height:18px; margin-bottom:30px;}
+.changeFrequency #newShippingfreq{width:100%; height:auto; float:left; padding:0;}
+.changeFrequency #newShippingfreq p{ line-height: 18px; margin-bottom: 18px; font-size:13px;}
+.changeFrequency #newShippingfreq p.selectNewFrequency{margin-bottom:12px; font-size:15px; color:#333; padding-bottom:48px;}
+.changeFrequency #newShippingfreq p.selectNewFrequency span.labeltext{font-weight:bold; font-size:15px; color:#333;}
+.changeFrequency #newShippingfreq p.selectNewFrequency select{width:262px; color:#333; font-weight:bold; font-size:12px;}
+.changeFrequency #newShippingfreq .currentFrequency span{font-weight:normal;}
+.changeFrequency #newShippingfreq .currentFrequency span.bold{font-weight:bold;}
+.changeFrequency #newShippingfreq #frequencyselectbox{top:1px; left:0px;}
+.changeFrequency #newShippingfreq #change{float:left; width:143px; height:37px; margin-top:10px; background:url(../images/changeBtn.png) no-repeat left 1px; text-indent:-9999px; font-size:0px; position:absolute; left:12px; bottom:0px;}
+.changeFrequency #newShippingfreq #change:hover{background-position:left bottom;}
+.changeFrequency #newShippingfreq #shipnow{float:left; width:143px; height:37px; margin-top:10px; background:url(../images/shipNowBtn.png) no-repeat left 1px; text-indent:-9999px; font-size:0px; border:none; padding:0px; position:absolute; right:258px; bottom:0px;}
+.changeFrequency #newShippingfreq #shipnow:hover{background-position:left bottom;}
+.accountContainer .changeFrequency .checkout_box h4{font-size:20px; font-weight:bold;text-transform:uppercase; color:#333; background:none; padding:0px; margin-bottom:9px;}
+.accountContainer .changeFrequency #newShippingfreq p.currentFrequency{font-size:15px; line-height:20px; color:#333; margin-top:140px;}
+.changeFrequency #newShippingfreq p.nextShippment{font-size:15px; line-height:20px; color:#333; margin-top:42px;}
+.kitCustomizeBottomShadow{width:940px; height:36px; float:left; background:url(../images/customizeKitBottomShadow.gif) no-repeat left top;}
+
+.aboutChangingYourFrequency{width:100%; float:left; margin-top:16px;}
+.aboutChangingYourFrequencyMiddle{padding-left:12px;}
+.aboutChangingYourFrequency h2{ float:left; font-size:24px; margin:0px 0px 12px; width:100%;}
+.aboutChangingYourFrequency p{ font-size:12px; line-height:16px; margin-bottom:15px;}
+.aboutChangingYourFrequency p strong{font-size:14px;}
+
+.changeFrequencyError{color:#C00; float:left; position: relative; top: 16px; line-height:normal;}
+.wapper-dialog #overlay_shipping .heading{ line-height: 24px;  border-bottom: 1px solid #CCCCCC; font-size: 14px; font-weight: bold; margin-bottom: 7px; text-indent: 0;}
+#overlay_shipping table {    margin-bottom: 10px; margin-top: 10px; width: 533px;}
+#overlay_shipping table th {    color: #6E9872; font-weight: bold; padding: 3px 15px 3px 2px;}
+#overlay_shipping table td {    border-top: 1px solid #CCCCCC;   padding: 5px 3px;}
+#security .contentSectionPrivacy p{color: #313A40; font: 11px/13px arial; padding: 7px 0;}
+#security .contentSectionPrivacy h1{font-size:14px;font-weight: bold; }
+#security .contentSectionPrivacy h3{font-weight: bold;}
+#ptChekoutsingle .checkout-maincontent .cbShipping .checkbox{float:left; width: 250px;padding:5px 0 0 0;}
+#ptChekoutsingle .billingShipping .checkbox label{width:225px; float:right; padding:0;padding-top:2px;}
+#ptChekoutsingle .checkout-maincontent .cbShipping .asbilling .checkbox{position:absolute; left:0px; top:75px;}
+#ptChekoutsingle .checkout-maincontent .asbilling label{display: block;width: 113px;padding-top:1px; float: right; color:#555; font-weight:normal;}
+.accountContainer .changeFrequencyTopText a{ color: #000000; font-size: 12px; font-weight: bold;}
+#minicartOuter .productSummry .productDec:first-child{padding-top:10px;}
+.minheight{min-height:160px;}
+#ptChekoutsingle .agreeBox .checkbox span.errormessage {position: absolute; top: -18px;width: 243px; font-weight:500}
+#ptChekoutsingle .agreeBox .agreeTermsBox{ position: relative;}
+.minHeight, .orderconfirmation{min-height:300px;}
+#termsAndConditionCreditCard {line-height: 1.5em; width:578px; margin-left:25px}
+.agreeBox {margin:10px 0}
+.agreeBox .checkbox {float:left; position:relative; top:3px; margin:0; padding:0}
+.checkoutBox .indicatesRequiredField {position:relative; left:5px}
+/*Dialog css starts here*/
+
+#popup_wen_cleansing_conditioner-body .wen_close, #popup_wen_styling_creme-body .wen_close, #popup_wen_intensive_hair_treatment-body .wen_close,#popup_wen_treatment_mist-body .wen_close,#popup_wen_texture_balm-body .wen_close,#popup_wen_wide_tooth_comb-body .wen_close{ background: url("../images/layout/close.png") no-repeat 0 0; height: 26px; position: absolute; right: 0; top: 0; width: 35px;}
+#popup_wen_cleansing_conditioner-body .dialog,#popup_wen_styling_creme-body .dialog,#popup_wen_intensive_hair_treatment-body .dialog,#popup_wen_treatment_mist-body .dialog,#popup_wen_texture_balm-body .dialog,#popup_wen_wide_tooth_comb-body .dialog{background: none repeat scroll 0 0 #FFFFFF; border: 1px solid #CCCCCC; height: auto; padding: 25px; width: 465px;}
+#popup_wen_cleansing_conditioner-body .dialog .mid.table_window,#popup_wen_intensive_hair_treatment-body .dialog .mid.table_window,#popup_wen_treatment_mist-body .dialog .mid.table_window,#popup_wen_texture_balm-body .dialog .mid.table_window,#popup_wen_wide_tooth_comb-body .dialog .mid.table_window{width: 100%;}
+#popup_wen_cleansing_conditioner-body .dialog .mid.table_window h2,#popup_wen_styling_creme-body .dialog .mid.table_window h2,#popup_wen_intensive_hair_treatment-body .dialog .mid.table_window h2,#popup_wen_treatment_mist-body .dialog .mid.table_window h2,#popup_wen_texture_balm-body .dialog .mid.table_window h2,#popup_wen_wide_tooth_comb-body .dialog .mid.table_window h2{ border: medium none;
+    font-family: Century Gothic,Apple Gothic,sans-serif; font-size: 22px; font-weight: normal; height: 22px; line-height: 22px; margin: 0; padding: 0 0 15px; text-transform: uppercase;}
+#popup_wen_cleansing_conditioner-body .dialog .mid.table_window #directionsContent,#popup_wen_intensive_hair_treatment-body .dialog .mid.table_window #directionsContent,#popup_wen_treatment_mist-body .dialog .mid.table_window #directionsContent,#popup_wen_texture_balm-body .dialog .mid.table_window #directionsContent,#popup_wen_wide_tooth_comb-body .dialog .mid.table_window #directionsContent{ float: left; width: 100%;}
+#popup_wen_cleansing_conditioner-body .dialog .mid.table_window #directionsContent .kitContent,#popup_wen_intensive_hair_treatment-body .dialog .mid.table_window #directionsContent .kitContent,#popup_wen_treatment_mist-body .dialog .mid.table_window #directionsContent .kitContent,#popup_wen_texture_balm-body .dialog .mid.table_window #directionsContent .kitContent,#popup_wen_wide_tooth_comb-body .dialog .mid.table_window #directionsContent .kitContent{ float: left; padding-right: 10px; width: 270px; font: 12px/18px arial;}
+#popup_wen_cleansing_conditioner-body .dialog .mid.table_window #directionsContent .kitImage,#popup_wen_intensive_hair_treatment-body .dialog .mid.table_window #directionsContent .kitImage,#popup_wen_treatment_mist-body .dialog .mid.table_window #directionsContent .kitImage,#popup_wen_texture_balm-body .dialog .mid.table_window #directionsContent .kitImage,#popup_wen_wide_tooth_comb-body .dialog .mid.table_window #directionsContent .kitImage{ float: left; width: 170px;}
+#popup_wen_cleansing_conditioner-body .dialog .mid.table_window #overlay_product,#popup_wen_intensive_hair_treatment-body .dialog .mid.table_window #overlay_product,#popup_wen_treatment_mist-body .dialog .mid.table_window #overlay_product,#popup_wen_texture_balm-body .dialog .mid.table_window #overlay_product,#popup_wen_wide_tooth_comb-body .dialog .mid.table_window #overlay_product{height: auto;}
+.cartShipping .checkoutBoxInner.inputbg input,.cartShipping .checkoutBoxInner.inputbg select{background:#d4d0c8;}
+.lp-formulas .headerWraper .formula-home-header{width:900px; margin:0px auto;}
+
+.travel .travel-homepage-banner{ width:100%; clear: both;}
+.core .core-homepage-banner,.core .core-homepage-bottombanner,.core .core-homepage-bottombanner-winter-vanilla{float: left;  width: 100%;}
+
+/* order detail */
+.accountContainer #orderDetailOverview .innerPanel{padding:0;float:left;width:100%;}
+.ptCheckOutOrder .checkOutContainer .checkOutContent #orderDetailOverview .panelWraper{padding:20px 0px 20px;}
+.accountContainer #orderDetailOverview .panelWraper{border: none;border-top:1px solid #D7D7D7;margin-bottom:5px;}
+.ptCheckOutOrder .checkOutContainer #orderDetailOverview .innerPanel .leftPanel,.ptCheckOutOrder .checkOutContainer #orderDetailOverview .innerPanel .rightPanel{min-height: 130px;}
+.accountContainer #orderDetailOverview .innerPanel.panelBottom .leftPanel, .accountContainer #orderDetailOverview .innerPanel.panelBottom .rightPanel{min-height:95px; padding-bottom:0px;}
+.ptCheckOutOrder .checkOutContainer .checkOutContent #orderDetailOverview  .topLabel{margin-top:0px; padding-bottom:17px;}
+.leftPanel, #ptAccount .accountContainer .accountOverView .orderWraper .rightPanel{min-height:170px;}
+#ptAccount .accountContainer .accountOverView .innerPanel.panelBottom .leftPanel,#ptAccount .accountContainer .accountOverView .innerPanel.panelBottom .rightPanel{min-height:165px;}
+#ptAccount .accountContainer .accountOverView .innerPanel .leftPanel,#ptAccount .accountContainer .accountOverView .innerPanel .rightPanel{ min-height:300px;}
+#ptAccount .accountContainer .accountOverView .orderWraper .leftPanel .aButton{ margin:20px 0; width:98px;}
+#ptAccount .accountContainer .accountOverView .orderWraper .whiteBg{width: 100%;}
+
+#subheader{ background: url("../images/layout/cmm-homepage-strip.gif") center top no-repeat #876d7f; height: 38px; width: 100%; clear: both; position:relative; z-index:1;}
+#subheader a{ color: #FFFFFF; display: block; float: left; font-size: 17px; line-height: 38px; height: 38px; padding-bottom:15px; text-align: center;  text-transform: capitalize;  width: 468px; display: block;}
+#subheader span.partLine{ background: url("../images/layout/cmm-link-line.gif") right center no-repeat; float: left; width: 2px; height: 38px;}
+#subheader a.active{ background: url("../images/layout/cmm-homepage-activeTab.png") center bottom no-repeat;}
+
+.cmm-homepage{ width:960px; margin-bottom: 20px; padding-bottom:25px;background: url("../images/layout/shopForSheerCoverBottomShadow.gif") center bottom no-repeat;}
+.cmm-homepage .cmmWrapper{ background: url("../images/layout/ret-hmpg-topstrip.gif") center top repeat-x #ffffff; border-left:1px solid #dbd4d9; border-top:1px solid #a793ab; border-right:1px solid #dbd4d9; padding:30px; width: 880px; margin: 0px auto; margin-top: 30px;}
+.cmm-homepage .cmmWrapper h2{font-size: 34px; font-weight: normal; color: #826379; margin-top: 15px;}
+.cmm-homepage .cmmWrapper h3{ font-size: 18px; margin-bottom: 5px;}
+.cmm-homepage .cmmWrapper .orderCall{ font-size: 22px; margin-bottom: 35px;}
+.cmm-homepage .cmmWrapper p{ font-size: 14px;}
+.cmm-homepage .cmmWrapper .banner{ width: 100%; display: inline-block; margin-top: 60px; text-align: center;}
+.cmm-homepage .callUs{ background: url("../images/layout/ret-pagefootbg.png") left top no-repeat; height: 40px; width: 960px; text-align: center; font-size: 23px; color: #ffffff; text-shadow:0px -1px 0px #3C2D39;}
+
+/*Moved BazaarVoice Inline Css from int_bazaarvoice\cartridge\templates\default\bv\display\rr\reviews.isml*/
+.reviewsBg {padding: 5px; margin-right: -5px;}
+.core .homeSmBanners .homeBotext,.travel .homeSmBanners .homeBotext{color: #757575; float: left; font: 11px/14px arial; padding-left: 2%; padding-top: 15px; text-align: center; width: 93%;}
+#ptAccount .contactWraper .contactusLeft h2{padding-bottom: 27px;}
+#container.pt_account{ overflow-x: hidden;float:none;}
+#container.pt_account #main{margin: 0px auto; width: 925px;}
+#container.pt_account #main #bvSubmitContentMain{float: left;}
+
+.notfound{ min-height: 500px; padding: 27px 0 0;}
+.notfound .errorpagemessage a{color: #775F70;text-decoration: underline;}
+.notfound .errorpagemessage a:hover{color: #000; text-decoration: none;}
+#ptChekoutsingle .order-totals.shippingTotal .sub_total{float:right;font-size:14px;padding:8px 10px 10px 0;width:100%; font-size: 15px;font-family: "museo-sans",Arial,Helvetica,sans-serif;}
+#ptChekoutsingle .order-totals.shippingTotal .sub_total p{margin:0px; padding:0px;}
+
+#ptChekoutsingle .order-totals.shippingTotal #totalshippingprice #shipTotal{font-weight:normal; padding-left:6px;padding:20px 0 0 12px;float: left;}
+#ptChekoutsingle .order-totals.shippingTotal{padding:0px 0px 10px 0;}
+.accountOverView .updatepass{padding-top: 31px; font-weight:bold;}
+
+.txtWraper{min-height:46px;}
+
+.ptCheckOutOrder .checkOutContainer .checkOutContent .accountOverView .orderreviewHeader .topLabel{ width:650px;}
+.ptCheckOutOrder .checkOutContainer .checkOutContent .accountOverView .orderreviewHeader .actions{width: 200px; float: right; clear:none;}
+.ptCheckOutOrder .checkOutContainer .checkOutContent .accountOverView .orderreviewHeader .actions button{ float:right; margin: 0;}
+
+
+/*---------- cart css Start ----------*/
+#ptChekoutsingle .checkoutRight {width: 680px; height: auto; float: right; padding: 0px 12px 22px 3px; position: relative; font-family: "museo-sans",Arial,Helvetica,sans-serif; }
+#ptChekoutsingle .checkoutSteps ul,
+.ptCheckoutRetention .checkoutSteps ul,
+.ptCheckOutOrder .checkoutSteps ul{float: left;height: auto;margin: 30px 0 10px;padding: 0; width:697px; border:solid 1px #dbdbdb;}
+#ptChekoutsingle .checkoutSteps li,.ptCheckOutOrder .checkoutSteps li{float: left; height:27px; margin-right: 0; padding:0px 0; width: 159px;}
+#ptChekoutsingle .checkoutSteps li.stepcartanddetails p{background: url("../images/checkoutpage/place_bg.png") no-repeat scroll left bottom transparent; font-size: 12px; padding-left: 16px; height:27px; width:327px;}
+#ptChekoutsingle .checkoutSteps li.stepcartanddetails p.active{background-position:left top;}
+#ptChekoutsingle .checkoutSteps li.stepconfirm p{background: url("../images/checkoutpage/place_bg.png") no-repeat scroll left top transparent; font-size: 12px; padding-left: 16px;}
+#ptChekoutsingle .checkoutSteps li.stepconfirm p.active{background-position:left bottom;}
+#ptChekoutsingle .checkout_box{ background-color: white; width:696px; float:left;border-radius:5px 5px 0 0 ;}
+#ptChekoutsingle .checkout_box.empty{border:1px solid #bbb; padding-bottom:25px; border-radius:5px 5px 5px 5px; min-height:166px; border-top:0; }
+#ptChekoutsingle .checkout_box.empty .cartempty p{ font-size:14px; font-weight:300;}
+#ptChekoutsingle .checkout_box.empty .emptyCartTitle{padding-bottom:20px;}
+#ptChekoutsingle .checkout_box.empty .emptyCartTitle h4{margin-left:-1px;margin-top:-4px;width: 97.7%;}
+#ptChekoutsingle .checkout_box.empty .cartempty,#ptChekoutsingle .checkout_box.empty .backToShopping{padding:0px 0 0 16px;}
+#ptChekoutsingle .personInfform h4,#ptChekoutsingle .thankyoumessage h2,#ptChekoutsingle .checkout_box h4,.ptCheckoutRetention .rightColumn h2{font:700 20px "museo-sans",Arial, Helvetica, sans-serif; color:#585856; padding:11px 0 14px 17px; position:relative;background: url("../images/checkoutpage/header-heading.png") left top no-repeat; width: 684px; }
+#ptChekoutsingle .checkout_box.empty .backToShopping a{width:245px; height:40px; float:left; background:url(../images/layout/continueShopping.png) no-repeat left top; font-size:0px; text-indent:-9999px; padding:0px; border:none;}
+/* cart */
+.ch_selected_products{width: 100%; border: none;}
+.ch_selected_products thead tr{background:url(../images/checkoutpage/heading-bg.png) repeat-x 0 0; height:30px; border-bottom:solid 1px #bbb;}
+.ch_selected_products th{padding:9px 4px 4px 0; text-align:left;vertical-align:middle; font-size:14px; color:#5d5d5d;}
+.ch_selected_products th.qty,.ch_selected_products td.qty {border-right:1px solid #e0e0e0;border-left:1px solid #e0e0e0;padding: 0 0px 0 9px;width:85px;}
+.ch_selected_products th.price, .ch_selected_products td.price, .ch_selected_products td.itemtotalcolumn {padding: 0 0px 0 9px;}
+.checkout_box .ch_selected_products td.first{border-right:0;border-left:0}
+.checkout_box .ch_selected_products td.second{border-left:0}
+.checkout_box .ch_selected_products td.price{border-right:0}
+.ch_selected_products td.itemtotalcolumn .itemtotals{font-size: 15px;font-weight: 700;color:#404040;padding-right:5px;}
+.checkout_box .ch_selected_products td{padding-left: 10px;vertical-align: top; border-left: 1px solid #E0E0E0;border-right: 1px solid #E0E0E0;}
+.checkout_box .ch_selected_products td.itemtotalcolumn{border-right:0px;}
+.checkout_box .ch_selected_products td.imagecolumn{width: 178px; text-align:center;border-right:0;border-left:0px}
+.imagecolumn img{max-width: 210px;}
+.checkout_box .ch_selected_products td.detailscolumn{width:272px; font-size:12px;padding:0 10px 0 0;border-left:0px}
+.checkout_box .ch_selected_products td.detailscolumn .shortDescription{margin-bottom:10px;color:#5d5d5d;font-weight:300;}
+
+/* checkout payment info */
+.ch_selected_products h2{font-size:18px; color:#87ad8c;}
+.ch_selected_products p strong{display: block; line-height: 15px; font-size: 12px; text-transform: uppercase; padding: 5px 0; color: #5d5d5d;}
+#ptChekoutsingle .checkoutBox.paymentInfo .paymentMethod,#ptChekoutsingle .checkoutBox.paymentInfo .cardNumber ,#ptChekoutsingle .checkoutBox.paymentInfo .expirationDate,#ptChekoutsingle .checkoutBox.paymentInfo .expirationDate .value{ float: left; width:500px;}
+#ptChekoutsingle .checkoutBox #shippingMessageBlock{padding: 15px 0px 0px 0px; font-size: 13px; color: #484848; float: left; width: 294px; font-weight: 700;}
+#ptChekoutsingle .checkoutBox .checkoutBoxInner #shippingBox{margin-top:25px;}
+#ptChekoutsingle .checkoutBox .checkoutBoxInner #shippingBox label{font-style:italic;}
+#ptChekoutsingle .billingShipping .cartShipping .formfield{margin-bottom:10px;}
+#ptChekoutsingle .checkoutBox.paymentInfo .cardNumber{float:left;width:254px;margin-top:-26px}
+.checkoutBox.paymentInfo .expirationDate .value{width: 160px;}
+#ptChekoutsingle .checkoutBox.paymentInfo .expirationDate{width:185px;margin-top:-26px}
+#ptChekoutsingle .checkoutBox.paymentInfo .cardNumber input{width: 100px;}
+#ptChekoutsingle .checkoutBox.paymentInfo .paymentMethod select{width: 120px;height: 26px;}
+#ptChekoutsingle .checkoutBox.paymentInfo .expirationDate .month{float:left;width: 120px;}
+#ptChekoutsingle .checkoutBox.paymentInfo .expirationDate .year{ float: left;width: 60px;}
+#ptChekoutsingle .checkoutBox.paymentInfo .expirationDate .month select{font-style: normal;font-weight: normal;height: 28px; padding: 5px;width: 110px;}
+#ptChekoutsingle .checkoutBox.paymentInfo .expirationDate .year select{font-style: normal;font-weight: normal;height: 28px;padding: 5px; width: 68px;}
+#ptChekoutsingle .cartPromotion{margin:40px 0 33px; padding:0;float:left;}
+#ptChekout  .moneyBackGuaranteeBox-cart{padding:68px 15px}
+#ptChekoutsingle .cartPromotion .cartpromo{margin: 1px 0 9px; padding:0;}
+#ptChekoutsingle .requiredIndicator{float:left;padding-top:25px;width:100%;font-size:12px; color:#568b5f;margin: 5px 3px 0px 4px;}
+#ptChekoutsingle .personInfform{float: left; margin-top: 10px; padding: 0; border-radius: 5px;}
+#ptChekoutsingle  .shipping_total .rush_shipping{padding-top: 6px;width: 190px;position: absolute;color: #5E5E5E;float: left;font-size: 14px;font-weight: 700;text-transform: uppercase;}
+#ptChekoutsingle .order-totals.shippingTotal #totalshippingprice{padding: 0; width: auto; font-size: 14px; color: #5E5E5E; float: left; margin-left: 75px; }
+#ptChekoutsingle .shippingTotal .shippingprice{float: left;width: 666px;margin-bottom:19px;padding:0 15px;display: block;border: 1px solid #E0E0E0;border-top: none; border-radius: 0 0 5px 5px;}
+#ptChekoutsingle .shipping_total{width:400px; float: left;padding: 15px 0;}
+#ptChekoutsingle .totalShipping{float: left;border-right: 1px solid #E0E0E0;padding: 20px 15px 20px 0;width: 113px;text-align:right;}
+#ptChekoutsingle .shippingmethodslist{width:186px; float:right;}
+#ptChekoutsingle .order-totals .shippingTotalCont{background:#c6e8cc; width:685px; float:left; padding:10px 0px 10px 15px; }
+#ptChekoutsingle .shippingTotalCont .ordertotaldisclaimer {float: left;font-size: 12px;line-height: 20px;text-align: left;width: 370px;color: #5e5e5e;}
+#ptChekoutsingle .shippingTotalCont .ordertotaldisclaimer .cart-tax-disclaimer {text-transform:uppercase;text-align:right;line-height:18px;}
+.personInfform .complete_order_btn{ float:left}
+#ptChekoutsingle .orderTotal .cocartLabel{font-weight:300; color:#2d2d2d;font-size: 18px;padding-right: 8px;}
+#ptChekoutsingle .order-totals.shippingTotal .orderTotal{float: right;font-size: 18px;font-weight: bold; margin-top:10px;padding-right:10px;width:auto; color:#2d2d2d;}
+#ptChekoutsingle .order-totals.shippingTotal .orderTotal .cocartContainer{min-width:176px;}
+#ptChekoutsingle .contactinfo .row label{font-size:12px; float:left; width:auto; font-weight:500; font-style:italic; }
+#ptChekoutsingle .contactinfo .row .phone label{ width:100%;}
+#ptChekoutsingle .personInfform .age input[type='text'] .age{ width:53px;}
+
+.G-gender{float: left;}
+.G-gender .options.row{padding: 0 !important;}
+.G-gender #gender_male, .G-gender #gender_female{ vertical-align: top; margin: 0px 0px 3px 0px !important; padding: 0px; }
+.G-gender .row label{ padding: 8px 0px !important;}
+
+#ptChekoutsingle .contactinfo .row_gender{ border: 1px solid #E0E0E0;border-bottom:0px; float: left; padding: 0 28px 0 15px;width: 653px;}
+#ptChekoutsingle .contactinfo  .row_email {padding-left: 15px;border: 1px solid #E0E0E0;border-bottom:0px;float: left;padding-bottom: 20px;width: 681px;}
+#ptChekoutsingle .contactinfo  .row_email .row.email{ width:363px;padding-right: 32px;}
+#ptChekoutsingle .contactinfo .row_email .row{width: 255px;}
+#ptChekoutsingle .checkoutBottom{background:url(../images/checkoutpage/h3-bg.png); border-top:2px solid #c8c8c8; border-bottom:2px solid #c8c8c8;float: left;margin-top: 10px;padding:11px 0 8px;width: 100%;}
+#ptChekoutsingle .orderConfimationContainer{margin:0px 0 0 0;float:left; padding:0px; border: solid 1px #ccc; border-radius:5px; width:698px;}
+#ptChekoutsingle .orderConfimationContainer .customerServiceText {float:left;border-top: 1px solid #CCCCCC; font-size: 14px; font-weight: 300; padding:12px 12px 12px 15px; width: 96.4%;}
+#ptChekoutsingle .orderConfimationContainer .customerServiceText p{margin:0;color: #404040;font-weight: 300;}
+#ptChekoutsingle .thankyoumessage .arrivePeriod,#ptChekoutsingle .thankyoumessage .confirmemail{padding-left:18px;line-height: 18px;margin-bottom:3px;width:95%;}
+#ptChekoutsingle .orderConfimationContainer .yourinformation .custInfo{line-height:22px; padding-left:15px; margin-top:15px}
+#ptChekoutsingle .orderConfimationContainer .yourinformation .custInfo #custName{font-size:20px;font-weight:500;color:#5D5D5D;padding-left:4px;}
+#ptChekoutsingle .orderConfimationContainer .yourinformation .custInfo #custEmail{font-size:14px;font-weight:300;color:#5D5D5D;padding-left:4px;}
+#ptChekoutsingle .thankyoumessage{ display: block;    float: left;    font-family: "museo-sans",Arial,Helvetica,sans-serif;    margin-bottom: 2px;}
+#ptChekoutsingle .orderConfimationContainer .thankyoumessage h2 {margin-bottom: 10px;border:0;font-size:20px;font-weight:700;background:url("../images/checkoutpage/checkoutheader.png") no-repeat scroll -1px 0 transparent;height:32px}
+#ptChekoutsingle label.blockheading{font-size: 15px; color: #87ad8c; font-weight: 900; padding: 18px 0 0; text-transform:uppercase; font-style: normal !important;}
+#ptChekoutsingle .orderConfimationContainer .thankyoumessage h2 {margin-bottom: 10px;border:0;font-size:20px;font-weight:700;background:url("../images/checkoutpage/checkoutheader.png") no-repeat scroll -1px 0 transparent;height:32px}
+#ptChekoutsingle #dwfrm_personinf_contact_email, #ptChekoutsingle #dwfrm_personinf_contact_emailconfirm{ width:360px;}
+#ptChekoutsingle .personInfform #age {width:50px;}
+
+/* product page last tab  */
+#bonusesproduct{ margin:15px;}
+#bonusesproduct tr td{ vertical-align:bottom;}
+#bonusesproduct tr td.howtouse{ vertical-align:top;}
+#bonusesproduct .prodetail{ padding:0 10px 50px; vertical-align: top;}
+#bonusesproduct .prodetail h2{ margin-top: 106px}
+#bonusesproduct .prodetail h2, .contentasset.faqs h2{ color:#6db678; font-size:16px;}
+#bonusesproduct .prodetail p, #bonusesproduct .howtouse p, .contentasset.faqs p{color:#000; font-size:14px; width:90%;}
+#bonusesproduct .howtouse h2{font-size:16px; color:#000; font-weight:700;}
+
+/*START: upsell */
+#ptChekoutsingle .hopupheader{float:left;}
+#ptChekoutsingle .hopupbody{text-align: center;padding:0px; float:left;margin-bottom:15px;}
+#ptChekoutsingle .hopupfooter{float:left;background:none repeat scroll 0 0 #F2F8F4;padding: 15px 15px 5px 20px;border-radius: 0 0 6px 6px;margin:-5px;border-top:1px solid #ececec}
+#upsellForHopUp a.closebtn{position: absolute; float: right; background: url('../images/layout/crossUpshell.png') no-repeat; width:30px; height:30px; display: block; border: none !important; top: -15px; right: -15px;float:right;text-indent: -9999px;}
+#upsellForHopUp .hopupclosebtn a span{display: none;}
+#ptChekoutsingle .hopupbodyinner{background: none repeat scroll 0 0 white; text-align: left;padding: 0;border-radius: 0;margin:0 0 0 10px}
+#ptChekoutsingle .hopupbodyinner .hopupcontainer{float:Left;width:211px;margin-right:20px;}
+#ptChekoutsingle .confirmationBox{width: 100%;float: left;margin-top: 22px;}
+#ptChekoutsingle .hopuptitle{background:#F8F8F6; border-radius: 5px 5px 0 0;border-color:#D0D0D0;margin: 0 auto;width:185px;border-style: solid solid none;border-width: 1px 1px 0;}
+#ptChekoutsingle .hopuoptitleinner{color: #6EB979;font-size:18px;font-weight:700;text-align: center;text-transform: capitalize;}
+#ptChekoutsingle .hopupimage{text-align: center;}
+
+#ptChekoutsingle .hopupdetails{float: none;text-align: center;font-size: 12px;line-height: 18px;color: #3c3835; padding:4px;border: 1px solid #D0D0D0;margin: -1px auto 0;width:177px;}
+#ptChekoutsingle .hopupdetails span{font-weight:700;font-size:14px;}
+#ptChekoutsingle .hopupcontrols{font-size: 16px;line-height: 13px;margin-top: 5px;text-align: left;position: relative;padding:0px;width:186px;margin:0 auto;}
+#ptChekoutsingle .hopupdetails .nothanksbtn{font-size: 12px;margin-top: 10px;display:block; color: #333;outline: none;}
+#ptChekoutsingle #upsellForHopUp{left: 23%;top:10px;z-index: 200;display: none;width:715px;border:none;border-radius:6px;border: 1px solid #D0D0D0;background:#fff;box-shadow: 0 0 8px #CCCCCC;position:fixed;}
+#ptChekoutsingle #upsellForHopUp .addtocartbtn{left: 0px;margin: 0;position: relative;top:0px;background: url("../images/checkoutpage/addtocart.png") no-repeat scroll center top transparent;height:36px;width:187px;text-indent:-9999px;border:none;cursor: pointer;}
+#ptChekoutsingle #upsellForHopUp .addtocartbtn:hover{background-position:center bottom;}
+/*END: upsell */
+
+/* cross sell css begin */
+.crosssell-container{width:744px; height:496px !important; background:url(../images/layout/confirmation-cross-sell-img.jpg) no-repeat left top; position:relative;}
+.crosssell-container a.try-it-risk{bottom:73px;height:35px;position:absolute;right:60px;width:165px;}
+
+/* cross sell css end */
+
+/* Most Upsell CSS from PA */
+#popupOverlay{background:#FFF; width: 100%; height: 100%; position: fixed; z-index: 100; filter: alpha(opacity=80); opacity: 0.8; -moz-opacity: 0.8; -webkit-opacity: 0.8; top: 0; left: 0; display: none;}
+.upsellarea .upselldescription{display: none;}
+.upsellrecommendationpopup{display: none;}
+#upsellForHopUp{display: none; position: absolute; z-index: 101; top: 100px; left: 45%; width: 408px;}
+#upsellForHopUp .hopupInner{background:url(../images/layout/hopupbg.png) repeat-x left top;float:left;margin:5px}
+#upsellForHopUp .hopupclosebtn a span{display: none;}
+.hopupbodyinner{margin: 0 30px; background: white; border-radius: 5px;}
+.hopuoptitleinner{padding: 8px 0;}
+.hopupimage{text-align: center;}
+.hopupdetails{padding: 0 10px; font-size: .9em;}
+.hopupdetails p{font: 12px/18px Arial,sans-serif;}
+.hopupcontrols{padding: 10px;}
+#upsellForHopUp .nothanksbtn{text-decoration: none;border: none !important;color: #b4784c;font-size: 16px;font-weight: bold;position: relative;top: 15px;left:90px;}
+#upsellForHopUp .nothanksbtn:hover{text-decoration:underline;}
+#upsellForHopUp .addtocartbtn{margin-top: -5px; float: right; height: 26px; width: 114px; background: url(../images/interface/dialog/popupadd.png) left top no-repeat; border: none;}
+#upsellForHopUp .addtocartbtn:hover{background-position: left -26px;}
+#upsellForHopUp .addtocartbtn span{display: none;}
+/*  END CSS FROM PA */
+.addtocartbtn{background: url("../images/checkoutpage/addtocard.png") no-repeat scroll top center transparent; color: transparent; height: 42px; width: 232px;}
+.addtocartbtn:hover{background-position:bottom center;}
+.addtocartbtn.disable{ display:none; float:left;}
+.addtocartbtn1{background: url("../images/checkoutpage/addtocard.png") no-repeat scroll top center transparent; color: transparent; height: 42px; width: 238px; text-indent: -9999px;}
+.addtocartbtn1:hover{background-position:bottom center;}
+.addtocartbtn1 span{display:none;}
+
+.moneyBackGuaranteeBox-cart{ padding:25px 15px;}
+.ptChekout .moneyBackGuaranteeBox-cart{ padding:25px 30px;}
+.quantitycolumn input { display: inline-block;}
+.quantitycolumn #qtydecrease, .quantitycolumn #qtyincrease{color:transparent; width: 23px; height: 30px; border: 0;}
+.quantitycolumn #qtydecrease:hover, .quantitycolumn #qtyincrease:hover{cursor:pointer;}
+.quantitycolumn #qtydecrease{ background:url("../images/checkoutpage/minus.png") left top no-repeat; }
+.quantitycolumn #qtyincrease{background:url("../images/checkoutpage/plus.png") left top no-repeat;}
+.quantitycolumn #quantity{background: url("../images/checkoutpage/number.png") left top no-repeat; border: 0; width: 30px; height: 30px; text-align: center; font-size: 13px; line-height: 10px; padding: 0; margin: 0; }
+#ptChekoutsingle .personInfform .formfield.phone.daytime input[type="text"], #ptChekoutsingle .personInfform .formfield.phone.evening input[type="text"]{ width:45px; float:left; margin-right:20px;text-align: center;}
+#ptChekoutsingle .personInfform .formfield.phone.evening input[type="text"]#eveningphone3, #ptChekoutsingle .personInfform .formfield.phone.daytime input[type="text"]#phone3{width:72px;}
+#ptChekoutsingle .personInfform .formfield.phone span.phoneseperator{padding:7px;float:left;color:#CBCBCB;}
+#ptChekoutsingle .personInfform .formfield.phone.daytime {position: relative;background: url("../images/dash.jpg")  51px 32px  no-repeat;}
+#ptChekoutsingle .personInfform .formfield.phone.daytime span.errormessage{position: absolute;top: 64px;}
+#ptChekoutsingle .personInfform .formfield.phone.daytime input.errormessage[type="text"]{border: 1px solid #FF0000;}
+.checkoutBoxInner .paymentMethod ul .paymentcardimg{ float: left;height: 45px;margin-right: 10px;width: 54px;}
+#Visa1{background: url("../images/checkoutpage/cards.png") no-repeat scroll -1px -5px transparent;}
+#Amex1{ background: url("../images/checkoutpage/cards.png") no-repeat scroll -56px -5px transparent;}
+#MasterCard1{ background: url("../images/checkoutpage/cards.png") no-repeat scroll -111px -5px transparent;}
+#Discover1{background: url("../images/checkoutpage/cards.png") no-repeat scroll -165px -5px transparent;}
+#Visa1.active{background-position: -1px -53px;}
+#Amex1.active{background-position: -56px -53px;}
+#MasterCard1.active{background-position: -111px -53px;}
+#Discover1.active{background-position: -165px -53px;}
+.order-by-phone-container{border: 1px solid #d4d4d4; box-shadow: 0px 0px 20px #ececec; padding: 5px; border-radius: 5px; height: 116px; width: 212px; float: left; margin-top: 15px;}
+.order-by-phone-bg{background: url(../images/saspage/order-phone-bg.jpg) repeat-x; height: 106px; width: 192px; padding: 4px 10px;}
+.order-by-phone-bg h3{margin: 0; font: 900 37px/34px "museo-sans", Helvetica, Verdana, sans-serif; color: #73ae7a; letter-spacing: -1px;}
+.order-by-phone-bg p{margin: 0; padding: 9px 4px; color: #3d3e3f; font: 400 18px "museo-sans", Helvetica, Verdana, sans-serif;}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* slider styling */
+.boxBottom {
+    background: url("http://reclaimbotanical.dev5.dw.grdev.com/on/demandware.static/Sites-ReclaimBotanical-Site/Sites-ReclaimBotanical-Library/default/v1383343267515/reclaimbotanical/images/slider/box-bottom.jpg") -1px bottom no-repeat;
+    height: auto;
+    float: left;
+}
+
+.realP {
+    float:left;
+    margin: 35px 0 5px 10px;
+}
+.realP .enlarged {
+    float: left;
+    margin-bottom: 30px;
+    border: 1px solid #ddd;
+    border-radius-bttom-left: 5px;
+    border-radius-bttom-right: 5px;
+    overflow: hidden;
+}
+.realP .hint {
+	height: 48px;
+	width: 263px;
+	display: block;
+	position: absolute;
+	z-index: 500;
+	left: 250px;
+	bottom: -180px;
+}
+
+
+.realP .col2 {
+    float:left;
+    margin-left: 63px;
+    width: 495px;
+}
+.realP .col2 .header {
+    width: 553px;
+    padding: 15px 30px;
+    position: relative;
+    text-transform: capitalize;
+    font-size: 2.0em;
+    color: #fff;
+    font-weight: 100;
+    text-shadow:0 0 7px #004E0A,0 0 10px #777;
+}
+
+.realP .col2 .info {
+    float: left;
+    display: block;
+    height: 200px;
+    width: 100%;
+    margin-bottom:10px;
+}
+
+.realP .slide-content {
+    display:none;
+    margin:20px;
+}
+.realP .slide-content p {
+    margin-bottom:15px !important;
+}
+.realP .slide-content p span {
+    font-size: 2.3em;
+    float: left;
+    padding: 15px 15px 15px 0;
+    color: #6fba7a;
+    width: 80px;
+    text-align: right;
+    font-weight: 100;
+}
+
+
+
+
+
+
+
+
+
+/*beforeafter plugin styling modifications*/
+
+
+div.balinks {
+    display:none;
+}
+
+.ui-draggable {
+    opacity:1 !important;
+    width:100%;
+    -ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=100)" !important;
+    filter: alpha(opacity=100) !important;
+    -moz-opacity:1 !important;
+    -khtml-opacity:1 !important;
+}
+.ui-draggable > div:first-child {
+    width: 4px !important;
+    background-color: #ddd !important;
+}
+.ui-draggable div > img {
+    width: 33px;
+    height: 20px;
+    left: -15px !important;
+    top:453px !important;
+}
+.ui-draggable ~ img {
+    display:none;
+}
+
+
+
+
+
+
+/*carousel styling*/
+
+.carousel {
+    margin-top: 280px;
+	position: absolute;
+	width: 490px
+}
+	.carousel .slider1 {
+		width:1000px;
+		position:relative;
+	}
+.carousel ul li {
+    float: left;
+    width: 85px;
+    padding: 12px 15px;
+    color: #fff;
+    font-size: 8em;
+    text-align: center;
+    cursor: pointer;
+    height: 105px;
+}
+.carousel ul li img {
+    box-shadow: 0 0 5px #666;
+}
+.carousel ul li span {
+    float: left;
+    top: 0;
+    font-size: .15em;
+    color: #6fba7a;
+    width: 100%;
+    text-align: center;
+    margin-top:-5px;
+}
+
+
+.bx-prev {
+	height: 130px;
+	width: 30px;
+	position: absolute;
+	margin-left: -20px;
+	z-index:50;
+	left:0;
+}
+.bx-next {
+	left: 460px;
+	top: 0;
+	height: 130px;
+	width: 30px;
+	position: absolute;
+}
+
+/* popup css begin */
+.ui-widget-content{border-radius:3px;}
+.ui-dialog .ui-dialog-titlebar{float:left;width:100%;}
+
+
+/* Dialog @import url("ui.dialog.css");
+----------------------------------*/
+.ui-dialog { position: relative; padding: 0; min-width: 300px; border-radius:5px; }
+.ui-dialog .ui-dialog-titlebar{float:left;width:100%;}
+.ui-dialog .ui-dialog-title { float: left; margin: .1em 0 .2em; } 
+.ui-dialog .ui-dialog-titlebar-close { background: url("../images/blk-close.jpg") no-repeat;  height: 17px; position: absolute; left:690px; top:15px; width: 61px; z-index:999; padding:0}
+.ui-dialog .ui-dialog-titlebar-close:hover, .ui-dialog .ui-dialog-titlebar-close:focus {border:none}
+.ui-dialog .errormessagewindow .ui-dialog-titlebar-close{margin-top:-15px;z-index:999;}
+.ui-dialog .ui-dialog-titlebar-close span, #ui-dialog-title-moreInfo { display: none; !important; }
+
+.ui-dialog .ui-dialog-content {background-color:#fff; border: 0;padding: 10px 25px 20px 25px; zoom: 1; font-size: 11px; font-family:arial; float:left;}
+.ui-dialog .ui-dialog-buttonpane { text-align: left; border-width: 1px 0 0 0; background-image: none; margin: .5em 0 0 0; padding: .3em 1em .5em .4em; }
+.ui-dialog .ui-dialog-buttonpane button { float: right; margin: .5em .4em .5em 0; cursor: pointer; padding: .2em .6em .3em .6em; line-height: 1.4em; width:auto; overflow:visible; }
+.ui-dialog .ui-resizable-se { width: 14px; height: 14px; right: 3px; bottom: 3px; }
+.ui-draggable .ui-dialog-titlebar { cursor: move; }
+.ui-widget-header{border:0px!important;background:transparent !important;}
+.wapper-dialog-error .ui-dialog-content{color: #C10100;font-family:Arial,sans-serif;}
+.wapper-dialog .ui-dialog-content{color: #707070;font-family:Arial,sans-serif;}
+.wapper-dialog{background-color:#fff;}
+.wapper-dialog .ui-dialog-title{padding:10px;}
+.ui-dialog #moreInfo {overflow:auto !important; margin-top:30px; margin-bottom:15px}
+/* popup css end */

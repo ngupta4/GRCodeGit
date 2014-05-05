@@ -1,0 +1,109 @@
+<!--- TEMPLATENAME: upsellrecommendation.isml --->
+<isinclude template="util/modules"/>
+<isloop items="${offersList}" var="product" status="offers_status">
+	<isscript>
+		if( !empty(product) ) {			
+				var titleString = product.getName();
+				var lastIndex = titleString.lastIndexOf(" ",24);
+				if( titleString.length>23 && lastIndex>0 ) {
+					titleString = titleString.substring(0,lastIndex);
+				}
+				var altSKUsString = product.ID;
+				if( !empty(product.custom.giftSelectSKUs) ) {
+					altSKUsString = product.custom.giftSelectSKUs;
+				} 
+				var altSKUs = altSKUsString.split(',');				
+				var giftProducts : dw.util.ArrayList = new dw.util.ArrayList();
+				for( var i=0, ii=altSKUs.length; i<ii; i++ ) {
+					giftProducts.add1(dw.catalog.ProductMgr.getProduct(altSKUs[i]));
+				}
+		}
+	</isscript> 
+	<isloop items="${giftProducts}" var="aProduct" status="gift_status">
+		<isscript>
+		if( !empty(aProduct) ) {
+			var upsellProducts : dw.util.ArrayList = new dw.util.ArrayList();
+			var upsellRecommendationsIter : dw.util.Iterator ;
+			    upsellRecommendationsIter = aProduct.getOrderableRecommendations(5).iterator();
+			    upsellProducts.add(aProduct);
+			    while( upsellRecommendationsIter.hasNext() )
+					{
+						var recommendation : dw.catalog.Recommendation = upsellRecommendationsIter.next();
+						var recommendedProduct : dw.catalog.Product = recommendation.getRecommendedItem();
+						upsellProducts.add( recommendedProduct );
+					}	
+		}	
+		</isscript>
+		<isloop items="${upsellProducts}" var="upsellproductPack" status="gift_status_upsell">
+			<isscript>
+				if( !empty(upsellproductPack) ) {
+					var upsellProductsValuePack : dw.util.ArrayList = new dw.util.ArrayList();
+					var upsellRecommendationsIter : dw.util.Iterator ;
+					    upsellRecommendationsIter = upsellproductPack.getOrderableRecommendations(16).iterator();
+					    upsellProductsValuePack.add(upsellproductPack);
+					    while( upsellRecommendationsIter.hasNext() )
+							{
+								var recommendation : dw.catalog.Recommendation = upsellRecommendationsIter.next();
+								var recommendedProduct : dw.catalog.Product = recommendation.getRecommendedItem();
+								upsellProductsValuePack.add( recommendedProduct );
+							}	
+				}	
+			</isscript>
+			<div id="system${offers_status.count}Gift${gift_status.count}Upsell${gift_status_upsell.count}ValuePack" class="valuepack-id" >
+				<div class="valuepackInline PanelB">
+					<div class="selectKit">
+						<h2 class="pageTitle"><isprint value="${Resource.msg('select.valuepack.page.title.panelc','locale',null)}" encoding="off"/></h2>
+						<ul class="sasKits">
+							<isset name="noThanksClass" value="" scope="page"/>
+							<isloop items="${upsellProductsValuePack}" var="upsellproductPackProduct" status="gift_status_upsell_status">
+								<isif condition="${gift_status_upsell_status.last}">
+									<isset name="noThanksClass" value="noThanks" scope="page"/>
+								</isif>							
+								<li id="system${offers_status.count}Gift${gift_status.count}Upsell${gift_status_upsell.count}ValuePack${gift_status_upsell_status.count}" class="${upsellproductPackProduct.ID} updatecartbtn ${noThanksClass}">
+								<isif condition="${gift_status_upsell_status.count==1}"><input type="hidden" name="valuepack_Product" class="valuepack_Product" value="${upsellproductPackProduct.ID}" /></isif>
+								<div class="giftBlockUpsell">
+									<span class="selected">${upsellproductPackProduct.custom.tabDetails}</span>
+									<div class="valuePackImage">
+											<isif condition="${!empty(upsellproductPackProduct.getImage('valuePack',0))}">
+												<img src="${upsellproductPackProduct.getImage('valuePack',0).url}" />
+											<iselse>
+												<img src="${URLUtils.staticURL('/images/noimagelarge.png')}"/>
+											</isif>
+									</div>	
+									<div class="pdata">
+											<span class="pname"><isprint value="${upsellproductPackProduct.name}" encoding="off"/></span>
+											<span class="ppriceupsell"><isprint value="${upsellproductPackProduct.priceModel.getPrice()}" /></span>
+											<span class="pimage"><isprint value="${upsellproductPackProduct.getImage('swatch',0).url}" /></span>
+										</div>		
+								</div>
+								</li>		
+							</isloop>
+						</ul>
+					</div>
+					<div class="bottomPanel panelB">
+						<div class="orderSummaryBottom">
+						<div id="prodSummary">
+								<div class="swatchImg"><img src="${product.getImage('swatch',0).url}" /></div>
+								<div class="swatchDesc">
+									<h4><isprint value="${Resource.msg('cart.title.order.summary','locale',null)}" encoding="off"/></h4>
+									<strong class="kitName"><isprint value="${product.name}" encoding="off"/></strong><br/>					
+									<span class="freeLink"><isprint value="${Resource.msg('bottomPanel.free','locale',null)}" encoding="off"/></span>
+									<span class="kitTab"><isprint value="${product.custom.altGiftName}" encoding="off"/></span><br/>
+									<span class="kitPrice"><isprint value="${product.priceModel.getPrice()}" encoding="off"/></span>
+								</div>
+						</div>
+						</div>
+						<isif condition="${isFrequencySection}">
+							<a href="#Step4" class="medOrngBtn" id="step4"><span><em><isprint value="${Resource.msg('next.select.freegiftsmall','locale',null)}" encoding="off"/></em><isprint value="${Resource.msg('cart.upsell.next.checkout','locale',null)}" encoding="off"/></span></a>
+						<iselse/>
+							<a href="#Step5" class="medOrngBtn checkout" id="step5"><span><em><isprint value="${Resource.msg('next.select.freegiftsmall','locale',null)}" encoding="off"/></em><isprint value="${Resource.msg('cart.upsell.next.checkout','locale',null)}" encoding="off"/></span></a>
+						</isif>
+					</div>
+				</div>
+			</div>
+		</isloop>
+	</isloop>
+</isloop>
+		
+
+

@@ -1,0 +1,136 @@
+<!--- TEMPLATENAME: topic_main.isml --->
+<iscache status="off"/>
+
+<isdecorate template="content/home/pt_storefront">
+	<script type="text/javascript" src="${URLUtils.staticURL('lib/jquery/js/fancybox/jquery.fancybox-1.3.4.pack.js')}"></script>
+	<link rel="stylesheet" href="${URLUtils.staticURL('lib/jquery/js/fancybox/jquery.fancybox-1.3.4.css')}" type="text/css" />
+	<isinclude template="util/modules"/>
+	<isscript>
+		importPackage(dw.object);
+		importPackage(dw.catalog);
+		importPackage(dw.util);
+		
+		var CCC : Object = pdict.CurrentCampaignConfig;
+	
+		var landingTemplate : String = CCC.landingTemplate;
+		var campaignCode : String = CCC.campaignCode;
+		
+		var showHeader : boolean = CCC.showHeader;
+		var showFooter : boolean = CCC.showFooter;
+		var showNav : boolean = CCC.showNav;
+		var showOrderButton : boolean = CCC.showOrderButton;
+		
+		var containerClasses : String = CCC.getContainerClasses();
+		var showsingup : boolean = false;
+		if('showsignup' in dw.system.Site.getCurrent().preferences.custom){
+			showsingup = dw.system.Site.getCurrent().preferences.custom.showsignup;
+		}
+		var category : dw.catalog.Category = CatalogMgr.getCategory(campaignCode + '-topics');
+	</isscript>	 
+	
+<div id="hiwBreadCrumb">
+	${Resource.msg('proof.detail.breadcrumb','rendering',null)}<span style="text-transform:uppercase;">${pdict.Topic.custom.topicName}</span>
+</div>
+ 
+
+<div id="topicContainer">
+	<div id="topicTitle">
+		<img src="${pdict.Topic.custom.topicTitleImage.url}"/>
+	</div>
+	<div id="topicDesc">
+		 <isprint value="${pdict.Topic.custom.topicDesc}" encoding="off" />
+	</div>
+	<div id="topicSocialAnother">
+		<a id="topicAnotherTopic" href="#chooseATopicLink">Choose Another Topic</a>
+	</div>
+	<div id="topicMoviesContainer">
+		<isloop items="${pdict.Topic.custom.topicMovies}" alias="topicIter" status="topicStatus">
+			<div class="clear"></div>
+			<div class="movieRow">
+				<div class="topicMovie">
+					<div id="topicMovie${topicStatus.index}" class="movie"></div>
+		  			<div id="AlternativeContent${topicStatus.index}"></div>			
+				</div>
+				<div class="topicMovieInfo">
+					<div class="topicMovieHeader"><isprint value="${movieObj.custom.movieName.toUpperCase()}" /></div>
+					<div class="topicMovieTitle"><isprint value="${movieObj.custom.movieSummary}" /></div>
+					<div class="topicMovieDesc">
+						<isprint value="${movieObj.custom.movieDesc}" encoding="off" />
+					</div>
+					<isif condition="${movieObj.custom.teenName != null && movieObj.custom.teenName != 'null'}">
+						<a class="topicMovieMore" href="${URLUtils.url('Proof-ShowDetail', 'teen', movieObj.custom.teenName)}">More From This Teen</a>				
+					</isif>
+				</div>
+			</div>
+			<isif condition="${!topicStatus.last}">
+				<div class="topicMovieSep">
+					<img src="${URLUtils.staticURL('/images/proof/divideTopic.png')}"/>
+				</div>		
+			</isif>		
+		</isloop>		
+	</div>
+</div>
+<div id="endTopicContainer"></div>
+
+<isinclude template="content/proof/teenchooser"/>
+
+<div id="topicsContainer">
+	<isscript>
+	  var topics : dw.util.SeekableIterator = dw.object.CustomObjectMgr.queryCustomObjects("topics", "", "custom.topicPosition asc");		  
+	</isscript>	
+	<div class="topicItem">
+		
+	</div>
+	<div id="chooseATopic">
+		<a name="chooseATopicLink"><img src="${URLUtils.staticURL('/images/proof/chooseATopic.png')}"/></a>
+	</div>
+	<div class="clear"></div>
+
+	<isloop items="${topics}" alias="topicIter" status="topic">
+		<div class="topicOuter" id="pos${topicIter.custom.topicPosition}">
+			<div class="topicInner" ><a href="${URLUtils.url('Proof-ShowTopic', 'topic', topicIter.custom.topicName)}">${topicIter.custom.topicName}</a></div>
+		</div>
+	</isloop>
+	
+	<isinclude template="content/proof/beforeaftergallery" />
+	
+</div>
+<div id="topicOrder">
+	<a href="${URLUtils.url('COCart-Show')}">
+		<img src="${dw.web.URLUtils.staticURL('/images/proof/orderProof.png')}"/>
+	</a>
+</div>
+
+<script type="text/javascript">
+jQuery(document).ready(function () {
+	var imageUrl = jQuery('.navProof img').attr('src');
+	imageUrl = imageUrl.replace('_off', '_on');
+	jQuery('.navProof img').attr('src', imageUrl);
+	jQuery('.navProof').addClass('navSelected');
+
+	var topic = "pos${pdict.Topic.custom.topicPosition}";
+
+	jQuery('#' + topic).addClass('topicSelected');
+});
+
+jQuery(window).load(function() {
+	jQuery(document).ready(function() {
+		if(jQuery.browser.msie) {
+			jQuery.each(jQuery('.movieRow .topicMovie .movie'), function() {
+			    jQuery(this).children('div:last').height(0);
+			    if(jQuery.browser.version > 7) {
+			    	jQuery(this).children('div:last').width(503);
+			    }
+			});
+		}
+	});
+});
+
+</script>
+
+<isset name="OmniturePage" value="Topicpage" scope="pdict">
+<isscript>
+var primaryUCI : Cookie = request.httpCookies['uci'];
+</isscript>
+
+</isdecorate>

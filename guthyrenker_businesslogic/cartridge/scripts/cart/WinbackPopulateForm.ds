@@ -1,0 +1,199 @@
+/**
+* Demandware Script File
+* To define input and output parameters, create entries of the form:
+*
+* @<paramUsageType> <paramName> : <paramDataType> [<paramComment>]
+*
+* where
+*   <paramUsageType> can be either 'input' or 'output'
+*   <paramName> can be any valid parameter name
+*   <paramDataType> identifies the type of the parameter
+*   <paramComment> is an optional comment
+*
+* For example:
+*
+*-   @input CurrentForms : dw.web.Form represent form
+*   @output CustomerInfo : Object Represents Customer Info
+*
+*/
+importPackage( dw.system );
+
+function execute( args : PipelineDictionary ) : Number
+{
+	var contact : Object  = null;
+	var customerInfoXML : XML = session.privacy.wbCustomerInfo;
+	var logger = Logger.getLogger( "winback.customerinfo" );
+	if(!customerInfoXML){
+		return PIPELET_ERROR;
+	}
+	var	contact = {
+			email : "",
+			emailconfirm : "",
+			daytimephone : "",
+			eveningphone : ""
+		};
+	
+	var billingAddress = {
+		firstName : "",
+		lastName : "",
+		address1 : "",
+		address2 : "",
+		city : "",
+		postalCode : "",
+		country : "",
+		stateCode : ""
+	};
+	var shippingAddress = {
+		firstName : "",
+		lastName : "",
+		address1 : "",
+		address2 : "",
+		city : "",
+		postalCode : "",
+		country : "",
+		stateCode : ""
+	}
+	var useAsBillingAddress = true;
+	
+	var creditcard = {
+		type : { cardType: ""},
+		creditCardNumber : ""
+		
+	};
+	//email field population 
+	try{
+		contact.email = customerInfoXML.emailAddress.email;
+		contact.emailconfirm = customerInfoXML.emailAddress.email;
+	}catch(e){
+		logger.debug("email population error #{}",e);
+	}	
+	
+	//phone numbers population
+	try{
+		var phones = customerInfoXML.phoneNumbers.phoneNumber;	
+		// there is not policy how to manage phones
+		if(phones.length() > 1){
+			contact.daytimephone = phones[0].number;
+			contact.eveningphone = phones[1].number;
+		}else{
+			contact.daytimephone = phones.number;
+		}
+	}catch(e){
+		logger.debug("phone population error #{}",e);
+	}
+	
+	//billing population
+	try{
+		//if exists
+		if(customerInfoXML.addresses.billingAddress.length()){
+			billingAddress.firstName = customerInfoXML.addresses.billingAddress.firstName;
+			billingAddress.lastName = customerInfoXML.addresses.billingAddress.lastName;
+			billingAddress.city = customerInfoXML.addresses.billingAddress.city;			
+			billingAddress.country = customerInfoXML.addresses.billingAddress.countryCode;
+			billingAddress.postalCode = customerInfoXML.addresses.billingAddress.zipCode;
+			billingAddress.states = {};
+			//billingAddress.states.stateCode = 'AZ';
+			billingAddress.states.stateCodeUS = customerInfoXML.addresses.billingAddress.state;
+			if(customerInfoXML.addresses.billingAddress.addressLine.length()){
+				if(customerInfoXML.addresses.billingAddress.addressLine.length() > 1){
+					//assume we have more then one address
+					billingAddress.address1 = customerInfoXML.addresses.billingAddress.addressLine[0];
+					billingAddress.address2 = customerInfoXML.addresses.billingAddress.addressLine[1];
+				}else{
+					billingAddress.address1 = customerInfoXML.addresses.billingAddress.addressLine;
+				}
+				
+			}			
+		}	
+	}catch(e){
+		logger.debug("billing address population error #{}",e);
+	}
+	
+	try{
+		if(customerInfoXML.addresses.shippingAddress.length()){
+			if(customerInfoXML.addresses.shippingAddress.* == customerInfoXML.addresses.billingAddress.*){
+				throw Error;
+			}
+			shippingAddress.firstName = customerInfoXML.addresses.shippingAddress.firstName;
+			shippingAddress.lastName = customerInfoXML.addresses.shippingAddress.lastName;
+			shippingAddress.city = customerInfoXML.addresses.shippingAddress.city;			
+			shippingAddress.country = customerInfoXML.addresses.shippingAddress.countryCode;
+			shippingAddress.postalCode = customerInfoXML.addresses.shippingAddress.zipCode;
+			shippingAddress.states = {};			
+			shippingAddress.states.stateCodeUS = customerInfoXML.addresses.shippingAddress.state;
+			if(customerInfoXML.addresses.shippingAddress.addressLine.length()){
+				if(customerInfoXML.addresses.shippingAddress.addressLine.length() > 1){
+					//assume we have more then one address
+					shippingAddress.address1 = customerInfoXML.addresses.shippingAddress.addressLine[0];
+					shippingAddress.address2 = customerInfoXML.addresses.shippingAddress.addressLine[1];
+				}else{
+					shippingAddress.address1 = customerInfoXML.addresses.shippingAddress.addressLine;
+				}
+				
+			}
+			useAsBillingAddress = false;
+			
+		}else{
+			throw Error;
+		}	
+	}catch(e){
+		//if we catch error, we put flag that shipping address is equil to billing address
+	}
+
+	//CC
+	try{
+		if(session.privacy.wbShowCCinfo && session.privacy.wbShowCCinfo === true){
+			var expDate : String = customerInfoXML.payment.expireDate;
+			
+			//if(expDate.match(/\d{4}-\d{2}-\d{2}/) && new Date(expDate) > new Date){
+				creditcard.type = {};
+				creditcard.type.cardType = customerInfoXML.payment.cardType;
+				creditcard.creditCardNumber = customerInfoXML.payment.ccNumber;
+				
+				session.privacy.ccexpiration = expDate.substring(0,expDate.lastIndexOf('-'));
+			//}
+		}	
+	}catch(e){
+		logger.debug("phone population error #{}",e);
+	}
+	
+	args.CustomerInfo = {contact : contact, billingAddress: billingAddress, shippingAddress: shippingAddress, useAsBillingAddress: useAsBillingAddress, creditcard: creditcard};
+	/*
+	//contact
+	args.CurrentForms.personinf.contact.email.setValue();
+	args.CurrentForms.personinf.contact.daytimephone;
+	args.CurrentForms.personinf.contact.emailconfirm;
+	args.CurrentForms.personinf.contact.eveningphone;
+	
+	//billing
+	args.CurrentForms.personinf.billtoaddress.firstName
+	args.CurrentForms.personinf.billtoaddress.lastName
+	args.CurrentForms.personinf.billtoaddress.address1
+	args.CurrentForms.personinf.billtoaddress.address2
+	args.CurrentForms.personinf.billtoaddress.city
+	args.CurrentForms.personinf.billtoaddress.states.stateUS //select
+	args.CurrentForms.personinf.billtoaddress.zip
+	args.CurrentForms.personinf.billtoaddress.country.htmlName //hidden
+	
+	args.CurrentForms.personinf.useAsBillingAddress //if user has saparete billing and shipping
+	
+	//shipping
+	args.CurrentForms.personinf.shipptoaddress.firstName
+	args.CurrentForms.personinf.shipptoaddress.lastName
+	args.CurrentForms.personinf.shipptoaddress.address1
+	args.CurrentForms.personinf.shipptoaddress.address2
+	args.CurrentForms.personinf.shipptoaddress.city
+	args.CurrentForms.personinf.shipptoaddress.states.stateUS //select
+	args.CurrentForms.personinf.shipptoaddress.zip
+	args.CurrentForms.personinf.shipptoaddress.country.htmlName //hidden
+	
+	//payment
+	args.CurrentForms.personinf.creditcard.selectedPaymentMethodID //hidden
+	args.CurrentForms.personinf.creditcard.type
+		args.CurrentForms.personinf.creditcard.type.options
+		pdict.CurrentForms.personinf.creditcard.type.selectedOption
+		
+	*/
+
+   return PIPELET_NEXT;
+}

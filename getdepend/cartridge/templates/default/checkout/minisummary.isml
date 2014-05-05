@@ -1,0 +1,84 @@
+<isinclude template="util/modules"/>
+<iscomment>
+	This template renders the summary of the current basket at the right hand side
+	of all checkout pages. It includes an order summary including order totals,
+	a list of all included shipments as well as the payment methods used to pay
+	the basket.
+</iscomment>
+<div class="gr-bg-wraper">
+	<div class="white-bg">
+    	<div class="top-l-corner"></div>
+		    <div class="top-r-corner"></div>
+	    <div class="bot-l-corner"></div>
+	    <div class="bot-r-corner"></div>
+
+	    <h2>${Resource.msg('cart.ordersummary','checkout',null)}</h2>
+
+		<div class="blockcontent">
+			<isif condition="${!empty(pdict.checkoutstep)}">
+				<isset name="checkoutstep" value="${pdict.checkoutstep}" scope="page"/>
+			</isif>
+
+			<isif condition="${!empty(checkoutstep) && (checkoutstep >= 2)}">
+				<div class="checkoutminisummary">
+					<iscomment><iscontentasset aid="cs-contact-number"/></iscomment>
+					
+					<div class="row-carttotal">
+						<isif condition="${pdict.Basket.getProductQuantityTotal()==1}">
+							${Resource.msgf( 'ordersummary.count', 'checkout', null, pdict.Basket.getProductQuantityTotal())}
+						<iselse/>
+							${Resource.msgf( 'ordersummary.counts', 'checkout', null, pdict.Basket.getProductQuantityTotal())}
+						</isif>
+					</div>
+					
+					<!-- isif condition="${checkoutstep &lt 5}"> -->
+						<div class="checkoutsummaryheader">
+							<iscomment>
+								The edit link depends on the basket content: if there is just one gift 
+								certificate in the basket the edit link leads to the gift certificate purchase page
+								offering to edit the gift certificate settings.
+							</iscomment>
+							<iscomment>
+								<isset name="editUrl" value="${URLUtils.url('Cart-Show')}" scope="page"/>
+								<isif condition="${pdict.Basket.productLineItems.size() == 0 && pdict.Basket.giftCertificateLineItems.size() == 1}">
+									<isset name="editUrl" value="${URLUtils.url('GiftCert-Edit','GiftCertificateLineItemID', pdict.Basket.giftCertificateLineItems[0].UUID)}" scope="page"/>
+								</isif>
+								<a href="${editUrl}" class="orderedit">${Resource.msg('global.edit','locale',null)}</a>
+							</iscomment>
+							Order Summary
+						</div><!-- END: checkoutsummaryheader -->
+						
+						<div class="checkoutminicart">
+							<isminilineitems p_lineitemctnr="${pdict.Basket}"/>
+						</div><!-- END: check_minicart -->
+					<!-- /isif> --><!-- END: checkoutstep < 5 -->
+
+					<iscomment>render the order totals</iscomment>
+					<div class="checkoutordertotals">
+						<isordertotals p_lineitemctnr="${pdict.Basket}" p_showshipmentinfo="${false}" p_shipmenteditable="${false}" p_totallabel="Total:"/>
+						<iscomment>	
+							<isif condition="${checkoutstep > 3}">
+								<isordertotals p_lineitemctnr="${pdict.Basket}" p_showshipmentinfo="${true}" p_shipmenteditable="${true}" p_totallabel="Total:"/>
+							<iselse/>
+								<isordertotals p_lineitemctnr="${pdict.Basket}" p_showshipmentinfo="${false}" p_shipmenteditable="${false}" p_totallabel="Estimated Total:"/>
+							</isif>
+						</iscomment>	
+					</div><!-- END: checkoutordertotals -->
+					
+					<div class="italic">${Resource.msg('ordersummary.note','checkout',null)}</div>
+					
+					<iscomment>render single shipment boxes</iscomment>
+					<isif condition="${!empty(checkoutstep) && (checkoutstep > 3)}">
+						<isinclude template="checkout/shipping/minishipments"/>
+					</isif>
+
+					<iscomment>render billing information: billing address and payment instruments</iscomment>
+					<isif condition="${!empty(checkoutstep) && (checkoutstep > 4)}">
+						<isinclude template="checkout/billing/minibillinginfo"/>
+					</isif>
+				
+				</div><!-- END: checkoutminisummary -->
+			</isif>
+		</div><!-- END: blockcontent -->
+	</div><!-- END: white-bg -->
+</div><!-- END: gr-bg-wraper -->

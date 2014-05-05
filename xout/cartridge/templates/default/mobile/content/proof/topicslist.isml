@@ -1,0 +1,13 @@
+<isscript>
+	var topics : dw.util.SeekableIterator = dw.object.CustomObjectMgr.queryCustomObjects('topics', '', 'custom.topicPosition asc');
+</isscript>	
+<div id="topics">
+	<div id="title">
+		<img src="${URLUtils.staticURL('/images/proof/topics/topicsLabel.png')}"/>
+	</div>
+	<div id="list">
+		<isloop items="${topics}" var="topic">
+			<a href="${URLUtils.url('Proof-ShowTopic', 'topic', topic.custom.topicName)}">${topic.custom.topicName}</a>
+		</isloop>
+	</div>
+</div>

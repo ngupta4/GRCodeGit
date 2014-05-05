@@ -1,0 +1,58 @@
+/**
+*	@input sourceXML:XML
+*	@output token :String
+*	@output screenLevel :String
+*	@output payoption :dw.util.ArrayList
+*	@output showPopUp :Boolean
+*/
+importPackage( dw.system );
+importPackage( dw.util );
+importPackage( dw.web );
+importPackage( dw.io );
+
+
+function execute( args : PipelineDictionary ) : Number
+{
+   	var token :String;//This Token will be used and passed in Validator API
+    var screenLevel :String;
+    var group :String;
+    var showPopUp : Boolean = false;
+    var payoption :ArrayList = new ArrayList();
+	var responseXMLData : XML = args.sourceXML.responseData.rts;
+	
+	if(!empty(responseXMLData) && null!=responseXMLData && ''!=responseXMLData)
+	{
+		if(null!=responseXMLData.token && ''!=responseXMLData.token.toString())
+			token = responseXMLData.token.toString();
+		
+		if(null!=responseXMLData.screenLevel && ''!=responseXMLData.screenLevel.toString())
+	    	screenLevel =responseXMLData.screenLevel.toString();
+	    
+	    if(null!=responseXMLData.payOptions && !empty(responseXMLData.payOptions)){
+			var payopt : ArrayList = responseXMLData.payOptions;
+			if(null!=payopt && !empty(payopt))
+			{
+				for (var i=0;i<payopt.payOption.length();i++)
+				{
+					payoption.add(payopt.payOption[i]);
+				}
+			}
+	    }
+	    
+	    if(null!=responseXMLData.group && ''!=responseXMLData.group.toString())
+	    {
+	    	group=responseXMLData.group.toString();
+	    		if(group.charAt(4)=='1'){
+	    		showPopUp = true;
+	    	}
+	    }
+	}
+	
+	
+	args.showPopUp = showPopUp;
+	args.screenLevel = screenLevel;
+	args.token = token;
+	args.payoption = payoption;
+   return PIPELET_NEXT;
+}
+

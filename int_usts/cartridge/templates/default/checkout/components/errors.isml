@@ -1,0 +1,37 @@
+<!--- TEMPLATENAME: errors.isml --->
+<iscomment>prevent checkout if any product price is N/A or if invalid coupons</iscomment>
+<isset name="showNav" value="${true}" scope="page" />
+<isif condition="${pdict.BasketStatus != null && pdict.BasketStatus.error}">
+	<div class="errorform ">
+		<isif condition="${pdict.BasketStatus.code != null && pdict.BasketStatus.code=='CouponError'}">
+			${Resource.msg('cart.cartcouponinvalid','checkout',null)}
+		<iselseif condition="${pdict.BasketStatus.code != null && pdict.BasketStatus.code=='TaxError'}">
+			${Resource.msg('cart.taxinvalid','checkout',null)}		
+		<iselse>
+			${Resource.msg('cart.carterror','checkout',null)}
+		</isif>
+	</div>
+</isif>
+
+<isif condition="${!empty(pdict.AVSError) && pdict.AVSError && !empty(pdict.LitleResponseAVSMessage)}">
+	<div class="errorform">${Resource.msg('global.avs.error','locale',null)}</div>
+</isif>
+
+<isif condition="${pdict.PlaceOrderError != null}">
+	
+		<isif condition="${!empty(pdict.CurrentForms.personinf.creditcard.error)}">
+			<div class="errorform">${pdict.CurrentForms.personinf.creditcard.error}</div>
+		<iselse/>
+			<isloop items="${pdict.PlaceOrderError.code.split("|")}" var="code">
+			<div class="errorform">${Resource.msg(code,'checkout',null)}</div>
+			</isloop>
+		</isif>
+	
+	<isif condition="${!empty(pdict.LitleResponseMessage)}">
+		<div class="errorform">${pdict.LitleResponseMessage}</div>
+	</isif>
+</isif>
+
+<isif condition="${!empty(pdict.AddressError)}">
+	<div class="errorform">${Resource.msg(pdict.AddressError, 'rendering', null)}</div>
+</isif>

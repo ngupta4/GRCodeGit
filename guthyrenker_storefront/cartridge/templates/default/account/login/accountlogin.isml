@@ -1,0 +1,39 @@
+<isdecorate template="account/pt_account">
+<isset name="pagetitle" value="${Resource.msg('signin.page.title','locale',null)}" encoding="off" scope="pdict">
+<isset name="description" value="${Resource.msg('signin.page.description','locale',null)}" encoding="off" scope="pdict">
+<isset name="keywords" value="${Resource.msg('signin.page.keywords','locale',null)}" encoding="off" scope="pdict">
+	<div class="page-wrapper-retention">
+    	<div class="page-wrapper-retention-middle">
+    		<isinclude template="util/modules"/>
+    		<isinclude template="util/errordisplay"/>
+    		<isif condition = "${null!=pdict.genericError && !empty(pdict.genericError)}">
+    			<span class="errormessage"><isprint value="${pdict.genericError}"></span>
+    		</isif>
+    		
+    		<div class="accountlogin">
+    			<div class="chtopline">${Resource.msg('logininclude.chtopline','account',null)}</div>
+    			<isinclude template="account/login/logininclude"/>
+    			
+    			<div class="logincreate">    			
+    				<div class="createaccount">
+    					<iscontentasset aid="login-create-account"/>
+    					<form action="${URLUtils.httpsContinue()}" method="post" id="${pdict.CurrentForms.login.htmlName}_register">
+							<fieldset>
+								<div class="createaccountbutton">
+									<button class="gr-btn margin0" type="submit" value="${Resource.msg('global.createbutton','locale',null)}" name="${pdict.CurrentForms.login.register.htmlName}"><span>${Resource.msg('button.createaccount','account',null)}</span></button>
+								</div>
+								<input type="hidden" name="${pdict.CurrentForms.login.secureKeyHtmlName}" value="${pdict.CurrentForms.login.secureKeyValue}"/>
+							</fieldset>
+						</form>
+					</div>
+				</div>
+				<!-- END: logincreate -->
+			</div>
+			<!-- END: accountlogin -->
+			
+			<isset name="OmniturePage" value="Loginpage" scope="pdict">
+				<div class="rightcoloum"><iscontentasset aid="login-Livechat"/></div>
+				<iscomment>Live Chat C2C Div Tag</iscomment>
+		</div>
+	</div>
+</isdecorate>

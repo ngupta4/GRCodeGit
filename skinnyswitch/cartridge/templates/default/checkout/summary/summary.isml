@@ -1,0 +1,84 @@
+<isdecorate template="content/home/pt_storefront">
+	<iscomment>
+		This template visualizes the last step of the checkout, the order summary
+		page prior to the actual order placing.
+		It displays the complete content of the cart including product line items,
+		bonus products, redeemed coupons and gift certificate line items.
+	</iscomment>
+	<isscript>
+		importPackage(dw.object);
+		importPackage(dw.catalog);
+		
+		var CCC : Object = pdict.CurrentCampaignConfig;
+		var campaignCode : String = CCC.campaignCode;
+		
+		var showHeader : boolean = CCC.showHeader;
+		var showFooter : boolean = CCC.showFooter;
+		var showNav : boolean = CCC.showNav;
+		var showOrderButton : boolean = CCC.showOrderButton;
+		
+		var category : dw.catalog.Category = CCC.getCampaignCategory();
+	</isscript>
+	
+	<isinclude template="util/modules"/>
+	<isinclude template="util/reporting/ReportBasket.isml"/>
+
+	<div class="place-order">
+		<isslot id="hp-top" context="category" description="Home Page Top" context-object="${category}"/>
+	</div>
+	
+		<span class="purple">${Resource.msg('revieworder.text','rendering',null)}</span><br/>
+		<span class="purple">${Resource.msg('revieworder.text2','rendering',null)}</span>
+	
+	<form action="${URLUtils.continueURL()}" method="post" id="FinalOrderForm">
+		<fieldset>	
+			<isif condition="${!empty(pdict.IsShowSuggest) && (pdict.IsShowSuggest == true)}">
+				<isinclude url="${URLUtils.url('COCart-ShowRecommendation','IsShowSuggest','true')}"/>
+			<iselse>
+				<isinclude url="${URLUtils.url('COCart-ShowRecommendation')}"/>
+			</isif>
+								
+
+			<p class="agreetoterms">${Resource.msg('cart.agreetext','rendering',null)}</p>
+			<button type="submit" id="btnCompleteOrder" class="completeorder" value="${Resource.msg('global.edit','locale',null)}" name="${pdict.CurrentForms.orderreview.apply.htmlName}" ></button>
+			<button type="submit" id="btnNoThanks" class="nothanks" value="${Resource.msg('global.edit','locale',null)}" name="${pdict.CurrentForms.orderreview.backtoinfo.htmlName}"></button>
+			<div class="clear"></div>
+			<isinputfield formfield="${pdict.CurrentForms.orderreview.agree}" type="checkbox" label="false" attribute1="requiredmesage" value1="${Resource.msg('forms.checkout.agree.value-error','forms',null)}">
+			<label for="${pdict.CurrentForms.orderreview.agree.htmlName}">Agree To Terms</label>
+			<span class="errorclient" generated="true" htmlfor="${pdict.CurrentForms.orderreview.agree.htmlName}" style="display:none;">${Resource.msg('forms.checkout.agree.value-error','forms',null)}</span>
+			
+		</fieldset>
+
+	</form>
+		
+	<isinclude template="checkout/components/cartinfo" />
+	<isinclude template="checkout/components/billingandshippinginfo" />
+	<isinclude template="checkout/components/ordertotalinfo" />
+	<isset name="OmniturePage" value="COSummary" scope="pdict">
+	
+	<script type="text/javascript">
+		jQuery("input[name=${pdict.CurrentForms.orderreview.agree.htmlName}]").removeClass("required");
+		jQuery("input[name=${pdict.CurrentForms.orderreview.agree.htmlName}]").click(function() {
+			jQuery(this).parent().siblings("span.errorclient").hide();
+		});
+		jQuery("#btnCompleteOrder").click(function() {
+			if(jQuery("input[name=${pdict.CurrentForms.orderreview.agree.htmlName}]").is(":checked")) {
+				return true;
+			} else if(!jQuery("input[name=p1]").is(":checked") && !jQuery("input[name=p2]").is(":checked")) {
+				return true;
+			} else {
+				jQuery("input[name=${pdict.CurrentForms.orderreview.agree.htmlName}]").parent().siblings("span.errorclient").show();
+			}
+			return false;
+		});
+		jQuery("#btnNoThanks").click(function() {
+			jQuery("input[name=${pdict.CurrentForms.orderreview.agree.htmlName}]").removeClass("required");
+			if(jQuery("input[name=${pdict.CurrentForms.orderreview.agree.htmlName}]").is(":checked")) {
+				jQuery("input[name=${pdict.CurrentForms.orderreview.agree.htmlName}]").click();
+			}
+			return true;
+		});
+		
+	</script>
+	<script language="javascript" src="https://t4.mgplatform.com/gr/skinnyswitch_sr.js"></script>
+</isdecorate>

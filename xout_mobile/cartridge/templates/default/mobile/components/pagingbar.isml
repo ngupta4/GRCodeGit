@@ -1,0 +1,51 @@
+<isif condition="${!pdict.pagingmodel.empty}">
+	<isscript>
+		var pagingModel = pdict.pagingmodel;
+		var current = pagingModel.start;
+		var totalCount = pagingModel.count;
+		var pageSize = pagingModel.pageSize;
+		var pageURL = pdict.pageurl;
+		var currentPage = pagingModel.currentPage;
+		var maxPage = pagingModel.maxPage;
+
+		var lr = 2; // number of explicit page links to the left and right
+		if ( maxPage <= 2*lr ) {
+			rangeBegin = 0;
+			rangeEnd = maxPage;
+		} else {
+			rangeBegin = Math.max( Math.min( currentPage - lr, maxPage - 2*lr ), 0 );
+			rangeEnd = Math.min( rangeBegin + 2*lr, maxPage );
+		}
+		
+		
+	</isscript>
+
+	<iscomment>Avoid empty paging div or empty div with empty ul</iscomment>
+	<div id="pagination">
+		<isif condition="${pagingModel.pageCount > 1}">
+			
+			<isif condition="${(currentPage > 0) && (maxPage > 4)}">
+				<a href="${pagingModel.appendPaging( pageURL, 0)}">&lt;&lt;</a>
+				<a href="${pagingModel.appendPaging( pageURL, current - pageSize)}">&lt;</a>
+			</isif>
+	
+			<isif condition="${maxPage >= 1}">
+				<isloop status="i" begin="${rangeBegin}" end="${rangeEnd}">
+					<isif condition="${i.index != currentPage}">
+						<a href="${pagingModel.appendPaging( pageURL, current + (i.index - currentPage) * pageSize)}"><isprint value="${i.index + 1}" style="0"/></a>
+					<iselse>
+						<isprint value="${i.index + 1}" style="0"/>
+					</isif>
+				</isloop>
+	
+				<isif condition="${(current < totalCount - pageSize) && (maxPage > 4)}">
+					<a  href="${pagingModel.appendPaging( pageURL, current + pageSize)}"><span>&gt;</span></a>
+					<a href="${pagingModel.appendPaging( pageURL, current + (maxPage - currentPage) * pageSize)}"><span>&gt;&gt;</span></a>
+					
+					
+				</isif>
+			</isif>
+	
+		</isif>
+	</div>
+</isif>

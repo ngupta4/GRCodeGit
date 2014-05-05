@@ -1,0 +1,426 @@
+/* =Section Titles
+-----------------------------------------------------*/
+#page_real-stories #main #primaryContent .contain {
+	padding:0pt 0px 20px 0px;
+}
+
+#page_real-stories #main #primaryContent h1 {
+
+}
+
+#page_customer #main #primaryContent h1 {
+}
+
+#page_tellus #main #primaryContent h1 {
+
+}
+
+#page_real-stories #realStories .blockContent {
+	padding:0px 1px;
+}
+
+#realStories h5{
+	font-size:18px;
+	color:#4e4d4b;
+	margin: 5px 0 6px 14px;
+	text-transform:capitalize;
+}
+
+.stories #main #primaryContent h2 {display:none}
+
+/*Landing page styles */
+
+* html #realStories #realStoriesSearch {
+	/*prevents jiggling in IE6*/
+	display: inline;
+}
+
+/*Search header*/
+
+#realStories #realStoriesSearchLanding{
+	background-color: #eee;
+	height: 33px;
+	padding: 10px 0 0 160px;
+}
+
+/* ie 6 & 7*/
+* html #realStories form{
+	padding: 15px 0 5px 0;
+}
+
+*:first-child+html #realStories form{
+	padding: 15px 0 5px 0;
+}
+/* end ie 6 & 7 */
+
+#realStories #realStoriesSearchLanding form {
+	display: inline;
+}
+
+#realStories #realStoriesSearchLanding button,
+#realStories #realStoriesSearchLanding a {
+	background: url(../images/interface/btn-find.png) no-repeat bottom;
+	text-indent: -99999em;
+	height: 22px;
+	border: 0;
+	vertical-align: middle;
+	float: left;
+	margin: 0 5px 0 0;
+}
+
+#realStories #realStoriesSearchLanding button.btnFind{
+	width:72px;
+}
+
+#realStories #realStoriesSearchLanding button.btnFind:hover{
+	background-position: top;
+	background: url(../images/interface/btn-find.png) no-repeat top;
+}
+
+#realStories #realStoriesSearchLanding div.buttonOr {
+	background: transparent url(../images/stories-75.png) no-repeat scroll 0pt -295px;
+	text-indent: -99999em;
+	height: 15px;
+	width: 12px;
+	float: left;
+	margin: 0 5px 0 0;
+}
+
+#realStories #realStoriesSearchLanding a.btnStoriesAll{	
+	background-position: 0 -100px;
+	width:123px;
+}
+
+#realStories #realStoriesSearchLanding a.btnStoriesAll:hover {
+	background-position: -300px -100px;
+}
+
+#realStories #realStoriesSearchLanding select{
+	margin: 0 5px 0 0;
+	font-size: 0.95em;
+	float: left;	
+}
+
+
+/*No Results*/
+#noResults {
+	padding: 40px 0 60px;
+	text-align: center;
+}
+
+#noResults strong {
+	display: block;
+	font-size: 1.1em;
+}
+
+
+/* Top area */
+#lgScroller{
+	height:135px;
+	margin:20px auto;
+	overflow:hidden;
+	width:430px;
+	position: relative;
+}
+
+#lgScroller #lgListMask{
+	width: 250000px;
+}
+
+#lgScroller #lgListMask ul{
+	float:left;	
+	height: 1%;
+	_margin-left: 0;
+	_padding-left:0;
+	_margin-right: 0;
+	_padding-right:0;
+}
+
+#lgScroller li{
+	float:left;
+	width: 430px;
+	height: 135px;
+	margin-right: 100px;
+	height: 132px; /*fixes not redrawing during animation in Safari 2.x*/
+}
+
+#lgScroller #lgListMask h6{
+	margin: 6px 0 4px 0;	
+}
+
+#lgScroller li .image{
+	float:left;
+	height: 100%;
+	margin-right: 21px;
+}
+
+/* Bottom area*/
+.thumbArea{
+	overflow:hidden;
+	background-color: #eee;
+/*	position: relative;*/
+	margin:  0 10px 5px 10px;
+	overflow: auto;
+	border: 1px solid #eee;
+}
+
+
+.thumbArea .previous{
+	position: absolute;
+	top: 93px;
+	left: 40px;
+	background: #eee url(../images/interface/btn-circles.png) no-repeat 0 0;
+	text-indent: -9999px;
+	width: 27px;
+	height: 27px;
+	display:block;
+	z-index: 200;
+/*for non-js*/
+	display: none;
+	visibility: hidden;
+}
+.thumbArea .next{
+	position: absolute;
+	top: 93px;
+	right: 40px;
+	background: #eee url(../images/interface/btn-circles.png) no-repeat 0 -100px;
+	text-indent: -9999px;
+	width: 27px;
+	height: 27px;
+	display:block;
+	z-index: 200;
+/*for non-js*/
+	display: none;
+	visibility: hidden;
+}
+.thumbArea a.previous:hover{
+	background-position: -300px 0px;
+}
+.thumbArea a.next:hover{
+	background-position: -300px -100px;
+}
+
+.smScroller{
+	padding: 18px 0;
+	position: relative;
+}
+
+* html .smScroller li,
+* html #lgScroller li{
+	display:inline;
+}
+
+.smScroller li{
+	float:left;
+	margin: 0 0 8px 18px;
+	display: inline;
+}
+.smScroller li a{
+	border: 2px solid #eee;
+	display:block;
+}
+.smScroller ul li a:hover,
+/*highlight small thumbs*/
+/*set0*/
+.s0_l0 .smScroller .s0 .l0 a,
+.s0_l1 .smScroller .s0 .l1 a,
+.s0_l2 .smScroller .s0 .l2 a,
+.s0_l3 .smScroller .s0 .l3 a,
+.s0_l4 .smScroller .s0 .l4 a,
+.s0_l5 .smScroller .s0 .l5 a,
+/*set1*/
+.s1_l0 .smScroller .s1 .l0 a,
+.s1_l1 .smScroller .s1 .l1 a,
+.s1_l2 .smScroller .s1 .l2 a,
+.s1_l3 .smScroller .s1 .l3 a,
+.s1_l4 .smScroller .s1 .l4 a,
+.s1_l5 .smScroller .s1 .l5 a,
+/*set2*/
+.s2_l0 .smScroller .s2 .l0 a,
+.s2_l1 .smScroller .s2 .l1 a,
+.s2_l2 .smScroller .s2 .l2 a,
+.s2_l3 .smScroller .s2 .l3 a,
+.s2_l4 .smScroller .s2 .l4 a,
+.s2_l5 .smScroller .s2 .l5 a,
+/*set3*/
+.s3_l0 .smScroller .s3 .l0 a,
+.s3_l1 .smScroller .s3 .l1 a,
+.s3_l2 .smScroller .s3 .l2 a,
+.s3_l3 .smScroller .s3 .l3 a,
+.s3_l4 .smScroller .s3 .l4 a,
+.s3_l5 .smScroller .s3 .l5 a,
+/*set4*/
+.s4_l0 .smScroller .s4 .l0 a,
+.s4_l1 .smScroller .s4 .l1 a,
+.s4_l2 .smScroller .s4 .l2 a,
+.s4_l3 .smScroller .s4 .l3 a,
+.s4_l4 .smScroller .s4 .l4 a,
+.s4_l5 .smScroller .s4 .l5 a,
+/*set5*/
+.s5_l0 .smScroller .s5 .l0 a,
+.s5_l1 .smScroller .s5 .l1 a,
+.s5_l2 .smScroller .s5 .l2 a,
+.s5_l3 .smScroller .s5 .l3 a,
+.s5_l4 .smScroller .s5 .l4 a,
+.s5_l5 .smScroller .s5 .l5 a,
+/*set6*/
+.s6_l0 .smScroller .s6 .l0 a,
+.s6_l1 .smScroller .s6 .l1 a,
+.s6_l2 .smScroller .s6 .l2 a,
+.s6_l3 .smScroller .s6 .l3 a,
+.s6_l4 .smScroller .s6 .l4 a,
+.s6_l5 .smScroller .s6 .l5 a,
+/*set7*/
+.s7_l0 .smScroller .s7 .l0 a,
+.s7_l1 .smScroller .s7 .l1 a,
+.s7_l2 .smScroller .s7 .l2 a,
+.s7_l3 .smScroller .s7 .l3 a,
+.s7_l4 .smScroller .s7 .l4 a,
+.s7_l5 .smScroller .s7 .l5 a,
+/*set8*/
+.s8_l0 .smScroller .s8 .l0 a,
+.s8_l1 .smScroller .s8 .l1 a,
+.s8_l2 .smScroller .s8 .l2 a,
+.s8_l3 .smScroller .s8 .l3 a,
+.s8_l4 .smScroller .s8 .l4 a,
+.s8_l5 .smScroller .s8 .l5 a,
+/*set9*/
+.s9_l0 .smScroller .s9 .l0 a,
+.s9_l1 .smScroller .s9 .l1 a,
+.s9_l2 .smScroller .s9 .l2 a,
+.s9_l3 .smScroller .s9 .l3 a,
+.s9_l4 .smScroller .s9 .l4 a,
+.s9_l5 .smScroller .s9 .l5 a,
+/*set10*/
+.s10_l0 .smScroller .s10 .l0 a,
+.s10_l1 .smScroller .s10 .l1 a,
+.s10_l2 .smScroller .s10 .l2 a,
+.s10_l3 .smScroller .s10 .l3 a,
+.s10_l4 .smScroller .s10 .l4 a,
+.s10_l5 .smScroller .s10 .l5 a,
+/*set11*/
+.s11_l0 .smScroller .s11 .l0 a,
+.s11_l1 .smScroller .s11 .l1 a,
+.s11_l2 .smScroller .s11 .l2 a,
+.s11_l3 .smScroller .s11 .l3 a,
+.s11_l4 .smScroller .s11 .l4 a,
+.s11_l5 .smScroller .s11 .l5 a,
+/*set12*/
+.s12_l0 .smScroller .s12 .l0 a,
+.s12_l1 .smScroller .s12 .l1 a,
+.s12_l2 .smScroller .s12 .l2 a,
+.s12_l3 .smScroller .s12 .l3 a,
+.s12_l4 .smScroller .s12 .l4 a,
+.s12_l5 .smScroller .s12 .l5 a{
+	border: 2px solid #102842;
+}
+ul.setController{
+	display: none; /*hides until JS positions*/
+	position: absolute;
+	top: 222px;
+}
+ul.setController li{
+	float: left;
+	margin: 0 3px;
+}
+ul.setController li a{
+	display: block;
+	width: 10px;
+	height: 10px;
+	background:  #eee url(../images/interface/btn-circles.png) no-repeat 0 -700px;
+	text-indent: -9999px;
+}
+ul.setController li a:hover,
+/*highlight set dots*/
+.s0 ul.setController #set0 a,
+.s1 ul.setController #set1 a,
+.s2 ul.setController #set2 a,
+.s3 ul.setController #set3 a,
+.s4 ul.setController #set4 a,
+.s5 ul.setController #set5 a,
+.s6 ul.setController #set6 a,
+.s7 ul.setController #set7 a,
+.s8 ul.setController #set8 a,
+.s9 ul.setController #set9 a,
+.s10 ul.setController #set10 a,
+.s11 ul.setController #set11 a,
+.s12 ul.setController #set12 a{
+	background-position: -300px -700px;	
+}
+
+.shareLearn{
+	padding: 10px 0;
+	border-top: 1px solid #ccc;
+	border-bottom: 1px solid #ccc;
+	float:left;
+	margin: 10px 5px 0 5px;
+	width: 655px;
+}
+
+.shareLearn a{
+	padding-left: 21px;
+	line-height: 18px;
+	display:block;
+	height: 18px;
+	width: 179px;
+	background: transparent url(../images/interface/btn-circles.png) no-repeat 0 -200px;
+}
+
+* html .shareLearn a {
+	display: inline;
+	padding: 2px 0 2px 21px;
+}
+
+.shareLearn a:hover{
+	background-position: -300px -200px;
+}
+.shareLearn .share{
+	width:440px;
+	float:left;
+	border-right: 1px solid #ccc;
+	margin-right: 13px;
+}
+.shareLearn .learn{
+	float:left;
+	width:187px;
+}
+.shareLearn .share h6{
+	text-transform:capitalize;
+	font-size:18px;
+	font-weight:normal;
+}
+.shareLearn .share p{
+	color:#6c9973;
+	margin:5px 13px;
+	}
+.shareLearn .share h6,
+.shareLearn .share a{
+	margin-left:11px;
+}
+.shareLearn .learn h6{
+	color:#6c9973;
+	font-size:14px;
+}
+.shareLearn .learn h5{
+	color:#4e4d4b;
+	font-size:18px;
+	text-transform:capitalize;
+	margin-bottom:10px;
+}
+.disclaimer{
+	margin-top:30px;
+	text-align:center;
+	font-size:11px;
+	font-style:italic;
+}
+#main a.ordersystem{
+	background:url(../images/aboutpa/ordersystem.png) no-repeat bottom;
+	width:188px;
+	height:22px;
+	text-indent:-99999px;
+	display:block;
+	margin:30px auto;
+}
+#main a.ordersystem:hover{
+	background-position:top;
+}

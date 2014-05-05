@@ -1,0 +1,81 @@
+/**
+* Demandware Script File
+*	
+*	Quick & Dirty Coupon Auth - 
+*		looks at requested CCC, checks if a (Business Manager) Campaign exists with the same name,
+*		if so, check coupons. If not, requested CCC homepage. If campaign and no coupons, requested CCC homepage.
+*		If coupons are set but user did not pass a coupon code or coupon code is invalid, send to default homepage.
+*
+*	- dsweeney 3/21/2012 
+*
+*
+* To define input and output parameters, create entries of the form:
+*
+* @<paramUsageType> <paramName> : <paramDataType> [<paramComment>]
+*
+* where
+*   <paramUsageType> can be either 'input' or 'output'
+*   <paramName> can be any valid parameter name
+*   <paramDataType> identifies the type of the parameter
+*   <paramComment> is an optional comment
+*
+* For example:
+*
+*   @input couponCode : String
+*	@output userCouponCode : String
+*
+*/
+importPackage( dw.system );
+importPackage( dw.util );
+importPackage( dw.object );
+importPackage( dw.campaign );
+
+importScript( 'guthyrenker_core:common/libUtils.ds' );
+
+
+function execute( args : PipelineDictionary ) : Number {
+	
+	var userCouponCode = args.couponCode;
+	args.userCouponCode = null;
+	 
+	var cccID = getCurrentCampaignCode();
+	
+	if (cccID) {
+		var campaign : Campaign = PromotionMgr.getCampaign(cccID);
+		
+		if (campaign && campaign.active && campaign.enabled) {
+			if (campaign.coupons) {
+				//first throw them out if they didnt pass a coupon code
+				if (!userCouponCode) {
+					return PIPELET_ERROR;
+				}
+				
+				//set pdict value
+				args.userCouponCode = userCouponCode;
+					
+				var theCoupon : Coupon = CouponMgr.getCouponByCode(userCouponCode);
+				
+				if (theCoupon) {
+					var redemptions : Collection = CouponMgr.getRedemptions(theCoupon.ID, userCouponCode);
+					
+					//check that code has not been redeemed
+					if (!redemptions || redemptions.size() < theCoupon.redemptionLimitPerCode) {
+						return PIPELET_NEXT;
+					}
+				}
+
+			} else {
+				//no coupons associated to campaign, display CCC 
+				return PIPELET_NEXT;
+			}
+			
+		} else {
+			//no campaign found, display CCC 
+			return PIPELET_NEXT;
+		}
+	}
+	
+	//all other cases will fall to default campaign
+	return PIPELET_ERROR;
+	
+}

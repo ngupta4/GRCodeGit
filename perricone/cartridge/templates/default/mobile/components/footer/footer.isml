@@ -1,0 +1,27 @@
+<isscript>
+  importPackage( dw.object );
+
+  var paaffURL = pdict.CurrentHttpParameterMap.paaff.stringValue;
+  var showLiveChat : CustomObject = CustomObjectMgr.getCustomObject("CampaignConfiguration", getCurrentCampaignCode()).custom.showLiveChat;
+</isscript>
+
+
+<iscomment>
+	This is the footer for all pages. Be careful caching it if it contains
+	user dependent information. Cache its elements instead if necessary (do not forget
+	to change the isinclude into a pipeline include for that).
+</iscomment>
+
+
+
+<iscomment>
+	Customer registration can happen everywhere in the page flow. As special tag in the pdict
+	is indicating it. So we have to check on every page, if we have to report this event for
+	the reporting engine.
+</iscomment>
+
+<!---  Omniture tracking  --->
+<iscontentasset aid="m-footer"/>
+<!---  Omniture tracking  --->
+
+<isinclude template="/tealium/include_tealium_pixel.isml">

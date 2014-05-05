@@ -1,0 +1,23 @@
+<div class="cart-info">
+		<table>
+			<tr>
+				<th>SKU</th>
+				<th>Description</th>
+				<th>Price</th>
+				<th>S&H</th>
+				<th>Qty</th>
+				<th>Total</th>
+			</tr>
+			<isloop items="${pdict.Basket != null ? pdict.Basket.allProductLineItems : pdict.Order.allProductLineItems}" var="pli" status="loopStatus">
+				<tr>
+					<td><isprint value="${pli.productID}" /></td>
+					<td><isprint value="${pli.product.name}" /></td>
+					<td>$<isprint value="${pli.product.priceModel.price.value}" /></td>
+					<td>$<isif condition="${pli.shippingLineItem != null}"><isprint value="${pli.shippingLineItem.getAdjustedPrice().value}" /><iselse/><isif condition="${pdict.Basket != null}"><isprint value="${pdict.Basket.getShippingTotalPrice().value}" /><iselse/><isprint value="${pdict.Order.getShippingTotalPrice().value}" /></isif></isif></td>
+					<td><isprint value="${pli.quantity.value.toFixed()}" /></td>
+					<td>$<isprint value="${pli.shippingLineItem != null ? (pli.product.priceModel.price.value + pli.shippingLineItem.getAdjustedPrice().value) : pdict.Basket != null ? (pli.product.priceModel.price.value + pdict.Basket.getShippingTotalPrice().value) :  (pli.product.priceModel.price.value + pdict.Order.getShippingTotalPrice().value)}" /></td>
+				</tr>
+			</isloop>
+			<tr class="taxmessage"><td colspan="6">${Resource.msg('cart.taxmessage','rendering',null)}</td></tr>
+		</table>
+	</div>

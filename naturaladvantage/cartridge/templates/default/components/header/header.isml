@@ -1,0 +1,27 @@
+<isif condition="${(('showHeader' in this) && !!showHeader) || empty(CCC) || empty(CCC.showHeader) }">
+	<isset name="showHeader" value="${true}" scope="page" />
+<iselse/>
+	<isset name="showHeader" value="${CCC.showHeader}" scope="page" />
+</isif>
+
+<isif condition="${(('showNav' in this) && !!showNav) || empty(CCC) || empty(CCC.showNav) }">
+	<isset name="showNav" value="${true}" scope="page" />
+<iselse/>
+	<isset name="showNav" value="${CCC.showNav}" scope="page" />
+</isif>
+
+	<div id="header">
+		
+		<isif condition="${showHeader}">
+			<isinclude template="components/header/logo" />
+		</isif>
+			    
+		<iscomment>INCLUDE: category menu bar at the bottom of the header (it's computing intensive, it's cached)</iscomment>
+		<isif condition="${showNav}">			
+			<isinclude url="${URLUtils.url('Home-IncludeHeaderMenu')}"/>
+		</isif>
+   
+	</div><!-- END: header -->
+
+<iscomment>Cookies and Javascript enabled check</iscomment>
+<isinclude template="components/browsertoolscheck"/>

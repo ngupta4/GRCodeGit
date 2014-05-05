@@ -1,0 +1,45 @@
+<isdecorate template="error/pt_error">
+<div class="siteoffline">
+	<style type="text/css">
+html {
+    background:white;
+    background-image: none !important;
+}
+body {
+    margin-top:20%;
+    text-align:center;
+    font-family:Helvetica, sans-serif;
+    color:#666;
+    background:white;
+    background-image: none !important;
+}
+.brand-name {
+    font-size: 24px;
+     text-align: center;
+}
+.message {
+    font-size:18px;
+     text-align: center;
+}
+.footer {
+    margin-top:150px;
+     text-align: center;
+}
+.footer .top{
+    font-size:x-large;
+}
+.footer .bottom {
+    font-size:small;
+    margin-top:10px;
+}
+pre {display:none;}
+div {border:none !important;}
+	</style>
+	<div class="brand-name">${Resource.msg('siteoffline.header','rendering',null)}</div>
+	<div class="message">${Resource.msg('siteoffline.message','rendering',null)}</div>
+	<div class="footer">
+		<div class="top">${Resource.msg('siteoffline.footer','rendering',null)}</div>	
+		<div class="bottom">${Resource.msg('siteoffline.footer1','rendering',null)}</div>
+	</div>
+</div>
+</isdecorate>

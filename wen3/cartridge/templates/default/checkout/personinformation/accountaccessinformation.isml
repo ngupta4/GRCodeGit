@@ -1,0 +1,42 @@
+<!--- TEMPLATENAME: accountaccessinformation.isml --->
+<div class="checkout_box access_info">
+	
+	<h4>${Resource.msg('accountaccess.title', 'rendering', null)}</h4>
+	
+	<div class="checkout_box_inner">
+		<iscomment>Slot for "access-your-account" content asset</iscomment>
+		
+		<iscontentasset aid="access-your-account" />
+		
+		<isif condition="${!empty(pdict.CurrentForms.personinf.account.error)}">
+			<div class="errorform">
+				${pdict.CurrentForms.personinf.account.error}
+			</div>
+		</isif>
+		
+		<div class="formfields">
+
+			<div class="formfield password">
+				<isinputfield id="password" formfield="${pdict.CurrentForms.personinf.account.password}" type="password" />
+			</div>
+			<div class="formfield passwordconfirm">
+				<isinputfield id="PasswordReType" formfield="${pdict.CurrentForms.personinf.account.passwordconfirm}" type="password" />
+			</div>
+
+				<div class="formfield age">
+					<isinputfield id="age" formfield="${pdict.CurrentForms.personinf.account.age}" type="input" size="5" attribute2="tabindex" value2="20"/>
+				</div>
+				<div class="formfield gender">
+					<div class="label">${Resource.msg(pdict.CurrentForms.personinf.account.gender.label, 'forms', null)}</div>
+					<div class="value">
+						<isloop items="${pdict.CurrentForms.personinf.account.gender.options}" var="gender">
+							<label>
+								<input type="radio" id="gender_${gender.value}"  tabindex="21" name="${pdict.CurrentForms.personinf.account.gender.htmlName}"<isif condition="${gender.selected}"> checked="checked"</isif> value="${gender.value}" />
+								${Resource.msg(gender.label, 'forms', null)}
+							</label>
+						</isloop>
+					</div>
+				</div>
+		</div>
+	</div>
+</div>

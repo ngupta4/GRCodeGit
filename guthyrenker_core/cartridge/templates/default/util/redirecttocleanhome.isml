@@ -1,0 +1,33 @@
+<isinclude template="util/modules" />
+<isscript>
+	importScript('guthyrenker_core:common/libUtils.ds');
+	clearCampaign();
+</isscript>
+
+<!-- redirect to the default home page -->
+<isset scope="page" name="Location" value="${URLUtils.url('Home-Show')}"/>
+<isredirect location="${Location}">
+
+<iscomment>a page with a meta refresh in case the browser doesn't follow the redirect</iscomment>
+<!DOCTYPE html>
+<html>
+<iscomment>
+	This creates a reporting entry for source codes in case a source code is available.
+	It relies on the fact, that the source code entry page is a special pipeline and
+	a redirect is executed at the end using this template.
+
+	If no source code is available in the session, no data is reported. So it is safe
+	to keep the include here and use the redirect for other purposes.
+</iscomment>
+<isinclude template="util/reporting/ReportSourceCodes.isml"/>
+
+<head>
+	<title>${Resource.msg('redirect.title','common',null)}</title>
+	<meta http-equiv="Robots" content="noindex, follow" />
+	<meta http-equiv="refresh" content="0; url=${URLUtils.httpHome()}" />
+</head>
+<body>
+	${Resource.msg('redirect.title','common',null)} <a href="${URLUtils.httpHome()}" title="${Resource.msg('redirect.title','common',null)} ${URLUtils.httpHome()}">${URLUtils.httpHome()}</a>
+
+</body>
+</html>

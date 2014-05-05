@@ -1,0 +1,38 @@
+<!--- TEMPLATENAME: eCheckpaymentinformation.isml --->
+<div class="eCheckPaymentinfo">
+		<!--    Code for E-Check Start Here     -->
+		<iscomment>
+		    	<input type="hidden" name="bankAccountType" class="bankAccountTypeId" value="${pdict.CurrentForms.personinf.eCheck.bankAccountType.value}" />
+		    	<h5>${Resource.msg('bank.account.info.title', 'rendering', null)}</h5>
+		    	<div class="formfield eCheck_bankAccountType">
+					<div class="label">${Resource.msg(pdict.CurrentForms.personinf.eCheck.bankAccountType.label, 'forms', null)} <span class="requiredindicator">*</span></div>
+					<isif condition="${!empty(pdict.CurrentForms.personinf.eCheck.bankAccountType.options)}">
+				    <isset name="selectedBankName" value="${pdict.CurrentForms.personinf.eCheck.bankAccountType.value}" scope="page"/>
+			        </isif>
+						<div class="value">
+						<isloop items="${pdict.CurrentForms.personinf.eCheck.bankAccountType.options}" var="bankAccountType"  status="accType">
+							<label>
+								<input type="radio" id="bankAccountType_${bankAccountType.value}"  tabindex="23" name="${pdict.CurrentForms.personinf.eCheck.bankAccountType.htmlName}"<isif condition="${(selectedBankName == bankAccountType.value) || (accType.first)}"> checked="checked"</isif> value="${bankAccountType.value}" />
+								${Resource.msg(bankAccountType.label, 'forms', null)}
+							</label>
+						</isloop>
+					</div>
+				</div>
+		</iscomment>
+		    	<h5>${Resource.msg('bank.account.info.title', 'rendering', null)}</h5> 
+		    	<div class="eCheckContainersInputFields eCheckRouting">
+		    	
+		    		<isinputfield id="routing" formfield="${pdict.CurrentForms.personinf.eCheck.routing}" xhtmlclass="routing" type="input" 
+		    	attribute1="requiredmesage" value1="${Resource.msg('forms.paymentinf.eCheck.routing.numbermissing','forms',null)}" attribute2="tabindex" value2="24" attribute3="autocomplete" value3="off" attribute4="placeholder" value4="Enter Routing Number"/>
+		    	</div>
+		    	
+		    	<div class="eCheckContainersInputFields eCheckAccount">
+		    		<isinputfield id="account" formfield="${pdict.CurrentForms.personinf.eCheck.account}" xhtmlclass="account" type="input" 
+		    	attribute1="requiredmesage" value1="${Resource.msg('forms.paymentinf.eCheck.account.numbermissing','forms',null)}" attribute2="tabindex" value2="25" attribute3="autocomplete" value3="off" attribute4="placeholder" value4="Enter Account Number"/>
+		    	</div>
+		    	<div class="eCheckSample">
+		    		<iscontentasset aid="eCheck-sample" />
+		    	</div>
+</div>
+		
+		<!-- Code End Here -->

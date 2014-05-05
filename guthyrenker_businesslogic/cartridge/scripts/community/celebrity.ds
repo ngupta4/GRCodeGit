@@ -1,0 +1,21 @@
+/**
+*
+*   @input ExcludedContentResult : dw.content.ContentSearchModel
+*   @output FilteredContent : Object
+*
+*/
+importPackage( dw.system );
+importPackage( dw.content );
+importPackage( dw.util );
+
+function execute( pdict : PipelineDictionary ) : Number
+{
+	var FilteredContent : dw.util.List = new dw.util.ArrayList();
+
+	FilteredContent.addAll( new dw.util.ArrayList(pdict.ExcludedContentResult.folder.onlineContent));
+
+	FilteredContent.removeAll( new dw.util.ArrayList(pdict.ExcludedContentResult.content));
+
+	pdict.FilteredContent = FilteredContent;
+   return PIPELET_NEXT;
+}

@@ -1,0 +1,34 @@
+importPackage(dw.system);
+importScript("WebServiceConfigMgr.ds");
+
+var _globalObject = this,
+	_serviceCache = {}; 
+
+function WebServiceInvoker() {};
+
+(function () {	
+	function getService(serviceName) {
+		var service = _serviceCache[serviceName];
+		if (!service) {					
+			importScript("Helper/" + serviceName + "Helper.ds");
+			service = _globalObject["get" + serviceName + "WebService"]();
+			_serviceCache[serviceName] = service;
+		};
+		return service;		
+	};
+	
+	WebServiceInvoker.invoke = function (serviceName, methodName) {
+		var service = getService(serviceName),
+			methodArgs = Array.prototype.slice.call(arguments, 2);
+	
+		service.config = WebServiceConfigMgr.getConfig(serviceName);
+
+		if (methodArgs) {
+			return (service[methodName]).apply(service, methodArgs);
+		} else {
+			return (service[methodName]).apply(service);
+		};
+	};
+
+	return WebServiceInvoker;
+})();

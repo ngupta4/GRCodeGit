@@ -1,0 +1,61 @@
+/**
+* Demandware Script File
+* To define input and output parameters, create entries of the form:
+*
+* @<paramUsageType> <paramName> : <paramDataType> [<paramComment>]
+*
+* where
+*   <paramUsageType> can be either 'input' or 'output'
+*   <paramName> can be any valid parameter name
+*   <paramDataType> identifies the type of the parameter
+*   <paramComment> is an optional comment
+*
+* For example:
+*
+*	@input sourceXML:XML
+*
+*/
+importPackage( dw.system );
+importPackage( dw.customer );
+importPackage( dw.util );
+importPackage( dw.web );
+importPackage( dw.io );
+importPackage( dw.order );
+
+function execute( args : PipelineDictionary ) : Number
+{
+	var responseXMLData : XML = args.sourceXML.responseData;
+	var getChildXMLData : XML;
+	var stringXml=responseXMLData.toXMLString();
+	getChildXMLData= responseXMLData.customer;
+	
+	if(null!=getChildXMLData.ffc.customerDualAccount && !empty(getChildXMLData.ffc.customerDualAccount) && getChildXMLData.ffc.customerDualAccount.stringValue!="")
+	{
+		var dualAccountFieldValue = getChildXMLData.ffc.customerDualAccount+"";
+		var dualAccountField : Array = dualAccountFieldValue.split(",");
+	//	site.static.brand1=PA
+	//	site.static.brand2=P4
+		var brandPA = dw.web.Resource.msg('site.static.brand1','configuration',null);
+		var brandP4 = dw.web.Resource.msg('site.static.brand2','configuration',null);
+		var PACount = 0;
+		var P4Count = 0;
+		if(dualAccountField[0] == brandPA){
+				PACount++;
+		}
+		if(dualAccountField[0] == brandP4){
+				P4Count++;
+		}
+		if(dualAccountField[1] == brandPA){
+				PACount++;
+		}
+		if(dualAccountField[1] == brandP4){
+				P4Count++;
+		}
+		
+		if(P4Count == '1' && PACount == '1'){
+			session.custom.dualProfileVar = "true";
+		}
+	}
+
+   return PIPELET_NEXT;
+}

@@ -1,0 +1,163 @@
+<!--- TEMPLATENAME: paymentinformation.isml --->
+<isinclude template="util/modules"/>
+<div data-role="content">
+	<div data-role="fieldcontain">
+		<isinputfield formfield="${pdict.CurrentForms.personinf.creditcard.selectedPaymentMethodID}" type="hidden" />
+		
+		<isif condition="${!empty(pdict.CurrentForms.personinf.creditcard.type.options)}">
+			<isset name="selectedOption" value="${pdict.CurrentForms.personinf.creditcard.type.selectedOption}" scope="page"/>
+		<iselse/>
+			<isset name="selectedOption" value="${null}" scope="page"/>
+		</isif>
+
+		<div class="label">
+			<span class="${(!pdict.CurrentForms.personinf.creditcard.valid && !pdict.CurrentForms.personinf.creditcard.type.value) ? "errorlabel" : "labeltext"}">${Resource.msg('paymentinformation.paymentmethod.label','rendering',null)}</span>
+			<span class="requiredindicator">*</span>
+		</div>			
+		
+		<div class="value">
+		<isscript>
+			// winback pre populate card type select
+			var ccSelected = (function(){
+				var cct='';
+				
+				try {
+					if(session.privacy.wbShowCCinfo && session.privacy.wbShowCCinfo == true ) {
+						cct=pdict.CustomerInfo.creditcard.type.cardType;
+					}
+				}
+				catch(e){};
+				
+				return cct;
+			})();
+		</isscript>
+   			<select tabindex="16" id="paymentMethod" name="${pdict.CurrentForms.personinf.creditcard.type.htmlName}" class="selectbox required paymentmethodselector" requiredmesage="${Resource.msg('personinformation.paymenttypeerror.label', 'rendering', null)}">
+   				<option value="">${Resource.msg("personinformation.paymentinformation.choose", "rendering", null)}</option>	   				
+   				<isloop items="${pdict.CurrentForms.personinf.creditcard.type.options}" var="creditCard">
+   				<isscript>
+	   				// add script to hide paypal payment method from mobile users
+	   				var ccLabel = creditCard.label;
+	   				var hidePaymentMethod : Boolean = false;
+	   				ccLabel = creditCard.label.toLowerCase();
+		   				if(ccLabel =='paypal'){
+		   				   hidePaymentMethod = true;
+		   				}
+   				</isscript>
+	   				 <isif condition="${!hidePaymentMethod}">
+	   					<option class="paymentmethod-${creditCard.object['methodID']}" value="${creditCard.value}"<isif condition="${(selectedOption && selectedOption.value == creditCard.value) || creditCard.value == ccSelected }"> selected="selected"</isif>>${creditCard.label}</option>
+	   				 </isif>
+   				</isloop>
+   			</select>
+   			
+   			
+   			<isif condition="${!pdict.CurrentForms.personinf.creditcard.valid && !pdict.CurrentForms.personinf.creditcard.type.value}">
+   				<span class="errormessage">${Resource.msg('personinformation.paymenttypeerror.label', 'rendering', null)}</span>
+   			</isif>
+  			</div>
+  			
+  			<iscomment>
+			<isinputfield formfield="${pdict.CurrentForms.personinf.creditcard.type}" type="select" attribute1="requiredmesage" value1="${Resource.msg('forms.paymentinf.creditcard.type.typemissing','forms',null)}">
+		</iscomment>
+    </div>
+	<div class="card_details"
+<isif condition="${(session.privacy.wbShowCustomerInformation && session.privacy.wbShowCCinfo == true) || pdict.CurrentForms.personinf.creditcard.type.value == 'PayPal'}">
+	style="display:none;"
+</isif>
+	>
+	<div data-role="fieldcontain">
+	    <isinputfield id="creditCardNumber" formfield="${pdict.CurrentForms.personinf.creditcard.number}" type="input" attribute1="requiredmesage" value1="${Resource.msg('forms.paymentinf.creditcard.number.numbermissing','forms',null)}" attribute2="tabindex" value2="17"  attribute3="pattern" value3="[0-9]*">
+	</div>
+
+	<label<isif condition="${!pdict.CurrentForms.personinf.creditcard.month.valid || !pdict.CurrentForms.personinf.creditcard.year.valid}"> class="errorlabel"</isif>>${Resource.msg('paymentinformation.expiration.label','rendering',null)}<span class="requiredindicator">*</span></label>
+
+	<fieldset class="ui-grid-a">
+	
+	  <div class="ui-block-a">
+	    
+		<select tabindex="18" class="selectbox required" name="${pdict.CurrentForms.personinf.creditcard.month.htmlName}" id="creditCardMonth" requiredmesage="${Resource.msg('forms.paymentinf.creditcard.month.monthmissing','forms',null)}">
+		<isloop items="${pdict.CurrentForms.personinf.creditcard.month.options}" var="option">
+  				<isscript>
+				// code to avoid empty option tags, because this causes an XHTML warning
+				var label = Resource.msg(option.label,'forms',null);
+				var displayValue = label;
+
+				if (displayValue == null || displayValue == '')
+				{
+					displayValue = "<!-- Empty -->";
+				}
+				else
+				{
+					// encode it already, because in case of empty, we want to
+					// avoid encoding
+					displayValue = StringUtils.stringToHtml(displayValue);
+				}
+			</isscript>
+  				<option value="${option.htmlValue}"<isif condition="${option.selected}"> selected="selected"</isif>>${displayValue}</option>
+  			</isloop>
+  			</select>
+  		</div>
+	<div class="ui-block-b">
+   		<select tabindex="19" class="selectbox required" name="${pdict.CurrentForms.personinf.creditcard.year.htmlName}" id="creditCardYear" requiredmesage="${Resource.msg('forms.paymentinf.creditcard.year.yearmissing','forms',null)}">
+   			<isloop items="${pdict.CurrentForms.personinf.creditcard.year.options}" var="option">
+   				<isscript>
+					// code to avoid empty option tags, because this causes an XHTML warning
+					var label = Resource.msg(option.label,'forms',null);
+					var displayValue = label;
+
+					if (displayValue == null || displayValue == '')
+					{
+						displayValue = "<!-- Empty -->";
+					}
+					else
+					{
+						// encode it already, because in case of empty, we want to
+						// avoid encoding
+						displayValue = StringUtils.stringToHtml(displayValue);
+					}
+				</isscript>
+   				<option value="${option.htmlValue}"<isif condition="${option.selected}"> selected="selected"</isif>>${displayValue}</option>
+   			</isloop>
+   		</select>
+   	</div>
+  </fieldset>
+  <div style="clear:both;"></div>	
+	<div id="paymentinfoerrors">
+		<isscript>
+		var cc_errors = [];
+		
+		if (!empty(pdict.CurrentForms.personinf.creditcard.month.error)) {
+			cc_errors.push(Resource.msg(pdict.CurrentForms.personinf.creditcard.month.error, 'forms', null));
+		}
+		
+		if (!empty(pdict.CurrentForms.personinf.creditcard.year.error)) {
+			cc_errors.push(Resource.msg(pdict.CurrentForms.personinf.creditcard.year.error, 'forms', null));
+		}
+		</isscript>
+		
+		<isloop items="${cc_errors}" var="error">
+			<div class="errormessage"><isprint value="${error}" /></div>
+		</isloop>
+	</div> 
+	<isif condition="${!empty(pdict.CurrentForms.personinf.creditcard.error)}">
+		<p class="errormessage">${pdict.CurrentForms.personinf.creditcard.error}</p>
+	</isif>
+	</div>
+	<div class="agree_box"">
+		<isinputfield id="termsAndConditions" formfield="${pdict.CurrentForms.personinf.agree}" type="checkbox" attribute1="requiredmesage" value1="${Resource.msg('forms.checkout.agree.value-error','forms',null)}" attribute2="tabindex" value2="20">
+		<label for="termsAndConditions">${Resource.msg('cart.agreetext', 'rendering', null)}</label>
+	</div>
+
+</div>
+<script>
+//handle paypal
+jQuery('#paymentMethod').click(function(){
+	if($('#paymentMethod').val() == "PayPal"){
+		//hide 
+		jQuery('.card_details').find(':input').removeClass("required");
+		jQuery('.card_details').hide();
+	}else{
+		jQuery('.card_details').show();
+		jQuery('.card_details').find(':input').addClass("required");
+	}
+ });
+</script>

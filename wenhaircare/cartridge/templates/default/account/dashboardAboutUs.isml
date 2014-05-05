@@ -1,0 +1,63 @@
+   		<div class="innerTitle">
+            <h2>
+              <isprint value="${Resource.msg('account.aboutyou','account',null)}"/>
+            </h2>
+	     </div>
+	<div class="innerBox">
+          <isif condition="${(pdict.CurrentCustomer.profile.gender.value!=0 && null!=pdict.CurrentCustomer.profile.gender.value) ||
+          					 (pdict.CurrentCustomer.profile.custom.age!=null && !empty(pdict.CurrentCustomer.profile.custom.age)) || 
+          					 ('null'!=pdict.CurrentCustomer.profile.custom.hairLength.value && null!=pdict.CurrentCustomer.profile.custom.hairLength.value) || 
+          					 ('null'!=pdict.CurrentCustomer.profile.custom.hairType.value && null!=pdict.CurrentCustomer.profile.custom.hairType.value) || 
+          					 ('null'!=pdict.CurrentCustomer.profile.custom.hairVolume.value && null!=pdict.CurrentCustomer.profile.custom.hairVolume.value) || 
+          					 ('null'!=pdict.CurrentCustomer.profile.custom.hairTexture.value && null!=pdict.CurrentCustomer.profile.custom.hairTexture.value)}">
+         
+            	<isif condition="${pdict.CurrentCustomer.profile.custom.age!=null}">
+	              <div class="row">
+	                <span>${Resource.msg('account.age','account',null)}</span>
+	                <span><isprint value="${pdict.CurrentCustomer.profile.custom.age}" formatter="#"/></span>
+	              </div>
+              	</isif>
+              	<isif condition="${pdict.CurrentCustomer.profile.gender.value!=null && pdict.CurrentCustomer.profile.gender.value!=0}">
+	              <div class="row">
+	                <span>${Resource.msg('account.gender','account',null)}</span>
+	                <span><isprint value="${pdict.CurrentCustomer.profile.gender.displayValue}"/></span>
+	              </div>
+	             </isif>
+	          <isif condition="${pdict.CurrentCustomer.profile.custom.hairLength.value!='null'}">
+	              <div class="row">
+	                <span>${Resource.msg('account.hairlength','account',null)}</span>
+	                <span><isprint value="${pdict.CurrentCustomer.profile.custom.hairLength.displayValue}"/></span>
+	              </div>
+              </isif>
+              <isif condition="${pdict.CurrentCustomer.profile.custom.hairType.value!='null'}">
+	              <div class="row">
+	                <span>${Resource.msg('account.hairtype','account',null)}</span>
+	                <span><isprint value="${pdict.CurrentCustomer.profile.custom.hairType.displayValue}"/></span>
+	              </div>
+              </isif>
+              <isif condition="${pdict.CurrentCustomer.profile.custom.hairTexture.value!='null'}">
+	              <div class="row">
+	                <span>${Resource.msg('account.hairtexture','account',null)}</span>
+	                <span><isprint value="${pdict.CurrentCustomer.profile.custom.hairTexture.displayValue}"/></span>
+	              </div>
+              </isif>
+              <isif condition="${pdict.CurrentCustomer.profile.custom.hairVolume.value!='null'}">
+	              <div class="row">
+	                <span>${Resource.msg('account.hairvolume','account',null)}</span>
+	                <span><isprint value="${pdict.CurrentCustomer.profile.custom.hairVolume.displayValue}"/></span>
+	              </div>
+              </isif>
+     
+          <iselse>
+	            <a href="${URLUtils.https('DisplayDashboard-AboutYou')}" title="">
+	            	<isprint value="${Resource.msg('account.share.some.info','account',null)}"/>
+	            </a>
+	            <isprint value="${Resource.msg('account.about.your.skin','account',null)}"/><br/>
+	            <isprint value="${Resource.msg('account.about.your.skin1','account',null)}"/>
+          </isif>
+          <a href="${URLUtils.https('DisplayDashboard-AboutYou')}" title="" class="grayButton editlink aButton">
+          		<span><isprint value="${Resource.msg('account.edit','account',null)}"/></span>
+				
+	           
+	        </a>
+	        </div>

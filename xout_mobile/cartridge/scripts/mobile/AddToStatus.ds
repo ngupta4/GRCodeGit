@@ -1,0 +1,39 @@
+/**
+* Demandware Script File
+* Use this script to add to a status object
+*
+*
+* @input inStatus : dw.system.Status
+* @input itemStatus : Number
+* @input itemCode : String
+* @output status : dw.system.Status
+*/
+importPackage( dw.system );
+
+function execute( pdict : PipelineDictionary ) : Number
+{
+	try{
+		
+		var status : Status;
+		
+		//if null create a new Status Object
+		if(pdict.inStatus == null){
+			status = new Status();
+		} else {
+			status = pdict.inStatus;
+		}
+		
+		
+		//TODO: parse and check 
+		var itemStatus : Number = 0;
+		var itemCode : String = pdict.itemCode;
+		status.addItem(new StatusItem(itemStatus,itemCode));
+	
+		pdict.status = status;
+	} catch(e){
+		pdict.status = status;
+	}
+
+ 
+    return PIPELET_NEXT;
+}

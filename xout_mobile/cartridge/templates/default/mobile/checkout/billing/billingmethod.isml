@@ -1,0 +1,40 @@
+
+<isdecorate template="mobile/pt_mobile">
+<isinclude template="mobile/util/modules"/>
+
+<div id="paymentmethods" class="mobilecontent">
+			
+<iscomment>payment method area</iscomment>
+
+    <h3>${Resource.msg('billing.paymentheader','checkout',null)}</h3>
+    
+    <isif condition="${!empty(pdict.ApplicablePaymentCards)}">
+		<isloop items="${pdict.ApplicablePaymentCards}" var="applicablePaymentCard">
+	   		<a href="${URLUtils.https('mCOBilling-BillingMethodDetails','creditCardType',applicablePaymentCard.cardType)}" class="linkbar"><isprint value="${applicablePaymentCard.cardType}" /></a>			
+		</isloop>
+	</isif>
+	    
+   	<isif condition="${!empty(pdict.AvailableCreditCards)}">
+    	<div>
+			<h4>${Resource.msg('billing.savedcreditcards','checkout',null)}</h4>
+	   		
+			<isloop items="${pdict.ApplicableCreditCards}" var="creditCard">
+		   		<a href="${URLUtils.https('mCOBilling-BillingMethodDetails','creditCardUUID',creditCard.UUID)}" class="linkbar">
+		   		(<isprint value="${creditCard.creditCardType}">) <isprint value="${creditCard.maskedCreditCardNumber}"> - ${Resource.msg('forms.checkout.creditcardlist.expiration','forms',null)} <isprint value="${creditCard.creditCardExpirationMonth}" formatter="00" />.<isprint value="${creditCard.creditCardExpirationYear}" formatter="0000" />
+		   		</a>			
+			</isloop>
+   		</div>
+	</isif>
+   	<div style="padding-top: 15px;">
+		<table cellpadding="0" cellspacing="0" width="100%" border="0">
+		<tr>
+			<td>		
+				<form  action="${URLUtils.https('mCOBilling-CreateBilling')}" method="post" id="${pdict.CurrentForms.billing.htmlName}">
+					<button  type="submit" value="${Resource.msg('global.back','locale',null)}" name="${pdict.CurrentForms.billing.back.htmlName}">${Resource.msg('global.back','locale',null)}</button>
+				</form>
+			</td>
+		</tr>
+		</table>
+	</div>
+</div>
+</isdecorate>

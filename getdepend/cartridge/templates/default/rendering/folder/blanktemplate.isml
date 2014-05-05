@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<!--[if lt IE 7]> <html class="ie6 oldie" lang="en"> <![endif]-->
+<!--[if IE 7]>    <html class="ie7 oldie" lang="en"> <![endif]-->
+<!--[if IE 8]>    <html class="ie8 oldie" lang="en"> <![endif]-->
+<!--[if gt IE 8]><!--> <html lang="en"> <!--<![endif]-->
+
+<isinclude template="util/modules"/>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title><isprint value="${pdict.CurrentPageMetaData.title}" encoding="off" /></title>
+<isif condition="${!empty(pdict.CurrentPageMetaData.description)}"><meta name="description" content="${pdict.CurrentPageMetaData.description}"/></isif>
+<isif condition="${!empty(pdict.CurrentPageMetaData.keywords)}"><meta name="keywords" content="${pdict.CurrentPageMetaData.keywords}"/></isif>
+<link href="${URLUtils.staticURL('/css/default.css')}" type="text/css" rel="stylesheet" />
+<isif condition="${'customCSSFile' in pdict.Content.custom && !empty(pdict.Content.custom.customCSSFile)}">
+	<link href="${pdict.Content.custom.customCSSFile.URL}" type="text/css" rel="stylesheet" />
+</isif>
+</head>
+<body  <isif condition="${!empty(pdict.Content.ID)}"> id="${pdict.Content.ID}" </isif>>
+	<iscomment>create reporting event</iscomment>
+	<isinclude template="util/reporting/ReportSearch.isml"/>
+	<isinclude template="content/content/htmlcontentasset" />
+	<isset name="OmniturePage" value="Loginpage" scope="pdict">
+</body>
+<isinclude template="analytics/omniture/omniture"/>
+</html>

@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<iscomment>This includes global utilities into the pages</iscomment>
+<isinclude template="util/modules"/>
+<isinclude template="common/mediaPixelsInit.isml"/>
+<iscomment>This page must be cachable. It inherits the caching attributes by the decorated template.</iscomment>
+<head>
+    <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0">
+	<iscomment>
+		Include all important information globally , e.g. meta-data, link information, and
+		javascript.
+	</iscomment>
+	<isinclude template="components/header/htmlhead"/>	
+
+    <meta name="description" content="Buy Proactiv online through our secure shopping cart and get your order shipped directly to your door. Visit the official Proactiv site today!"/>
+    <meta name="keywords" content="buy proactiv, purchase proactiv, order proactiv"/>
+	<link href="${URLUtils.staticURL('/css/main_checkout.css')}" media="screen" rel="stylesheet" type="text/css" />
+	<link href="${URLUtils.staticURL('/css/tabinline.css')}" media="screen" rel="stylesheet" type="text/css" />
+	<iscomment>Page specific js file</iscomment>	
+	<script type="text/javascript" src="${URLUtils.staticURL('js/airlinetab.js')}"></script>
+	<script src="${URLUtils.staticURL('/js/checkout.js')}" type="text/javascript"></script>	
+	<iscomment>Add page specific header information here.</iscomment>
+	<script type="text/javascript" src="${URLUtils.staticURL('js/jquery.validate.11.1.js')}"></script>
+	<script type="text/javascript" src="//use.typekit.net/wch3zun.js"></script>
+	<script type="text/javascript">try{Typekit.load();}catch(e){}</script>    
+	<meta name="ROBOTS" content="NOINDEX,NOFOLLOW" />
+</head>
+
+<body class="cartid-${pdict.CurrentCampaignConfig['cartID']} tabinline-view">
+
+<div id="container" class="pt-checkout-refresh">
+	<div class="mainWide" id="idMainWide">
+		<div class="posFixeded">
+			<div class="checkout-heading-acned">
+        		<iscontentasset aid="naktest-checkout-heading" />
+			</div>	
+		</div>
+		<div id="main" class="pt_checkout">
+			<isreplace/>
+		</div> <!-- END: main -->
+		
+	</div>
+</div><!-- END: container -->
+<script type="text/javascript">
+	jQuery(document).ready(function () {
+		// Initialize the Checkout API
+		var redirectUrl = "${URLUtils.url('Checkout-Show')}";
+		app.proactiv.checkout.init();
+	});	
+</script>
+
+</body>
+</html>

@@ -1,0 +1,47 @@
+<isdecorate template="account/pt_account">
+ <div id="idMainWide" class="mainWide">
+	  	<div class="clearfix" id="main">
+	  	   <div id="content">
+<isinclude template="util/modules"/>
+
+<isinclude template="util/errordisplay"/>
+<isif condition = "${null!=pdict.genericError && !empty(pdict.genericError)}">
+		 <span class="errormessage"><isprint value="${pdict.genericError}"></span>
+</isif>
+<div class="accountlogin">
+
+	<h2>${Resource.msg('accountlogin.header','account',null)}</h2>
+
+	<isinclude template="account/login/logininclude"/>
+	
+	
+	<div class="logincreate">
+		
+				<div class="createaccount">
+			<iscontentasset aid="login-create-account"/>
+			<form action="${URLUtils.httpsContinue()}" method="post" id="${pdict.CurrentForms.login.htmlName}_register">
+				<fieldset>
+						<div class="createaccountbutton">
+						<button class="gr-btn margin0" type="submit" value="${Resource.msg('global.createbutton','locale',null)}" name="${pdict.CurrentForms.login.register.htmlName}"><span class="lc"></span><span>${Resource.msg('button.createaccount','account',null)}</span></button>
+					</div>
+					<input type="hidden" name="${pdict.CurrentForms.login.secureKeyHtmlName}" value="${pdict.CurrentForms.login.secureKeyValue}"/>
+				</fieldset>
+			</form>
+			<div class="clear"><!-- FLOAT CLEAR --></div>
+		</div>
+	</div><!-- END: logincreate -->
+	
+<div class="label requiredtexttext">
+<span class="requiredindicator">*</span>
+<span class="labeltext">${Resource.msg('acount.required','account',null)}</span>
+</div>	
+
+</div><!-- END: accountlogin -->
+<isset name="OmniturePage" value="Loginpage" scope="pdict">
+<iscomment> <div class="rightcoloum"><iscontentasset aid="login-Livechat"/></div> <iscomment>
+<iscomment>Live Chat C2C Div Tag</iscomment>
+
+
+</div></div></div>
+
+</isdecorate>

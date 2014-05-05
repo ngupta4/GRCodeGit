@@ -1,0 +1,80 @@
+/**
+*	
+*	 @input account : String
+*	 @input brandId : String
+*	 @input Request : dw.system.Request
+*
+*/
+importPackage( dw.io );
+importPackage( dw.web );
+importPackage( dw.system );
+importPackage( dw.net );
+importPackage( dw.util );
+importScript( "grmiddleware/libGRMiddleware.ds" );
+importScript("common/libUtils.ds");
+
+function execute( args : PipelineDictionary ) : Number
+{	
+
+	logInfo("Inside ShipNow");
+	
+	var uid:String = getCustomerUID(args.Request);
+	var transaction : String = getTransactionID();
+	
+	// Get the service URL
+	var serviceURL : String = getServiceURL(args.account, args.brandId, uid, transaction);
+	
+	// Call GR API 
+	 
+	var http : HTTPClient = new HTTPClient();
+
+	logDebug ("Ship Now URL :"+serviceURL);
+	http = callMWAPI(http, "POST", serviceURL);
+	
+	 // Capture response
+	 
+	var response : String = http.text;
+	var errorResponse : String = http.errorText;
+	var responseXML : XML = null;
+	
+	logInfo ("Ship Now response = "+ response);
+	logInfo ("Ship Now errorResponse = "+ errorResponse);
+		
+	if( !empty(errorResponse) ) {
+		response = errorResponse;
+	}
+	
+	responseXML = new XML(response);
+	logInfo("Response XML: "+responseXML.toString());
+
+	var status = responseXML.status.toString();
+
+	if(status == '200'){
+		logInfo("Exiting ShipNow with Status " + status);
+		return PIPELET_NEXT; 
+	}
+	else {
+		getErrorResponse(responseXML);
+		logInfo("Exiting ShipNow with Error status " + status);
+		return PIPELET_ERROR;
+	}
+
+}
+
+
+//	Function used to generate the request URL
+
+function getServiceURL(account : String, brandId : String, uid : String, trans: String) {
+
+	logInfo("Inside getServiceURL method");
+	
+	var baseURL : String = Site.current.getCustomPreferenceValue("middlewareAPIURL");
+	logInfo("BaseURL: " + baseURL);
+
+	var requestURL= baseURL + "/customer/ship-now/account/"+ account +"/brand/"+ brandId + "/uid/" + uid + "/trans/" + trans;	
+	
+	logInfo("Exiting getServiceURL method");
+	return requestURL;
+}
+
+

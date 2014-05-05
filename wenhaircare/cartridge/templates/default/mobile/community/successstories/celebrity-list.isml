@@ -1,0 +1,12 @@
+<isinclude template="util/modules"/>
+
+<ul class="celeb-listings">
+	<isset name="celebContentList" value="${pdict.ContentPagingModel.pageElements}" scope="page"/>
+	<isloop items="${celebContentList}" var="content">
+		<li>
+			<isinclude template="community/successstories/celebritytile"/>
+		</li>
+	</isloop> 
+</ul>
+<p style="text-align:right;font-size:10px;margin-right:20px;"><isprint value="${Resource.msg('community.notice','community',null)}"/></p>
+<ispagingbar pageurl="${URLUtils.http('Page-Show','cid','celebritySpotlight')}" pagingmodel="${pdict.ContentPagingModel}"/>

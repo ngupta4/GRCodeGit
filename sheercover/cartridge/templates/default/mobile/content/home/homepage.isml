@@ -1,0 +1,62 @@
+<isdecorate template="mobile/content/home/pt_storefront">
+<isinclude template="util/modules"/>
+
+<isscript>
+	importScript('guthyrenker_core:common/libUtils.ds');
+	
+	var CCC : Object = pdict.CurrentCampaignConfig;
+	var category : dw.catalog.Category = CCC.getCampaignCategory();
+	
+	var atlasHttpQuery = empty(pdict.CurrentRequest.httpQueryString) ? "" : ("?"+pdict.CurrentRequest.httpQueryString);
+	atlasHttpQuery = dw.util.StringUtils.stringToHtml(atlasHttpQuery); 		
+</isscript>
+	<isif condition="${empty(pdict.CurrentCampaignConfig.landingTemplate) || pdict.CurrentCampaignConfig.landingTemplate=='T1'}">
+		<isslot id="S1" context="category" description="Main Content Area" context-object="${category}"/>
+	<iselse/>
+		<isslot id="S4" context="category" description="Full Page Content Area" context-object="${category}"/>
+		<isslot id="S5" context="category" description="Full Page Bottom Alternate ContentBox Area" context-object="${category}"/>
+	</isif>
+
+	<isif condition="${false}">
+		<iscomment>Initializing category content slot for checkout page</iscomment>
+		<isslot id="order-by-phone" context="category" description="Cart Phone Number Content Slot" context-object="${category}" />
+		
+		<iscomment>Slots for single-page checkout</iscomment>
+		<isslot id="singlepage-cart-banner" description="Single-page checkout cart banner" context="category" context-object="${category}" />
+		<isslot id="singlepage-cart-right-top" description="Single-page checkout right top slot" context="category" context-object="${category}" />
+		<isslot id="singlepage-cart-right-middle" description="Single-page checkout right middle slot" context="category" context-object="${category}" />									
+	</isif>
+	
+	<iscomment>
+		Initializing Single Product Landing Page slots
+		<isslot id="overnight-shipment-cart-banner-top" description="Overnight shipment banner top" context="category" context-object="${category}" />
+		<isslot id="overnight-shipment-cart-header" description="Overnight shipment cart header" context="category" context-object="${category}" />
+		<isslot id="overnight-shipment-cart-top-footer" description="Overnight shipment cart top footer" context="category" context-object="${category}" />
+		<isslot id="overnight-shipment-cart-top" description="Overnight shipment cart top" context="category" context-object="${category}" />
+		<isslot id="overnight-shipment-cart-center" description="Overnight shipment cart center" context="category" context-object="${category}" />
+		<isslot id="overnight-shipment-cart-top-bottom" description="Overnight shipment cart bottom" context="category" context-object="${category}" />
+		<isslot id="overnight-shipment-cart-footer" description="Overnight shipment cart footer" context="category" context-object="${category}" />
+		
+		Cart2 slots
+		<isslot id="html-header-javascript" description="HTML Header Section for Javascript" context="category" context-object="${CCC.getCampaignCategory()}"/>
+		<isslot id="cart2-top-banner" description="Cart2 top banner" context="category" context-object="${category}" />
+	
+		Special Campaign CSS
+		<isslot id="campaign-css" context="category" description="Campaign CSS" context-object="${category}"/>
+		
+	</iscomment>
+	<isset name="OmniturePage" value="mobileHomepage" scope="pdict">	
+    <iscomment> Home Page Pixels </iscomment>
+    <script type="text/javascript">
+      var atlasHttpQuery = '<isprint value="${atlasHttpQuery}" encoding="off">';
+    </script>
+    
+    <isinclude template="mobile/common/mediaPixelsInit.isml"/>
+    <iscontentasset aid="m-t1-mediapixel"/>
+    
+</isdecorate>
+
+		<isslot id="S2" context="category" description="Bottom ContentBox Area" context-object="${category}"/>
+		<isslot id="S3" context="category" description="Bottom Alternate ContentBox Area" context-object="${category}"/>
+
+		

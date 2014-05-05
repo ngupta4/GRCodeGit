@@ -1,0 +1,186 @@
+/**
+ * This script provides utility functions shared across other account
+ * related scripts. Reused script components for account management 
+ * should be contained here, while this script is imported into the  
+ * requiring script.
+ */
+importPackage( dw.customer );
+importPackage( dw.order );
+importPackage( dw.system );
+importPackage( dw.util );
+importPackage( dw.value );
+importPackage( dw.web );
+importPackage( dw.catalog );
+
+/**
+ * Determines a unique address ID for an address to be save the given
+ * address book. The function first checks the city as the candidate ID 
+ * or appends a counter to the city (if already used as address ID) and 
+ * checks the existence of the resulting ID candidate. If the resulting 
+ * ID is unique this ID is returned, if not the counter is incremented and
+ * checked again.
+ */
+ 
+ function determineUniqueAddressID( city : String, addressBook : AddressBook )
+{
+	var counter : Number = 0;
+	var existingAddress : CustomerAddress = null;
+
+	// check, if attribute "city" is set and has a value
+	if( city == null || empty(city) )
+	{
+		Logger.debug("Cannot determine unique address ID from non existing or not set attribute \"city\".");
+		return null;
+	}
+
+	// initialize the candidate ID
+	var candidateID : String = city;
+
+	while( existingAddress == null )
+	{
+		existingAddress = addressBook.getAddress(candidateID);
+		if( existingAddress != null )
+		{
+			// this ID is already taken, increment the counter 
+			// and try the next one
+			counter++;
+			candidateID = city + "-" + counter;
+			existingAddress = null;
+		}
+		else
+		{
+			return candidateID;
+		}
+	}
+
+	// should never go here
+	return null;
+}
+ 
+function determineIfExistingAddress(addressData :XML, addressBook : AddressBook )
+{
+	var firstName : String =addressData.firstName;
+	var lastName : String =addressData.lastName;
+	var address1 : String =addressData.address;
+	var address2 : String =addressData.address2;
+	
+	var address : CustomerAddress = null;
+	for each(address in addressBook.addresses)
+	{		
+		if(address.firstName == firstName && address.lastName == lastName)
+		{
+			//Make the AND operator to OR when reponse will get two address tags, <address1> and <address2>
+			 if((!empty(address.address1) && null!=address.address1) && (!empty(address.address2) && null!=address.address2))
+			 {
+			 	//Make the AND operator to OR when reponse will get two address tags, <address1> and <address2> 
+			 	if((address.address1==address1) || (address.address2 == address2))
+			 	{
+			 		return address.ID;
+			 	}else
+			 	{
+			 		return null;
+			 	}
+			 }
+			return address.ID;
+		}
+	}
+	return null;
+}
+
+
+/**
+ * Returns a possible equivalent address to the given order address from the 
+ * address book or null, if non equivalent address was found.
+ */
+function getEquivalentAddress(addressBook : AddressBook, orderAddress : OrderAddress) : CustomerAddress
+{
+	var address : CustomerAddress = null;
+	for each(address in addressBook.addresses)
+	{
+		if(address.isEquivalentAddress(orderAddress))
+		{
+			return address;
+		}
+	}
+	return null;
+}
+
+/**
+ * Returns the Product ID from the UPC code that we get in Login Response
+ */
+function getProductUPC(upc : String)
+{
+	var masterProduct : dw.catalog.Product = getProductFromUPC(upc);
+	
+	if(masterProduct != null){
+		if(masterProduct.isMaster()){
+			var variants : dw.util.Collection= masterProduct.getVariationModel().getVariants();
+			
+			for each( var varProduct in variants){
+				if(varProduct.UPC == upc){
+					return varProduct;
+				} 
+			}
+			Logger.error("Master Product "+masterProduct.ID +" had no variant with UPC : " + upc);
+			return null;
+		} else {
+			return masterProduct;			
+		}
+	}
+	Logger.debug("Following UPC did not return any product : "+ upc);
+	return null;	
+}
+
+/**
+ * Returns the Master Product from the UPC code
+ */
+function getProductFromUPC(upc : String)
+{
+	var pm : ProductSearchModel = new ProductSearchModel();
+	//Getting the sorting rule to replace the default sorting rule. The default rule is not returning any products
+	var sortingRule : dw.catalog.SortingRule = dw.catalog.CatalogMgr.getSortingRule("best-seller");
+	pm.setCategoryID("Retention");
+	pm.setRecursiveCategorySearch(true);
+	pm.setOrderableProductsOnly(false);
+	pm.addRefinementValues("UPC",upc);
+	pm.setSortingRule(sortingRule);
+	pm.search();
+	
+	var tempList : dw.util.List = pm.getProducts().asList();
+	//tempList will have size > 1 , if UPC is concerend with Variation product
+	
+	//if product doesnot have master variant then  
+	if(!empty(tempList) && tempList.size() == 1){
+		return tempList[0];
+	}else if(!empty(tempList) && tempList.size() > 1) {
+		for each(var product in tempList){
+			if(product.master){
+				return product;
+			}
+		}
+		//if none of them are master product, in that case just pick check the upc and return that product very rare case.
+		for each(var product in tempList){
+			if(upc == product.UPC){
+				return product;
+			}
+		}
+	}else {
+		return null;
+	}
+}
+
+function getRecommendationList(srcProduct : Product , recomendationType : Number):ArrayList {
+
+		var recommendedProductList : dw.util.ArrayList = new dw.util.ArrayList();
+		if( !empty(srcProduct) ) {
+				var recommendationsIter : dw.util.Iterator ;
+			    recommendationsIter = srcProduct.getOrderableRecommendations(recomendationType).iterator();
+			    while( recommendationsIter.hasNext() )
+					{
+					var recommendation : dw.catalog.Recommendation = recommendationsIter.next();
+					var recommendedProduct : dw.catalog.Product = recommendation.getRecommendedItem();
+					recommendedProductList.add( recommendedProduct );
+				}		
+			}		
+	return recommendedProductList;
+}

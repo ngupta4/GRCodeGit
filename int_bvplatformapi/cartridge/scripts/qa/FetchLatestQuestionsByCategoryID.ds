@@ -1,0 +1,61 @@
+/**
+* Demandware Script File
+* Fetches the latest questions based on the category id. 
+*
+*   @input CategoryID : String Category from which latest conversations to be fetched
+*   @output Questions : Object
+*
+*/
+importPackage( dw.system );
+importPackage( dw.util );
+importScript("int_bvplatformapi:WebServiceInvoker.ds");
+importScript("int_bvplatformapi:qa/QuestionJson.ds");
+
+function execute( pdict : PipelineDictionary ) : Number
+{
+	var categoryID : String = "Breakouts";
+	//var categoryID : String = pdict.CategoryID;
+	var logMessage : String = "[FetchLatestQuestionsByCategoryID.ds] [Type = {0}] [CategoryID = {"+categoryID+"}] [Message = {1}]";
+	var questionsArray : Array = null; 
+	try {		
+		
+		//invoke webservice
+		var response : String = WebServiceInvoker.invoke("BazaarvoiceAPI", "fetchLatestQuestionsByCategoryID", categoryID); 
+		
+		//Convert response to JSON response
+		if(response != null){
+			var responseJson : JSON = JSON.parse(response);
+			
+			if('httpClient-statusCode' in responseJson && responseJson.httpClient-statusCode != 200){
+				//Error calling the webservice
+				Logger.error(StringUtils.format(logMessage,"ERROR", JSON.stringify(responseJson)));
+				return PIPELET_ERROR;
+			}else if(responseJson.HasErrors){
+				//log error in response
+				Logger.error(StringUtils.format(logMessage,"ERROR", JSON.stringify(responseJson.Errors)));
+				return PIPELET_ERROR;
+			}else if(responseJson.TotalResults == 0){
+				//Conversations not found
+				Logger.info(StringUtils.format(logMessage,"INFO", "No Questions present under category-"+categoryID ));
+			}else{
+				//response is fine, fetch Question details to Question Array
+				questionsArray = new Array();
+				for(var count = 0; count < responseJson.Results.length; count++){
+					//push the custom bean object to the array
+					questionsArray.push(this.QuestionJson(responseJson.Results[count]));
+				}
+			}
+		}else{
+			//log error for response null
+			Logger.error(StringUtils.format(logMessage,"ERROR", JSON.stringify(responseJson.Errors)));
+			return PIPELET_ERROR;
+		}
+		
+	} catch (e) {
+		Logger.debug(e.toString());
+		return PIPELET_ERROR;
+	}
+	
+	pdict.Questions = questionsArray;
+    return PIPELET_NEXT;
+}

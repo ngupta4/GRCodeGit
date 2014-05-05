@@ -1,0 +1,56 @@
+<!--- TEMPLATENAME: alternateoffer.isml --->
+<isinclude template="util/modules"/>
+<script type="text/javascript">
+		jQuery(document).ready(function() {
+			$('.sasForm').find('input[type="radio"]').click(function() {
+				$(this).parent('.productChoice').siblings('.productChoice').removeClass('selected');
+				$(this).parent('.productChoice').addClass('selected');
+			});
+			$('div.basicCTA').click(function() {
+				$("#basic").submit();
+			});
+			$('div.deluxeCTA').click(function() {
+				$("#deluxe").submit();
+			});
+		});
+	</script>
+<iscomment>make sure we have content at all</iscomment>
+<isif condition="${slotcontent != null}">
+	<isif condition="${!empty(slotcontent.content)}">
+		<isscript>
+			var column1 = new Array();
+			var column2 = new Array();
+		</isscript>
+		<isloop items="${slotcontent.content}" var="product" status="status">
+			<isscript>
+			if (status.odd == true) {
+				column1.push(product);
+			} else {
+				column2.push(product)
+			}
+			</isscript>
+		</isloop>
+
+		<isscript>var campaignPanel = pdict.CurrentSession.privacy.campaignID</isscript>
+		<isif condition = "${campaignPanel == 'xout-corea-campaign'}">
+			<iscontentasset aid="core-sas-product-titles-a"/>
+		<iselseif condition = "${campaignPanel == 'xout-coreb-campaign'}">
+			<iscontentasset aid="core-sas-product-titles-b"/>
+		<iselse>
+			<iscontentasset aid="core-sas-product-titles"/>
+		</isif>
+
+		<div class="sasProductContainer">
+			<div class="sasProductLeftColumn">
+				<div class="sasFormContainer">
+					<issasform products="${column1}" formid="basic"/>
+				</div>
+			</div>
+			<div class="sasProductRightColumn">
+				<div class="sasFormContainer">
+					<issasform products="${column2}" formid="deluxe"/>
+				</div>
+			</div>
+		</div>
+	</isif>
+</isif>

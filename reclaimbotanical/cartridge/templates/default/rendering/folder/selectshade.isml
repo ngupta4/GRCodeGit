@@ -1,0 +1,8 @@
+<isdecorate template="rendering/folder/pt_selectshade">
+<isset name="shadePage" value="SelectAShade" scope="pdict" >
+<isinclude template="util/modules"/>
+<isinclude template="content/content/htmlcontentassetshade" />
+<script type="text/javascript">
+  	var selectedShade = '${pdict.CurrentHttpParameterMap.Shade.stringValue}';
+</script>
+</isdecorate>

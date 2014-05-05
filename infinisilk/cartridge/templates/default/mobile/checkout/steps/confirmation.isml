@@ -1,0 +1,181 @@
+<!--- TEMPLATENAME: complete.isml --->
+<isset name="ShowBrowsingOrderYourSystem" value="${false}" scope="pdict" />
+<isset name="ShowOtherWaysToPurchase" value="${false}" scope="pdict" />
+<isset name="ShowRelatedLinks" value="${false}" scope="pdict" />
+<isset name="ShowUpsells" value="${false}" scope="pdict" />
+<isset name="ShowGuarantee" value="${true}" scope="pdict" />
+<isset name="ShowCartPhone" value="${false}" scope="pdict" />
+<isset name="ShowCartQuestions" value="${false}" scope="pdict" />
+<isset name="LeftRailShowCheck" value="${false}" scope="pdict"/>
+<isset name="showOrderButton" value="${false}" scope="page" />
+<isset name="cookiesDomain" value="${dw.system.Site.current.getCustomPreferenceValue("GRCookiesDomain")}" scope="page"/>
+<isset name="primaryUCI" value="${pdict.CurrentRequest.httpCookies['uci'].value}" scope="page"/>
+<!-- Refer a friend -->
+<isset name="pageName" value="Confirmation" scope="page"/>
+
+<isif condition="${pdict.showReferAFriend}">
+	<isinclude template="checkout/referafriend"/>
+	
+	<!-- To keep track of referred friend -->
+	<isinclude template="checkout/referafriendconversionpage"/>
+</isif>
+
+<script type="text/javascript">
+	var orderIdinserted='<isprint value="${pdict.Order.orderNo}"/>';
+</script>
+
+<iscomment>including see why js & setting up initial variables</iscomment>
+<isif condition="${'seeWhyIncluded' in dw.system.Site.current.preferences.custom && dw.system.Site.current.preferences.custom.seeWhyIncluded}">
+	<isinclude template="checkout/steps/initseewhy" />
+</isif>
+
+<iscomment> Commenting the creation of rememberme cookies.Now the user from aquisition site after placing the 
+	order and on click of any link, the new retentions site will show the old/legacy/aquistion page on retention site
+</iscomment>
+<iscomment>
+	<isscript>
+	  var rememberMeObj = {
+	   "firstName" : pdict.Order.billingAddress.firstName,
+	   "lastName"  : pdict.Order.billingAddress.lastName,
+	   "email"     : pdict.Order.customerEmail
+	  }
+	 
+	</isscript>
+	<iscookie name="rememberMe" path="/" value="${encodeURIComponent(rememberMeObj['firstName']+' '+rememberMeObj['lastName']+':'+rememberMeObj['email'])}" domain="${cookiesDomain}" maxAge="2678400" />
+	<iscookie name="sharedsession" path="/" value="${encodeURIComponent(JSON.stringify(rememberMeObj))}" domain="${cookiesDomain}" maxAge="2678400" />
+</iscomment>
+<iscookie name="campaign" path="/" value="${}" domain="${cookiesDomain}" maxAge="0" />
+<iscookie name="uci" path="/" value="${}" domain="${cookiesDomain}" maxAge="0" />
+<iscookie name="secondaryuci" path="/" value="${}" domain="${cookiesDomain}" maxAge="0" />
+
+<iscomment>Clear out Order information that is no longer useful or required anymore</iscomment>
+<isscript>
+	delete pdict.CurrentSession.privacy.OrderNo;
+	delete pdict.CurrentSession.privacy.OrderNoDec;
+</isscript>
+<div class="orderConfimationContainer">
+	<iscomment>'Thank you' section</iscomment>	
+	<div class="thankyoumessage">
+		<h1>${Resource.msg('cart.thankyou.label', 'rendering', null)}</h1>
+		<div class="orderno"><isprint value="${Resource.msgf('cart.thankyou.orderno', 'rendering', null, pdict.Order.orderNo)}" encoding="off" /></div>
+		<div class="confirmemail"><isprint value="${Resource.msgf('cart.thankyou.confirmemail', 'rendering', null, pdict.CurrentForms.personinf.contact.email.value)}" encoding="off" /></div>
+	</div>
+	<isif condition="${pdict.ServerError}">
+	<div class="errorform">${Resource.msgf('global.unable.to.process','locale',null)}</div>
+	</isif>
+	
+	<div class="ordersummary">
+		<isinclude template="checkout/components/ordersummary" />
+	</div>
+	<div class="yourinformation">
+		<isinclude template="checkout/components/yourinformation" />
+	</div>
+	<iscomment>
+	<div class="callUsText">
+		<iscontentasset aid="callus"/>
+	</div> 
+	</iscomment>
+</div>
+
+<iscontentasset aid="m-confirmation">
+
+<iscomment>SeeWhy code</iscomment>
+<isif condition="${dw.system.Site.current.preferences.custom.seeWhyIncluded}">
+	<script type="text/javascript">
+		cy.USERID='${pdict.CurrentForms.personinf.contact.email.value}';
+		cy.CUSTOM1='${pdict.CurrentForms.personinf.billtoaddress.firstName.value}';
+		cy.CUSTOM2='${pdict.CurrentForms.personinf.billtoaddress.lastName.value}';
+		cy.CUSTOM3='${pdict.CurrentForms.cart.shipments[0].items[0].object.product.ID}';
+		cy.CUSTOM4='${addressObj.states.stateUS.htmlValue}';
+		cy.CUSTOM5="";
+		cy.FUNNELLEVEL='7';
+	</script>
+	
+	<isinclude template="seewhy/variables/setcheckoutvariables.isml"/>
+</isif>
+
+<iscomment>Media Pixel</iscomment>
+<isslot id="MediaPixelForConfirmation" context="global" description="MediaPixelForConfirmation" />
+
+<isif condition="${(!pdict.ServerError) && (pdict.originalCampaignCode == Resource.msg('campaign.code.core', 'configuration', 'core'))}">
+	<isslot id="confirmation-cross-sell" description="Cross-sell on confirmation page" context="global" />
+</isif>
+
+<isinclude template="mobile/common/pixelTracking.isml"/>
+
+
+<isscript>
+  var orderId = pdict.Order.orderNo;
+  var brand   = 'wenhaicare';
+
+  var qty1  = qty2  = 0;
+  var kit1  = kit2  = '';
+  var prod1 = prod2 = '';
+  var rev1  = rev2  = 0;
+
+  var iter = pdict.Order.getAllProductLineItems().iterator();
+  var loopc = 0;
+
+  while (iter.hasNext()) {
+    var pli = iter.next();
+
+      if (loopc == 0) {
+        qty1  = pli.quantityValue;
+        kit1  = pli.product.ID;
+        prod1 = pli.product.name;
+      } else {
+        qty2  = pli.quantityValue;
+        kit2  = pli.product.ID;
+        prod2 = pli.product.name;
+      }
+
+      brand = pli.product.brand;
+      loopc = loopc + 1;
+  }
+  var revenue = 0;
+  revenue = pdict.Order.getAdjustedMerchandizeTotalPrice(true).value + pdict.Order.giftCertificateTotalPrice.value;
+
+  if (prod1.indexOf("Vitamins") != -1) {  
+    rev1 = 0;
+    rev2 = revenue;
+  } else {
+    rev1 = revenue;
+    rev2 = 0;
+  }  
+
+</isscript>
+<!--Begin LinkShare Tagging-->
+<isif condition="${primaryUCI=='US-PA-O-AF-LI-27156' || primaryUCI=='US-PA-O-AF-LI-27157' || primaryUCI=='US-PA-O-AF-LI-27158'|| primaryUCI=='US-PA-O-AF-LI-27159' || primaryUCI=='US-PA-O-AF-LI-27160'|| primaryUCI=='US-PA-O-AF-LI-27161'}">
+<script type="text/javascript">
+var brnd_pfix = "PA";
+var brnd_name = "Proactiv Solution:";
+var LSmsg = "";
+var LSord = "ord=" + brnd_pfix + "${pdict.Order.orderNo}";
+var LSsku = "skulist=";
+var LSqty = "qlist=";
+var LSamt = "amtlist=";
+var LSname = "namelist=";
+
+function addLSitem(ls1,ls2,ls3,ls4) {
+  LSsku = LSsku + brnd_pfix + escape(ls1) + "|";
+  LSqty = LSqty + ls2 + "|";
+  ls3 = ls3 * ls2 * 100;
+  ls3 = ls3.toFixed(0);
+  LSamt = LSamt + ls3 + "|";
+  LSname = LSname + escape(brnd_name) + escape(ls4) + "|";
+}
+
+// Call AddLSitem(SKU Number, Qty Purchased, Item Unit Price, Item Name) for each item purchased.
+addLSitem(
+        "${kit1}",
+        "${qty1}",
+        "${rev1}",
+        "${prod1}"
+);
+
+
+LSmsg = "mid=2637&cur=USD&" + LSord + "&" + LSsku + "&" + LSqty + "&" + LSamt + "&" + LSname;
+document.write('<img src="https://track.linksynergy.com/ep?' + LSmsg + '" border="0" width="1px" height="1px" alt="">');
+</script>
+</isif>
+<!--End LinkShare Tagging-->

@@ -1,0 +1,217 @@
+<!--- TEMPLATENAME: cartovernight.isml --->
+<isinclude template="util/modules" />
+
+<form action="${URLUtils.httpsContinue()}" method="post" class="checkoutform" id="checkout-shipmentovernight">
+	<iscomment>Cart</iscomment>
+	<div class="rounded" id="cartsection">
+		<iscomment>Cart items list</iscomment>
+		<div id="carttable">
+			<table class="cartitems">
+				<isloop items="${pdict.Basket.getAllProductLineItems()}" var="pli">
+					<tr>
+						<td class="cellimage">
+							<isset name="productImage" value="${pli.product.getImage('small', 0)}" scope="page" />
+							<isif condition="${!productImage}">
+								<img src="${URLUtils.staticURL('images/noimagesmall.png')}" alt="" />
+							<iselse>
+								<img src="${productImage.url}" alt="${productImage.alt}" />
+							</isif>
+						</td>
+						<!--  Added for to pass Brand Id to seewhy -->																	
+						<isscript>
+							importScript("guthyrenker_businesslogic:login/FindProductSpecificBrand.ds" );
+							var productBrand : String = findProductBrand(pli.product,Resource.msg('acq.default.segment','configuration','2'));
+						</isscript>
+						<td class="celldescription">
+							<div class="name">
+								<isprint value="${pli.productName}"/> 
+							</div><!-- END: name -->
+							
+							<div class="shortDescription">
+								<isprint value="${pli.product.custom.cartDescription || pli.product.shortDescription}" encoding="off"/>
+							</div><!-- END: shortDescription -->
+							
+							<div class="offerCode">${pli.product.ID}</div>
+							<!--  Added for to pass Brand Id to seewhy -->
+							<input type="hidden" name="pid" class="coreid" value="${pli.productID}" />							
+							<input type="hidden" name="productBrandCY" class="productBrand" value="${productBrand}" />
+						</td>
+						<td class="cellprice">
+							<isif condition="${CCC.enableSlpSas}">
+								<iscontentasset aid="${'sas-cart-price-' + pli.product.ID}" />
+							<iselse>
+								<iscontentasset aid="${'cart-price-' + pli.product.ID}" />
+							</isif>
+						</td>
+					</tr>
+				</isloop>
+			</table>
+		</div>
+		
+		<iscomment>Shipping method section</iscomment>
+		<div id="shippingmethod">
+			<iscomment>Shipping Method block</iscomment>
+			<isif condition="${pdict.ShippingMethodsMap.size() > 0}">
+				<div class="shippingmethodslist">
+					<isloop items="${pdict.ShippingMethodsMap.keySet()}" var="shippingMethod">
+						<isscript>
+						var shippingCost = pdict.ShippingMethodsMap.get(shippingMethod);
+						var isSelected = !empty(pdict.DefaultShipment) && (shippingMethod.ID == pdict.DefaultShipment.shippingMethodID);
+						
+						if (pdict.CurrentForms.cart.shippingMethodID.value)
+						{
+							isSelected = shippingMethod.ID == pdict.CurrentForms.cart.shippingMethodID.value;
+						}
+						</isscript>
+						<div class="labelwrapper ${shippingMethod.ID.toLowerCase().replace(/\W/,'_')}">
+						<div class="shippinglabel"></div>
+						<label>
+							<input type="radio" name="${pdict.CurrentForms.cart.shippingMethodID.htmlName}" value="${shippingMethod.ID}"<isif condition="${isSelected}"> checked="checked"</isif> />
+							<span class="shipmentprice">$<isprint value="${shippingCost.value}" style="MONEY_LONG" /></span> <isprint value="${shippingMethod.displayName}"/>
+							<isif condition="${!empty(shippingMethod.custom['see-details'])}">
+								<span class="seedetails">
+									<a href="${'#' + shippingMethod.custom['see-details']}" >
+										${Resource.msg('cart.seedetails', 'rendering', null)}
+										<span class="shippingdetailspopup" id="${'#' + shippingMethod.custom['see-details']}"><iscontentasset aid="${shippingMethod.custom['see-details']}" /></span>
+									</a>
+								</span>
+							</isif>
+							
+							<iscomment>Display the shipping method description if any</iscomment>
+							<isif condition="${!empty(shippingMethod.description)}">
+								<span class="description">(${shippingMethod.description})</span>
+							</isif>
+						</label>
+						</div>
+					</isloop>
+					<script type="text/javascript">
+						jQuery(function(){
+							var margin = 5;
+							jQuery('.shippingmethodslist').find('.seedetails>a').hover(function(e){
+								var jqTooltip = jQuery(this).find('.shippingdetailspopup');
+								//if we have no space in top of link show down
+								if(jqTooltip.height()+jQuery(this).height() > e.clientY){
+									jqTooltip.css({
+										top: jQuery(this).height()+margin,
+										display: 'block'
+									});
+								}else{
+									jqTooltip.css({
+										top: -(jqTooltip.height()+jQuery(this).height()),
+										display: 'block'
+									});
+								}
+							},function(){
+								jQuery(this).find('.shippingdetailspopup').removeAttr('style');
+							});						
+						});
+					</script>
+				</div>
+			</isif>
+		</div>
+	</div>
+	
+	<div class="rounded" id="personinfo">
+		<div id="personinfoinner">
+			<div id="contactinfo">
+				<iscomment>Contact information</iscomment>
+				<isinclude template="checkout/personinformation/contactinformation" />
+				<div class="clearfix"></div>
+			</div>
+			
+			<iscomment>Some fields will be hidden for now</iscomment>
+			<isinputfield formfield="${pdict.CurrentForms.personinf.account.password}" type="hidden" />
+			<isinputfield formfield="${pdict.CurrentForms.personinf.account.passwordconfirm}" type="hidden" />
+			<isinputfield formfield="${pdict.CurrentForms.personinf.account.age}" type="hidden" />
+			<isinputfield formfield="${pdict.CurrentForms.personinf.account.gender}" type="hidden" />
+			
+			<iscomment>Billing and shipping</iscomment>
+			<div class="billing_shipping">
+				<isinclude template="checkout/personinformation/billinginformation" />
+				
+				<div class="checkout_box cb_shipping">
+					<h4 class="asbilling">
+						<isif condition="${pdict.CurrentForms.personinf.useAsBillingAddress.value === false}">
+							<isinputfield formfield="${pdict.CurrentForms.personinf.useAsBillingAddress}" type="checkbox" attribute1="checked" value1="checked" />
+						<iselse>
+							<isinputfield formfield="${pdict.CurrentForms.personinf.useAsBillingAddress}" type="checkbox" />
+						</isif>
+						<span>${Resource.msg('personinformation.shippinginformation.label', 'rendering', null)}</span>
+					</h4>
+					<div class="checkout_box_inner">
+						<div id="shipping_message_block">
+							<iscontentasset aid="cart-international-site" />
+					    </div>
+						
+						<isinclude template="checkout/personinformation/shippinginformation" />
+					</div>
+				</div>
+				<div class="clearfix"></div>
+			</div>
+			
+			<iscomment>Payment information</iscomment>
+			<isinclude template="checkout/personinformation/paymentinformation" />
+			
+			<script type="text/javascript">
+			<!--
+			jQuery(".payment_info").show();
+			//-->
+			</script>
+
+			<div id="carttotals">
+			<isinclude template="checkout/personinformation/promoinformation" />
+			
+				<div id="agreebox">
+					<isinputfield formfield="${pdict.CurrentForms.personinf.agree}" type="checkbox" attribute1="requiredmesage" value1="${Resource.msg('forms.checkout.agree.value-error','forms',null)}" attribute2="tabindex" value2="17" />
+					<p>${Resource.msg('cart.agreetext', 'rendering', null)}</p>
+				</div>
+				<div id="cartpricesummary">
+					<table>
+						<tr>
+							<td>${Resource.msg('checkout.overnight.itemtotal.label', 'rendering', null)}</td>
+							<td id="merchandizeTotal"><isprint value="${pdict.Basket.getAdjustedMerchandizeTotalPrice(false)}" style="MONEY_LONG" /></td>
+						</tr>
+						<tr>
+							<td>${Resource.msg('checkout.overnight.shipping-price.label', 'rendering', null)}</td>
+							<td id="shippingTotalPrice"><isprint value="${pdict.Basket.shippingTotalPrice}" style="MONEY_LONG" /></td>
+						</tr>
+						<tr class="bold">
+							<td>${Resource.msg('checkout.overnight.totalprice.label', 'rendering', null)}</td>
+							<td id="basketTotalPrice"><isprint value="${pdict.Basket.getTotalNetPrice()}" style="MONEY_LONG" /></td>
+						</tr>
+					</table>
+					
+					
+					
+					<button class="continueBtn completeBtn" type="submit" value="Checkout" name="dwfrm_personinf_apply" tabindex="18"><span>${Resource.msg('checkout.submit', 'rendering', null)}</span></button>
+				</div>
+
+				<div id="cartsummarycomments" class="clearfix">
+					<p>* ${Resource.msg('cart.requiredtext', 'rendering', null)}</p>
+					<p>${Resource.msg('cart.ordertotal.note', 'rendering', null)}</p>
+				</div>
+			</div>
+			
+			<div class="clearfix"></div>
+		</div>
+	</div>
+</form>
+
+<script type="text/javascript"><!--
+app.proactiv.resources.set({
+	'cartFormID' : 'checkout-shipmentovernight',
+	'verifyEmailLimit' : ${pdict.CurrentSession.privacy.verifyemaillimit},
+	'verifyEmailUrl' : '<isprint value="${URLUtils.url('GRMiddleware-VerifyEmail')}" encoding="off"/>',
+	'billingEqualsShipping' : ${pdict.BillingEqualsShipping},
+	'billingEqualsShippingCheckbox' : '${pdict.CurrentForms.personinf.useAsBillingAddress.htmlName}',
+	'paymentAlwaysVisible' : true,
+	'updateShippingPriceUrl' : '${URLUtils.url("COCart-SetShippingMethod")}',
+	'updateQtyUrl' : '${URLUtils.url("COCart-UpdateProductQty")}',
+	'subtotal-selector' : '${"#"}merchandiseTotal',
+	'shipping-price-selector' : '${"#"}shippingTotalPrice',
+	'total-price-selector' : '${"#"}basketTotalPrice'
+});
+
+// Initialize the Proactiv API
+app.proactiv.checkout.init();
+//--></script>

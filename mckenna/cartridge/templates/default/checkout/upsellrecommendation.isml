@@ -1,0 +1,44 @@
+<!--- TEMPLATENAME: upsellrecommendation.isml --->
+<form action="${URLUtils.continueURL()}" method="post" id="${pdict.CurrentForms.advertise.htmlName}">
+	<isloop items="${pdict.CurrentForms.advertise.recommendation}" alias="recommendation" status="loopstate">
+		<isset name="product" value="${recommendation.object}" scope="page"/>
+			<isobject object="${product}" view="detail">
+				<div class="related_product">
+					<p class="upgrade">${Resource.msg('upsell.upgrade','upsell',null)}
+						<span class="deluxe">${Resource.msg('upsell.deluxe','upsell',null)}</span> 
+					</p>				
+						
+					<div class="productimage"><!-- Product Image -->
+						<isif condition="${product.master && pdict.CurrentVariationModel && CurrentVariationModel.variants.size() > 0}">
+							<isset name="imageProduct" value="${CurrentVariationModel.variants[0]}" scope="page"/>
+						<iselse/>
+							<isset name="imageProduct" value="${product}" scope="page"/>
+						</isif>
+						<isif condition="${!empty(imageProduct.getImage('small',0))}">
+							<isset name="imageUrl" value="${imageProduct.getImage('small',0).url}" scope="page"/>
+							<isset name="imageAlt" value="${imageProduct.getImage('small',0).alt}" scope="page"/>
+							<isset name="imageTitle" value="${imageProduct.getImage('small',0).title}" scope="page"/>
+						<iselse/>
+							<isset name="imageUrl" value="${URLUtils.staticURL('/images/noimagesmall.png')}" scope="page"/>
+							<isset name="imageAlt" value="${product.name}" scope="page"/>
+							<isset name="imageTitle" value="${product.name}" scope="page"/>
+						</isif>
+						<img src="${imageUrl}" alt="${imageAlt}" title="${imageTitle}" />
+					</div>
+					
+					<div class="upselldescription">
+						<isprint value="${product.custom.cartShortDescription}" encoding="off"/>
+					</div><!-- END: shortDescription -->
+
+					<div class="addtocart_btn">
+						<button type="submit" value="${Resource.msg('global.add','locale',null)}" name="${recommendation.addtocart.htmlName}" ></button>
+					</div>
+					
+					<div class="shippingtext">
+						<isprint value="${product.custom.shippingPromoText}" encoding="off"/>
+					</div>
+					
+				</div>    
+			</isobject>
+	</isloop>
+</form>

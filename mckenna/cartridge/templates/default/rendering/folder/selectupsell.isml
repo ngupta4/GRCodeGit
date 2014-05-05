@@ -1,0 +1,56 @@
+<!--- TEMPLATENAME: selectupsell.isml --->
+<iscache status="off"/>
+
+<iscomment>
+	This template is created before the 'wrapper' template, so we can set
+	up the template configuration for the 'pt_selectasystem' template right here.
+</iscomment>
+
+
+<isdecorate template="rendering/folder/pt_selectasystem">
+	<isinclude template="util/modules"/>
+	<isscript>
+		importPackage(dw.util);
+		importPackage(dw.object);
+		importPackage(dw.catalog);
+		
+		var CCC : Object = pdict.CurrentCampaignConfig;
+		var campaignCode : String = CCC.campaignCode;
+		var category : dw.catalog.Category = dw.catalog.CatalogMgr.getCategory(campaignCode + '-selectupsell');
+		var rIter : dw.util.Iterator = pdict.Product.getRecommendations(6).iterator();
+		var recommendation : dw.catalog.Product;
+		while (rIter.hasNext()) {
+			recommendation = rIter.next();
+			break; 
+		}
+		
+	</isscript>
+	<div id="pdp_upsell_container">
+		<div class="pdp_upsell_header">
+			<isslot id="selectupsell-header" context="category" description="Select Upsell Header" context-object="${category}"/>
+		</div>
+		<img id="offerimage" src="${URLUtils.staticURL('/images/offerImage.png')}"/>
+		<span id="pdp_upsell_note">${Resource.msg('upsell.note','upsell',null)}</span>
+		<div id="pdp_upsell_top_slot">
+			<isslot id="selectupsell-topslot" context="category" description="Select Upsell Top Slot" context-object="${category}"/>
+	<iscomment>  MSanders HTTPS Update Start </iscomment>
+		<div id="pdp_upsell_upgrade">
+				<a href="${URLUtils.https('COCart-Show')}">
+					<img src="${URLUtils.staticURL('/images/btnNoThanks.png')}"/>	
+				</a>
+			</div>
+			<div id="pdp_upsell_nothanks">
+				<a href="${URLUtils.https('COCart-AddProduct','pid', recommendation.recommendedItemID, 'upsell', 'true')}">
+					<img src="${URLUtils.staticURL('/images/btnUpgradeNow.png')}"/>	
+				</a>
+			</div>
+	<iscomment>  MSanders HTTPS Update End </iscomment>
+		</div>
+		
+		<div id="pdp_upsell_bottom_slot">
+			<isslot id="selectupsell-bottomslot" context="category" description="Select Upsell Bottom Slot" context-object="${category}"/>	
+		</div>
+		
+		<isset name="OmniturePage" value="Upsellpage" scope="pdict">	
+	</div>
+</isdecorate>

@@ -1,0 +1,38 @@
+<div class="graybox">
+	<div class="l-top-lt corner"></div>
+	<div class="l-top-rt corner"></div>
+	<div class="l-btm-lt corner"></div>
+	<div class="l-btm-rt corner"></div>
+	<h3>Community Stats</h3>
+		<div class="content">
+			<div class="whitebox2">
+				<div class="l-top-lt corner"></div>
+				<div class="l-top-rt corner"></div>
+				<div class="l-btm-lt corner"></div>
+				<div class="l-btm-rt corner"></div>
+		<iscomment>
+			Renders the Community Stats for current customer.
+			Stats are picked from Session, if not available, we hide the widget.
+		</iscomment>
+		
+		<isif condition="${'CommunityUserProfileJSON' in pdict.CurrentSession.custom 
+					&& !empty(pdict.CurrentSession.custom.CommunityUserProfileJSON)}">
+			<isset name="CommunityProfileJSON" value="${pdict.CurrentSession.custom.CommunityUserProfileJSON}" scope="page" />
+			Total Review Count : <strong><isprint value="${CommunityProfileJSON.ReviewsCount}" /></strong> 
+			<br />
+			<isset name="firstReviewDate" value="${new Date(CommunityProfileJSON.FirstReviewDate)}" scope="page" />
+			
+			First Review : <strong><isprint value="${firstReviewDate}" formatter="MM/dd/yyyy" /></strong>
+			<br />
+			<isset name="lastReviewDate" value="${new Date(CommunityProfileJSON.LastReviewDate)}" scope="page" />
+			Last Review : <strong><isprint value="${lastReviewDate}" formatter="MM/dd/yyyy" /></strong>
+			<br />
+			Featured Reviews : <strong><isprint value="${CommunityProfileJSON.FeaturedReviewCount}" /></strong>
+			<br />
+			Average Ratings : <strong><isprint value="${CommunityProfileJSON.AverageOverallRating}" /></strong>
+			<br />
+			Helpfulness Votes : <strong><isprint value="${CommunityProfileJSON.HelpfullVotes}" /></strong>
+		</isif>
+		</div>
+	</div>
+</div>

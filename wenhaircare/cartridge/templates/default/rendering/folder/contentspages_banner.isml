@@ -1,0 +1,25 @@
+<isdecorate template="rendering/folder/pt_contentpage">
+<isinclude template="util/modules"/>
+
+<iscomment>create reporting event</iscomment>
+<isinclude template="util/reporting/ReportSearch.isml"/>
+
+<div style="clear:both;"><!-- FLOAT CLEAR --></div>
+<div class="category">
+<div style="clear:both;"><!-- FLOAT CLEAR --></div>
+<isinclude template="content/content/htmlcontentasset" />
+
+<div class="Bottom_banner">
+		<isif condition="${'categoryName' in pdict.Content.custom && empty(pdict.Content.custom.categoryName)}">
+			<isset name="folderName" value="${pdict.Content.classificationFolder.displayName}"/>
+			<isslot id="Bottom-banner-contentpages" context="category" description="Bottom banner content pages" context-object="${dw.catalog.CatalogMgr.getCategory(folderName)}"/>
+			<isslot id="MediaPixel" context="category" description="MediaPixel" context-object="${dw.catalog.CatalogMgr.getCategory(folderName)}"/>
+		<iselse>
+			<isslot id="Bottom-banner-contentpages" context="category" description="Bottom banner content pages" context-object="${dw.catalog.CatalogMgr.getCategory(pdict.Content.custom.categoryName)}"/>
+			<isslot id="MediaPixel" context="category" description="MediaPixel" context-object="${dw.catalog.CatalogMgr.getCategory(pdict.Content.custom.categoryName)}"/>
+		</isif>
+		
+	</div>
+</div>
+<isset name="OmniturePage" value="StaticContent" scope="pdict">
+</isdecorate>

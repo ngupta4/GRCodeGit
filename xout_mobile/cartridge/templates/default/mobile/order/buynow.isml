@@ -1,0 +1,221 @@
+<iscache type="relative" hour="24"/>
+<isdecorate template="mobile/order/pt_order">
+
+	<isscript>
+	    importPackage(dw.catalog);
+	    importPackage(dw.system);
+	    
+		var primaryOffer1;
+		var primaryOffer2;
+		var alternateOffer1;
+		var alternateOffer2;
+		if (pdict.CurrentHttpParameterMap.offer == 'B' || session.custom.offer == 'B') {
+			primaryOffer1 = ProductMgr.getProduct(Site.getCurrent().preferences.custom.mobileOfferBProducts[0]);
+			primaryOffer2 = ProductMgr.getProduct(Site.getCurrent().preferences.custom.mobileOfferBProducts[2]);
+			alternateOffer1 = ProductMgr.getProduct(Site.getCurrent().preferences.custom.mobileOfferBProducts[1]);
+			alternateOffer2 = ProductMgr.getProduct(Site.getCurrent().preferences.custom.mobileOfferBProducts[3]);
+		} else if (pdict.CurrentHttpParameterMap.offer == 'C' || session.custom.offer == 'C') {
+			primaryOffer1 = ProductMgr.getProduct(Site.getCurrent().preferences.custom.mobileOfferCProducts[0]);
+			alternateOffer1 = ProductMgr.getProduct(Site.getCurrent().preferences.custom.mobileOfferCProducts[1]);	
+		} else { 
+			primaryOffer1 = ProductMgr.getProduct(Site.getCurrent().preferences.custom.mobileOffers[0]);
+			primaryOffer2 = ProductMgr.getProduct(Site.getCurrent().preferences.custom.mobileOffers[2]);
+			alternateOffer1 = ProductMgr.getProduct(Site.getCurrent().preferences.custom.mobileOffers[1]);
+			alternateOffer2 = ProductMgr.getProduct(Site.getCurrent().preferences.custom.mobileOffers[3]);
+		}
+	</isscript>
+	
+	<div class="mboxDefault"></div>
+	<script type="text/javascript">mboxCreate("DT_Global_Mobile");</script>
+	<div id="buynowcontainer">
+		<isif condition="${pdict.CurrentHttpParameterMap.offer == 'B' || session.custom.offer == 'B'}">
+			<div id="leftside" class="relative">
+				<img src="${primaryOffer1.getImage('mobile', 0).httpURL}" width="160" height="531" />
+				<a href="${URLUtils.https('mCOCart-AddProduct', 'pid', primaryOffer2.ID)}" class="primaryCart absolute topClick offerB"></a>
+				<form id="leftForm" class="absolute">
+					<a href="#" class="label">
+						<input type="radio" name="leftPID" value="${primaryOffer1.ID}"/>
+						<div>
+							<h3>One time delivery</h3>
+							<p>Only $19.95+ s/h</p>						
+						</div>
+					</a>
+					<a href="#" class="label selected">
+						<input type="radio" name="leftPID" value="${primaryOffer2.ID}" checked="checked"/>
+						<div>
+							<h3>Subscribe &amp; Save:</h3>
+							<p>Only $19.95 <span>FREE SHIPPING</span></p>
+							<p>Choose to Subscribe &amp; Save for best value and convenient automatic shipments that you control!</p>						
+						</div>
+					</a>					
+				</form>
+				<a href="${URLUtils.https('mCOCart-AddProduct', 'pid', primaryOffer2.ID)}" class="primaryCart absolute bottomClick offerB"></a>
+			</div>			
+			<div id="rightside" class="relative">
+				<img src="${alternateOffer1.getImage('mobile', 0).httpURL}"  width="160" height="531" />
+				<a href="${URLUtils.https('mCOCart-AddProduct', 'pid', alternateOffer2.ID)}" class="alternateCart absolute topClick offerB"></a>		
+				<form id="rightForm" class="absolute">
+					<a href="#" class="label">
+						<input type="radio" name="rightPID" value="${alternateOffer1.ID}"/>
+						<div>
+							<h3>One time delivery</h3>
+							<p>Only $39.90+ s/h</p>						
+						</div>
+					</a>
+					<a href="#" class="label selected">
+						<input type="radio" name="rightPID" value="${alternateOffer2.ID}" checked="checked"/>
+						<div>
+							<h3>Subscribe &amp; Save:</h3>
+							<p>Only $39.90 <span>FREE SHIPPING</span></p>
+							<p>Choose to Subscribe &amp; Save for best value and convenient automatic shipments that you control!</p>						
+						</div>
+					</a>
+				</form>
+				<a href="${URLUtils.https('mCOCart-AddProduct', 'pid', alternateOffer2.ID)}" class="alternateCart absolute bottomClick offerB"></a>
+			</div>
+			<div id="call_now_offer_b" class="clear relative">
+				<img src="${primaryOffer2.getImage('mobile', 1).httpURL}"  width="320"/>
+				<isif condition="${pdict.phoneNumber != null}">
+					<a id="calltoorder" href="tel:<isprint value="${pdict.phoneNumber}"/>" class="absolute"></a>
+				<iselse/>
+					<a id="calltoorder" href="tel:<isinclude url="${URLUtils.abs('mPhone-PhoneNumber')}" />" class="absolute"></a>
+				</isif>
+			</div>		
+		<iselse>
+            <div id="contentContainer">
+              <img src="${URLUtils.staticURL('/images/30daysupply.jpg')}" width="320" height="90" border="0" alt="30-Day Supply" />
+              <a href="${URLUtils.https('mCOCart-AddProduct', 'pid', primaryOffer2.ID)}"><div class="cta"></div></a>
+              <div class="purple_txt">Special Introductory Price - Limited Time ONLY</div>
+              <img src="${URLUtils.staticURL('images/product.jpg')}" width="320" height="226" border="0" alt="30-Day Supply plus Free Gift" />
+  
+              <div class="youget">You Get</div>
+              <ul class="list">
+                <li>30-day supply of X Out&reg; Acne Wash-In Treatment</li>
+                <li><span class="bold">FREE GIFT:</span><br />
+                    Cleansing Bar to treat blemishes on the chest, back and shoulders by gently washing away dirt, impurities, oil and dead skin cells</li>
+              </ul>
+              <div class="price_onetime"></div>
+  
+              <div class="purple_txt">Special Introductory Price - Limited Time ONLY</div>
+              <a href="${URLUtils.https('mCOCart-AddProduct', 'pid', primaryOffer2.ID)}"><div class="cta2"></div></a>
+            </div>
+			
+			<div id="call_now_offer_a" class="clear relative">
+				<img src="${primaryOffer2.getImage('mobile', 0).httpURL}"  width="320"/>
+				<a id="calltoorder" href="tel:1-888-507-7317" class="absolute"></a>
+				<iscomment>
+					<isif condition="${pdict.phoneNumber != null}">
+						<a id="calltoorder" href="tel:<isprint value="${pdict.phoneNumber}"/>" class="absolute"></a>
+					<iselse/>
+						<a id="calltoorder" href="tel:<isinclude url="${URLUtils.abs('mPhone-PhoneNumber')}" />" class="absolute"></a>
+					</isif>
+				</iscomment>				
+			</div>
+			<iscomment>
+			<!--<div id="leftside" class="relative">
+				<img src="${primaryOffer1.getImage('mobile', 0).httpURL}" width="160" height="890"/>
+				<a href="${URLUtils.https('mCOCart-AddProduct', 'pid', primaryOffer2.ID)}" class="primaryCart absolute topClick offerA"></a>
+				<form id="leftForm" class="absolute offerA">
+					<a href="#" class="label">
+						<input type="radio" name="leftPID" value="${primaryOffer1.ID}"/>
+						<div>
+							<h3>One time delivery</h3>
+							<p><span class="price">Only $19.95+ s/h</span></p>						
+						</div>
+					</a>
+					<a href="#" class="label selected">
+						<input type="radio" name="leftPID" value="${primaryOffer2.ID}" checked="checked"/>
+						<div>
+							<h3>Subscribe &amp; Save:</h3>
+							<p><span class="price">Only $19.95</span><span>FREE SHIPPING</span></p>
+							<p>Choose to Subscribe &amp; Save for best value and convenient automatic shipments that you control!</p>						
+						</div>
+					</a>					
+				</form>
+				<a href="${URLUtils.https('mCOCart-AddProduct', 'pid', primaryOffer2.ID)}" class="primaryCart absolute bottomClick offerA"></a>
+			</div>			
+			<div id="rightside" class="relative">
+				<img src="${alternateOffer1.getImage('mobile', 0).httpURL}" width="160" height="890"/>
+				<a href="${URLUtils.https('mCOCart-AddProduct', 'pid', alternateOffer2.ID)}" class="alternateCart absolute topClick offerA"></a>		
+				<form id="rightForm" class="absolute offerA">
+					<a href="#" class="label">
+						<input type="radio" name="rightPID" value="${alternateOffer1.ID}"/>
+						<div>
+							<h3>One time delivery</h3>
+							<p><span class="price">Only $39.90+ s/h</span></p>						
+						</div>
+					</a>
+					<a href="#" class="label selected">
+						<input type="radio" name="rightPID" value="${alternateOffer2.ID}" checked="checked">
+						<div>
+							<h3>Subscribe &amp; Save:</h3>
+							<p><span class="price">Only $39.90</span><span>FREE SHIPPING</span></p>
+							<p>Choose to Subscribe &amp; Save for best value and convenient automatic shipments that you control!</p>						
+						</div>
+					</a>
+				</form>
+				<a href="${URLUtils.https('mCOCart-AddProduct', 'pid', alternateOffer2.ID)}" class="alternateCart absolute bottomClick offerA"></a>
+			</div>
+			<div id="call_now_offer_a" class="clear relative">
+				<img src="${primaryOffer2.getImage('mobile', 1).httpURL}"  width="320"/>
+				<isif condition="${pdict.phoneNumber != null}">
+					<a id="calltoorder" href="tel:<isprint value="${pdict.phoneNumber}"/>" class="absolute"></a>
+				<iselse/>
+					<a id="calltoorder" href="tel:<isinclude url="${URLUtils.abs('mPhone-PhoneNumber')}" />" class="absolute"></a>
+				</isif>
+			</div>
+			-->
+			</iscomment>
+		</isif>		
+	</div>
+	
+	<script type="text/javascript">
+	  	jQuery(document).ready(function() {
+			var leftAdd 	= jQuery(".primaryCart").attr('href');
+			var rightAdd 	= jQuery(".alternateCart").attr('href');
+			jQuery("#leftForm .label").live('click',function(e){
+				e.preventDefault();
+				jQuery(this).children("input[name='leftPID']").attr('checked','checked');
+				var urlParts = leftAdd.split('?');
+				
+				jQuery.each(jQuery("input[name='leftPID']"),function(i){
+					if(jQuery(this).is(":checked")){
+						jQuery(this).parent(".label").addClass('selected');
+					} else {
+						jQuery(this).parent(".label").removeClass('selected');
+					}
+				});
+
+				jQuery(".primaryCart").attr('href', urlParts[0] + '?pid=' + jQuery(".label.selected input[name='leftPID']").val());
+			});
+			jQuery("#rightForm .label").live('click',function(e){
+				e.preventDefault();
+				jQuery(this).children("input[name='rightPID']").attr('checked','checked');
+				var urlParts = leftAdd.split('?');
+				
+				jQuery.each(jQuery("input[name='rightPID']"),function(i){
+					if(jQuery(this).is(":checked")){
+						jQuery(this).parent(".label").addClass('selected');
+					} else {
+						jQuery(this).parent(".label").removeClass('selected');
+					}
+				});
+
+				jQuery(".alternateCart").attr('href', urlParts[0] + '?pid=' + jQuery(".label.selected input[name='rightPID']").val());
+			});
+
+	  	});
+	</script>
+	
+<isset name="OmniturePage" value="Offerpage" scope="pdict">	
+<isscript>
+var primaryUCI : Cookie = request.httpCookies['uci'];
+</isscript>
+<!--  Media Geeks -->
+<script language="javascript" src="http://delivery.mgplatform.com/gr/m307landing.js"></script>
+<!--  End Media Geeks -->
+<!--  Atlas -->
+<script>document.write('<s'+'cript language="JavaScript" src="http://view.atdmt.com/jaction/grkout_XOUTSASMobile_4"></s'+'cript>')</script><noscript><iframe src="http://view.atdmt.com/iaction/grkout_XOUTSASMobile_4" width="1" height="1" frameborder="0" scrolling="No" marginheight="0" marginwidth="0" topmargin="0" leftmargin="0"></iframe></noscript>
+<!--  End Atlas -->
+
+</isdecorate>

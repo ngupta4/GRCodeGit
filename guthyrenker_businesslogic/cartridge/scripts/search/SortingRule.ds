@@ -1,0 +1,44 @@
+/**
+* 
+* Gets the id corresponding to sorting rule defined in product search model.
+* For example:
+*
+*-   @input ExampleIn : String This is a sample comment.
+*-   @output ExampleOut : Number
+*
+*/
+importPackage( dw.system );
+
+function getSortingRuleID( productsearchmodel : PipelineDictionary ) : String
+{
+
+	// determine the ID of the sorting rule used to sort the current search results
+	var sortingRuleID : String = null;
+	if( null != productsearchmodel)
+	{
+		var sortingRule : dw.catalog.SortingRule = null;
+		var productsearchmodel : dw.catalog.ProductSearchModel = productsearchmodel;
+		if(productsearchmodel.getSortingRule() != null) {
+			sortingRule = productsearchmodel.getSortingRule();
+		}
+		else {
+			var category : dw.catalog.Category = productsearchmodel.getCategory();
+			if (category == null) {
+				category = dw.catalog.CatalogMgr.getSiteCatalog().getRoot();
+			}
+			if (category.getDefaultSortingRule() != null) {
+				sortingRule = category.getDefaultSortingRule();
+			}
+		}
+		if(sortingRule != null) {
+			var sortingOptions : dw.util.List = dw.catalog.CatalogMgr.getSortingOptions();
+			for(var it : Iterator = sortingOptions.iterator(); it.hasNext(); ) {
+				var option : dw.catalog.SortingOption = it.next();
+				if(option.getSortingRule().getID() == sortingRule.getID()) {
+					sortingRuleID = sortingRule.getID();
+				}
+			}
+		}
+	}
+   return sortingRuleID;
+}

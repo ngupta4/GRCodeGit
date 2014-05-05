@@ -1,0 +1,8 @@
+<isinclude template="util/modules"/>
+<isset name="variantType" value="${pdict.CurrentHttpParameterMap.variationValue.stringValue}" scope="page"/>
+
+<isif condition="${variantType!=null && !empty(variantType)}">
+<isredirect location="${URLUtils.https('COCart-AddProduct','variationValue',variantType)}" permanent="true"/>
+<iselse>
+<isredirect location="${URLUtils.https('COCart-AddProduct')}" permanent="true"/>
+</isif>

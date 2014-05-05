@@ -1,0 +1,28 @@
+<!doctype html>
+<!--[if lt IE 7]> <html class="ie6 oldie" lang="en"> <![endif]-->
+<!--[if IE 7]>    <html class="ie7 oldie" lang="en"> <![endif]-->
+<!--[if IE 8]>    <html class="ie8 oldie" lang="en"> <![endif]-->
+<!--[if gt IE 8]><!--> <html lang="en"> <!--<![endif]-->
+<iscomment>This page must never be cached!! This page tries to avoid having too much logic or includes to avoid any followup errors!!</iscomment>
+<head>
+	<iscomment>Include all important information globally , e.g. meta-data, link information, and javascript.</iscomment>
+	<isinclude template="components/header/htmlhead"/>
+</head>
+<body>
+<isinclude template="components/header/header"/>
+<div class="page-outer-inner">	
+	<div class="page-wrapper">
+		<div id="secondaryContent">		
+					<isinclude url="${URLUtils.url('CustomerService-LeftNav')}"/>
+					<div class="clear"><!-- FLOAT CLEAR --></div>
+		</div><!-- END: leftcolumn -->
+		<div id="primaryContent">
+					<isreplace/>
+					<div class="clear"><!-- FLOAT CLEAR --></div>
+		</div><!-- END: content -->
+	</div>
+</div>		
+	<isinclude template="components/footer/footer"/>
+	<isinclude template="components/footer/pixels"/>
+</body>
+</html>

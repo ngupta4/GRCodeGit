@@ -1,0 +1,145 @@
+<isset name="CurrentFolder"  value="${dw.content.ContentMgr.getFolder('contact-us')}" scope="page"/>
+<isset name="CurrentContent" value="${dw.content.ContentMgr.getFolder('contact-us')}" scope="page"/>
+<isset name="showNav" value="${true}" scope="page" />
+<isscript>
+importScript("guthyrenker_core:common/libUtils.ds");
+</isscript>
+<isset name="pagetitle" value="Depend Customer Service | Contact Depend" scope="pdict">
+<isdecorate template="account/pt_contactus">
+<isinclude template="util/modules"/>
+<div class="page-outer-inner">
+<div class="page-wrapper">
+ <div class="contactWrapper">
+<script type="text/javascript">
+	$(document).ready(function(){
+			$("#dwfrm_contactus_firstname").focus(function(){
+				var jscript = jQuery(app.resources["JSCRIPT_ENABLED"]).val();
+				if(jscript == null || jscript == "false"){
+					jQuery(app.resources["JSCRIPT_ENABLED"]).val("true");
+			}
+			});
+			 $("#phone1,#phone2,#phone3").keyup(function () {
+            	 $('.phone div.errormessage').hide();
+                var maxLength = $(this).attr('maxlength');
+                if ($(this).val().length == maxLength) {
+                    $(this).next('span').remove();
+                    $(this).next().focus();                   
+                }
+            });
+            $("#phone1,#phone2,#phone3").keydown(function (event) {
+                if (event.keyCode == 46 || event.keyCode == 8 || event.keyCode == 9 || event.keyCode == 27 || event.keyCode == 13 || (event.keyCode == 65 && event.ctrlKey === true) || (event.keyCode >= 35 && event.keyCode <= 39)) {
+                    return;
+                } else {
+                    if (event.shiftKey || (event.keyCode < 48 || event.keyCode > 57) && (event.keyCode < 96 || event.keyCode > 105)) {
+                        event.preventDefault();
+                    }
+                }
+            });
+            var acc1 = $("#phone-number").val().substr(0, 3);
+            var acc2 = $("#phone-number").val().substr(3, 3);
+            var acc3 = $("#phone-number").val().substr(6, 4);
+            jQuery("#phone1").val(acc1);
+            jQuery("#phone2").val(acc2);
+            jQuery("#phone3").val(acc3);
+	});
+	function beforesubmitcheck()	{
+		var textVal1 = jQuery("#phone1").val();
+		var textVal2 = jQuery("#phone2").val();
+		var textVal3 = jQuery("#phone3").val();
+		var textval = textVal1+textVal2+textVal3;
+		jQuery("input[id=phone-number]").val(textval);	
+		if($("#phone1,#phone2,#phone3").val() == ""){
+			$("#phone2,#phone3").addClass("errormessage");
+		}	
+}
+</script>	
+		<form action="${URLUtils.httpsContinue()}" method="post"  class="suppress" id="RegistrationForm">
+			<fieldset>
+				    <div class="blockContent">
+				        <h1>${Resource.msg('contactus.pagetitle.h1','locale',null)}</h1>
+				        <div class="customer-notes">
+				        	${Resource.msg('contactus.customercare','locale',null)}<br/>
+				        	${Resource.msg('contactus.completeform','locale',null)}
+				        </div>		        
+						<div class="formfields">							
+							<div class="formrow nameinfo">
+								<div class="formfield" id="first">
+									<isinputfield formfield="${pdict.CurrentForms.contactus.firstname}" type="input" attribute1="requiredmesage" value1="${Resource.msg('forms.contactus.firstname.missing','forms',null)}"/>
+								</div><!-- END: firstname -->
+								<div class="formfield">
+									<isinputfield formfield="${pdict.CurrentForms.contactus.lastname}" type="input" attribute1="requiredmesage" value1="${Resource.msg('forms.contactus.lastname.missing','forms',null)}"/>
+								</div>
+							</div>
+							<isinputfield formfield="${pdict.CurrentForms.contactus.jscriptEnabled}" type="hidden" attribute1="value" value1="false" label="false"/>
+							<div class="formfield fullwidth">
+								<isinputfield formfield="${pdict.CurrentForms.contactus.email}" type="input" attribute1="requiredmesage" value1="${Resource.msg('forms.contactus.email.missing','forms',null)}"/>
+							</div>
+							<div class="formfield fullwidth">
+				                <isinputfield formfield="${pdict.CurrentForms.contactus.reemail}" type="input" 
+				                                  attribute1="requiredmesage" value1="${Resource.msg('forms.contactus.reemail.missing','forms',null)}" 
+				                                  attribute2="equalTo"        value2="${'#'+pdict.CurrentForms.contactus.email.htmlName}"
+				                                  attribute3="equaltomessage" value3="${Resource.msg('forms.contactus.email.match', 'forms', null)}"/>
+				            </div>
+				           <div class="contactMoreText">${Resource.msg('contact.textlarge','locale',null)}</div>
+				            <div class="formrow orderinfo">
+				                <div class="formfield" id="first-box">
+				                    <isinputfield formfield="${pdict.CurrentForms.contactus.ordernumber}" type="input"/>
+				                </div>
+				                <div class="formfield">
+				                    <isinputfield formfield="${pdict.CurrentForms.contactus.accountnumber}" type="input"/>
+				                </div>
+				            </div>
+			                <div class="formfield fullwidth">
+			                    <isinputfield formfield="${pdict.CurrentForms.contactus.address1}" type="input" 
+			                    attribute1="requiredmesage" value1="${Resource.msg('forms.addresserror','forms',null)}"/>
+			                </div>
+			                <div class="formfield fullwidth">
+			                    <isinputfield formfield="${pdict.CurrentForms.contactus.address2}" type="input"/>
+			                </div>
+			                <div class="city-state-zip">	                
+				                <div class="formfield city">
+				                    <isinputfield formfield="${pdict.CurrentForms.contactus.city}" type="input"/>
+				                </div>
+				                <div class="formfield" id="state">
+				                    <isinputfield formfield="${pdict.CurrentForms.contactus.states.stateUS}" type="select"/>
+				                </div>
+				                <div class="formfield" id="zip">
+				                    <isinputfield formfield="${pdict.CurrentForms.contactus.zip}" type="input"/>
+				                </div>
+				            </div>                	                
+							<div class="formfield clearfix phone">
+								<div class="label">${Resource.msg('forms.contactus.phone.label','forms',null)}<span class="requiredindicator">${Resource.msg('global.requiredsymbol','locale', null)}</span></div>
+								<div class="value phone">
+									<input type="text" id="phone1" class="small textinput required" maxlength="3" size="3" />
+		        					<input type="text" id="phone2" class="small textinput required" maxlength="3" size="3" />		        
+		        					<input type="text" id="phone3" class="numberbox textinput required" maxlength="4" size="6" />
+		        					<isinputfield id="phone-number" formfield="${pdict.CurrentForms.contactus.phone}" type="hidden" />
+         				      		<isif condition="${!pdict.CurrentForms.contactus.phone.valid}" >
+		                  				<div class="clear phoneErrorMsg" style="color:red; font-size:11px;">${Resource.msg('address.phone.missing','forms',null)}</div>
+		                  			</isif>
+               			      		
+         				      	</div>
+               				</div>		
+							
+							<div class="formfield myquestion">
+							    <isinputfield formfield="${pdict.CurrentForms.contactus.myquestion}" type="select" attribute1="requiredmesage" value1="${Resource.msg('forms.contactus.required','forms',null)}"/>
+							</div>
+							<div class="formfield messege">
+								<isinputfield attribute1="rows" value1="8" attribute2="cols" value2="40" formfield="${pdict.CurrentForms.contactus.comment}" type="textarea" attribute1="requiredmesage" value1="${Resource.msg('forms.contactus.note.missing','forms',null)}"/>
+							</div>
+							 <isinclude template="components/captcha.isml"/>
+						</div><!-- END: formfields -->
+						<div class="formactions">
+                            <button class="orange-button" id="sendBtn" type="submit" onclick="beforesubmitcheck();" value="${Resource.msg('global.send','locale',null)}" name="${pdict.CurrentForms.contactus.send.htmlName}"><span>${Resource.msg('global.submit','locale',null)}</span></button>
+                        </div> 
+						<div class="requirenote"><span class="requiredindicator">${Resource.msg('global.requiredsymbol','locale', null)}</span>${Resource.msg('contactus.requirednotes','locale',null)}</div>
+						                      
+					</div>
+			</fieldset>
+		</form>		
+
+	</div>
+</div>
+</div>
+<isset name="OmniturePage" value="Contactus" scope="pdict">	
+</isdecorate>

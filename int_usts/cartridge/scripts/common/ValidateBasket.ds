@@ -1,0 +1,387 @@
+/**
+* Demandware Script File
+* To define input and output parameters, create entries of the form:
+*
+* @<paramUsageType> <paramName> : <paramDataType> [<paramComment>]
+*
+* where
+*   <paramUsageType> can be either 'input' or 'output'
+*   <paramName> can be any valid parameter name
+*   <paramDataType> identifies the type of the parameter
+*   <paramComment> is an optional comment
+*
+* For example:
+*
+*   @input Basket : dw.order.Basket This is a sample comment.
+*   @input OrderNumber : String The OrderNo from COPlaceOrder
+*	@input CheckoutForm : dw.web.Form
+*	@input userStatus : String
+*   @output Status : Object
+*   @output ResponseID : Object
+*   @output ClientTransactionID : Object
+*   @output ClientOrderID : Object
+*   @output PreAuthID : Object
+*   @output ValidationID : Object
+*   @output ErrorContainer : Array
+*   @output RequestURI : Object
+*   @output ServerError : Boolean  Meant to signify 2nd-Attempt Override (TRANSITION)
+*   @output AcceptError : Boolean  Meant to signify Accept Error Override (ACCEPT)
+*	@output CustomServerError: String 	Resonse to give to the user
+*
+*/
+importPackage( dw.system );
+importPackage( dw.order );
+importPackage( dw.net );
+importPackage( dw.crypto );
+importPackage( dw.util );
+importPackage( dw.io );
+importPackage( dw.web );
+importPackage( dw.util );
+
+
+
+importScript('int_usts:common/libEcom.ds'); 
+
+
+var log : Log = Logger.getLogger("ValidatorAPI Client");
+
+
+
+function execute( args : PipelineDictionary ) : Number
+{
+	var starttime = new Date();
+	var basket : Basket = args.Basket;
+	var orderNumber : String = args.OrderNumber;
+
+	if( empty(basket) ) {
+		log.error("Basket is a required parameter for ValidateBasket.ds.");
+		return PIPELET_ERROR;
+	}
+	
+	basket.custom.customerIPAddress = request.httpRemoteAddress;
+	
+	// Build the post data to post
+
+	// Figure out service URL
+	//var serviceURL : String = "https://qa01-shop.ustechsupport.com/carts/sale";//Site.current.getCustomPreferenceValue("ecomAPIURL");
+	var serviceURL:String = Site.getCurrent().getCustomPreferenceValue("ecom_api_sales_url");
+	var billing_descriptor:String =  Site.getCurrent().getCustomPreferenceValue("ecom_billing_descriptor");
+	log.debug ("Ecom Cart serviceURL: " + serviceURL);
+    // Call Ecom Service
+    var http : HTTPClient = new HTTPClient();
+    //http.setTimeout(1000*60*15);
+    http.setTimeout(Site.getCurrent().getCustomPreferenceValue("ecom_api_timeout") * 1000);
+    try {
+	    log.debug("Validator URL "+serviceURL);
+	    //This method is responsible for hitting the webservice
+		http.open( "POST", serviceURL);
+		http.setRequestHeader("Content-Type", "application/x-www-form-urlencoded"); 
+		var date = new Date();
+		http.setRequestHeader("Date", date.toUTCString());
+		var auth = createAuth(date,serviceURL);
+		http.setRequestHeader("Authorization",auth );
+		//log.debug ("Ecom Cart auth: " + auth);
+		//log.debug ("Ecom Cart date: " +  date.toUTCString());
+		//CheckoutForm.contact.email.htmlValue
+		//CheckoutForm.emailconfirm.htmlValue
+		//CheckoutForm.daytimephone.htmlValue
+		//CheckoutForm.billtoaddress.firstName.htmlValue
+		//CheckoutForm.billtoaddress.lastName.htmlValue
+		//CheckoutForm.billtoaddress.companyName.htmlValue
+		//CheckoutForm.billtoaddress.billtoaddress.address1.htmlValue
+		//CheckoutForm.billtoaddress.billtoaddress.address2.htmlValue
+		//CheckoutForm.billtoaddress.billtoaddress.city.htmlValue
+		//CheckoutForm.billtoaddress.billtoaddress.states.stateUS.htmlValue
+		//CheckoutForm.billtoaddress.billtoaddress.zip.htmlValue
+		//CheckoutForm.billtoaddress.billtoaddress.country.htmlValue
+		
+		//Bastet information not forms...hmmm
+		//Basket.custom.cartID
+		//;
+		//
+		//Basket.defaultShipment.billingAddress.address1;
+		//Basket.defaultShipment.billingAddress.address2;
+		//Basket.defaultShipment.billingAddress.city;
+		//Basket.defaultShipment.billingAddress.stateCode;
+		//Basket.defaultShipment.billingAddress.postalCode;
+		//Basket.defaultShipment.billingAddress.countryCode.value;
+		//Basket.defaultShipment.billingAddress.phone;
+		//
+		
+		//Basket.paymentInstruments[0].creditCardExpirationMonth
+		//Basket.paymentInstruments[0].creditCardExpirationYear
+		//Basket.paymentInstruments[0].creditCardType
+		//Basket.paymentInstruments[0].creditCardNumber
+		//Basket.paymentInstruments[0].creditCardNumber
+		
+		//
+		var cookies:Cookies = request.getHttpCookies();
+		//
+		var lineitems = args.Basket.allProductLineItems;
+		if(empty(lineitems)){
+			log.error ("Cart is missing products");
+			return PIPELET_ERROR;
+		}
+		
+		//graceful fail with empty values
+		var sc:String = "";
+		if(!empty(session.custom.sc)){
+			sc = session.custom.sc;
+		}
+		else if(!empty(cookies['Cps.sku'])){
+			sc = cookies['Cps.sku'].value;
+		}else{
+			sc = Site.getCurrent().getCustomPreferenceValue("ecom_default_sc");
+		}
+		
+		var pr:String = "";
+		if(!empty(session.custom.pr)){
+			pr = session.custom.pr;
+		}
+		else if(!empty(cookies['Cps.pr'])){
+			pr = cookies['Cps.pr'].value;
+		}else{
+			pr = Site.getCurrent().getCustomPreferenceValue("ecom_default_pr");
+		}		
+		
+		var session_id = "";
+		if(!empty(cookies["Cps.user_session_id"]))
+			session_id = cookies["Cps.user_session_id"].value;
+		var carts:Object = getCart(sc,pr);
+		log.debug ("getCart returned: " + JSON.stringify(carts));
+		 
+		var json:Object = {"sale": {
+				"cart_id": carts.cartid,//args.Basket.custom.cartID,
+				"customer": {
+					"first_name" : args.Basket.billingAddress.firstName,
+					"last_name" : args.Basket.billingAddress.lastName,
+					"email_address" : args.Basket.customerEmail,
+					"company" :  args.Basket.billingAddress.companyName,
+		            "billing_address": {
+		                "name": args.Basket.billingAddress.firstName,
+		                "addr1": args.Basket.billingAddress.address1,
+		                "addr2":  args.Basket.billingAddress.address2,
+		                "city":  args.Basket.billingAddress.city,
+		                "postal_code":  args.Basket.billingAddress.postalCode,
+		                "phone":  args.Basket.billingAddress.phone,
+		                "district": args.Basket.billingAddress.stateCode,
+		                "country": args.Basket.billingAddress.countryCode.value
+		            },
+		            "credit_card":{
+		                "type": args.Basket.paymentInstruments[0].creditCardType,
+		                "account": args.Basket.paymentInstruments[0].creditCardNumber,
+		                "account_holder_name": args.Basket.paymentInstruments[0].creditCardHolder,
+		                "expiration_date": args.Basket.paymentInstruments[0].creditCardExpirationYear.toString() + StringUtils.formatNumber(args.Basket.paymentInstruments[0].creditCardExpirationMonth,"00")
+		            }
+		        },
+		        "currency": "USD",
+		        "total": args.Basket.getTotalNetPrice().value,
+		        "billing_descriptor": billing_descriptor,//"USTechSupport",
+		        "session_id": "",
+		        "tracking_id": session_id,
+		        "ip_address": request.getHttpRemoteAddress(),
+		        "source_code":sc, //cookies["Cps.sc"].value,
+		        "sale_lines": []
+		    }
+		};
+		//for each item in the cart...
+		//log.debug ("Validate basket: Number of items in cart: " + lineitems.length);
+		for(var x=0;x<lineitems.length;x++){
+			var lineitem:ProductLineItem = lineitems[x];
+			json.sale.sale_lines[x] ={	
+					"sku_number": lineitem.product.manufacturerSKU, //"LTC1M1", //product.id
+	                //"offer_id": carts[lineitem.product.manufacturerSKU],//lineitem.product.custom.itemCode, //What is this?
+	                "price": lineitem.adjustedNetPrice.value,//lineitem.product.adjustedNetPrice.value,
+	                "quantity": lineitem.quantityValue//,
+	               // "billing_plan": {}
+	            };
+	        if(!empty(carts[lineitem.product.manufacturerSKU]))
+	        	json.sale.sale_lines[x].offer_id =  carts[lineitem.product.manufacturerSKU];
+	        //only include the billing plan 
+	        if(!empty(lineitem.product.custom.kitFrequency)){
+		        var cal:Calendar = new Calendar();
+		        switch(lineitem.product.custom.kitFrequency){
+		        	case "Month":
+		        		cal.add(Calendar.MONTH,1);
+		        		break;
+		        	case "Year":
+		        		cal.add(Calendar.YEAR,1);
+		        		break;
+		        }
+		        cal.timeZone = "PST";
+		        
+	       		json.sale.sale_lines[x].billing_plan = {
+	                    "start_date": StringUtils.formatCalendar(cal,"yyyy-MM-dd hh:mm:ss"), ///"2011-04-01 00:00:00",
+	                    "periods": [
+	                        {
+	                            "type": lineitem.product.custom.kitFrequency, //
+	                            "quantity": lineitem.quantityValue, 
+	                            "cycles": "0", //What is this? continuityType
+	                            "amount": lineitem.product.custom.kitPrice 
+	                        }
+	                    ]
+	                };
+	        }
+		}
+		
+		
+		var jsonstr:String = JSON.stringify(json);
+		log.debug("Ecom Cart jsonstr created: " + jsonstr);
+		http.send(jsonstr);
+	}
+	catch (e)
+	{
+		/* short-circuit code here was removed, to instead be handled by */	
+		/* common error code handling below                              */	
+		log.error("Ecom http call failed: " + e);
+	}
+   
+    // Capture response
+	var response : String = http.text;
+	var errorResponse : String = http.errorText;
+	
+	log.debug ("Ecom Cart response: " + response);
+	
+	if(http.statusCode > 199 && http.statusCode < 301 && !empty(response) ){
+		//if we fail retriving this then gracefully fail to the user saying they will recieve in the email
+		try{
+			//parse the json response...
+			var j: Object = JSON.parse(response);
+			
+			//see if we have an error or an order
+			if(!empty(j.exception) && !empty(j.exception.message)){
+				parseError(response,args);
+				return PIPELET_ERROR;
+			}
+
+			
+			//var activationCode: String = "";
+			var confirmationId: String = j.order_id;
+			//var phoneNo: String = "";
+			//var orderTotal: Numner = j.total_paid;
+			args.ClientOrderID = confirmationId;
+		}
+		catch(ex){
+			//TODO:set values to something to show visible to the user...
+			var endtime = new Date();
+			var diff = endtime - starttime;
+			log.info ("Ecom Place Order failed with response in: " + (diff/1000).toFixed(2) + " sec");
+			log.warn("Ecom call failed with invalid json: " + response);
+			return PIPELET_ERROR;
+		}
+		
+	}
+	else{
+		try{
+				parseError(errorResponse,args);
+				args.ServerError = true;//j.exception.message;
+			
+		}catch(ex){
+		}
+		var endtime = new Date();
+		var diff = endtime - starttime;
+		log.info ("Ecom Place Order failed to responsed in: " + (diff/1000).toFixed(2) + " sec");
+		log.fatal("ECOM HTTP Call failed with a status code of " + http.statusCode + " , data: " + errorResponse);
+		return PIPELET_ERROR;	
+	}
+	var endtime = new Date();
+	var diff = endtime - starttime;
+	log.info ("Ecom Place Order placed in: " + (diff/1000).toFixed(2) + " sec");
+	log.debug("ECOM successful response");
+	return PIPELET_NEXT;
+}
+function parseError(errorResponse:string,args:Object){
+	var j: Object = JSON.parse(errorResponse);
+	if(!empty(j.exception)){
+		var m:String = j.exception.message;
+		args.CustomServerError = "";
+		if(!empty(m) && m != ""){
+			
+			if(new RegExp(/.*(Issuer Unavailable|Call Issuer|Call Issuer|Lost\/Stolen Card|Pick Up Card|Invalid Account Number|Cardholder transaction not permitted).*/i).test(m))
+				args.CustomServerError = "confirm.error.creditcard";
+			if(new RegExp(/.*(502 Bad Gateway).*/i).test(m))
+				args.CustomServerError = "confirm.error.technical";
+			if(new RegExp(/.*(Cdef::Models::Customer#save returned false|Invalid Amount).*/i).test(m))
+				args.CustomServerError = "confirm.error.validator";
+			
+			if(new RegExp(/.*neither zip nor address match/i).test(m))
+				args.CustomServerError += (args.CustomServerError == ""?"":"|") +  "confirm.error.addressnomatch";
+			if(new RegExp(/.*(cvv2|cid|cvn|cardvalidationnum).*/i).test(m))
+				args.CustomServerError += (args.CustomServerError == ""?"":"|") + "confirm.error.cvn";
+			if(new RegExp(/.*(Invalid Transaction|Do Not Honor|Generic Decline|Restricted Card).*/i).test(m))
+				args.CustomServerError += (args.CustomServerError == ""?"":"|") + "confirm.error.paymentfailed";
+			if(new RegExp(/.*(Insufficient Funds).*/i).test(m))
+				args.CustomServerError += (args.CustomServerError == ""?"":"|") + "confirm.error.nofunds";
+			if(new RegExp(/.*(Expired Card).*/i).test(m))
+				args.CustomServerError += (args.CustomServerError == ""?"":"|") + "confirm.error.cardexpired";
+			if(new RegExp(/.*(Cdef::Models::BillingAddress).*/i).test(m))
+				args.CustomServerError += (args.CustomServerError == ""?"":"|") + "confirm.error.addressblank";
+				
+			//default error message
+			if(empty(args.CustomServerError))
+				args.CustomServerError = "confirm.error.validator";
+				
+		}else{
+			//generic error message
+			args.CustomServerError = "confirm.error.validator";
+		}
+	}else{
+		args.CustomServerError = "confirm.error.technical";
+	}
+}
+
+function getCart(sc:String,pr:String){
+	var rtv:Object = {"cartid":""};
+	//make an api call to the cart calls...
+	//var sc:String = Site.getCurrent().getCustomPreferenceValue("ecom_default_sc");
+	//var pr:String = Site.getCurrent().getCustomPreferenceValue("ecom_default_pr");
+	var domain:String = Site.getCurrent().getCustomPreferenceValue("ecom_api_domain");
+	var serviceURL:String = Site.getCurrent().getCustomPreferenceValue("ecom_api_cart_url") + "?source_code=" + sc + "&pr=" + pr + "&domain=" + domain;
+	log.debug ("API Cart call url: " + serviceURL);
+	var httpClient : HTTPClient = new HTTPClient();
+    //http.setTimeout(1000*60*15);
+    httpClient.setTimeout(Site.getCurrent().getCustomPreferenceValue("ecom_api_timeout") * 1000);
+    var json:JSON;
+    var message:String = "";
+
+    log.debug("Validator URL "+serviceURL);
+    //This method is responsible for hitting the webservice
+	httpClient.open( "GET", serviceURL);
+	httpClient.send();
+
+	if (httpClient.statusCode == 200){
+    	json = JSON.parse(httpClient.text);
+     	log.debug("json: " + httpClient.text);
+     	
+     	rtv.cartid = json.cart_id;
+     	//  iterate offers...
+     	
+     	if(json.cart.catalog){
+     		var offers = json.cart.catalog.offers;
+	     	for (var x = 0;x<offers.length;x++){
+	     		 var offer_id = "";
+	     		 var cart_skus = json.cart.cart_skus;
+	     		 
+	     		 for (var y = 0;y<cart_skus.length;y++){
+	     		 	if(cart_skus[y].sku_id == offers[x].sku_id)
+	     		 		offer_id = cart_skus[y].offer_id;
+	     		 }
+	     		if(empty(offer_id)){
+	     			log.fatal("Ecom API: Missing offer_id in cart API response json");	
+	     		}
+	     		rtv[offers[x].sku.number] = offer_id;
+	     		
+	     		/*
+	     		var slaves = offers[x].sku.slaves;
+	     		for (var y = 0;y<slaves.length;y++){
+	     			rtv[slaves[y].sku.number] = slaves[y].sku.id;
+	     		}
+	     		*/
+	     	}
+     	}
+	}else{
+    	log.error("http error message: " + httpClient.statusCode);
+    	throw new Error("Cart API Call failed");
+	}
+    return rtv;
+}

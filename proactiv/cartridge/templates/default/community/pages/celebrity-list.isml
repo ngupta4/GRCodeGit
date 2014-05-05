@@ -1,0 +1,32 @@
+<isdecorate template="community/successstories/pt_celebritylisting">
+<isinclude template="util/modules"/>
+<isinclude template="util/reporting/ReportSearch.isml"/>
+<div style="clear:both;"></div>
+<div class="mainWide success-stories">
+	<div class="main">	
+		<div id="content">
+			<div class="category">
+				<div class="success-stories">
+					<isinclude template="content/content/htmlcontentasset" />
+					
+					<isinclude url="${URLUtils.url('Community-CelebrityListing','start',pdict.CurrentHttpParameterMap.start.intValue)}"/>
+					<iscomment>					
+						<isif condition="${pdict.CurrentHttpParameterMap.start.intValue!=null}">
+							<isinclude url="${URLUtils.url('Community-CelebrityListing','start',pdict.CurrentHttpParameterMap.start.intValue)}"/>
+						<iselse/>	
+							<isinclude url="${URLUtils.url('Community-CelebrityListing')}"/>
+						</isif>
+					</iscomment>								 		
+			 		<isif condition="${empty(pdict.Content.custom.categoryName)}">
+						<isset name="folderName" value="${pdict.Content.classificationFolder.displayName}" scope="page"/>
+						<isslot id="MediaPixel" context="category" description="MediaPixel" context-object="${dw.catalog.CatalogMgr.getCategory(folderName)}"/>
+					<iselse>
+						<isslot id="MediaPixel" context="category" description="MediaPixel" context-object="${dw.catalog.CatalogMgr.getCategory(pdict.Content.custom.categoryName)}"/>
+					</isif>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+</isdecorate>
+ 

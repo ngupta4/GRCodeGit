@@ -1,0 +1,8 @@
+<iscache type="relative" hour="24" varyby="price_promotion" />
+
+<iscomment>Test Default Kit Selection</iscomment>
+<isif condition="${dw.campaign.ABTestMgr.isParticipant('defaultKitSelection', 'SegmentA')}">
+     <iscontentasset aid="m-header-abtest-defaultkit"/>
+  <iselse>
+     <iscontentasset aid="m-header" />
+</isif>

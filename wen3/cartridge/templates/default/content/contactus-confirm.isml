@@ -1,0 +1,19 @@
+<!--- TEMPLATENAME: contactus-confirm.isml --->
+<isset name="CurrentFolder"  value="${dw.content.ContentMgr.getFolder('contact-us')}" scope="page"/>
+<isset name="CurrentContent" value="${dw.content.ContentMgr.getFolder('contact-us')}" scope="page"/>
+
+<isdecorate template="account/pt_account">
+<isinclude template="util/modules"/>
+ <div class="leftModule">
+	<h1>${Resource.msg('contactus.proactive','locale',null)}<span class="phoneNbr">${pdict.CurrentCampaignConfig.phone}</span></h1>
+	<div class="whiteContainer">
+          <div class="white">
+          	<div class="contactusDiv">
+           <p><b>${Resource.msg('forms.contactus.messagesent','forms',null)}</b></p> 
+           <p>${Resource.msg('forms.contactus.messagerequires','forms',null)}</p>
+              </div>
+          </div><!-- /.white -->
+          <div class="whiteBtm"></div>
+	</div>
+ </div> 
+</isdecorate>

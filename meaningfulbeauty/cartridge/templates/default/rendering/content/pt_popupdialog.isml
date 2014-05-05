@@ -1,0 +1,36 @@
+<!--- TEMPLATENAME: pt_popupdialog.isml --->
+<isinclude template="util/modules"/>
+<div class="dialog" style="">
+	<div class="proactiv_close"> </div>
+	<table class="top table_window">
+		<tr>
+			<td class="proactiv_nw"></td>
+			<td class="proactiv_n"><div class="proactiv_title title_window">&nbsp;</div></td>
+			<td class="proactiv_ne"></td>
+		</tr>
+	</table>
+	<table class="mid table_window">
+		<tr>
+			<td class="proactiv_w"></td>
+			<td valign="top" class="proactiv_content">
+				<div class="proactiv_content" style="height: 430px; width: 358px; overflow: hidden;">
+					<div class="proactiv_message" id="modal_dialog_message">
+					
+						<isreplace/>
+						
+					</div>
+				</div>
+			</td>
+			<td class="proactiv_e"></td>
+		</tr>
+	</table>
+	<table class="bot table_window">
+		<tr>
+			<td class="proactiv_sw"></td>
+			<td class="proactiv_s"><div class="status_bar"><span style="float:left; width:1px; height:1px"></span></div></td>
+			<td class="proactiv_se"></td>
+		</tr>
+	</table>
+	<div class="proactiv_popBkd"> </div>
+</div>
+

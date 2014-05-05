@@ -1,0 +1,55 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<isinclude template="util/modules"/>
+
+<isscript>
+    importScript('guthyrenker_core:common/libUtils.ds');
+
+    importPackage(dw.object);
+    importPackage(dw.catalog);
+    
+    var CCC : Object = pdict.CurrentCampaignConfig;
+    var campaignCode : String = CCC.campaignCode;
+    
+    var showHeader : boolean = CCC.showHeader;
+    var showFooter : boolean = CCC.showFooter;
+    var showNav : boolean = CCC.showNav;
+    var showOrderButton : boolean = CCC.showOrderButton;
+    
+    var category : dw.catalog.Category = CCC.getCampaignCategory();
+</isscript>
+
+<isset name="RootFolder" value="${dw.content.ContentMgr.getFolder('customercare')}" scope="page"/>
+
+<head>
+    <iscomment>Include all important information globally , e.g. meta-data, link information, and javascript.</iscomment>
+    <isinclude template="mobile/components/header/htmlhead"/>
+    <link href="${URLUtils.staticURL('/css/account.css')}" type="text/css" rel="stylesheet" />
+</head>
+<body>
+<isinclude template="mobile/components/header/header"/>
+<div data-role="page" id="product-info" data-theme="d" class="wallpaper">
+
+		<isreplace/>
+		
+
+	<!--- footer --->
+<isinclude template="mobile/components/footer/footer"/>
+<!---  Omniture tracking  --->
+</div><!-- /page -->
+	
+	<isinclude template="mobile/components/footer/pixels"/>
+	<isinclude template= "mobile/common/google_analytics" />
+	<!-- END: container -->
+
+	<isif condition="${pdict.AuthError}">
+		<script type="text/javascript">
+			//in case of error in winback auth code. Code placed in common.js 
+			winbackerromessage();
+		</script>
+	</isif>	
+	
+<isinclude template="/tealium/include_tealium_pixel.isml">
+	
+</body>
+</html>

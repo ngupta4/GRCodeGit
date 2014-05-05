@@ -1,0 +1,22 @@
+/**
+ * Script for PO Box detection
+ *
+ * @input negativeEval: Boolean Negative expression evaluation.
+ * @input Value : String value for checking
+ * @output Result : Boolean
+ */
+importPackage( dw.system );
+
+function execute( pdict : PipelineDictionary ) : Number
+{
+	var regExp : RegExp = new RegExp("((\s*(p([o,0]st|\.)*\s*o(ffice|\.)*)+\s*b([o,0]*(x|ks))*))", "gi");
+	
+	pdict.Result = regExp.test(pdict.Value);
+	
+	if (pdict.Result) {
+		return pdict.negativeEval ? PIPELET_ERROR : PIPELET_NEXT;
+	}
+	else {
+		return pdict.negativeEval ? PIPELET_NEXT : PIPELET_ERROR;
+	}
+}

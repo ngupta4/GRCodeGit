@@ -1,0 +1,203 @@
+<isinclude template="util/modules"/>
+
+<isset name="multiCheckout" value="${pdict.multiCheckout}" scope="page"/>
+<isif condition="${multiCheckout}">
+	<isset name="submitbtnClass" value="continue_btn" scope="page"/>
+<iselse>	
+	<isset name="submitbtnClass" value="complete_order_btn" scope="page"/>
+</isif>
+
+<iscomment>js for value change event on text fields.</iscomment>
+<isinclude template="checkout/steps/triggerseewhy" />
+
+<div class="personInfform">	
+	<iscomment>Contact information</iscomment>
+	<isinclude template="checkout/personinformation/contactinformation" />
+	 	
+	<iscomment>Billing and shipping</iscomment>
+	<div class="billingShipping">
+		<isinclude template="checkout/personinformation/billinginformation" />
+		
+		<div class="checkoutBox cbShipping cartShipping">
+			<label class="blockheading">${Resource.msg('personinformation.shippinginformation.label', 'rendering', null)}</label>
+			<div id="shippingMessageBlock">
+					<iscontentasset aid="cart-international-site" />
+			 </div>
+			<isinputfield id="sameAsBilling" formfield="${pdict.CurrentForms.personinf.useAsBillingAddress}" type="checkbox" attribute2="tabindex" value2="19"/>
+			
+			<div class="checkoutBoxInner">				
+				<div id="shippingBox">
+				<isinclude template="checkout/personinformation/shippinginformation" />
+				</div>
+			</div>
+			
+			
+			
+		</div>
+	</div>
+	 <iscomment>Account access information</iscomment>
+	<iscomment><isinclude template="checkout/personinformation/accountaccessinformation" /></iscomment>
+		
+	 <iscomment>Payment information</iscomment>
+	<isinclude template="checkout/personinformation/paymentinformation" />
+	
+	<div class="checkoutBox accessInfo agre">
+		<div class="agreeBox">
+			<iscomment><h4>${Resource.msg('accountaccess.title', 'rendering', null)}</h4></iscomment>
+			<isinputfield id="termsAndConditions" formfield="${pdict.CurrentForms.personinf.agree}" type="checkbox" attribute1="requiredmesage" value1="${Resource.msg('forms.checkout.agree.value-error','forms',null)}" attribute2="tabindex" value2="30">
+			<iscontentasset aid="termsAndConditionCreditCard"/>
+		</div>
+		<p class="indicatesRequiredField"><span class="requiredindicator">*</span> indicates required field</p>
+	</div>
+	<div class="terms" id="terms" style="display:none;overflow:auto;">
+ 		<iscontentasset aid="terms-and-conditions-popup"/>
+    </div>
+
+	<div class="checkoutBottom">
+		<iscomment>order total</iscomment>
+			<div class="${submitbtnClass}">
+    	<input type="hidden" value="x" name="${pdict.CurrentForms.personinf.apply.htmlName}" />
+		<button class="continueBtn greenButton" id="contYourOrder" type="submit" value="${Resource.msg('global.checkout', 'locale', null)}" name="${pdict.CurrentForms.personinf.apply.htmlName}" tabindex="31" onclick="beforeSubmit()"></button>
+		<a href="javascript:void(0);"  id="contYourOrder-disable" class="continueBtn greenButton completBtn disable" ></a>
+				
+	</div>
+		<div class="orderTotalFinal ordertotalfinal">
+			<div class="cocartContainer">
+				<span class="cocartLabel">
+					${Resource.msg('cart.ordertotal.label', 'rendering', null)}&nbsp;
+				</span>
+				<span class="totalPrice cocart-price" id="orderTotal_2">					
+					<isprint value="${pdict.Basket.getTotalNetPrice()}"/>
+				</span>
+			</div>
+		 </div>
+		
+		
+	</div>
+
+</div>
+<script type="text/javascript"><!--
+
+jQuery(".agreeBox").hide();
+
+$(".continueBtn.completBtn").click(function() {
+	$(this).attr("disabled","disabled");
+	});
+	
+	
+$('.agreeBox .checkbox label').hide();
+
+app.proactiv.resources.set({
+	'verifyEmailLimit' : ${pdict.CurrentSession.privacy.verifyemaillimit},
+	'verifyEmailUrl' : '<isprint value="${URLUtils.url('GRMiddleware-VerifyEmail')}" encoding="off"/>',
+	'billingEqualsShipping' : ${pdict.BillingEqualsShipping},
+	'billingEqualsShippingCheckbox' : '${pdict.CurrentForms.personinf.useAsBillingAddress.htmlName}',
+	'updateShippingPriceUrl' : '${URLUtils.url("COCart-SetShippingMethod")}',
+	'updateQtyUrl' : '${URLUtils.url("COCart-UpdateProductQty")}',
+	'subtotal-selector' : '.merchandiseTotal',
+	'shipping-price-selector' : '${"#"}totalshippingprice .value',
+	'total-price-selector' : '.order-totals .totalPrice, .ordertotalfinal .totalPrice'
+});
+
+function beforeSubmit()
+{   
+	var textVal1 = jQuery("#phone1").val();
+	var textVal2 = jQuery("#phone2").val();
+	var textVal3 = jQuery("#phone3").val();
+	var textval = textVal1+textVal2+textVal3;
+	var maxLength = $('#phone1,#phone2,#phone3').attr('maxlength');
+	   
+    if($('#phone1,#phone2,#phone3').val().length != maxLength){
+    	$('#phone1,#phone2,#phone3').addClass('errormessage');
+    	$('.row.phonecontainer span.errormessage').show();
+    	$('.row.phonecontainer span.errormessage').hide();
+    }
+	jQuery("input[id=daytimePhone]").val(textval);
+	if($("#phone1,#phone2,#phone3").val() == ""){
+		$("#phone2,#phone3").addClass("errormessage");
+	}
+	
+	
+	
+	
+/*var textVal4 = jQuery("#eveningphone1").val();
+var textVal5 = jQuery("#eveningphone2").val();
+var textVal6 = jQuery("#eveningphone3").val();
+var textval = textVal4+textVal5+textVal6;
+jQuery("input[id=eveningPhone]").val(textval);*/
+
+}
+
+jQuery(document).ready(function() {
+	
+	$("#billFirstName,#billLastName,#shipFirstName,#shipLastName").keyup(function(){
+		$(this).parent().find('span.errormessage').hide()
+		        
+	});
+	$("#billFirstName,#billLastName,#shipFirstName,#shipLastName").keydown(function(){
+		$(this).parent().find('span.errormessage').hide()
+		        
+	});
+	$("#billZip").keydown(function(){
+		var minLen = $(this).attr('minLength');
+		var currLength = $(this).val().length;		
+		if(currLength < minLen) {
+	        $("span.errormessage:last-child").hide();	
+	    }
+		
+	})
+	$("#billZip").keyup(function(){
+		var minLen = $(this).attr('minLength');
+		var currLength = $(this).val().length;
+		
+		if(currLength < minLen) {
+	        $("span.errormessage:last-child").hide();
+	    }
+	});
+	
+	var acc1= $("#daytimePhone").val().substr(0,3);
+	var acc2= $("#daytimePhone").val().substr(3,3);
+	var acc3= $("#daytimePhone").val().substr(6,4);
+	jQuery("#phone1").val(acc1);
+	jQuery("#phone2").val(acc2);
+	jQuery("#phone3").val(acc3);
+	 
+	/*var acc4= $("#eveningPhone").val().substr(0,3);
+	var acc5= $("#eveningPhone").val().substr(3,3);
+	var acc6= $("#eveningPhone").val().substr(6,4);
+	jQuery("#eveningphone1").val(acc4);
+	jQuery("#eveningphone2").val(acc5);
+	jQuery("#eveningphone3").val(acc6);*/
+	$("#phone1,#phone2,#phone3").keydown(function ( event) {
+	
+	if ( event.keyCode == 46 || event.keyCode == 8 || event.keyCode == 9 || event.keyCode == 27 || event.keyCode == 13 || (event.keyCode == 65 && event.ctrlKey === true) || (event.keyCode >= 35 && event.keyCode <= 39)) {
+        return;
+      }
+      else {      
+        if (event.shiftKey || (event.keyCode < 48 || event.keyCode > 57) && (event.keyCode < 96 || event.keyCode > 105 )) {
+          event.preventDefault();
+        }  
+        }   
+      });
+	$("#eveningphone1,#eveningphone2,#eveningphone3,#phone1,#phone2,#phone3").keyup(function () {
+	    var maxLength = $(this).attr('maxlength');
+	    if($(this).val().length != maxLength){
+	    	$(this).addClass('errormessage');
+	    	$(this).siblings('input').removeClass('errormessage');	    	
+	    	$('.row.phonecontainer span.errormessage').show();
+	    	$('.row.phonecontainer div.errormessage').hide();
+	    }
+	    if($(this).val().length == maxLength) {
+	    	$(this).next('span').remove();
+	    	$(this).next().focus();
+	    } 
+	   
+		
+	});
+	
+	
+});
+
+//-->
+</script>
+

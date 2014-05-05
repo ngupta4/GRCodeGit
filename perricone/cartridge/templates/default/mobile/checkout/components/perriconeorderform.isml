@@ -1,0 +1,73 @@
+<!--- TEMPLATENAME: perriconeorderform.isml --->
+<div class="order-form">
+	<h4>Order Form</h4>
+	<div class="formfield type">
+		<div class="label">
+			<span class="labeltext">Payment Option</span>
+		</div>
+		<div class="value">
+			<select name="type" id="type" tabindex="1">
+				<option value="standard">$34.95 Monthly</option>
+				<option value="deluxe">$70.00 Per Shipment</option>
+			</select>
+		</div>
+	</div>
+	
+	<div class="formfield frequency">
+		<div class="label">
+			<span class="labeltext">Shipping Frequency</span>
+		</div>
+		<div class="value">
+			<select name="frequency" id="frequency" tabindex="2">
+				<option value="monthly">Every 60 Days</option>
+				<option value="one-time">One Time Shipment</option>
+			</select>
+		</div>
+	</div>
+	
+	<p class="monthly">Select shipping frequency of "Every 60 Days" to be enrolled in our Auto-ship program and receive Cold Plasma Sub-D Neck Treatment PLUS a FREE BONUS of our amazing High Potency Amine Face Treatment (a $50 value) every 60 days. You'll also receive a one-time bonus of our three piece Discovery Collection with your first shipment. Remember, as an Auto-ship member you can cancel or customize your shipments at any time. If you are not satisfied with your purchase simply give us a call.</p>
+	<p class="one-time" style="display:none;">By Selecting "One-Time" purchase, you will not receive the FREE BONUSES of our amazing High Potency Amine Face Treatment ($50 value) or the Discovery Collection ($60 value). Remember, as an Auto-ship member you can cancel or customize your shipments at any time. If you are not satisfied with your purchase simply gives us a call.</p>
+	<p class="semi-monthly" style="display:none;">Select shipping frequency of "Every 60 Days" to be enrolled in our Auto-ship program and receive Cold Plasma Sub-D Neck Treatment PLUS a FREE BONUS of our amazing High Potency Amine Face Treatment (a $50 value) every 60 days. You'll also receive a one-time bonus of our three piece Discovery Collection with your first shipment. Remember, as an Auto-ship member you can cancel or customize your shipments at any time. If you are not satisfied with your purchase simply give us a call.</p>
+</div>
+<script type="text/javascript">
+	jQuery(document).ready(function() {
+		jQuery("#frequency").change(function() {
+			if(jQuery(this).val() == "one-time") {
+				jQuery("p.monthly").hide();
+				jQuery("p.semi-monthly").hide();
+				jQuery("p.one-time").show();
+				jQuery("#type option[value='standard']").attr("disabled","disabled");
+				jQuery("#type option[value='deluxe']").attr("selected","selected");
+			} else {
+				jQuery("#type option[value='standard']").removeAttr("disabled");
+				if(jQuery("#type").val() == "standard") {
+					jQuery("p.monthly").show();
+					jQuery("p.semi-monthly").hide();
+				} else {
+					jQuery("p.semi-monthly").show();
+					jQuery("p.monthly").hide();
+				}
+				jQuery("p.one-time").hide();
+			}
+		});
+		jQuery("#type").change(function() {
+			if(jQuery("#frequency").val() == "one-time") {
+				jQuery("p.monthly").hide();
+				jQuery("p.semi-monthly").hide();
+				jQuery("p.one-time").show();
+				jQuery("#type option[value='standard']").attr("disabled","disabled");
+				jQuery("#type option[value='deluxe']").attr("selected","selected");
+			} else {
+				jQuery("#type option[value='standard']").removeAttr("disabled");
+				if(jQuery(this).val() == "standard") {
+					jQuery("p.monthly").show();
+					jQuery("p.semi-monthly").hide();
+				} else {
+					jQuery("p.semi-monthly").show();
+					jQuery("p.monthly").hide();
+				}
+				jQuery("p.one-time").hide();
+			}
+		});
+	});
+</script>

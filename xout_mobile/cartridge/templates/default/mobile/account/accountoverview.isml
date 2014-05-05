@@ -1,0 +1,22 @@
+<isdecorate template="mobile/pt_mobile">
+<isinclude template="mobile/util/modules">
+
+<div id="accountoverview" class="mobilecontent">	
+	<h3>${Resource.msg('account.header','account',null)}</h3>
+	<div>
+		<div>
+			${Resource.msg('accountoverview.welcome','account',null)} <isprint value="${pdict.CurrentCustomer.profile.firstName}">
+		</div><!-- END: welcomemessage -->
+		
+		<div style="margin:0px 0px 20px 0px;">
+			<span>If you're not <isprint value="${pdict.CurrentCustomer.profile.firstName}">&nbsp;<isprint value="${pdict.CurrentCustomer.profile.lastName}"></span>
+			<span>, click <a class="btn" href="${URLUtils.url('mLogin-Logout')}">here</a></span>
+
+		</div><!-- END: not_user -->
+		
+    	<a href="${URLUtils.https('mAddress-List')}" class="linkbar">${Resource.msg('accountoverview.addresses','account',null)}</a>
+    
+    	<a href="${URLUtils.https('mOrder-History')}" class="linkbar">${Resource.msg('accountoverview.orders','account',null)}</a>	
+	</div><!-- END: accountwelcome -->
+</div><!-- END: accountoverview -->
+</isdecorate>

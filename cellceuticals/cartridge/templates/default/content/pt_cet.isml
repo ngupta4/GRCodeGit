@@ -1,0 +1,34 @@
+<!--- TEMPLATENAME: pt_cet.isml --->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		
+		<title>CellCeuticals® </title>
+		
+		<isinclude template="components/header/htmlhead" />
+		
+		<script type="text/javascript" src="${URLUtils.staticURL('lib/jquery/js/form/jquery.form.js')}"></script>
+		<link rel="stylesheet" href="${URLUtils.staticURL('css/cet.css')}" type="text/css" />
+	</head>
+	
+	<body>
+		<div id="overlay"></div>
+		<div id="container">
+			<div id="leftColumn">
+				<h2>${Resource.msg('cet.leftcolumn.title', 'rendering', null)}</h2>
+				<p>${Resource.msg('cet.leftcolumn.description', 'rendering', null)}</p>
+			</div>
+			
+			<div id="rightColumn">
+				<isreplace/>
+			</div>
+			
+			<div class="clearfix"></div>
+		</div>
+		
+		<div id="redirect">
+			${Resource.msg('cet.redirect.label', 'rendering', null)} <span>10</span>...
+		</div>
+	</body>
+</html>

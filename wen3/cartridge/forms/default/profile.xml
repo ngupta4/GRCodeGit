@@ -1,0 +1,107 @@
+<?xml version="1.0"?>
+<form xmlns="http://www.demandware.com/xml/form/2008-04-19" secure="true">
+	<group formid="customer">
+		<field formid="firstname" label="profile.firstname" type="string" mandatory="true" binding="firstName" missing-error="profile.firstname.missingerror" max-length="30" min-length="2" regexp="^[a-zA-Z -]+$" parse-error="forms.profile.invalid.firstname"/>
+		<field formid="lastname" label="profile.lastname" type="string" mandatory="true" binding="lastName" missing-error="profile.lastname.missingerror" max-length="30" min-length="2"  regexp="^[a-zA-Z -]+$" parse-error="forms.profile.invalid.lastname"/>
+		<field formid="email" label="profile.email" type="string" mandatory="true" regexp="^[\w-\.]{1,}\@([\da-zA-Z-]{1,}\.){1,}[\da-zA-Z-]{2,3}$" parse-error="profile.emailparseerror" binding="email" missing-error="profile.email.missingerror" max-length="50" value-error="profile.usernametaken"/>
+		<field formid="emailconfirm" label="profile.confirmemail" type="string" mandatory="true" regexp="^[\w-\.]{1,}\@([\da-zA-Z-]{1,}\.){1,}[\da-zA-Z-]{2,3}$" parse-error="profile.emailparseerror" missing-error="profile.confirmemail.missingerror"  max-length="50" value-error="profile.emailnomatch"/>
+
+		<field formid="birthday" label="profile.dob"  description="profile.dobexample" type="date" mandatory="false" format="MM/dd/yyyy" max="now" binding="birthday" max-length="10"/>		
+		<field formid="phone" label="profile.phone" type="string" description="profile.phoneexample" mandatory="false" binding="phoneHome" missing-error="profile.phone.missingerror" max-length="10" min-length="10" regexp="^[0-9]+$"/>		
+		<field formid="addtoemaillist" label="productlist.public"  type="boolean"/>
+
+		<!-- Fields added for GRP -->
+			
+		<field formid="screenName" label="profile.screenname" type="string" mandatory="false" binding="screenName" max-length="50"/>
+		<field formid="billingZipCode" label="profile.billingZipCode" type="string" mandatory="true" binding="custom.billingZipCode" max-length="5" regexp="^[0-9]+$" parse-error="forms.invalidZipCode"/>
+		<field formid="accountNumber" label="profile.accountNumber" type="string" mandatory="false" binding="custom.accountNumber" max-length="14" min-length="9" regexp="^[0-9]+$"/>
+		<field formid="mpgm" label="profile.accountNumber" type="string" mandatory="true" binding="custom.mpgm" max-length="3" min-length="3" regexp="^[0-9]+$"/>
+		
+		<!-- About You -->
+		<field formid="age" label="profile.age" type="number" mandatory="false" binding="custom.age" format="0.#" max-length="2" regexp="^[0-9]+$" parse-error="profile.invalidage"/>
+		
+		<field formid="gender" label="Gender" type="string" mandatory="false" binding="gender">
+			<options>
+				<option optionid="Select" 	label="Select Gender"	value=""/>
+				<option optionid="Female" 	label="Female"	value="2"/>
+				<option optionid="Male" 	label="Male"	value="1"/>
+				
+			</options>	
+		</field>
+		<field formid="skinTone" label="Skin Tone" type="string" mandatory="false" binding="custom.skinTone">
+			<options>
+				<option optionid="medium" value="medium" label="medium" />
+				<option optionid="tan" value="tan" label="tan" />
+				<option optionid="dark" value="dark" label="dark" />
+			</options>
+		</field>
+		<field formid="skinType" label="Skin Type" type="string" mandatory="false" binding="custom.skinType">
+			<options>
+				<option optionid="sensitive" value="sensitive" label="sensitive" />
+				<option optionid="dry" value="dry" label="dry" />
+				<option optionid="oily" value="oily" label="oily" />
+				<option optionid="combination" value="combination" label="combination" />
+				<option optionid="normal" value="normal" label="normal" />
+			</options>
+		</field>
+		<field formid="acneSeverity" label="Acne Severity" type="string" mandatory="false" binding="custom.acneSeverity">
+			<options>
+				<option optionid="mild" value="mild" label="mild" />
+				<option optionid="moderate" value="moderate" label="moderate" />
+				<option optionid="stubborn" value="stubborn" label="stubborn" />
+			</options>
+		</field>
+		<!-- About You -->
+		<action formid="editprofile" valid-form="true"/>
+	</group>	
+
+
+	
+	<group formid="login">
+	
+		<field formid="username" 
+			label="label.username" 
+			description="forms.5_20characters" 
+			type="string" 
+			mandatory="true" 
+			binding="login" 
+			regexp="^[-\w\.@_ ]{5,100}$" 
+			parse-error="profile.usernameerror"
+			value-error="profile.usernametaken"
+			missing-error="profile.usernamemissingerror"  />
+			   
+		<field formid="password" label="label.password" description="forms.5_20characters" type="string" mandatory="true" min-length="8" max-length="32" missing-error="profile.password.missingerror"
+			   range-error="forms.5_20characters"/>	
+		<field formid="passwordconfirm" label="profile.passwordconfirm" type="string" mandatory="true" min-length="8" max-length="32" missing-error="profile.confirmpassword.missingerror"
+			   range-error="forms.5_20characters"	
+			   value-error="profile.passwordnomatch" />
+		<field formid="question" label="profile.accountquestion" type="string" mandatory="false" binding="passwordQuestion">
+			<options>
+				<option optionid="MothersMaidenName" value="Mother's Maiden Name" label="profile.question1"/>
+				<option optionid="MakeOfFirstCar" value="Make of First Car" label="profile.question2"/>
+				<option optionid="FavouritePetsName" value="Favourite Pet's Name" label="profile.question3"/>
+				<option optionid="FathersFirstName" value="Father's First Name" label="profile.question4"/>
+				<option optionid="PlaceOfBirth" value="Place of Birth" label="profile.question5"/>
+			</options>	
+		</field>
+		<field formid="answer" label="profile.accountanswer" type="string" mandatory="true" binding="passwordAnswer" max-length="50"/>
+		<field formid="rememberme" label="profile.remember" type="boolean" mandatory="false" />
+
+		<action formid="editlogin" valid-form="true"/>
+	</group>	
+
+	<include formid="address" name="customeraddress"/>
+	
+	<group formid="addressbook">
+		<list formid="addresses">
+			<action formid="edit" valid-form="false"/>
+			<action formid="remove" valid-form="false"/>
+		</list>	
+		<action formid="add" valid-form="false"/>
+	</group>
+
+	<action formid="confirm" valid-form="true"/>
+	<action formid="register" valid-form="true"/>
+	<action formid="cancel" valid-form="false"/>
+	<action formid="save" valid-form="true"/>
+</form>

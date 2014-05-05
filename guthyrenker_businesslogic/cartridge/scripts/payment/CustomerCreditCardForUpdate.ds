@@ -1,0 +1,50 @@
+/**
+* Demandware Script File
+* To define input and output parameters, create entries of the form:
+*	GetCustomerCreditCard.ds
+ * 	Finds the credit card with the given UUID in the given customer payment instruments.
+ * 	If the credit card was not found, PIPELET_ERROR is returned.
+ *
+ * 	@input CreditCardUUID : String UUID of the credit card payment instrument to find
+ * 	@input CustomerPaymentInstruments : dw.util.Collection the payment instruments to search
+ * 	@output CreditCardPaymentInstrument : dw.customer.CustomerPaymentInstrument the payment instrument with the given UUID
+ */
+importPackage( dw.customer );
+importPackage( dw.system );
+importPackage( dw.util );
+//importScript( "checkout/CheckoutLogging.ds" );
+
+
+function execute( pdict : PipelineDictionary ) : Number
+{
+	Logger.info("Start of GetCustomerCreditCard.ds");
+	var uuid : String = pdict.CreditCardUUID;
+	var instruments : Collection = pdict.CustomerPaymentInstruments;
+	var creditCardInstrument : dw.customer.CustomerPaymentInstrument = null;
+	
+	// ensure mandatory parameter 'CreditCardUUID' and 'CustomerPaymentInstruments' 
+	// in pipeline dictionary and collection is not empty
+	if( uuid == null || instruments == null || instruments.empty)
+	{
+		logErrors("GetCustomerCreditCard.ds:not able to retrieve Credit Card");
+		return PIPELET_ERROR;
+	}
+	
+	// find credit card in payment instruments
+	var instrumentsIter : Iterator = instruments.iterator();
+	while( instrumentsIter.hasNext() )
+	{
+		creditCardInstrument = instrumentsIter.next();
+		var retUUID = creditCardInstrument.UUID;
+		Logger.info(":::::::::::::::creditCardInstrument.UUID"+ retUUID);
+		if( uuid.equals( creditCardInstrument.UUID ) )
+		{
+			pdict.CreditCardPaymentInstrument = creditCardInstrument;
+			return PIPELET_NEXT;
+		}
+	}
+
+	pdict.CreditCardPaymentInstrument = null;
+	Logger.info("End of GetCustomerCreditCard.ds");
+    return PIPELET_ERROR;
+}

@@ -1,0 +1,748 @@
+<isdecorate template="mobile/pt_mobile">
+<iscache type="relative" minute="30" varyby="price_promotion"/>
+<isinclude template="mobile/util/modules"/>
+
+<script type="text/javascript"><!--	
+
+	// constants
+	app.constants.AVAIL_STATUS_IN_STOCK 		= "${dw.catalog.ProductAvailabilityModel.AVAILABILITY_STATUS_IN_STOCK}";
+	app.constants.AVAIL_STATUS_PREORDER 		= "${dw.catalog.ProductAvailabilityModel.AVAILABILITY_STATUS_PREORDER}";
+	app.constants.AVAIL_STATUS_BACKORDER 		= "${dw.catalog.ProductAvailabilityModel.AVAILABILITY_STATUS_BACKORDER}";
+	app.constants.AVAIL_STATUS_NOT_AVAILABLE 	= "${dw.catalog.ProductAvailabilityModel.AVAILABILITY_STATUS_NOT_AVAILABLE}";
+	
+	// product availability messages
+	app.resources["${dw.catalog.ProductAvailabilityModel.AVAILABILITY_STATUS_IN_STOCK}"] = "${StringUtils.format(Resource.msg('global.instock','locale',null))}";
+	app.resources["QTY_${dw.catalog.ProductAvailabilityModel.AVAILABILITY_STATUS_IN_STOCK}"] = "${StringUtils.format(Resource.msg('global.quantityinstock','locale',null))}";
+	app.resources["${dw.catalog.ProductAvailabilityModel.AVAILABILITY_STATUS_PREORDER}"] = "${StringUtils.format(Resource.msg('global.allpreorder','locale',null))}";
+	app.resources["QTY_${dw.catalog.ProductAvailabilityModel.AVAILABILITY_STATUS_PREORDER}"] = "${StringUtils.format(Resource.msg('global.quantitypreorder','locale',null))}";
+	app.resources["REMAIN_${dw.catalog.ProductAvailabilityModel.AVAILABILITY_STATUS_PREORDER}"] = "${StringUtils.format(Resource.msg('global.remainingpreorder','locale',null))}";
+	app.resources["${dw.catalog.ProductAvailabilityModel.AVAILABILITY_STATUS_BACKORDER}"] = "${StringUtils.format(Resource.msg('global.allbackorder','locale',null))}";
+	app.resources["QTY_${dw.catalog.ProductAvailabilityModel.AVAILABILITY_STATUS_BACKORDER}"] = "${StringUtils.format(Resource.msg('global.quantitybackorder','locale',null))}";
+	app.resources["REMAIN_${dw.catalog.ProductAvailabilityModel.AVAILABILITY_STATUS_BACKORDER}"] = "${StringUtils.format(Resource.msg('global.remainingbackorder','locale',null))}";
+	app.resources["${dw.catalog.ProductAvailabilityModel.AVAILABILITY_STATUS_NOT_AVAILABLE}"] = "${StringUtils.format(Resource.msg('global.allnotavailable','locale',null))}";
+	app.resources["REMAIN_${dw.catalog.ProductAvailabilityModel.AVAILABILITY_STATUS_NOT_AVAILABLE}"] = "${StringUtils.format(Resource.msg('global.remainingnotavailable','locale',null))}";
+	app.resources["IN_STOCK_DATE"] = "${Resource.msg('global.inStockDate','locale',null)}";
+	app.resources["NON_SELECTED"] = "${StringUtils.format(Resource.msg('global.nonSelected','locale',null))}";
+	app.resources["MISSING_VAL"] = "${StringUtils.format(Resource.msg('product.missingval','product',null))}";
+	app.resources["SIZECHART_TITLE"] = "${StringUtils.format(Resource.msg('product.sizecharttitle','product',null))}";
+	app.resources["SEND_TO_FRIEND"] = "${Resource.msg('account.sendfriend','account',null)}";	
+
+	var findIDPrefix="#";
+	var findClassPrefix=".";
+	
+	// keeep this as our local product
+	var productCache = null;
+
+	var variationPrefix = "var_";
+
+	// add Product namespace to app namespace
+	Product = function(response) {
+		// product private data
+
+		// product json data
+		var model 			= response.data;
+
+		return {
+			pid					: model.ID,
+			name				: model.name,
+			variant				: model.variant,
+			master				: model.master,
+			bundled				: model.bundled,
+			quantity			: response.quantity,
+			containerId			: response.containerId,
+			productSet			: model.productSet,
+			bundle				: model.bundle,
+			selectedVar			: null, // currently selected variant
+			avStatus			: null,
+			avStatusQuantity	: null,
+			avLevels			: null,
+			ATS					: null,
+			inStock				: null,
+			inStockDate			: null,
+			variations			: model.variations,
+			variants			: new Array(),
+			subProducts			: new Array() }
+	}
+	
+	// show the product and get any variants 
+	// setup the qty input
+	var show = function(thisProduct) {
+
+		if (thisProduct.master || thisProduct.variant) {
+			setAvailabilityMsg(thisProduct, app.resources["${dw.catalog.ProductAvailabilityModel.AVAILABILITY_STATUS_NOT_AVAILABLE}"]);
+			loadVariants(thisProduct);
+		} else if (!thisProduct.bundle && !thisProduct.productSet) {
+			val = jQuery(findIDPrefix + thisProduct.containerId + " .quantityinput:last").val();
+			loadAvailability(thisProduct, val);
+		} else if (thisProduct.bundle) {
+			loadAvailability(thisProduct, 1);
+		}
+
+		// for bundles and product-sets, enable or disable the add-to-cart button
+		if (thisProduct.bundle || thisProduct.productSet) {
+			getBundledA2Cart();
+		}
+		
+		getQtyBox(thisProduct);
+	};
+
+	// bind qty box keyup handler
+	// the handler grabs the value and updates product.quantity
+	var getQtyBox 		= function(thisProduct) {				
+		jQuery(findIDPrefix + thisProduct.containerId+" .quantityinput:last").keyup(function(e){
+			try {
+				val = parseInt(jQuery(findIDPrefix + thisProduct.containerId + " .quantityinput:last").val());
+				if (isNaN(val) || val == 0) {
+					disableAddToCart(thisProduct);
+				}
+				else {
+					thisProduct.quantity = val;
+					var addToCartButtonEnabled = true;
+					jQuery.each(thisProduct.variations.attributes, function() {
+						var variation = this;
+						var element = jQuery(findIDPrefix + thisProduct.containerId + " ." + variationPrefix + variation.id);					
+						var selectionValue = element.val();
+						if (selectionValue === "") {
+							addToCartButtonEnabled = false;
+							return false;
+						}
+					});	
+					
+					if (addToCartButtonEnabled) {
+						enableAddToCart(thisProduct);
+					} else {
+						disableAddToCart(thisProduct);
+					}
+					
+					// If the quantity value is different than
+					// when we loaded the availability data, then
+					// refresh availability data for this variant 
+					if (val != getAvailabilityQty(thisProduct)) {
+						loadAvailability(thisProduct, val);
+					} else {
+						setAvailabilityMsg(createAvMessage(thisProduct, val));
+					}
+					
+				}
+			} catch(e){
+				disableAddToCart(thisProduct);
+			}
+		});
+	};
+
+	// helper function to set availability message
+	var loadAvailability = function(thisProduct, quantity) {
+
+		var id = (thisProduct.master ? thisProduct.selectedVar.id : thisProduct.pid);
+
+		if (quantity === undefined) {
+			quantity = 1;
+		}
+
+		app.ajax.getJson({
+			url		: app.URLs.getAvailability,
+			data	: {"pid": id, "Quantity": quantity, "format": "json"},
+			callback: function(data){
+				if (!data || !data.avLevels) {
+					return;
+				}
+				
+				// update the data in the variant
+				if (thisProduct.master) {
+					thisProduct.selectedVar.avLevels = data.avLevels;
+					thisProduct.selectedVar.avStatusQuantity = data.avStatusQuantity;
+					thisProduct.selectedVar.avStatus = data.avStatus;
+					thisProduct.selectedVar.inStock = data.inStock;
+					thisProduct.selectedVar.ATS = data.ATS;
+					thisProduct.selectedVar.inStockDate = data.inStockDate;
+				} else {
+					thisProduct.avLevels = data.avLevels;
+					thisProduct.avStatusQuantity = data.avStatusQuantity;
+					thisProduct.avStatus = data.avStatus;
+					thisProduct.inStock = data.inStock;
+					thisProduct.ATS = data.ATS;
+					thisProduct.inStockDate = data.inStockDate;
+				}
+				
+				setAvailabilityMsg(thisProduct, createAvMessage(thisProduct, quantity));
+
+				// check to see if the add to cart needs to be enabled/disabled
+				if (productCache.bundle) {
+					getBundledA2Cart();
+				} else {
+					if (isA2CEnabled(thisProduct)) {
+						enableAddToCart(thisProduct);
+					} else {
+						disableAddToCart(thisProduct);
+					}
+					
+				}
+			}
+		});	
+	};
+
+	// based on availability status, creates a message
+	// param val - the stock value to compare i.e. qty entered by user
+	var createAvMessage = function(thisProduct, val) {
+		var avStatus 	= getAvStatus(thisProduct); // availability status
+		var avMessage 	= app.resources[avStatus];
+		var ats 		= getATS(thisProduct); // get available to sell qty
+		var avLevels	= getAvLevels(thisProduct);
+
+		// get ats levels per-status
+		var inStockLevel = avLevels[app.constants.AVAIL_STATUS_IN_STOCK];
+		var backOrderLevel = avLevels[app.constants.AVAIL_STATUS_BACKORDER];
+		var preOrderLevel = avLevels[app.constants.AVAIL_STATUS_PREORDER];
+		var notAvailLevel = avLevels[app.constants.AVAIL_STATUS_NOT_AVAILABLE];
+		if (avStatus === app.constants.AVAIL_STATUS_BACKORDER ||
+				avStatus === app.constants.AVAIL_STATUS_PREORDER) {
+			if (val > ats && ats > 0)
+			{
+				avMessage = avMessage + "<br/>" + jQuery.format(app.resources["QTY_"+avStatus], ats);
+			}
+			// display backorder/preorder availability
+			avMessage = avMessage + "<br/>" + getInStockDateMsg(thisProduct);
+		}
+		else if (val > inStockLevel && avStatus !== app.constants.AVAIL_STATUS_NOT_AVAILABLE) {
+			avMessage = "";
+			if (inStockLevel > 0) {
+				avMessage = avMessage + "<br/>" + jQuery.format(app.resources["QTY_"+app.constants.AVAIL_STATUS_IN_STOCK], inStockLevel);
+			}
+			if (backOrderLevel > 0) {
+				avMessage = avMessage + "<br/>" + jQuery.format(app.resources["QTY_"+app.constants.AVAIL_STATUS_BACKORDER], backOrderLevel);
+				// uncomment the following line to display availability message with back order information
+				// avMessage = avMessage + getInStockDateMsg(thisProduct);
+			}
+			if (preOrderLevel > 0) {
+				avMessage = avMessage + "<br/>" + jQuery.format(app.resources["QTY_"+app.constants.AVAIL_STATUS_PREORDER], preOrderLevel);
+				// uncomment the following line to display availability message with back order information
+				// avMessage = avMessage + getInStockDateMsg(thisProduct);
+			} 
+		}
+		return avMessage;
+	};
+
+	// return the availability levels
+	getAvLevels = function(thisProduct) {
+		if ((thisProduct.variant || thisProduct.master) && thisProduct.selectedVar != null) {
+			return thisProduct.selectedVar.avLevels;
+		}
+		else {
+			return thisProduct.avLevels;
+		}					
+	};
+
+	// returns current availability status e.g. in_stock, preorder etc.
+	getAvStatus = function(thisProduct) {
+		if ((thisProduct.variant || thisProduct.master) && thisProduct.selectedVar != null) {
+			return thisProduct.selectedVar.avStatus;
+		}
+		else {
+			return thisProduct.avStatus;
+		}
+	};
+	
+	// return available to sell qty
+	getATS = function(thisProduct) {
+		if ((thisProduct.variant || thisProduct.master) && thisProduct.selectedVar != null) {
+			return thisProduct.selectedVar.ATS;
+		}
+		else {
+			return thisProduct.ATS;
+		}
+	};
+
+	// helper function that returns the in-stock date
+	var getInStockDateMsg = function(thisProduct) {
+		var msg = "";
+		var inStockDate = getInStockDate(thisProduct);
+		if (inStockDate && inStockDate != "null") {
+			msg = jQuery.format(app.resources["IN_STOCK_DATE"], (new Date(inStockDate)).toDateString() );
+		}
+		return msg;
+	};
+
+	// helper function to set availability message
+	var setAvailabilityMsg = function(thisProduct, msg) {
+		jQuery(findIDPrefix + thisProduct.containerId +" .availability:last .value").html(msg);
+	};
+
+	// returns in stock date 
+	var getInStockDate = function(thisProduct) {
+		if ((thisProduct.variant || thisProduct.master) && thisProduct.selectedVar != null) {
+			return thisProduct.selectedVar.inStockDate;
+		}
+		else {
+			return thisProduct.inStockDate;
+		}
+	};
+
+	// return the quantity that was used to calculate availability
+	var getAvailabilityQty = function(thisProduct) {
+		if ((thisProduct.variant || thisProduct.master) && thisProduct.selectedVar != null) {
+			return thisProduct.selectedVar.avStatusQuantity;
+		}
+		else {
+			return thisProduct.avStatusQuantity;
+		}
+	};
+
+	// determine if A2C button is enabled or disabled
+	// true if enabled, false otherwise
+	var isA2CEnabled = function(thisProduct) {
+		if (thisProduct.variant || thisProduct.master) {
+			if (thisProduct.selectedVar != null) {
+				return (thisProduct.selectedVar.avStatus === app.constants.AVAIL_STATUS_IN_STOCK ||
+						thisProduct.selectedVar.avStatus === app.constants.AVAIL_STATUS_BACKORDER ||
+						thisProduct.selectedVar.avStatus === app.constants.AVAIL_STATUS_PREORDER);
+			}
+			else {
+				return false;
+			}
+		}
+		else {
+			return (thisProduct.avStatus === app.constants.AVAIL_STATUS_IN_STOCK ||
+					thisProduct.avStatus === app.constants.AVAIL_STATUS_BACKORDER ||
+					thisProduct.avStatus === app.constants.AVAIL_STATUS_PREORDER);
+		}
+	};
+
+	// load variants for a product
+	var loadVariants = function(thisProduct) {
+				
+		// build the url and load variants data				
+		app.ajax.getJson({
+			url		: app.URLs.getVariants,
+			data	: {"pid": thisProduct.pid, "format": "json"},
+			callback: function(data){
+
+				if (!data || !data.variations || !data.variations.variants) {
+					return;
+				}
+	
+				// assign an event handler for each variations
+				jQuery.each(thisProduct.variations.attributes, function() {
+					var variation = this;
+
+					// loop thru all the non-swatches attributes and bind events etc.
+					jQuery(findIDPrefix + thisProduct.containerId + " ." + variationPrefix + variation.id).change(function() {				
+							getAvailableVariations(thisProduct, variation.id,this.value);
+					});
+				});
+	
+				// disable the Add button if variations are available
+				disableAddToCart(thisProduct);
+
+				thisProduct.variations.variants = data.variations.variants;
+
+				// get the variants for later reference
+				jQuery.each(data.variations.variants, function() {
+					var variant = this;
+
+					// check for a match of the product and it's variant
+					if (thisProduct.pid == variant.id) {
+						
+						jQuery.each(thisProduct.variations.attributes, function() {							
+							variation = this;
+							jQuery(findIDPrefix + thisProduct.containerId + " ." + variationPrefix + variation.id).val(variant.attributes[this.id]);
+						});
+
+						val = jQuery(findIDPrefix + thisProduct.containerId+" .quantityinput:last").val();
+						loadAvailability(thisProduct, val);
+						enableDropdowns(thisProduct);
+						enableAddToCart(thisProduct);								
+						jQuery('.pid').val(thisProduct.pid);	
+						thisProduct.selectedVar = thisProduct;
+					}
+				});
+			}
+		});
+	};
+
+	// pass an attribute and search for all available related variations
+	var getAvailableVariations = function(thisProduct, pVariation, pSelect){
+		if((pSelect == null) || (pSelect == "") || (pSelect == undefined)){					
+			return false;
+		}
+		
+		findinVar(thisProduct, {key:pVariation,value:pSelect});
+		return false;
+	};
+
+	// find the variants with this attribute
+	// ie. pass color = 123 iterates over the variants and create list of linked other variants
+	var findinVar = function(thisProduct, pair) {
+
+		var attributeList = new Array();
+		
+		jQuery.each(thisProduct.variations.variants, function() {
+			var e = this;
+			if(e.attributes[pair.key] == pair.value){
+				attributeList.push(e);
+			}
+		});
+		
+		enableDropdowns(thisProduct);
+		var addToCartButtonEnabled = true;
+		
+		try{
+			
+			jQuery.each(thisProduct.variations.attributes, function() {
+
+				var variation = this;
+				var element = jQuery(findIDPrefix + thisProduct.containerId + " ." + variationPrefix + variation.id);
+			
+				var selectionValue = element.val();
+
+				if (selectionValue === "") {
+					addToCartButtonEnabled = false;
+					return false;
+				}
+
+				// update product image
+				if (this.id == variation.id && pair.key == this.id) {
+					showImages(thisProduct, selectionValue, this.vals);
+				}
+			});
+			
+		} catch(e){
+		}
+		
+		if (addToCartButtonEnabled) {
+			
+			var match = false;
+			
+			for (var i=0; i<attributeList.length; i++) {
+				var variant = attributeList[i];
+
+				// compare variant select boxes with list of variations, if there is a match for all, set the pid
+				jQuery.each(thisProduct.variations.attributes, function() {
+					match = false;
+					if (variant.attributes[this.id] == jQuery(findIDPrefix + thisProduct.containerId + " ." + variationPrefix + this.id).val()) {
+						match = true;
+					}
+					else {
+						return false;
+					}
+					
+				});
+
+				if (match) {
+					thisProduct.selectedVar = variant;
+
+					showUpdatedPrice(thisProduct, thisProduct.selectedVar.pricing.sale, thisProduct.selectedVar.pricing.standard);
+							
+					setAvailabilityMsg(thisProduct, createAvMessage(thisProduct, thisProduct.quantity));
+					
+					jQuery(findIDPrefix + thisProduct.containerId + " .pid").val(variant.id);
+
+					if (isA2CEnabled(thisProduct)) {
+						enableAddToCart(thisProduct);
+					} else {
+						disableAddToCart(thisProduct);
+					}
+					
+					// check the productcache to see if this is a bundle or productset
+					if (productCache.bundle || productCache.productSet) {
+						getBundledA2Cart();
+					}
+					
+					break;
+				}	
+			}
+
+			if (!match) {
+				setAvailabilityMsg(thisProduct, app.resources["${dw.catalog.ProductAvailabilityModel.AVAILABILITY_STATUS_NOT_AVAILABLE}"]);
+			}	
+		} else {
+			disableAddToCart(thisProduct);
+		}	
+	};
+
+	// shows product images
+	// @param thisProduct - current product
+	// @param selectedVal - currently selected variation attr val
+	// @param vals - total available variation attr values
+	var showImages = function(thisProduct, selectedVal, vals) {
+		vals = vals || {};
+		
+		// show related images for the current variation value					
+		jQuery.each(vals, function(){
+			var thisVal = this;						
+			if (this.id === selectedVal && this.images) {
+				if (this.images.medium.length > 0) {
+					jQuery(findIDPrefix + thisProduct.containerId + " .productimage").html("").append(jQuery("<img/>").attr("src", thisVal.images.medium[0].url).attr("alt", thisVal.images.medium[0].alt).attr("title", thisVal.images.medium[0].title));
+			
+				}
+			}
+		});
+	};
+
+	// for bundles and product-sets, enable or disable the add-to-cart button
+	// the button should be disabled if the add-to-cart button of any subproduct is disabled, enabled otherwise
+	var getBundledA2Cart = function() {
+		
+		var bundleA2CEnabled = true;	
+							
+		for (var i = 0; i < productCache.subProducts.length; i++) {
+			var subProduct = productCache.subProducts[i];
+			if (subProduct.variant || subProduct.master) {
+				if (subProduct.selectedVar != null && isA2CEnabled(subProduct)) {
+					bundleA2CEnabled = true;
+				}
+				else {
+					bundleA2CEnabled = false;
+				}
+			} else {
+				bundleA2CEnabled = isA2CEnabled(subProduct);
+			}
+
+			if (!bundleA2CEnabled) {
+				break;
+			}
+		}
+		
+		// if any of the bundled product has its A2C button disabled then the bundle is not orderable
+		if (!bundleA2CEnabled) {		
+			disableAddToCart(productCache);
+		} 
+		else {							
+			enableAddToCart(productCache);
+		}
+	};
+
+	// convenience to enable all attribute dropdowns
+	var enableDropdowns = function(thisProduct) {
+		jQuery.each(thisProduct.variations.attributes, function() {
+			jQuery(findIDPrefix + thisProduct.containerId + " ." + variationPrefix + this.id).removeAttr("disabled");
+		});
+	};
+
+	// convenience to disable all attribute dropdowns
+	var disableDropdowns = function(thisProduct) {
+		jQuery.each(thisProduct.variations.attributes, function() {
+			jQuery(findIDPrefix + thisProduct.containerId + " ." + variationPrefix + this.id).attr("disabled","disabled");
+		});
+	};
+
+	// disable the add to cart button for the product
+	var disableAddToCart = function(thisProduct) {
+		jQuery(findIDPrefix + thisProduct.containerId+" .addtocartbutton:last").attr("disabled", "true");
+	};
+
+	// enable the add to cart button for the product
+	var enableAddToCart = function(thisProduct) {
+		jQuery(findIDPrefix + thisProduct.containerId+" .addtocartbutton:last").removeAttr("disabled");
+	};
+
+	// renders pricing div given a sale price and optional standard price
+	var showUpdatedPrice = function(thisProduct, sale, standard) {
+		var standardPrice 	= Number(standard || 0);					
+		var salePrice 		= Number(sale || 0);
+		var priceHtml 		= "";
+		var formattedPrices = {"salePrice": salePrice, "standardPrice": standardPrice};
+		
+		// send server request to format the money baed on site settings using Money api
+		app.ajax.getJson({
+			url		: app.URLs.formatMoney,
+			cache	: true,
+			async	: false,
+			data	: {"salePrice": salePrice, "standardPrice": standardPrice},
+			callback: function(data){
+				formattedPrices = data;
+			}
+		});
+		
+		// in case it is a promotional price then we do not care if it is 0
+		priceHtml = (salePrice > 0 || this.isPromoPrice()) ? '<div class="salesprice">' + formattedPrices.salePrice + '</div>' : ' <div class="salesprice">N/A</div>';
+		
+		if (standardPrice > 0 && standardPrice > salePrice) {
+			// show both prices
+			priceHtml = '<div class="standardprice">' + formattedPrices.standardPrice + ' </div>' + priceHtml;						
+		}					
+		
+		jQuery(findIDPrefix + thisProduct.containerId+" .price").html(priceHtml);
+	};
+
+	jQuery(document).ready(function(){
+
+		// set up the add to cart button handler
+		jQuery(findIDPrefix +"pdpMain .addtocartbutton:last").click(function(e) {
+
+			// check if we are adding a bundle/productset to the cart
+			if (productCache.bundle || productCache.productSet) {							
+				var subProducts = productCache.subProducts;
+				var comma 		= ",";
+				var tempQty 	= "";
+				var subproduct 	= null;
+				var childPids = "";
+
+				// process each individual products in the set/bundle
+				for (var i = 0; i < subProducts.length; i++) {
+					subproduct = subProducts[i];
+					
+					if (i == subProducts.length - 1) {
+						comma = ""; // at the end of the list
+					}
+					
+					// see if any of the sub products are variations, if so then get the selected variation id
+					// from selectedVar property and make it a comma separated list
+					if (subproduct.variant || subproduct.master) {									
+						if (subproduct.selectedVar == null) {
+							return false;
+						}
+						childPids += subproduct.selectedVar.id+comma;
+					}
+					else {
+						childPids += subproduct.pid+comma;
+					}
+					
+					// if it is a product set then sub products can have their separate qty
+					if (productCache.productSet) {
+						tempQty += subproduct.quantity+comma;
+					}
+				}
+				
+				jQuery('.childQuantities').val(tempQty);
+				jQuery('.childPids').val(childPids); 	
+			}
+			
+			jQuery("#pdpMainForm").submit();
+		});
+
+		productCache = new Product({data: <isinclude template="mobile/product/productjson"/>, containerId : 'pdpMain', quantity : 1});
+			
+	});
+//--></script>
+
+<div id="pdpMain" class="productdetail">
+	<isobject object="${pdict.Product}" view="detail">
+	
+	<isif condition="${!empty(pdict.ProductSearchResult) && pdict.ProductSearchResult.count > 0}">	
+		<isset name="backLinkText" value="${Resource.msgf('productnav.back','search',null, (!empty(pdict.ProductSearchResult.categoryID) ? pdict.ProductSearchResult.category.displayName: pdict.CurrentHttpParameterMap.q.stringValue))}" scope="page"/>
+		<a id="pdpContShopLink" href="${pdict.ProductSearchResult.url('mSearch-Show')}" title="${backLinkText}" class="linkbar backlink"><span><isprint value="${backLinkText}"/></span></a> 		
+	</isif>
+			
+	<div id="productdisplay"><!-- dwMarker="product" dwContentID="${pdict.Product.UUID}" -->
+	
+		<table border="0" width="100%" cellpadding="0" cellspacing="0">
+			<tr>
+				<td valign="top" class="productimages"><isinclude template="mobile/product/productdetailimage"/></td>
+				<td valign="top" class="productinfo">
+				
+					<div id="prod_details" style="margin:10px 5px 10px 10px;padding: 5px;background-color:transparent;">
+				
+						<isinclude template="mobile/product/productset"/>
+						
+						<isif condition="${pdict.Product.bundle && pdict.Product.getBundledProducts().size() > 0}">
+							<div id="pdpBundleDiv" >					
+								<iscomment>Display bundle Individual Products</iscomment>
+								<iscomment>Preserve the current product instance</iscomment>
+								<isset name="ProductBundle" value="${pdict.Product}" scope="pdict"/>
+								<isloop items="${pdict.Product.getBundledProducts()}" var="BundledProduct" status="bundleLoop">
+									<isset name="Product" value="${BundledProduct}" scope="pdict"/>
+									<isset name="ProductCount" value="${bundleLoop.count}" scope="pdict"/>
+				
+									<isobject object="${pdict.Product}" view="setproduct">
+										<isinclude template="mobile/product/components/subproduct"/>
+									</isobject>
+									
+									<script type="text/javascript"><!--
+										jQuery(document).ready(function(){
+											var subProduct = new Product({data: <isinclude template="mobile/product/productjson"/>, containerId : 'dddddsubProduct${pdict.ProductCount}', quantity : 1});
+											show(subProduct);
+											productCache.subProducts.push(subProduct);
+										});
+									//--></script>
+				
+								</isloop>
+								<iscomment>restore the current product instance</iscomment>
+								<isset name="Product" value="${pdict.ProductBundle}" scope="pdict"/>
+							</div><!-- END: bundle -->
+						</isif>				
+						
+						<div id="pdpATCDivpdpMain" >
+							<form id="pdpMainForm" action="${URLUtils.http('mCart-AddProduct')}" method="post"> 
+							    <input type="hidden" class="pid" name="pid" value="${pdict.Product.getID()}"/>
+								<input type="hidden" class="masterPid" name="masterPid" value="${pdict.Product.getID()}"/>
+								<input type="hidden" class="childPids" name="childPids"/>								
+								
+								<isif condition="${pdict.Product.productSet || pdict.Product.bundle}">
+									<h1><!-- Product Name Display -->
+										<a href="${URLUtils.url('mProduct-Show','pid', pdict.Product.ID)}" ><isprint value="${pdict.Product.name}"/></a>
+									</h1>
+								</isif>
+																
+								<isinclude template="mobile/product/components/variations"/>
+						
+								<isinclude template="mobile/product/components/options"/>							
+								
+								<isif condition="${(pdict.action == 'EditDetails')}">
+									<input type="hidden" id="lineItemUUID" name="lineItemUUID" value="${pdict.ProductLineItem.UUID}"/>
+									<script type="text/javascript"><!--
+										jQuery(document).ready(function(){
+											jQuery("#Quantity").val(parseInt('${pdict.ProductLineItem.quantity.value}'));						
+										});
+									//--></script>
+								</isif>
+								<isset name="showTieredPrice" value="${true}" scope="pdict"/>
+								<isinclude template="mobile/product/components/pricing"/>
+								<isset name="showTieredPrice" value="${false}" scope="pdict"/>
+								<isif condition="${!(pdict.Product.productSet || pdict.Product.bundle)}">
+									<iscomment>bundle/product set do not have a quantity box</iscomment>
+									<input class="quantityinput" type="text" id="Quantity" name="Quantity" size="2" value="1"/>
+								<iselse>
+									<input type="hidden" class="childQuantities" id="childQuantities" name="childQuantities"/>
+								</isif>
+								<button class="addtocartbutton" type="button"><isif condition="${(pdict.action == 'EditDetails')}">${Resource.msg('global.updatecart','locale',null)}<iselse>${Resource.msg('global.addtocart','locale',null)}</isif></button>		
+								<isif condition="${!pdict.Product.productSet}">
+									<div class="availability">
+										<span class="label">${Resource.msg('global.availability','locale',null)}: </span><span class="value"><!-- Product Availability Message --></span>
+									</div><!-- END: availability -->
+								</isif>
+								<script type="text/javascript"><!--
+									jQuery(document).ready(function(){
+										show(productCache);
+									});
+								//--></script>	
+							</form>
+						</div><!-- END: pdpATCDivpdpMain -->
+					</div><!-- END: prod_details -->
+				</td>
+			</tr>
+			<tr>
+				<td colspan="2">
+				<h1 class="productname">${pdict.Product.name}</h1>
+				<div class="itemNo productid"><span class="label">${Resource.msg('product.item','product',null)}</span> <isprint value="${ pdict.Product.ID }"/></div>
+				<isinclude template="mobile/product/components/promotions"/>
+				<div class="description"><isprint value="${pdict.Product.getLongDescription()}" encoding="off"></div>
+				</td>
+			</tr>
+			<iscomment>Facebook like button</iscomment>
+			<tr>
+				<td colspan="2">
+				<div class="socialmedia">
+					<div class="share">
+						<script type="text/javascript"> 
+						var addthis_config = { 
+						          services_compact: 'email, facebook, twitter, more', 
+						          services_exclude: 'print' 
+						} 
+						</script>
+	
+						<!-- AddThis Button BEGIN -->
+						<div class="addthis_toolbox addthis_default_style ">
+						<a href="http://www.addthis.com/bookmark.php?v=250&amp;username=xa-4cdd55c576074981" class="addthis_button_compact">${Resource.msg('global.share','locale',null)}</a>
+						</div>
+						<script type="text/javascript" src="http://s7.addthis.com/js/250/addthis_widget.js#username=xa-4cdd55c576074981"></script>
+						<!-- AddThis Button END -->
+					</div>
+					<div class="facebook"><fb:like href="${URLUtils.http('mProduct-Show', 'pid', pdict.Product.ID)}" layout="button_count" show_faces="false"></fb:like></div>
+					
+				</td>
+			</tr>
+		</table>
+	</div><!-- END: productdisplay -->						
+	</isobject>		
+</div><!-- END: pdpMain -->
+</isdecorate>

@@ -1,0 +1,67 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<isinclude template="util/modules"/>
+
+<isscript>
+	importScript('guthyrenker_core:common/libUtils.ds');	
+	var CCC : Object = pdict.CurrentCampaignConfig;
+</isscript>
+
+<iscomment>This page must be cachable. It inherits the caching attributes by the decorated template.</iscomment>
+<head>
+	<iscomment>Include all important information globally , e.g. meta-data, link information, and javascript.</iscomment>
+	<isinclude template="components/header/htmlhead"/>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+	<iscomment>Add page specific header information here.</iscomment>
+	<isif condition="${!empty(CCC) && !empty(CCC.cssStyle)}">
+			<link rel="stylesheet" type="text/css" href="${URLUtils.staticURL(URLUtils.CONTEXT_LIBRARY,null,CCC.cssStyle)}" />
+	</isif>
+    <iscomment>Insert meta tag for the "Google-Verification" feature to verify that you are the owner of this site.</iscomment>
+    <isif condition="${'GoogleVerificationTag' in dw.system.Site.current.preferences.custom && dw.system.Site.current.preferences.custom.GoogleVerificationTag!=''}">
+        <meta name="google-site-verification" content="<isprint value="${dw.system.Site.current.preferences.custom.GoogleVerificationTag}"/>" />
+    </isif>
+    <isif condition="${'MSValidateTag' in dw.system.Site.current.preferences.custom && dw.system.Site.current.preferences.custom.MSValidateTag!=''}">
+    	<meta name="msvalidate.01" content="${dw.system.Site.current.preferences.custom.MSValidateTag}" />
+    </isif>
+    
+    <script type="text/javascript">
+    	var CCCphone = "${CCC.phone}";
+    	var CCCorderURL = "${URLUtils.url('COCart-AddProduct','pid',CCC.sasOfferCodes[0])}";
+	</script>
+</head>
+
+<body class="${CCC.getContainerClasses()}">
+	<iscomment>Homepage Redirect mBox</iscomment>
+	<isif condition="${CCC.campaignCode == 'core'}">
+		<div class="mboxDefault"></div>
+		<script type="text/javascript">mboxCreate('mcp_dw_homepage_tracker');</script>
+	</isif>
+
+	<isif condition="${CCC.showHeader}">
+		<isinclude template="components/header/header"/>
+	<iselse>
+		<iscomment>Mbox Redirect</iscomment>
+		<isinclude template="common/mboxglobal"/>			
+	</isif>
+	<iscomment>Cookies and Javascript enabled check</iscomment>
+	<isinclude template="components/browsertoolscheck"/>
+	<div id="main">
+		<div id="wrapper">
+			<isreplace/>
+		</div>
+	</div>
+	<isslot id="homebottom" context="category" description="Home page Bottom Slot" context-object="${category}"/>
+	<isif condition="${CCC.showFooter}">
+		<isinclude template="components/footer/footer"/>
+	<iselse>
+		<iscomment>REFACTOR:  We need to refactor the footer to have this logic to include omniture/pixels regardless if it is shown</iscomment>
+		<!---  Omniture tracking  --->
+	  	<isinclude template="analytics/omniture/omniture"/>
+	</isif>
+	
+	<isinclude template="components/footer/pixels"/>
+	<isinclude template="common/google_analytics" />
+	<!-- END: container -->
+	
+</body>
+</html>

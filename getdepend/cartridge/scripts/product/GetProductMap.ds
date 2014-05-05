@@ -1,0 +1,158 @@
+importPackage( dw.system );
+importPackage( dw.util );
+importPackage(dw.catalog);
+
+//This Method returns the Final Map With Key of Master Product Id and Map as Value
+function createMap(masterProducts : Object) : String{
+	  var jsonStr:String="";
+		var len:Number=masterProducts.toString().split(",").length;
+		var index:Number=1;
+		
+		for each(var masterPID in masterProducts){
+			var filteredProductsFemale: dw.util.ArrayList = getProductDetails(masterPID, "Gender", "female");
+			var filteredProductsMale: dw.util.ArrayList = getProductDetails(masterPID, "Gender", "male");
+			jsonStr += toJSON(masterPID,filteredProductsMale,filteredProductsFemale);
+			if(index!=len)
+			 	jsonStr+=",";
+			 
+			index++;
+		}
+		
+	return "{"+jsonStr+"}";
+}
+
+//This Method returns the Array List to be added in MAP for Both Male and Female 
+function getProductDetails(productID:String,variantType:String,subVariant:String):dw.util.ArrayList
+{
+	var masterProd: Product = ProductMgr.getProduct(productID);
+	var filteredProducts: dw.util.ArrayList;
+	
+	if(masterProd != null){
+			if( masterProd.master){
+			var PVM: ProductVariationModel = masterProd.variationModel;
+			var varAttr = PVM.getProductVariationAttribute(variantType);
+			var varProds: dw.util.Collection = PVM.getVariants();
+			filteredProducts= getFilteredProducts(PVM, varProds, varAttr, subVariant);
+			}
+		}
+		
+	return filteredProducts;
+}
+
+
+//This function return the filtered list on the basis of variants passed to method
+function getFilteredProducts(PVM: Object, varProds : Object, varAttr: String, varVal: String) : dw.util.ArrayList
+{
+	if( null == varAttr || null == varVal)
+		return varProds;
+	var filteredProducts: dw.util.ArrayList = new dw.util.ArrayList();
+	
+	for each(var attr in varProds){
+		var variationVal: ProductVariationAttributeValue = PVM.getVariationValue( attr, varAttr);
+		if( variationVal.ID == varVal){
+			filteredProducts.add( attr);
+		}
+	}
+	
+	return filteredProducts;
+}
+
+//This function return the recommendation for given recommendation type
+function getRecommendations(pid:String,typeRecommendation: String,variantType:String,subVariant:String):ArrayList
+{
+	var flag:boolean=true;
+	var varProducts:ArrayList=getProductDetails(pid,variantType,subVariant);
+	var recommendList:ArrayList=new ArrayList();
+	for each(var attr in varProducts){
+			 recommendList.add(attr);
+	var recommendationType=typeRecommendation.split(",");
+	for(var index=0;index<recommendationType.length;index++)
+	{
+	var recommendIter : dw.util.Iterator = ProductMgr.getProduct(attr.ID).getRecommendations(recommendationType[index]).iterator();
+	var recommend : Recommendation = null;
+	
+	while (recommendIter.hasNext()){
+		recommend  = recommendIter.next();
+		recommendList.add(ProductMgr.getProduct(recommend.getRecommendedItemID()));
+	}
+	}
+	}
+	return recommendList;	
+}
+
+
+//This function create the JSON string for given list
+function toJSON(pid:String,productDetailsMale:ArrayList,productDetailsfemale: ArrayList)
+{
+	var lenMale:Number=productDetailsMale.size()-1;
+	var lenFemale:Number=productDetailsfemale.size()-1;
+	
+	var str:String='"'+pid+'": {"male":[';
+	for(var i=0;i<productDetailsMale.size();i++)
+	{
+	str+='{"ID": "'+productDetailsMale.get(i).ID+'", "size": "'+productDetailsMale.get(i).custom.size+'", "recommendation30days": "'+getRecommendations(productDetailsMale.get(i).ID, "8")+'" , "recommendationUpsell": "'+getRecommendations(productDetailsMale.get(i).ID, "13")+'"}';
+	if(lenMale!=i)
+	str+=',';
+	}
+	
+	str+='],"female": [';
+	for(var j=0;j<productDetailsfemale.size();j++)
+	{
+	str+='{"ID": "'+productDetailsfemale.get(j).ID+'", "size": "'+productDetailsfemale.get(j).custom.size+'", "recommendation30days": "'+getRecommendations(productDetailsfemale.get(j).ID, "8")+'", "recommendationUpsell": "'+getRecommendations(productDetailsfemale.get(j).ID, "13")+'"}';
+	if(lenFemale!=j)
+	str+=',';
+	}
+	str+=']}';	
+
+return str;
+}
+
+
+//This Method returns the Array List to be added in MAP for Both Male and Female 
+function getProduct(productID:String,variantType:String):dw.util.ArrayList
+{
+	var masterProd: Product = ProductMgr.getProduct(productID);
+	var varProds: dw.util.Collection;
+	if(masterProd != null){
+			if( masterProd.master){
+			var PVM: ProductVariationModel = masterProd.variationModel;
+			var varAttr = PVM.getProductVariationAttribute(variantType);
+			varProds= PVM.getVariants();
+			}
+		}
+		
+	return varProds;
+}
+
+//This function return only those products which has recommendations 
+function getVariantswithRecommendations(pid:String,typeRecommendation: String,variantType:String,subVariant:String):ArrayList
+{
+	var flag:boolean=true;
+	var varProducts:ArrayList=getProductDetails(pid,variantType,subVariant);
+	var recommendList:ArrayList=new ArrayList();
+	for each(var attr in varProducts){
+			 
+		var recommendationType=typeRecommendation.split(",");
+		for(var index=0;index<recommendationType.length;index++)
+		{
+			var recommendIter : dw.util.Iterator = ProductMgr.getProduct(attr.ID).getRecommendations(recommendationType[index]).iterator();
+			var recommend : Recommendation = null;
+			
+			while (recommendIter.hasNext()){
+				recommendList.add(attr);
+				recommend  = recommendIter.next();
+				recommendList.add(ProductMgr.getProduct(recommend.getRecommendedItemID()));
+			}
+		}
+	}
+	return recommendList;	
+}
+//This function return the QueryString
+function getQueryString(params:String, type:String ){
+	var queryString = "";	
+    if(params.indexOf(type)> -1)
+     {
+      queryString = params.substring(params.indexOf(type),params.length);
+     }
+	return queryString;
+}

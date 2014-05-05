@@ -1,0 +1,109 @@
+<isdecorate template="content/pt_escalation">
+<isinclude template="util/modules"/>
+<div class="escalation">
+	<div class="leftColumn"></div>
+	<div class="rightColumn">
+		<form action="${URLUtils.httpsContinue()}" method="post" id="EscalationForm">
+			<fieldset>
+				<div class="formfields">
+				
+					<isif condition="${!empty(pdict.ErrorMessage) && pdict.ErrorMessage.stringValue == 'email'}">
+						<div class="errormessage emailerror">
+							${Resource.msg('forms.escalation.error.email','forms',null)}
+						</div>
+					</isif>
+				
+					<div class="formfield pull-left">
+						<isinputfield formfield="${pdict.CurrentForms.escalation.firstname}" type="input"/>
+					</div>
+					<div class="formfield pull-right">
+						<isinputfield formfield="${pdict.CurrentForms.escalation.lastname}" type="input"/>
+					</div>
+					<div class="clearfix"></div>
+					
+					<div class="formfield pull-left">
+						<isinputfield formfield="${pdict.CurrentForms.escalation.email}" type="input"/>
+					</div>
+					<div class="formfield pull-right">
+						<isinputfield formfield="${pdict.CurrentForms.escalation.confirmemail}" type="input"/>
+					</div>
+					<div class="clearfix"></div>
+
+					<div class="formfield address1">
+						<isinputfield formfield="${pdict.CurrentForms.escalation.address1}" type="input"/>
+					</div>
+					<div class="clearfix"></div>
+					
+					<div class="formfield pull-left">
+						<isinputfield formfield="${pdict.CurrentForms.escalation.city}" type="input"/>
+					</div>
+					<div class="formfield pull-right">
+						<isinputfield formfield="${pdict.CurrentForms.escalation.state}" type="select"/>
+					</div>
+					<div class="clearfix"></div>
+
+					<div class="formfield pull-left">
+						<isinputfield formfield="${pdict.CurrentForms.escalation.zip}" type="input"/>
+					</div>
+					<div class="formfield pull-right">
+						<isinputfield formfield="${pdict.CurrentForms.escalation.phone}" type="input"/>
+					</div>
+					<div class="clearfix"></div>
+
+					<div class="formfield pull-left">
+						<isinputfield formfield="${pdict.CurrentForms.escalation.country}" type="select"/>
+					</div>
+					<div class="formfield pull-right">
+						<isinputfield formfield="${pdict.CurrentForms.escalation.product}" type="input"/>
+					</div>
+					<div class="clearfix"></div>
+
+					<div class="formfield pull-left message">
+						<isinputfield attribute1="rows" value1="8" attribute2="cols" value2="86" formfield="${pdict.CurrentForms.escalation.message}" type="textarea"/>
+					</div>
+					<div class="clearfix"></div>
+
+					
+				</div><!-- END: formfields -->
+				<div id="formaction"></div>
+			</fieldset>
+			
+			<div class="formactions">
+				<button id="sendBtn" type="submit" value="${Resource.msg('global.send','locale',null)}" name="${pdict.CurrentForms.escalation.send.htmlName}"></button>
+			</div>
+			<div class="clearfix"></div>
+		
+		</form>
+		<div class="footnote">
+			${Resource.msg('forms.escalation.footnote','forms',null)}
+		</div>
+	</div>
+	<div class="clearfix"></div>
+	<div class="footer">
+		<iscontentasset aid="cetFooterLinks" />
+		<img src="${URLUtils.staticURL('images/gr-logo.gif')}" /> <span><isprint value="${Resource.msg('forms.escalation.footercopy1','forms',null)}" encoding="off" /> <isinclude url="${URLUtils.url('GRUtils-GetFullYear')}"> <isprint value="${Resource.msg('forms.escalation.footercopy2','forms',null)}" encoding="off" /></span>
+	</div>
+</div>
+<isif condition="${!empty(pdict.ConfirmationMessage)}">
+	<script language="javascript">
+		function showConfirmation() { alert( "Your Priority Case has been submitted and will be reviewed. Someone from our Corporate Escalation Team will contact you shortly at the email address or phone number you provided." ); }
+		window.setTimeout( showConfirmation, 1000 );		
+	</script>
+</isif>
+
+<script language="javascript">
+	jQuery( document ).ready(function() {
+		var currentSite = "${dw.system.Site.getCurrent().ID}";		
+		if( currentSite == "ProactivPlus" ) {
+			jQuery( "[name=dwfrm_escalation_product]" ).val( "Proactiv" );
+		} else if ( currentSite == "WenHairCare" ) {
+			jQuery( "[name=dwfrm_escalation_product]" ).val( "Wen" );
+		} else if ( currentSite == "SheerCover" ) {
+			jQuery( "[name=dwfrm_escalation_product]" ).val( "Sheer Cover" );
+		} else if ( currentSite == "MeaningfulBeauty" ) {
+			jQuery( "[name=dwfrm_escalation_product]" ).val( "Meaningful Beauty" );
+		}
+	});
+</script>
+
+</isdecorate>

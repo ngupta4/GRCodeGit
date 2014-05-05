@@ -1,0 +1,1019 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<?demandware-pipeline version="2.0"?>
+
+<pipeline group="Catalog">
+  <branch basename="_ANONYMOUS_BRANCH_1">
+    <segment>
+      <node>
+        <text-node>
+          <description>Renders a full featured product search result page. If the http parameter &quot;format&quot; is set to &quot;ajax&quot; only the product grid is rendered instead of the full page.</description>
+        </text-node>
+        <node-display width="2" x="1" y="1"/>
+      </node>
+    </segment>
+  </branch>
+  <branch basename="Show">
+    <segment>
+      <node>
+        <start-node name="Show" secure="false"/>
+        <node-display x="1" y="2"/>
+      </node>
+      <simple-transition/>
+      <node>
+        <pipelet-node pipelet-name="Assign" pipelet-set-identifier="bc_api">
+          <config-property key="Transactional" value="false"/>
+          <key-binding alias="&quot;Search-Show&quot;" key="From_0"/>
+          <key-binding alias="TargetPipeline" key="To_0"/>
+          <key-binding alias="CurrentRequest.getHttpQueryString()" key="From_1"/>
+          <key-binding alias="TargetPipelineParams" key="To_1"/>
+          <key-binding alias="null" key="From_2"/>
+          <key-binding alias="null" key="To_2"/>
+          <key-binding alias="null" key="From_3"/>
+          <key-binding alias="null" key="To_3"/>
+          <key-binding alias="null" key="From_4"/>
+          <key-binding alias="null" key="To_4"/>
+          <key-binding alias="null" key="From_5"/>
+          <key-binding alias="null" key="To_5"/>
+          <key-binding alias="null" key="From_6"/>
+          <key-binding alias="null" key="To_6"/>
+          <key-binding alias="null" key="From_7"/>
+          <key-binding alias="null" key="To_7"/>
+          <key-binding alias="null" key="From_8"/>
+          <key-binding alias="null" key="To_8"/>
+          <key-binding alias="null" key="From_9"/>
+          <key-binding alias="null" key="To_9"/>
+        </pipelet-node>
+        <node-display x="0" y="1"/>
+      </node>
+      <simple-transition>
+        <transition-display>
+          <bend-point relative-to="source" x="0" y="1"/>
+        </transition-display>
+      </simple-transition>
+      <node>
+        <decision-node condition-key="CurrentCustomer.authenticated ||  CurrentSession.custom.cRememberMe" condition-operator="expr"/>
+        <node-display x="0" y="1"/>
+        <branch basename="b2" source-connector="yes">
+          <transition target-connector="in">
+            <transition-display>
+              <bend-point relative-to="source" x="0" y="1"/>
+            </transition-display>
+          </transition>
+          <segment>
+            <node>
+              <pipelet-node pipelet-name="Assign" pipelet-set-identifier="bc_api">
+                <config-property key="Transactional" value="false"/>
+                <key-binding alias="CurrentHttpParameterMap.cgid.value" key="From_1"/>
+                <key-binding alias="null" key="From_2"/>
+                <key-binding alias="null" key="To_2"/>
+                <key-binding alias="null" key="From_3"/>
+                <key-binding alias="null" key="To_3"/>
+                <key-binding alias="null" key="From_4"/>
+                <key-binding alias="null" key="To_4"/>
+                <key-binding alias="null" key="From_5"/>
+                <key-binding alias="null" key="To_5"/>
+                <key-binding alias="null" key="From_6"/>
+                <key-binding alias="null" key="To_6"/>
+                <key-binding alias="null" key="From_7"/>
+                <key-binding alias="null" key="To_7"/>
+                <key-binding alias="null" key="From_8"/>
+                <key-binding alias="null" key="To_8"/>
+                <key-binding alias="null" key="From_9"/>
+                <key-binding alias="null" key="To_9"/>
+                <key-binding alias="CurrentHttpParameterMap.q.value" key="From_0"/>
+                <key-binding alias="q" key="To_0"/>
+                <key-binding alias="cgid" key="To_1"/>
+              </pipelet-node>
+              <node-display x="0" y="1"/>
+            </node>
+            <simple-transition>
+              <transition-display>
+                <bend-point relative-to="source" x="0" y="1"/>
+              </transition-display>
+            </simple-transition>
+            <node>
+              <decision-node condition-key="(q!=null)" condition-operator="expr"/>
+              <node-display x="0" y="1"/>
+              <branch basename="b2" source-connector="yes">
+                <transition target-connector="in"/>
+                <segment>
+                  <node>
+                    <pipelet-node pipelet-name="Search" pipelet-set-identifier="bc_api">
+                      <config-property key="SearchContent" value="true"/>
+                      <config-property key="SearchProduct" value="false"/>
+                      <config-property key="DisallowOfflineCategory" value="true"/>
+                      <config-property key="RecursiveCategorySearch" value="true"/>
+                      <config-property key="RecursiveFolderSearch" value="true"/>
+                      <key-binding alias="q" key="SearchPhrase"/>
+                      <key-binding alias="CurrentHttpParameterMap.psortb1.value" key="SortBy1"/>
+                      <key-binding alias="CurrentHttpParameterMap.psortd1.intValue" key="SortBy1Direction"/>
+                      <key-binding alias="CurrentHttpParameterMap.psortb2.value" key="SortBy2"/>
+                      <key-binding alias="CurrentHttpParameterMap.psortd2.intValue" key="SortBy2Direction"/>
+                      <key-binding alias="CurrentHttpParameterMap.psortb3.value" key="SortBy3"/>
+                      <key-binding alias="CurrentHttpParameterMap.psortd3.intValue" key="SortBy3Direction"/>
+                      <key-binding alias="CurrentHttpParameterMap.pmin.doubleValue" key="PriceMin"/>
+                      <key-binding alias="CurrentHttpParameterMap.pmax.doubleValue" key="PriceMax"/>
+                      <key-binding alias="cgid" key="CategoryID"/>
+                      <key-binding alias="CurrentHttpParameterMap.pid.value" key="ProductID"/>
+                      <key-binding alias="CurrentHttpParameterMap.cid.value" key="ContentID"/>
+                      <key-binding alias="dw.web.Resource.msg('search.fid.generalcontent','search',null)" key="FolderID"/>
+                      <key-binding alias="ContentSearchResult" key="ContentSearchModel"/>
+                      <key-binding alias="dw.web.Resource.msg('search.refinebynameprefix','search',null)" key="RefineByNamePrefix"/>
+                      <key-binding alias="dw.web.Resource.msg('search.refinebyphraseprefix','search',null)" key="RefineByPhrasePrefix"/>
+                      <key-binding alias="null" key="OrderableProductsOnly"/>
+                      <key-binding alias="ProductSearchResult" key="ProductSearchModel"/>
+                    </pipelet-node>
+                    <node-display x="0" y="1"/>
+                  </node>
+                  <simple-transition>
+                    <transition-display>
+                      <bend-point relative-to="source" x="0" y="1"/>
+                    </transition-display>
+                  </simple-transition>
+                  <node>
+                    <pipelet-node pipelet-name="Search" pipelet-set-identifier="bc_api">
+                      <config-property key="SearchContent" value="true"/>
+                      <config-property key="SearchProduct" value="false"/>
+                      <config-property key="DisallowOfflineCategory" value="true"/>
+                      <config-property key="RecursiveCategorySearch" value="true"/>
+                      <config-property key="RecursiveFolderSearch" value="true"/>
+                      <key-binding alias="q" key="SearchPhrase"/>
+                      <key-binding alias="CurrentHttpParameterMap.psortb1.value" key="SortBy1"/>
+                      <key-binding alias="CurrentHttpParameterMap.psortd1.intValue" key="SortBy1Direction"/>
+                      <key-binding alias="CurrentHttpParameterMap.psortb2.value" key="SortBy2"/>
+                      <key-binding alias="CurrentHttpParameterMap.psortd2.intValue" key="SortBy2Direction"/>
+                      <key-binding alias="CurrentHttpParameterMap.psortb3.value" key="SortBy3"/>
+                      <key-binding alias="CurrentHttpParameterMap.psortd3.intValue" key="SortBy3Direction"/>
+                      <key-binding alias="CurrentHttpParameterMap.pmin.doubleValue" key="PriceMin"/>
+                      <key-binding alias="CurrentHttpParameterMap.pmax.doubleValue" key="PriceMax"/>
+                      <key-binding alias="cgid" key="CategoryID"/>
+                      <key-binding alias="ProductSearchResult" key="ProductSearchModel"/>
+                      <key-binding alias="CurrentHttpParameterMap.pid.value" key="ProductID"/>
+                      <key-binding alias="CurrentHttpParameterMap.cid.value" key="ContentID"/>
+                      <key-binding alias="dw.web.Resource.msg('search.fid.videocontent','search',null)" key="FolderID"/>
+                      <key-binding alias="VideoSearchResult" key="ContentSearchModel"/>
+                      <key-binding alias="dw.web.Resource.msg('search.refinebynameprefix','search',null)" key="RefineByNamePrefix"/>
+                      <key-binding alias="dw.web.Resource.msg('search.refinebyphraseprefix','search',null)" key="RefineByPhrasePrefix"/>
+                      <key-binding alias="null" key="OrderableProductsOnly"/>
+                    </pipelet-node>
+                    <node-display x="0" y="1"/>
+                  </node>
+                  <transition target-connector="in1" target-path="../+2"/>
+                </segment>
+              </branch>
+            </node>
+            <simple-transition>
+              <transition-display>
+                <bend-point relative-to="source" x="2" y="0"/>
+                <bend-point relative-to="target" x="0" y="-1"/>
+              </transition-display>
+            </simple-transition>
+            <node>
+              <decision-node condition-key="CurrentHttpParameterMap.subcgid.value !=null &amp;&amp; !empty(CurrentHttpParameterMap.subcgid.value)" condition-operator="expr"/>
+              <node-display x="1" y="1"/>
+              <branch basename="b3" source-connector="yes">
+                <transition target-connector="in">
+                  <transition-display>
+                    <bend-point relative-to="source" x="0" y="1"/>
+                  </transition-display>
+                </transition>
+                <segment>
+                  <node>
+                    <pipelet-node pipelet-name="Assign" pipelet-set-identifier="bc_api">
+                      <config-property key="Transactional" value="false"/>
+                      <key-binding alias="CurrentHttpParameterMap.subcgid.value" key="From_0"/>
+                      <key-binding alias="cgid" key="To_0"/>
+                      <key-binding alias="null" key="From_1"/>
+                      <key-binding alias="null" key="To_1"/>
+                      <key-binding alias="null" key="From_2"/>
+                      <key-binding alias="null" key="To_2"/>
+                      <key-binding alias="null" key="From_3"/>
+                      <key-binding alias="null" key="To_3"/>
+                      <key-binding alias="null" key="From_4"/>
+                      <key-binding alias="null" key="To_4"/>
+                      <key-binding alias="null" key="From_5"/>
+                      <key-binding alias="null" key="To_5"/>
+                      <key-binding alias="null" key="From_6"/>
+                      <key-binding alias="null" key="To_6"/>
+                      <key-binding alias="null" key="From_7"/>
+                      <key-binding alias="null" key="To_7"/>
+                      <key-binding alias="null" key="From_8"/>
+                      <key-binding alias="null" key="To_8"/>
+                      <key-binding alias="null" key="From_9"/>
+                      <key-binding alias="null" key="To_9"/>
+                    </pipelet-node>
+                    <node-display x="0" y="1"/>
+                  </node>
+                  <transition target-connector="in2" target-path="../+1"/>
+                </segment>
+              </branch>
+            </node>
+            <simple-transition>
+              <transition-display>
+                <bend-point relative-to="source" x="2" y="0"/>
+                <bend-point relative-to="target" x="0" y="-1"/>
+              </transition-display>
+            </simple-transition>
+            <node>
+              <pipelet-node pipelet-name="Script" pipelet-set-identifier="bc_api">
+                <config-property key="Transactional" value="false"/>
+                <config-property key="OnError" value="PIPELET_ERROR"/>
+                <config-property key="ScriptFile" value="search/GetSubCategory.ds"/>
+                <key-binding alias="null" key="ScriptLog"/>
+                <key-binding alias="cgid" key="cgid"/>
+                <key-binding alias="cgid" key="cgidinput"/>
+                <key-binding alias="cgid" key="cgidoutput"/>
+                <key-binding alias="subcategory" key="subcategories"/>
+              </pipelet-node>
+              <node-display x="1" y="1"/>
+              <branch basename="b4" source-connector="error">
+                <transition target-connector="in">
+                  <transition-display>
+                    <bend-point relative-to="source" x="1" y="0"/>
+                  </transition-display>
+                </transition>
+                <segment>
+                  <node>
+                    <interaction-node transaction-required="false">
+                      <template buffered="true" dynamic="false" name="error/notfound"/>
+                    </interaction-node>
+                    <node-display orientation="horizontal" x="1" y="0"/>
+                  </node>
+                </segment>
+              </branch>
+            </node>
+            <transition target-connector="in1" target-path="./+1">
+              <transition-display>
+                <bend-point relative-to="source" x="0" y="2"/>
+              </transition-display>
+            </transition>
+          </segment>
+          <segment>
+            <node>
+              <join-node/>
+              <node-display x="-1" y="1"/>
+            </node>
+            <transition target-connector="in1" target-path="./+1"/>
+          </segment>
+          <segment>
+            <node>
+              <join-node/>
+              <node-display x="-1" y="0"/>
+            </node>
+            <simple-transition/>
+            <node>
+              <decision-node condition-key="cgid==null || empty(cgid)" condition-operator="expr"/>
+              <node-display x="0" y="1"/>
+              <branch basename="b2" source-connector="yes">
+                <transition target-connector="in"/>
+                <segment>
+                  <node>
+                    <pipelet-node pipelet-name="Assign" pipelet-set-identifier="bc_api">
+                      <config-property key="Transactional" value="false"/>
+                      <key-binding alias="dw.web.Resource.msg('search.retention','search',null)" key="From_0"/>
+                      <key-binding alias="cgid" key="To_0"/>
+                      <key-binding alias="null" key="From_1"/>
+                      <key-binding alias="null" key="To_1"/>
+                      <key-binding alias="null" key="From_2"/>
+                      <key-binding alias="null" key="To_2"/>
+                      <key-binding alias="null" key="From_3"/>
+                      <key-binding alias="null" key="To_3"/>
+                      <key-binding alias="null" key="From_4"/>
+                      <key-binding alias="null" key="To_4"/>
+                      <key-binding alias="null" key="From_5"/>
+                      <key-binding alias="null" key="To_5"/>
+                      <key-binding alias="null" key="From_6"/>
+                      <key-binding alias="null" key="To_6"/>
+                      <key-binding alias="null" key="From_7"/>
+                      <key-binding alias="null" key="To_7"/>
+                      <key-binding alias="null" key="From_8"/>
+                      <key-binding alias="null" key="To_8"/>
+                      <key-binding alias="null" key="From_9"/>
+                      <key-binding alias="null" key="To_9"/>
+                    </pipelet-node>
+                    <node-display x="0" y="1"/>
+                  </node>
+                  <transition target-connector="in1" target-path="../+1"/>
+                </segment>
+              </branch>
+            </node>
+            <transition target-connector="in1" target-path="./+1">
+              <transition-display>
+                <bend-point relative-to="source" x="1" y="2"/>
+              </transition-display>
+            </transition>
+          </segment>
+          <segment>
+            <node>
+              <join-node/>
+              <node-display x="0" y="2"/>
+            </node>
+            <simple-transition/>
+            <node>
+              <pipelet-node pipelet-name="Search" pipelet-set-identifier="bc_api">
+                <config-property key="SearchContent" value="false"/>
+                <config-property key="SearchProduct" value="true"/>
+                <config-property key="DisallowOfflineCategory" value="true"/>
+                <config-property key="RecursiveCategorySearch" value="true"/>
+                <config-property key="RecursiveFolderSearch" value="true"/>
+                <key-binding alias="q" key="SearchPhrase"/>
+                <key-binding alias="CurrentHttpParameterMap.psortb1.value" key="SortBy1"/>
+                <key-binding alias="CurrentHttpParameterMap.psortd1.intValue" key="SortBy1Direction"/>
+                <key-binding alias="CurrentHttpParameterMap.psortb2.value" key="SortBy2"/>
+                <key-binding alias="CurrentHttpParameterMap.psortd2.intValue" key="SortBy2Direction"/>
+                <key-binding alias="CurrentHttpParameterMap.psortb3.value" key="SortBy3"/>
+                <key-binding alias="CurrentHttpParameterMap.psortd3.intValue" key="SortBy3Direction"/>
+                <key-binding alias="CurrentHttpParameterMap.pmin.doubleValue" key="PriceMin"/>
+                <key-binding alias="CurrentHttpParameterMap.pmax.doubleValue" key="PriceMax"/>
+                <key-binding alias="null" key="RefineBy5Name"/>
+                <key-binding alias="null" key="RefineBy5Phrase"/>
+                <key-binding alias="cgid" key="CategoryID"/>
+                <key-binding alias="CurrentHttpParameterMap.pid.value" key="ProductID"/>
+                <key-binding alias="CurrentHttpParameterMap.cid.value" key="ContentID"/>
+                <key-binding alias="CurrentHttpParameterMap.fdid.value" key="FolderID"/>
+                <key-binding alias="ContentSearchResult" key="ContentSearchModel"/>
+                <key-binding alias="dw.web.Resource.msg('search.refinebynameprefix','search',null)" key="RefineByNamePrefix"/>
+                <key-binding alias="dw.web.Resource.msg('search.refinebyphraseprefix','search',null)" key="RefineByPhrasePrefix"/>
+                <key-binding alias="CurrentHttpParameterMap.srule.value" key="SortingRuleID"/>
+                <key-binding alias="ProductSearchResult" key="ProductSearchModel"/>
+              </pipelet-node>
+              <node-display x="0" y="1"/>
+            </node>
+            <simple-transition/>
+            <node>
+              <decision-node condition-key="!(ProductSearchResult.emptyQuery &amp;&amp; ContentSearchResult.emptyQuery)" condition-operator="expr"/>
+              <node-display x="0" y="1"/>
+              <branch basename="b2" source-connector="yes">
+                <transition target-connector="in">
+                  <transition-display>
+                    <bend-point relative-to="source" x="0" y="1"/>
+                  </transition-display>
+                </transition>
+                <segment>
+                  <node>
+                    <decision-node condition-key="ProductSearchResult.count &gt; 0 || ContentSearchResult.count&gt;0 || VideoSearchResult.count&gt;0" condition-operator="expr"/>
+                    <node-display x="0" y="1"/>
+                    <branch basename="b2" source-connector="yes">
+                      <transition target-connector="in"/>
+                      <segment>
+                        <node>
+                          <pipelet-node pipelet-name="Paging" pipelet-set-identifier="bc_api">
+                            <config-property key="DefaultPageSize" value="10000"/>
+                            <key-binding alias="ProductSearchResult.productSearchHits" key="Objects"/>
+                            <key-binding alias="CurrentHttpParameterMap.sz.getIntValue(12) &lt;= 60 ? CurrentHttpParameterMap.sz.intValue : null" key="PageSize"/>
+                            <key-binding alias="CurrentHttpParameterMap.start.intValue" key="Start"/>
+                            <key-binding alias="ProductSearchResult.count" key="ObjectsCount"/>
+                            <key-binding alias="ProductPagingModel" key="PagingModel"/>
+                          </pipelet-node>
+                          <node-display x="0" y="1"/>
+                        </node>
+                        <simple-transition>
+                          <transition-display>
+                            <bend-point relative-to="source" x="0" y="1"/>
+                          </transition-display>
+                        </simple-transition>
+                        <node>
+                          <decision-node condition-key="(q!=null)" condition-operator="expr"/>
+                          <node-display x="0" y="1"/>
+                          <branch basename="b2" source-connector="yes">
+                            <transition target-connector="in">
+                              <transition-display>
+                                <bend-point relative-to="source" x="0" y="1"/>
+                              </transition-display>
+                            </transition>
+                            <segment>
+                              <node>
+                                <pipelet-node pipelet-name="Paging" pipelet-set-identifier="bc_api">
+                                  <config-property key="DefaultPageSize" value="10000"/>
+                                  <key-binding alias="ContentSearchResult.content" key="Objects"/>
+                                  <key-binding alias="pageSize" key="PageSize"/>
+                                  <key-binding alias="CurrentHttpParameterMap.start.intValue" key="Start"/>
+                                  <key-binding alias="ContentPagingModel" key="PagingModel"/>
+                                  <key-binding alias="ContentSearchResult.count" key="ObjectsCount"/>
+                                </pipelet-node>
+                                <node-display x="0" y="1"/>
+                              </node>
+                              <simple-transition/>
+                              <node>
+                                <pipelet-node pipelet-name="Paging" pipelet-set-identifier="bc_api">
+                                  <config-property key="DefaultPageSize" value="10000"/>
+                                  <key-binding alias="VideoSearchResult.content" key="Objects"/>
+                                  <key-binding alias="pageSize" key="PageSize"/>
+                                  <key-binding alias="CurrentHttpParameterMap.start.intValue" key="Start"/>
+                                  <key-binding alias="VideoPagingModel" key="PagingModel"/>
+                                  <key-binding alias="VideoSearchResult.count" key="ObjectsCount"/>
+                                </pipelet-node>
+                                <node-display x="0" y="1"/>
+                              </node>
+                              <transition target-connector="in1" target-path="../+1"/>
+                            </segment>
+                          </branch>
+                        </node>
+                        <transition target-connector="in2" target-path="./+1">
+                          <transition-display>
+                            <bend-point relative-to="source" x="1" y="0"/>
+                            <bend-point relative-to="target" x="1" y="-2"/>
+                          </transition-display>
+                        </transition>
+                      </segment>
+                      <segment>
+                        <node>
+                          <join-node/>
+                          <node-display x="0" y="3"/>
+                        </node>
+                        <simple-transition/>
+                        <node>
+                          <pipelet-node pipelet-name="UpdatePageMetaData" pipelet-set-identifier="bc_api">
+                            <key-binding alias="null" key="DefaultTitle"/>
+                            <key-binding alias="null" key="DefaultKeywords"/>
+                            <key-binding alias="null" key="DefaultDescription"/>
+                            <key-binding alias="null" key="Product"/>
+                            <key-binding alias="ProductSearchResult.category" key="Category"/>
+                            <key-binding alias="null" key="Content"/>
+                            <key-binding alias="null" key="Folder"/>
+                          </pipelet-node>
+                          <node-display x="0" y="1"/>
+                        </node>
+                        <simple-transition>
+                          <transition-display>
+                            <bend-point relative-to="source" x="0" y="1"/>
+                          </transition-display>
+                        </simple-transition>
+                        <node>
+                          <decision-node condition-key="ProductSearchResult.categorySearch &amp;&amp; !ProductSearchResult.refinedCategorySearch &amp;&amp; !empty(ProductSearchResult.category.custom.categoryRenderingTemplate)" condition-operator="expr"/>
+                          <node-display x="0" y="1"/>
+                          <branch basename="b2" source-connector="yes">
+                            <transition target-connector="in">
+                              <transition-display>
+                                <bend-point relative-to="source" x="0" y="1"/>
+                              </transition-display>
+                            </transition>
+                            <segment>
+                              <node>
+                                <interaction-node transaction-required="false">
+                                  <description>use alternative search result template</description>
+                                  <template buffered="true" dynamic="true" name="ProductSearchResult.category.custom.categoryRenderingTemplate"/>
+                                </interaction-node>
+                                <node-display x="0" y="1"/>
+                              </node>
+                            </segment>
+                          </branch>
+                        </node>
+                        <simple-transition>
+                          <transition-display>
+                            <bend-point relative-to="source" x="1" y="0"/>
+                          </transition-display>
+                        </simple-transition>
+                        <node>
+                          <interaction-node transaction-required="false">
+                            <template buffered="true" dynamic="true" name="CurrentSession.custom.renderingTemplatePath + &quot;search/searchresulthit&quot;"/>
+                          </interaction-node>
+                          <node-display orientation="horizontal" x="1" y="0"/>
+                        </node>
+                      </segment>
+                    </branch>
+                  </node>
+                  <simple-transition/>
+                  <node>
+                    <interaction-node transaction-required="false">
+                      <template buffered="true" dynamic="true" name="CurrentSession.custom.renderingTemplatePath + &quot;search/nohits&quot;"/>
+                    </interaction-node>
+                    <node-display orientation="horizontal" x="1" y="0"/>
+                  </node>
+                </segment>
+              </branch>
+            </node>
+            <simple-transition/>
+            <node>
+              <jump-node start-name-ref="Home-Show"/>
+              <node-display orientation="horizontal" x="1" y="0"/>
+            </node>
+          </segment>
+        </branch>
+      </node>
+      <simple-transition>
+        <transition-display>
+          <bend-point relative-to="source" x="1" y="0"/>
+        </transition-display>
+      </simple-transition>
+      <node>
+        <jump-node start-name-ref="Account-RequireLogin"/>
+        <node-display orientation="horizontal" x="1" y="0"/>
+      </node>
+    </segment>
+  </branch>
+  <branch basename="_ANONYMOUS_BRANCH_3">
+    <segment>
+      <node>
+        <text-node>
+          <description>Pipeline to show Articles Details Page</description>
+        </text-node>
+        <node-display x="7" y="2"/>
+      </node>
+    </segment>
+  </branch>
+  <branch basename="ShowContent">
+    <segment>
+      <node>
+        <start-node call-mode="public" name="ShowContent" secure="false"/>
+        <node-display x="7" y="3"/>
+      </node>
+      <simple-transition>
+        <transition-display>
+          <bend-point relative-to="source" x="0" y="1"/>
+        </transition-display>
+      </simple-transition>
+      <node>
+        <pipelet-node pipelet-name="Search" pipelet-set-identifier="bc_api">
+          <config-property key="SearchContent" value="true"/>
+          <config-property key="SearchProduct" value="true"/>
+          <config-property key="DisallowOfflineCategory" value="true"/>
+          <config-property key="RecursiveCategorySearch" value="true"/>
+          <config-property key="RecursiveFolderSearch" value="true"/>
+          <key-binding alias="CurrentHttpParameterMap.q.value" key="SearchPhrase"/>
+          <key-binding alias="CurrentHttpParameterMap.psortb1.value" key="SortBy1"/>
+          <key-binding alias="CurrentHttpParameterMap.psortd1.intValue" key="SortBy1Direction"/>
+          <key-binding alias="CurrentHttpParameterMap.psortb2.value" key="SortBy2"/>
+          <key-binding alias="CurrentHttpParameterMap.psortd2.intValue" key="SortBy2Direction"/>
+          <key-binding alias="CurrentHttpParameterMap.psortb3.value" key="SortBy3"/>
+          <key-binding alias="CurrentHttpParameterMap.psortd3.intValue" key="SortBy3Direction"/>
+          <key-binding alias="CurrentHttpParameterMap.cgid.value" key="CategoryID"/>
+          <key-binding alias="ProductSearchResult" key="ProductSearchModel"/>
+          <key-binding alias="CurrentHttpParameterMap.cid.value" key="ContentID"/>
+          <key-binding alias="dw.web.Resource.msg('search.fid.generalcontent','search',null)" key="FolderID"/>
+          <key-binding alias="ContentSearchResult" key="ContentSearchModel"/>
+          <key-binding alias="dw.web.Resource.msg('search.refinebynameprefix','search',null)" key="RefineByNamePrefix"/>
+          <key-binding alias="dw.web.Resource.msg('search.refinebyphraseprefix','search',null)" key="RefineByPhrasePrefix"/>
+        </pipelet-node>
+        <node-display x="0" y="1"/>
+      </node>
+      <simple-transition>
+        <transition-display>
+          <bend-point relative-to="source" x="0" y="1"/>
+        </transition-display>
+      </simple-transition>
+      <node>
+        <interaction-node transaction-required="false">
+          <template buffered="true" dynamic="true" name="CurrentSession.custom.renderingTemplatePath + &quot;search/articledetails&quot;"/>
+        </interaction-node>
+        <node-display x="0" y="1"/>
+      </node>
+    </segment>
+  </branch>
+  <branch basename="_ANONYMOUS_BRANCH_5">
+    <segment>
+      <node>
+        <text-node>
+          <description>Determines search suggestions based on a given input and renders the JSON response for the list of suggestions.</description>
+        </text-node>
+        <node-display x="11" y="1"/>
+      </node>
+    </segment>
+  </branch>
+  <branch basename="GetSuggestions">
+    <segment>
+      <node>
+        <start-node name="GetSuggestions" secure="false"/>
+        <node-display x="11" y="2"/>
+      </node>
+      <simple-transition>
+        <transition-display>
+          <bend-point relative-to="source" x="0" y="1"/>
+        </transition-display>
+      </simple-transition>
+      <node>
+        <pipelet-node pipelet-name="GetSearchSuggestions" pipelet-set-identifier="bc_api">
+          <key-binding alias="Suggestions" key="Suggestions"/>
+          <key-binding alias="CurrentHttpParameterMap.q.value" key="SearchPhrase"/>
+          <key-binding alias="10" key="MaxSuggestions"/>
+        </pipelet-node>
+        <node-display x="0" y="1"/>
+      </node>
+      <simple-transition>
+        <transition-display>
+          <bend-point relative-to="source" x="0" y="1"/>
+        </transition-display>
+      </simple-transition>
+      <node>
+        <interaction-node transaction-required="false">
+          <template buffered="true" dynamic="true" name="CurrentSession.custom.renderingTemplatePath + &quot;search/suggestions&quot;"/>
+        </interaction-node>
+        <node-display x="0" y="1"/>
+      </node>
+    </segment>
+  </branch>
+  <branch basename="_ANONYMOUS_BRANCH_7">
+    <segment>
+      <node>
+        <text-node>
+          <description>Renders the partial content of the product grid of a search result as rich html.</description>
+        </text-node>
+        <node-display x="13" y="1"/>
+      </node>
+    </segment>
+  </branch>
+  <branch basename="_ANONYMOUS_BRANCH_8">
+    <segment>
+      <node>
+        <text-node>
+          <description>Executes a product search and puts the ProductSearchResult into the pipeline dictionary for convenient reuse.
+This is also used in Product pipeline for product navigation i.e. next/prev.</description>
+        </text-node>
+        <node-display width="2" x="14" y="1"/>
+      </node>
+    </segment>
+  </branch>
+  <branch basename="ShowProductGrid">
+    <segment>
+      <node>
+        <start-node call-mode="private" name="ShowProductGrid" secure="false"/>
+        <node-display x="13" y="2"/>
+      </node>
+      <simple-transition>
+        <transition-display>
+          <bend-point relative-to="source" x="0" y="1"/>
+        </transition-display>
+      </simple-transition>
+      <node>
+        <pipelet-node pipelet-name="Search" pipelet-set-identifier="bc_api">
+          <config-property key="SearchContent" value="true"/>
+          <config-property key="SearchProduct" value="true"/>
+          <config-property key="DisallowOfflineCategory" value="true"/>
+          <config-property key="RecursiveCategorySearch" value="true"/>
+          <key-binding alias="CurrentHttpParameterMap.q.value" key="SearchPhrase"/>
+          <key-binding alias="CurrentHttpParameterMap.psortb1.value" key="SortBy1"/>
+          <key-binding alias="CurrentHttpParameterMap.psortd1.intValue" key="SortBy1Direction"/>
+          <key-binding alias="CurrentHttpParameterMap.psortb2.value" key="SortBy2"/>
+          <key-binding alias="CurrentHttpParameterMap.psortd2.intValue" key="SortBy2Direction"/>
+          <key-binding alias="CurrentHttpParameterMap.psortb3.value" key="SortBy3"/>
+          <key-binding alias="CurrentHttpParameterMap.psortd3.intValue" key="SortBy3Direction"/>
+          <key-binding alias="CurrentHttpParameterMap.pmin.doubleValue" key="PriceMin"/>
+          <key-binding alias="CurrentHttpParameterMap.pmax.doubleValue" key="PriceMax"/>
+          <key-binding alias="null" key="RefineBy5Name"/>
+          <key-binding alias="null" key="RefineBy5Phrase"/>
+          <key-binding alias="CurrentHttpParameterMap.cgid.value" key="CategoryID"/>
+          <key-binding alias="ProductSearchResult" key="ProductSearchModel"/>
+          <key-binding alias="CurrentHttpParameterMap.pid.value" key="ProductID"/>
+          <key-binding alias="CurrentHttpParameterMap.cid.value" key="ContentID"/>
+          <key-binding alias="dw.web.Resource.msg('search.refinebynameprefix','search',null)" key="RefineByNamePrefix"/>
+          <key-binding alias="dw.web.Resource.msg('search.refinebyphraseprefix','search',null)" key="RefineByPhrasePrefix"/>
+          <key-binding alias="null" key="OrderableProductsOnly"/>
+          <key-binding alias="CurrentHttpParameterMap.srule.value" key="SortingRuleID"/>
+        </pipelet-node>
+        <node-display x="0" y="1"/>
+      </node>
+      <simple-transition>
+        <transition-display>
+          <bend-point relative-to="source" x="0" y="1"/>
+        </transition-display>
+      </simple-transition>
+      <node>
+        <pipelet-node pipelet-name="Paging" pipelet-set-identifier="bc_api">
+          <config-property key="DefaultPageSize" value="12"/>
+          <key-binding alias="ProductSearchResult.productSearchHits" key="Objects"/>
+          <key-binding alias="CurrentHttpParameterMap.sz.getIntValue(12) &lt;= 60 ? CurrentHttpParameterMap.sz.intValue : null" key="PageSize"/>
+          <key-binding alias="CurrentHttpParameterMap.start.intValue" key="Start"/>
+          <key-binding alias="ProductSearchResult.count" key="ObjectsCount"/>
+          <key-binding alias="ProductPagingModel" key="PagingModel"/>
+        </pipelet-node>
+        <node-display x="0" y="1"/>
+      </node>
+      <simple-transition>
+        <transition-display>
+          <bend-point relative-to="source" x="0" y="1"/>
+        </transition-display>
+      </simple-transition>
+      <node>
+        <decision-node condition-key="ProductSearchResult.categorySearch &amp;&amp; !ProductSearchResult.refinedCategorySearch &amp;&amp; !empty(ProductSearchResult.category.template)" condition-operator="expr"/>
+        <node-display x="0" y="1"/>
+        <branch basename="b2" source-connector="yes">
+          <transition target-connector="in">
+            <transition-display>
+              <bend-point relative-to="source" x="0" y="1"/>
+            </transition-display>
+          </transition>
+          <segment>
+            <node>
+              <interaction-node transaction-required="false">
+                <description>use alternative search result template</description>
+                <template buffered="true" dynamic="true" name="CurrentSession.custom.renderingTemplatePath + ProductSearchResult.category.template"/>
+              </interaction-node>
+              <node-display x="0" y="1"/>
+            </node>
+          </segment>
+        </branch>
+      </node>
+      <simple-transition>
+        <transition-display>
+          <bend-point relative-to="source" x="2" y="0"/>
+          <bend-point relative-to="target" x="0" y="-1"/>
+        </transition-display>
+      </simple-transition>
+      <node>
+        <interaction-node transaction-required="false">
+          <template buffered="true" dynamic="true" name="CurrentSession.custom.renderingTemplatePath + &quot;rendering/category/categoryproducthits&quot;"/>
+        </interaction-node>
+        <node-display x="1" y="1"/>
+      </node>
+    </segment>
+  </branch>
+  <branch basename="_ANONYMOUS_BRANCH_10">
+    <segment>
+      <node>
+        <text-node>
+          <description>Executes a content search and puts the ContentSearchResult into the pipeline dictionary for convenient reuse.</description>
+        </text-node>
+        <node-display x="19" y="1"/>
+      </node>
+    </segment>
+  </branch>
+  <branch basename="GetProductResult">
+    <segment>
+      <node>
+        <start-node call-mode="private" name="GetProductResult" secure="false"/>
+        <node-display x="16" y="2"/>
+      </node>
+      <simple-transition>
+        <transition-display>
+          <bend-point relative-to="source" x="0" y="1"/>
+        </transition-display>
+      </simple-transition>
+      <node>
+        <pipelet-node pipelet-name="Search" pipelet-set-identifier="bc_api">
+          <config-property key="SearchContent" value="false"/>
+          <config-property key="SearchProduct" value="true"/>
+          <config-property key="DisallowOfflineCategory" value="true"/>
+          <config-property key="RecursiveCategorySearch" value="true"/>
+          <key-binding alias="CurrentHttpParameterMap.q.value" key="SearchPhrase"/>
+          <key-binding alias="CurrentHttpParameterMap.psortb1.value" key="SortBy1"/>
+          <key-binding alias="CurrentHttpParameterMap.psortd1.intValue" key="SortBy1Direction"/>
+          <key-binding alias="CurrentHttpParameterMap.psortb2.value" key="SortBy2"/>
+          <key-binding alias="CurrentHttpParameterMap.psortd2.intValue" key="SortBy2Direction"/>
+          <key-binding alias="CurrentHttpParameterMap.psortb3.value" key="SortBy3"/>
+          <key-binding alias="CurrentHttpParameterMap.psortd3.intValue" key="SortBy3Direction"/>
+          <key-binding alias="CurrentHttpParameterMap.pmin.doubleValue" key="PriceMin"/>
+          <key-binding alias="CurrentHttpParameterMap.pmax.doubleValue" key="PriceMax"/>
+          <key-binding alias="null" key="RefineBy5Name"/>
+          <key-binding alias="null" key="RefineBy5Phrase"/>
+          <key-binding alias="CurrentHttpParameterMap.cgid.value" key="CategoryID"/>
+          <key-binding alias="ProductSearchResult" key="ProductSearchModel"/>
+          <key-binding alias="dw.web.Resource.msg('search.refinebynameprefix','search',null)" key="RefineByNamePrefix"/>
+          <key-binding alias="dw.web.Resource.msg('search.refinebyphraseprefix','search',null)" key="RefineByPhrasePrefix"/>
+          <key-binding alias="null" key="OrderableProductsOnly"/>
+          <key-binding alias="CurrentHttpParameterMap.srule.value" key="SortingRuleID"/>
+        </pipelet-node>
+        <node-display x="0" y="1"/>
+      </node>
+      <simple-transition>
+        <transition-display>
+          <bend-point relative-to="source" x="0" y="1"/>
+        </transition-display>
+      </simple-transition>
+      <node>
+        <end-node/>
+        <node-display x="0" y="1"/>
+      </node>
+    </segment>
+  </branch>
+  <branch basename="GetContentResult">
+    <segment>
+      <node>
+        <start-node call-mode="private" name="GetContentResult" secure="false"/>
+        <node-display x="19" y="2"/>
+      </node>
+      <simple-transition>
+        <transition-display>
+          <bend-point relative-to="source" x="0" y="1"/>
+        </transition-display>
+      </simple-transition>
+      <node>
+        <pipelet-node pipelet-name="Search" pipelet-set-identifier="bc_api">
+          <config-property key="SearchContent" value="true"/>
+          <config-property key="SearchProduct" value="true"/>
+          <config-property key="DisallowOfflineCategory" value="true"/>
+          <config-property key="RecursiveCategorySearch" value="true"/>
+          <config-property key="RecursiveFolderSearch" value="true"/>
+          <key-binding alias="CurrentHttpParameterMap.q.value" key="SearchPhrase"/>
+          <key-binding alias="CurrentHttpParameterMap.psortb1.value" key="SortBy1"/>
+          <key-binding alias="CurrentHttpParameterMap.psortd1.intValue" key="SortBy1Direction"/>
+          <key-binding alias="CurrentHttpParameterMap.psortb2.value" key="SortBy2"/>
+          <key-binding alias="CurrentHttpParameterMap.psortd2.intValue" key="SortBy2Direction"/>
+          <key-binding alias="CurrentHttpParameterMap.psortb3.value" key="SortBy3"/>
+          <key-binding alias="CurrentHttpParameterMap.psortd3.intValue" key="SortBy3Direction"/>
+          <key-binding alias="CurrentHttpParameterMap.fdid.value" key="FolderID"/>
+          <key-binding alias="ContentSearchResult" key="ContentSearchModel"/>
+          <key-binding alias="dw.web.Resource.msg('search.refinebynameprefix','search',null)" key="RefineByNamePrefix"/>
+          <key-binding alias="dw.web.Resource.msg('search.refinebyphraseprefix','search',null)" key="RefineByPhrasePrefix"/>
+        </pipelet-node>
+        <node-display x="0" y="1"/>
+      </node>
+      <simple-transition>
+        <transition-display>
+          <bend-point relative-to="source" x="0" y="1"/>
+        </transition-display>
+      </simple-transition>
+      <node>
+        <end-node/>
+        <node-display x="0" y="1"/>
+      </node>
+    </segment>
+  </branch>
+  <branch basename="_ANONYMOUS_BRANCH_13">
+    <segment>
+      <node>
+        <text-node>
+          <description>Set the subcategory to cgid if present. otherwise setting category itself.</description>
+        </text-node>
+        <node-display x="0" y="5"/>
+      </node>
+    </segment>
+  </branch>
+  <branch basename="_ANONYMOUS_BRANCH_14">
+    <segment>
+      <node>
+        <text-node>
+          <description>Set the cgid to &quot;Retention&quot; for searching.</description>
+        </text-node>
+        <node-display x="0" y="8"/>
+      </node>
+    </segment>
+  </branch>
+  <branch basename="_ANONYMOUS_BRANCH_15">
+    <segment>
+      <node>
+        <text-node>
+          <description>The query is empty if no search term, parameters or refinements were defined.In this case show the home page to user.</description>
+        </text-node>
+        <node-display x="0" y="11"/>
+      </node>
+    </segment>
+  </branch>
+  <branch basename="_ANONYMOUS_BRANCH_16">
+    <segment>
+      <node>
+        <text-node>
+          <description>To set current celebrity to pdict.Content. It is used in omniture tagging.</description>
+        </text-node>
+        <node-display x="11" y="11"/>
+      </node>
+    </segment>
+  </branch>
+  <branch basename="ShowSlotOnlyCategory">
+    <segment>
+      <node>
+        <start-node call-mode="public" name="ShowSlotOnlyCategory" secure="false"/>
+        <node-display x="12" y="8"/>
+      </node>
+      <simple-transition/>
+      <node>
+        <decision-node condition-key="null!=CurrentHttpParameterMap.cgid.stringValue" condition-operator="expr"/>
+        <node-display x="0" y="1"/>
+        <branch basename="b2" source-connector="yes">
+          <transition target-connector="in"/>
+          <segment>
+            <node>
+              <pipelet-node pipelet-name="Assign" pipelet-set-identifier="bc_api">
+                <config-property key="Transactional" value="false"/>
+                <key-binding alias="renderingTemplate" key="To_0"/>
+                <key-binding alias="null" key="From_1"/>
+                <key-binding alias="null" key="To_1"/>
+                <key-binding alias="null" key="From_2"/>
+                <key-binding alias="null" key="To_2"/>
+                <key-binding alias="null" key="From_3"/>
+                <key-binding alias="null" key="To_3"/>
+                <key-binding alias="null" key="From_4"/>
+                <key-binding alias="null" key="To_4"/>
+                <key-binding alias="null" key="From_5"/>
+                <key-binding alias="null" key="To_5"/>
+                <key-binding alias="null" key="From_6"/>
+                <key-binding alias="null" key="To_6"/>
+                <key-binding alias="null" key="From_7"/>
+                <key-binding alias="null" key="To_7"/>
+                <key-binding alias="null" key="From_8"/>
+                <key-binding alias="null" key="To_8"/>
+                <key-binding alias="null" key="From_9"/>
+                <key-binding alias="null" key="To_9"/>
+                <key-binding alias="dw.catalog.CatalogMgr.getCategory(CurrentHttpParameterMap.cgid.stringValue).custom.categoryRenderingTemplate" key="From_0"/>
+              </pipelet-node>
+              <node-display x="0" y="1"/>
+            </node>
+            <simple-transition/>
+            <node>
+              <pipelet-node pipelet-name="GetContent" pipelet-set-identifier="bc_api">
+                <key-binding alias="CurrentHttpParameterMap.cgid.stringValue!=null?CurrentHttpParameterMap.cgid.stringValue:cgid" key="ContentID"/>
+                <key-binding alias="Content" key="Content"/>
+              </pipelet-node>
+              <node-display x="0" y="1"/>
+              <branch basename="b2" source-connector="error">
+                <transition target-connector="in">
+                  <transition-display>
+                    <bend-point relative-to="source" x="1" y="0"/>
+                  </transition-display>
+                </transition>
+                <segment>
+                  <node>
+                    <interaction-node transaction-required="false">
+                      <template buffered="true" dynamic="true" name="CurrentSession.custom.renderingTemplatePath + &quot;error/notfound&quot;"/>
+                    </interaction-node>
+                    <node-display orientation="horizontal" x="1" y="0"/>
+                  </node>
+                </segment>
+              </branch>
+            </node>
+            <simple-transition/>
+            <node>
+              <pipelet-node pipelet-name="UpdatePageMetaData" pipelet-set-identifier="bc_api">
+                <key-binding alias="null" key="DefaultKeywords"/>
+                <key-binding alias="null" key="DefaultDescription"/>
+                <key-binding alias="null" key="Product"/>
+                <key-binding alias="null" key="Category"/>
+                <key-binding alias="Content" key="Content"/>
+                <key-binding alias="null" key="Folder"/>
+              </pipelet-node>
+              <node-display x="0" y="1"/>
+            </node>
+            <simple-transition/>
+            <node>
+              <interaction-node transaction-required="false">
+                <description>use alternative search result template</description>
+                <template buffered="true" dynamic="true" name="CurrentSession.custom.renderingTemplatePath + renderingTemplate"/>
+              </interaction-node>
+              <node-display x="0" y="1"/>
+            </node>
+          </segment>
+        </branch>
+      </node>
+      <simple-transition>
+        <transition-display>
+          <bend-point relative-to="source" x="1" y="0"/>
+        </transition-display>
+      </simple-transition>
+      <node>
+        <end-node name="error"/>
+        <node-display orientation="horizontal" x="1" y="0"/>
+      </node>
+    </segment>
+  </branch>
+  <branch basename="_ANONYMOUS_BRANCH_18">
+    <segment>
+      <node>
+        <text-node>
+          <description>If no search results are returned then show no search hit page.</description>
+        </text-node>
+        <node-display x="0" y="12"/>
+      </node>
+    </segment>
+  </branch>
+  <branch basename="Redirect">
+    <segment>
+      <node>
+        <start-node name="Redirect" secure="false"/>
+        <node-display x="7" y="14"/>
+      </node>
+      <simple-transition/>
+      <node>
+        <pipelet-node pipelet-name="Search" pipelet-set-identifier="bc_api">
+          <config-property key="SearchContent" value="true"/>
+          <config-property key="SearchProduct" value="true"/>
+          <config-property key="DisallowOfflineCategory" value="true"/>
+          <config-property key="RecursiveCategorySearch" value="true"/>
+          <config-property key="RecursiveFolderSearch" value="true"/>
+          <key-binding alias="CurrentHttpParameterMap.q.value" key="SearchPhrase"/>
+          <key-binding alias="ProductSearchResult" key="ProductSearchModel"/>
+          <key-binding alias="ContentSearchResult" key="ContentSearchModel"/>
+          <key-binding alias="null" key="OrderableProductsOnly"/>
+        </pipelet-node>
+        <node-display x="0" y="1"/>
+      </node>
+      <simple-transition>
+        <transition-display>
+          <bend-point relative-to="source" x="0" y="1"/>
+        </transition-display>
+      </simple-transition>
+      <node>
+        <pipelet-node pipelet-name="SearchRedirectURL" pipelet-set-identifier="bc_api">
+          <key-binding alias="CurrentHttpParameterMap.q.value" key="SearchPhrase"/>
+          <key-binding alias="searchResponse" key="Location"/>
+        </pipelet-node>
+        <node-display x="0" y="1"/>
+        <branch basename="b2" source-connector="error">
+          <transition target-connector="in1" target-path="./+1"/>
+        </branch>
+      </node>
+      <transition target-connector="in2" target-path="./+1"/>
+    </segment>
+    <segment>
+      <node>
+        <join-node/>
+        <node-display x="0" y="1"/>
+      </node>
+      <simple-transition/>
+      <node>
+        <interaction-node transaction-required="false">
+          <template buffered="true" dynamic="true" name="CurrentSession.custom.renderingTemplatePath + &quot;search/components/redirectresponse&quot;"/>
+        </interaction-node>
+        <node-display x="0" y="1"/>
+      </node>
+    </segment>
+  </branch>
+</pipeline>

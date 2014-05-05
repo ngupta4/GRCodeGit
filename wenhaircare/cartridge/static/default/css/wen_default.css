@@ -1,0 +1,1802 @@
+#page_index3g_homepage #container #main{width: 898px;padding:20px 0px 60px 0px;}
+#paLogo{ background: url("../images/wen/logo.gif") no-repeat scroll 0 0 transparent; display: block;    height: 71px;    margin: 8px 0 0;    overflow: hidden;    position: absolute;    text-indent: -500000px;    width: 158px;}
+.header #paLogo_new{background: url("../images/wen/logo.gif") no-repeat scroll 0 0 transparent;    display: block;    height: 71px;    margin: 28px 0 0;    overflow: hidden;      text-indent: -500000px;    width: 158px;}
+/*---------------------------------------------
+		common properties used
+-----------------------------------------------*/
+.vSeprator{border-right:1px solid #cbcbcb;float:left;height:967px;width:26px; margin-top:30px;}
+/* cart */
+.ch_selected_products{width: 100%; border: none;}
+.ch_selected_products thead tr{background-color: #F2F2F2; height:28px;}
+.ch_selected_products th{padding: 4px; text-align:left;}
+.ch_selected_products th,.ch_selected_products td{vertical-align: top;}
+.ch_selected_products .imagecolumn{width: 178px; text-align:center;}
+.imagecolumn img{max-width: 150px;}
+.ch_selected_products .detailscolumn{width:272px; font-size:11px;}
+/* Breadcrumbs */
+.checkoutSteps ul{ margin-left: 10px; margin-top: 1px; }
+.checkoutSteps li.stepcartanddetails{background-position: 0 0;}
+.checkoutSteps li{float:left;}
+.checkoutSteps p,.checkoutSteps span{font:bold 13px arial;}
+.checkoutSteps span{background: none repeat scroll 0 0 #7C8F24; color: white; float: left;  height: 19px; padding:2px 0 0 1px;width: 20px; text-align:center;}
+.checkoutSteps p.active,.checkoutSteps li.active p a{text-decoration:underline;}
+.checkoutSteps p,.checkoutSteps p a{ color: #747474;  float: left;  margin:2px 23px 0px 7px; text-transform: uppercase;text-decoration: none;}
+
+/*------------------------------------------------
+				 Global CSS
+--------------------------------------------------*/
+
+html, body, div, span, applet, object, iframe,h1, h2, h3, h4, h5, h6, p, blockquote, pre,a, abbr, acronym, address, big, cite, code,del, dfn, em, img, ins, kbd, q, s, samp,
+small, strike, strong, sub, sup, tt, var,b, u, i, center,dl, dt, dd, ol, ul, li,fieldset, form, label, legend,table, caption, tbody, tfoot, thead, tr, th, td,article, aside, canvas, details, embed, figure, figcaption, footer, header, hgroup, menu, nav, output, ruby, section, summary,time, mark, audio, video {margin: 0;padding: 0;border: 0;font-size: 100%;font: inherit;vertical-align: baseline;}
+/* HTML5 display-role reset for older browsers */
+article, aside, details, figcaption, figure, footer, header, hgroup, menu, nav, section {display: block;}
+ol, ul {list-style: none;}
+blockquote, q {	quotes: none;}
+blockquote:before, blockquote:after,q:before, q:after {content: '';	content: none;}
+table {	border-collapse: collapse;border-spacing: 0;}
+/*body{ background:url("../images/wen/bg_container.gif") left top repeat;line-height: 1;font-family:normal 11px Arial,sans-serif; color: #4E4D4B;}*/
+body{ background:#fff;font:normal 11px Arial,sans-serif; color: #4E4D4B;}
+.wrapperMain{margin: 0 auto; width:920px;}
+.brownButton{background:url("../images/wen/brown_button_bg.png") left top repeat; margin:0; paddding:7px 0; border:0;color:#FFF;}
+.brownBlackButton{background:url("../images/wen/brown_black_button_bg.png") left top repeat; margin:0; paddding:7px 0; border:0;color:#FFF;}
+.greenButton{background:url("../images/greenButton_bg.png") left top repeat; margin:0; paddding:7px 0;  border:0;color:#FFF; cursor:pointer;height:32px;}
+.grayButton{background:url("../images/wen/gray_button_bg.png") left top repeat; margin:0; paddding:7px 0; border:0;color:#FFF; cursor:pointer;}
+.darkGrayBtn{background:url("../images/wen/dark_gray_button_bg.png") left top repeat; margin:0; paddding:7px 0; border:0;color:#FFF; cursor:pointer;}
+.aButton{float:left;text-decoration: none;}
+.caption{background:url("../images/wen/right_direction.png") right 2px no-repeat; font:bold 14px Arial, Helvetica, sans-serif;font-size:14px;  padding:0 13px 0 0;color:#fff; font-weight:bold;text-transform: uppercase;}
+.buttonDisable{opacity: 0.3;-ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=30)";}
+strong{font-weight:bold;}
+.strikeout {text-decoration: line-through;}
+/*------------------------------------------------
+				 Global Header
+--------------------------------------------------*/
+#main-wraper{ margin: 0 auto; width: 898px;}
+.headerWraper, .pt_storefront{ width:100%; margin:auto;}
+.header{width:925px;margin: 0 auto;}
+.header #logo{width:190px; height:91px;float:left; margin: 8px 0 16px;}
+.header #logo a{background: url(../images/wen/logo-wh.png) no-repeat scroll 0 0 transparent;    display: block;    height: 93px;  width: 190px;}
+.header .midtext{ font: bold 16px Georgia,"Times New Roman",Times,serif; color:#000; float:left;  padding: 46px 0 0 25px;}
+.header .top-nav{float:right; }
+.header .top-nav ul li{list-style:none; display:inline-block;padding: 0 10px; background:url(../images/wen/divider.gif) no-repeat right 8px;}
+.header .top-nav ul li:last-child{ background:none; padding-right: 0;}
+.header .top-nav ul li a{ color:#333; text-decoration:none; font-size:12px;}
+.topNav{ float:left; width: 735px;background: none;  margin-top: 28px;}
+.topNav ul{ float: left;    width: 100%;}
+.topNav ul li{ float: left; padding:0px 14px;}
+.topNav ul li a{color: #FFFFFF;font: bold 14px arial;text-decoration: none; padding:3px 0px;}
+.topNav ul li.active a, .topNav ul li:hover a{border-bottom: 3px solid #7C8F24;}
+.topNav ul li.btnOrdernow{display: block;float: right;height: 32px;margin-top: -4px;padding:0 0 0 21px; width: 128px;}
+.topNav ul li.btnOrdernow a{ background: url(../images/wen/ordernowBg.jpg) repeat-x scroll 0 0 transparent;text-align: center;    display: block;    height: 32px;  width: 129px;padding: 9px 0;}
+.header .customerlinks{ float:right;height: 44px; min-width: 435px; }
+.header .customerlinks ul li{list-style:none; display:inline-block; background:url(../images/wen/divider.gif) no-repeat right 5px;}
+.header .customerlinks ul li:last-child{ background:none; padding-right: 0;}
+.header .customerlinks ul li a{ color: #FFFFFF;font:11px arial;text-decoration: none;text-transform: uppercase; display:block; padding: 3px 4px; }
+.header .customerlinks ul li.startRegister{padding-left: 18px;}
+.header .customerlinks ul li.startRegister a{ padding: 5px 0px 9px 16px; font: bold 13px arial;}
+.header .customerlinks ul li.startRegister a:hover{background:none;text-decoration:underline; }
+.header .customerlinks ul li.existingCustomers { padding: 3px 16px 5px 15px;background-color:#555555; background-image: none;}
+.header .customerlinks ul li.existingCustomers a { font: bold 13px arial;}
+.header .welcomecoloum{min-width:231px;padding:  0;float:left; color:#fff; font-size:11px;}
+.header .welcomecoloum a{font-size:11px;text-align: right; text-decoration: none;}
+.header .welcomecoloum a:hover{color:#95B400; text-decoration:underline;}
+.header .welcomecoloum.aqcCustomers{min-width:185px;float:right;}
+.header .welcomecoloum #member-logedin{color:#fff;float:right;position: relative;padding-left: 3px;float: left;padding-top:8px;}
+.header .welcomecoloum #member-logedin .welcomemessage{padding-left:2px;}
+.header .welcomecoloum #member-logedin a.username{color: #fff;}
+.header .welcomecoloum #member-logedin .divider{color:#fff;padding:0 0px 0 17px;}
+.header .welcomecoloum  .accountnav{float:left;position: relative;z-index: 999; padding-top:8px;padding-right: 12px;}
+.header .welcomecoloum  a.account{color: #95b400;cursor: text;padding: 16px 27px 5px 25px;text-decoration: underline;background: url("../images/wen/arrow-account.jpg") no-repeat 102px 21px ;}
+.header .welcomecoloum  a.account:hover,.header .welcomecoloum   .accountnav:hover  a.account {background: url("../images/topnav/topnav-account.jpg") no-repeat scroll 102px 21px #FFFFFF;color:#555555;}
+.header .welcomecoloum .accountnav .dropdownbox{display: none;padding-top:8px;box-shadow:0 9px 9px 0 #929292; -ms-filter: "progid:DXImageTransform.Microsoft.Shadow(Strength=12, Direction=135, Color='#929292')";filter: progid:DXImageTransform.Microsoft.Shadow(Strength=5, Direction=150, Color='#929292');}
+.header .welcomecoloum  .accountnav .dropdownbox ul{padding:0 0 8px 0}
+.header .welcomecoloum  .accountnav:hover .dropdownbox{display:block;z-index: 99999;top: 27px;background:#FFFFFF;position: absolute;right:12px;padding:15px 8px;width:157px; z-index: 9999;}
+.header .welcomecoloum  .accountnav .dropdownbox li{text-align: right;padding:3px 0; width: 157px;  background: none;}
+.header .welcomecoloum  .accountnav .dropdownbox li a{color: #555555;}
+.header .welcomecoloum  .accountnav .dropdownbox li a:hover{color:#7e9802; text-decoration:underline;}
+.header .welcomecoloum  .accountnav .dropdownbox .sign-out{text-align: right;margin-right:5px;border-top:1px solid #e5e5e5;color:#3f838d;font-weight: bold;padding: 8px 0 0;text-transform: uppercase;}
+.header .welcomecoloum  .accountnav .dropdownbox .sign-out a{color: #7e9802;}
+.header .welcomecoloum  .accountnav .dropdownbox .sign-out a:hover{color:#23646f; text-decoration:underline;}
+/*-----------------------------------------------------	----- 
+				start: globalFooter 
+------------------------------------------------------------*/
+#globalFooter .row{ float:left; width:100%;padding: 0;}
+#globalFooter{ background:#262626; float:left; width:100%; color:#FFFFFF; font-size:12px; font-family:Arial, Helvetica, sans-serif;margin-top:20px;}
+#globalFooter .pageWidth{ width:930px; margin:auto;}
+
+#globalFooter .mainFooter{ background:#434343; clear:left; float:left; width:100%; padding:25px 0px 9px; position: relative;}
+#globalFooter .mainFooter.login{ padding: 7px 0 ;}
+#globalFooter .mainFooter h3.widgetTitle,#globalFooter .footerTop h2,#globalFooter .mainFooter .pageWidth h2{ font-size:14px; text-transform:uppercase; color:#dcbc99; font-weight:bold; padding-bottom:10px;}
+#globalFooter .mainFooter .footWidget{ width:162px; float:left; padding:0px 25px; min-height:270px;}
+#globalFooter .mainFooter .footWidget .theLinks{ list-style:none;}
+#globalFooter .mainFooter .footWidget .theLinks > li{ padding:5px 0px;position: relative;}
+#globalFooter .mainFooter .footWidget .theLinks  li.guarantee{min-height: 111px;}
+#globalFooter .mainFooter .footWidget .theLinks a{ display:block; color:#FFFFFF; text-decoration: none;font-weight: bold;}
+ #globalFooter .mainFooter .footWidget .theLinks a:hover{text-decoration: underline;}
+#globalFooter .mainFooter .otherLinks{ padding-left:0px; background:url(../images/wen/border-footer.gif) right 0px repeat-y;}
+#globalFooter .mainFooter .helpfullLinks{ padding: 0 6px 0 41px;background:url(../images/wen/border-footer.gif) right 0px repeat-y; font-weight:bold;}
+
+#globalFooter .customerFav{ width:490px; float:left; min-height:270px; padding-left:41px;}
+#globalFooter .customerFav .row{padding: 0px 0;}
+#globalFooter .customerFav h3.widgetTitle{ text-align:center;}
+#globalFooter .customerFav .prodKits{width:213px; min-height:230px; float:left; padding-top: 8px;}
+#globalFooter .customerFav .prodKits .thumb{ display:inline-block; border:3px solid #811510; overflow: hidden;   height: 105px;}
+#globalFooter .customerFav .prodKits .desc{ width:100%; padding:9px 0px;}
+#globalFooter .customerFav .prodKits .desc h3{margin-bottom:8px;  line-height: 16px; font-size:18px; font-weight:normal; margin-bottom:4px;}
+#globalFooter .customerFav .prodKits .desc p{ font-size:10px; min-height:39px;}
+#globalFooter .customerFav .prodKits .desc sup{font-size:11px;}
+#globalFooter .customerFav .prodKits .desc a.orderbtn{ display:inline-block; padding-right:12px; color:#7c8f24; text-transform:uppercase; font-weight:bold;background:url(../images/wen/footer_grnArrow.png) right 2px no-repeat; margin-top:12px;}
+#globalFooter .customerFav .basicKit{ padding-right:30px;background:url(../images/wen/border-footer.gif)right 0px repeat-y;}
+#globalFooter .customerFav .deluxKit{ padding-left:34px;}
+
+#globalFooter .footerTop h2,#globalFooter .mainFooter .pageWidth h2{float:left; padding:8px 0; text-align: left;width: 186px; font-size: 15px;}
+#globalFooter .mainFooter .pageWidth .needHelp{ padding: 12px 14px 9px 46px;float:left; background:url(../images/wen/border-footer.gif) left 0px repeat-y;font-size:11px; color:#fff;}
+#globalFooter .mainFooter .pageWidth .callus,#globalFooter .mainFooter .pageWidth .callusno{float:left;padding: 5px 18px 0 6px;}
+#globalFooter .mainFooter .pageWidth #inqC2C2ImgContainer{float:left;padding: 5px 18px 0 0px;}
+#globalFooter .mainFooter .pageWidth .callusno{font-size: 11px;font-weight: bold; padding-left: 0px; padding-top:12px;}
+#globalFooter .mainFooter .pageWidth .callusno span{color:#ddbc99;}
+#globalFooter .footerTop .socialLinks{ float:left; padding-left:0px;}
+#globalFooter .footerTop{ clear:left; float:left; width:100%; padding:10px 0px 9px; text-align:center;}
+#globalFooter .footerTop .socialLinks li{ float:left; background:url(../images/wen/border-footer.gif) left 0px repeat-y; padding: 0 0 0 34px;}
+#globalFooter .footerTop .socialLinks li.first{padding: 0 0 0 42px;}
+#globalFooter .footerTop a{padding:10px 16px 9px 54px; color: #ebebeb; font-size: 11px;text-decoration: none; background:url(../images/wen/social-icons.png) no-repeat; float:left;}
+
+
+#globalFooter .footerTop a.facebook{ background-position:0px 0px;}
+#globalFooter .footerTop a.twitter{ background-position:0px  -108px;}
+#globalFooter .footerTop a.youTube{ background-position:0px -72px;}
+#globalFooter .footerTop a.pinUs{ background-position:0px -35px;}
+#globalFooter .footerTop a.google{ background-position:0px -146px;}
+
+
+/* START:Bazar voice specific css */
+.BVRContainer{background: url("../images/topnav/subnavtop-border.png") no-repeat scroll center 128px transparent;float:left;margin:0;padding:0;width:100%;}
+.BVRContainer .BVRContent{margin:0 auto; padding:0; width:906px;}
+.BVRContainer #pdpTabsDiv.secondarynavtap{background:none;}
+#globalFooter .footerBottom{ clear:left; float:left; width:100%; padding:18px 0px; text-align:center; font-size:10px;}
+#globalFooter .footerBottom .row{ padding: 0px 0 4px 0px;}
+#globalFooter .footerBottom .grLogo{ vertical-align:middle;   padding-right: 28px;}
+#globalFooter .footerBottom .headerlinks{float:left; padding: 1px 0 24px 180px;}
+#globalFooter .footerBottom .headerlinks li{float:left; padding: 5px 7px;}
+#globalFooter .footerBottom .headerlinks li a{color:#fff; font-size:12px; font-weight: bold;text-decoration: none;}
+
+/* START:Bazar voice specific css */
+.BVRContainer{float:left;margin:0;padding:0;width:100%;}
+.BVRContainer .BVRContent{margin:0 auto; padding:0; width:906px;}
+
+/* Footer country selector */
+#globalFooter #locale_selector {width: 130px;
+	height: 1px;
+	overflow: hidden;
+	border: 1px solid #9C9C9C;
+	background-color: #FFFFFF;
+	height:14px;
+	padding-bottom:6px;
+	cursor: pointer;
+	z-index:999;
+	left:-6px;
+}
+#globalFooter li ul#locale_selector li {
+	text-align: left;
+	padding: 3px 0 0;
+}
+#globalFooter li ul#locale_selector li a {
+	background: transparent url(../images/wen/icons_countryselector.gif) 10px 2px no-repeat;
+	display: block;
+	float: left;
+	width: 100px;
+	color:#000000;
+	padding: 1px 5px 5px 34px;
+	border-right: none;
+}
+
+#globalFooter #locale_selector,#lpFooter #locale_selector {	width: 140px;	height: 1px;	overflow: hidden;	border: 1px solid #9C9C9C;	background-color: #FFFFFF;	height:14px;	padding-bottom:6px;	cursor: pointer;	z-index:999; position: absolute;right: 0;bottom: 0; margin: -3px 0 0 5px;}
+#globalFooter li ul#locale_selector li,#lpFooter li ul#locale_selector li {	text-align: left;	padding: 3px 0 0;}
+#lpFooter #countryselector label{color: #4E4D4B;    float: none;    font: 12px times new roman;    padding: 0;    width: 100%;}
+#globalFooter li ul#locale_selector li a,#lpFooter li ul#locale_selector li a {	background: transparent url(../images/wen/icons_countryselector.gif) 10px 2px no-repeat;	display: block;	float: left;	width: 100px;	color:#000000;padding: 1px 5px 5px 34px;	border-right: none;}
+#globalFooter li ul#locale_selector li.selected,#lpFooter li ul#locale_selector li.selected {	background: transparent url(../images/wen/arrow_up.gif) 125px 7px no-repeat;float:left;	bottom: -3px;	left: 0;z-index: 150;}
+#globalFooter li ul#locale_selector li.selected{background: transparent url(../images/wen/arrow_up.gif) 116px 7px no-repeat;}
+#globalFooter li ul#locale_selector li.uk a,#lpFooter li ul#locale_selector li.uk a { background-position: 10px -17px;}
+#globalFooter li ul#locale_selector li.ca a,#lpFooter li ul#locale_selector li.ca a { background-position: 10px -37px;}
+#globalFooter li ul#locale_selector li.aus a,#lpFooter li ul#locale_selector li.aus a { background-position: 10px -57px;}
+#globalFooter li ul#locale_selector li.swe a,#lpFooter li ul#locale_selector li.swe a { background-position: 10px -137px;}
+#globalFooter li ul#locale_selector li.jap a,#lpFooter li ul#locale_selector li.jap { background-position: 10px -97px;}
+#globalFooter li ul#locale_selector li.nor a,#lpFooter li ul#locale_selector li.nor a{ background-position: 10px -177px;}
+#globalFooter li ul#locale_selector li.fin a,#lpFooter li ul#locale_selector li.fin a { background-position: 10px -117px;}
+#globalFooter li ul#locale_selector li.den a,#lpFooter li ul#locale_selector li.den a { background-position: 10px -157px;}
+#globalFooter li ul#locale_selector li.nz a,#lpFooter li ul#locale_selector li.nz a { background-position: 10px -300px;}
+#globalFooter li ul#locale_selector li.ger a,#lpFooter li ul#locale_selector li.ger a { background-position: 10px -77px;}
+#globalFooter li ul#locale_selector li.at a,#lpFooter li ul#locale_selector li.at a { background-position: 10px -277px;}
+#globalFooter li ul#locale_selector li.sw a,#lpFooter li ul#locale_selector li.sw a { background-position: 10px -257px;}
+#globalFooter li ul#locale_selector li.ire a,#lpFooter li ul#locale_selector li.ire a { background-position: 10px -197px;}
+#globalFooter li ul#locale_selector li.rus a,#lpFooter li ul#locale_selector li.rus a { background-position: 10px -217px;}
+/* ---- country selector - open -start ------ */
+#globalFooter #countryselector.open,#lpFooter #countryselector.open { position: relative;}
+#globalFooter #countryselector.open #locale_selector,#lpFooter #countryselector.open #locale_selector { height: auto; z-index: 500; padding-bottom: 17px; padding-top: 2px;}
+#globalFooter #countryselector.open #locale_selector li.selected,#lpFooter #countryselector.open #locale_selector li.selected { bottom: -3px; top: auto;}
+/* end: globalFooter */
+/*-----------------------------------------------
+				 Error Message Styles
+------------------------------------------------*/
+.errorclient{display: block; color: red;}
+.errorclient.success{display: none !important;}
+.errormessage,.errorform{display: inline-block; color: red; font-size:11px;}
+
+
+/*------------------------------------------------
+				 Home Page CSS
+--------------------------------------------------*/
+.homepageBanner{ float: left;position: relative;}
+.homepageBanner .bannerBtn{ position:absolute; top:123px; left:490px;}
+
+.homepageBottom{ float:left;margin: 20px 0 0; color:#000;}
+.homepageBottom .bottomModule {background: url(../images/wen/bg_btmModules.png) repeat-x scroll 0 0 transparent;    border: 1px solid #BFD9CA;    float: left;    height: 196px;}
+.homepageBottom .bottomModule span.sub {font-size: 80%;    position: relative;    top: -0.5em;}
+.homepageBottom .bottomModule.leftBanner{margin-right: 18px;  padding: 0 16px 0 0; width:422px;}
+.homepageBottom .bottomModule.rightBanner{  height: 166px;    padding: 15px;    width: 408px;}
+.homepageBottom .bottomModule img{ float:left}
+.homepageBottom .bottomModule .bannerText{ float:right;width: 168px; padding-top:15px;}
+.homepageBottom .bottomModule p{font: 12px arial;    text-align: right;}
+.homepageBottom .bottomModule h3 {padding: 10px 0 5px 0px;    text-align: right;color: #000000;   font: 24px/24px Georgia,Times,serif;}
+.homepageBottom .bottomModule p.moreLinkP {color: #86120D;     font-weight: bold;    height: 17px; text-align: right;}
+.homepageBottom .bottomModule p.moreLinkP a{ color: #86120D;    font: bold 12px Arial,Verdana,Helvetica,sans-serif;   text-decoration: none;}
+.homepageBottom .bottomModule p.moreLinkP a:hover{border-bottom: 2px solid #86120D;}
+.homepageBottom .bottomModule.rightBanner .r-Text{ float: right;width: 170px;}
+.homepageBottom .bottomModule.rightBanner .r-Text .aleft{ text-align:left;}
+/* Footer */
+.footerContainer {background:url("../images/wen/bg_body.gif") repeat scroll 0 0 transparent;    float: left;    width: 100%;margin-top: 42px; }
+.footerContainer .footer {margin: 0 auto;    padding: 10px 0;width: 915px;   }
+.footerContainer .footer .footerbottom{ background: none}
+.footerContainer .footer .footerbottom-sub{ background: none}
+.footerContainer .footer .footerbottom ul {border-right: 1px solid #CCCCCC;    float: left;    min-height: 244px;    padding: 0 20px;}
+.footerbottom ul li {
+    color: #555555;
+    display: block;
+    float: none;
+    font-size: 11px;
+    padding: 0 0 5px;
+}
+.footerbottom ul li h3 {
+    border: medium none;
+    color: #dcbc99;
+    font-size: 15px;
+    font-weight: bold;
+    margin: 0;
+    padding-bottom: 2px;
+}
+.footerbottom ul li a {
+    color: #fff;
+    font-size: 13px;
+}
+.footerContainer .footer li {    float: left;    margin-bottom: 25px;}
+.footerContainer .footer li, .footerContainer .footer li a {    color: #000;    font-family: "Times New Roman",Times,serif;    font-size: 12px;    font-weight: normal;    text-decoration: none;}
+.footerContainer .footer li a {border-right: 1px solid #000000;    margin-right: 10px;    padding-right: 10px;}
+.footerContainer .footer li:last-child a{ border-right:none;}
+.footerContainer .footer .footer-top{ float:left;width: 100%;padding: 11px 0 0;}
+.footerContainer .footer .copy{ color: #333333; font:10px/18px Arial, Helvetica, sans-serif normal;    width: 100%;}
+.footerContainer .footer li.last a, .footerContainer .footer li.countryselector {border-right: medium none;}
+.footerContainer .footer li.countryselector {padding-bottom: 6px;float: right;margin-bottom: 0;padding-right: 155px;position: relative;top: 2px;}
+.footerContainer .footer li.countryselector li {margin-bottom: 0;}
+.footerContainer .footer #localeSelector { background-color: #FFFFFF;border: 1px solid #9C9C9C;bottom: 0;cursor: pointer;height: 14px;margin: -3px 0 0 5px;overflow: hidden;padding-bottom: 6px;position: absolute;right: 0;width: 140px;z-index: 999;}
+.footerContainer .footer li ul#localeSelector li {padding: 3px 0 0;text-align: left;}
+.footerContainer  .footer li ul#localeSelector li a {background: url("../images/wen/icons_countryselector.gif") no-repeat scroll 10px 2px transparent;border-right: medium none;display: block;float: left;padding: 1px 5px 5px 34px;width: 100px;}
+.footerContainer  .footer li ul#localeSelector li.selected {background: url("../images/wen/arrow_up.gif") no-repeat scroll 125px 7px transparent; bottom: -3px;left: 0;z-index: 150;}
+.footerContainer  .footer li ul#localeSelector li.uk a {background-position: 10px -17px;}
+.footerContainer  .footer li ul#localeSelector li.ca a {background-position: 10px -37px;}
+.footerContainer  .footer li ul#localeSelector li.aus a {background-position: 10px -57px;}
+.footerContainer  .footer li ul#localeSelector li.swe a {background-position: 10px -137px;}
+.footerContainer  .footer li ul#localeSelector li.jap a {background-position: 10px -97px;}
+.footerContainer  .footer li ul#localeSelector li.nor a {background-position: 10px -177px;}
+.footerContainer  .footer li ul#localeSelector li.fin a {background-position: 10px -117px;}
+.footerContainer  .footer li ul#localeSelector li.den a {background-position: 10px -157px;}
+.footerContainer  .footer li ul#localeSelector li.nz a {background-position: 10px -300px;}
+.footerContainer  .footer li ul#localeSelector li.ger a {background-position: 10px -77px;}
+.footerContainer  .footer li ul#localeSelector li.at a {background-position: 10px -277px;}
+.footerContainer  .footer li ul#localeSelector li.sw a {background-position: 10px -257px;}
+.footerContainer  .footer li ul#localeSelector li.ire a {background-position: 10px -197px;}
+.footerContainer  .footer li ul#localeSelector li.rus a {background-position: 10px -217px;}
+.footerContainer  .footer #countryselector.open {position: relative;}
+.footerContainer  .footer #countryselector.open #localeSelector {height: auto;padding-bottom: 17px;padding-top: 2px;z-index: 500;}
+.footerContainer  .footer #countryselector.open #localeSelector li.selected {bottom: -3px;top: auto;}
+#personinfo{padding: 12px;}
+.checkoutform #personinfo  h4 {font-size: 13px;margin-bottom: 2px;border-bottom: 1px solid #687b09;color: #687b09;padding: 5px 0;font-family: Arial, Helvetica, sans-serif;}
+.checkoutHeader{ color: #86120D;  font-size: 14px;  font-weight: bold;}
+.checkoutHeader h1 {color: #000000; font: 37px Georgia,Times,serif; margin: 0; padding: 0;}
+.wait{margin-top: 15%; text-align: center;}
+.checkoutHeader p{width:470px;}
+.row{float: left;padding: 6px 0;width: 100%;}
+#personinfo .contactinfo .row{width:44%;}
+.formfield {float: left;padding: 3px 0;}
+input {font-size: 11px;}
+label {color: #4E4D4B;float: left;font: 11px Arial,Verdana,Helvetica,sans-serif;width: 100%; padding: 3px 0;}
+.requiredindicator {color: #FF0100;}
+.checkoutform #personinfo .formfield {width: 201px;clear: none;}
+/* checkout shipping */
+#cartcontent  #cartcontent  .checkoutform #personinfo .row{ width: 200px;}
+#cartcontent  .checkoutform .billingShipping .cbBilling,#cartcontent  .checkoutform .billingShipping .cartShipping{float: left; width:340px;}
+#cartcontent  .checkoutform .billingShipping .cartShipping{margin-left:5px;}
+#cartcontent  .checkoutform .cartShipping .asbilling .checkbox{float:right;margin-left: 15px;}
+#cartcontent  .checkoutform .cartShipping .asbilling .checkbox label{padding:0px; float: right;}
+#cartcontent  .checkoutform .cartShipping .asbilling .checkbox .checkinput{width:15px;}
+#cartcontent  .checkoutform .cartShipping .asbilling .checkbox input,#cartcontent  .checkoutform .cartShipping .asbilling label {float:left;width: auto;}
+#cartcontent  .checkoutform input{width: 152px;}
+#carttotals{color:#000;}
+#carttotals #agreebox{float: left; width: 200px;}
+#carttotals #agreebox .errormessage{float: left;}
+#carttotals .checkbox input{width:10px;  margin: 3px 0 0;}
+#carttotals .checkbox .requiredindicator{font-size: 9px;font-weight: normal;padding: 0 10px 0 0}
+#carttotals .checkbox label{font-weight: bold;width: 103px;}
+#carttotals #agreebox p{width:200px;float:left;font-size:10px; line-height: 18px;}
+#carttotals #cartsummarycomments{width:400px;float:left; font-size: 10px;  padding-top: 15px;}
+#carttotals #cartpricesummary{width:200px;float:left;padding: 8px 0 0;font: 10px Tahoma;}
+#carttotals #cartpricesummary td{padding: 2px 0;width: 80px;}
+#cartpricesummary .continueBtn.completeBtn {   margin: 10px 0 0;text-indent: -9999px;background: url("../images/wen/btn_completeOrder.png") no-repeat scroll 0 0 transparent; cursor: pointer;height: 30px; width: 203px;}
+#cartcontent #selectyourshipment   {margin-bottom: 7px;text-indent: -9999px;background: url("../images/wen/orderBtnGifts.jpg") no-repeat scroll 0 0 transparent;clear: right;float: left;height: 26px;margin-right: 38px;width: 446px;}
+
+/* START: ACQ. check out page */
+#ptChekoutsingle .block.nav .blockContent ul{border-bottom: 1px solid #D6D6D6;font-size: 0.95em;font-weight: bold;}
+#ptChekoutsingle .block.nav .blockContent ul li a {background: none repeat scroll 0 0 transparent;border-top: 1px solid #D6D6D6; display: block;padding: 2px 10px 3px;}
+#ptChekoutsingle strong{font-weight:bold;}
+#ptChekoutsingle #upsellSection .blockContent,#ptChekoutsingle #valueUpsellSection .blockContent{border:1px solid #85980b;}
+#ptChekoutsingle #valueUpsellSection .blockContent{margin-bottom:30px;}
+#ptChekoutsingle .boxTitle{width: 185px; height: 25px; background: url(../images/upsell_title.png) 0 0 no-repeat; text-indent: -5000px;}
+#ptChekoutsingle #upsellSection .relatedProduct,.upsellcontent a{color: #2d323c !important;}
+#ptChekoutsingle .upsellcontent{margin: 10px; padding: 0 10px;width:165px; text-align:center; font-size:14px;border-bottom:1px solid #e2e2e2;}
+#ptChekoutsingle .upsellcontent h4{font: bold 12px georgia;}
+#ptChekoutsingle .upsellcontent .upsell_details_content{font-size:12px;padding-top:10px;text-align: left;}
+#upsellSection .relatedProduct h4{font-weight: bold;}
+#ptChekoutsingle .upsellcontent .addtocartbtn{border: none; margin-top: 5px; background: transparent url('../images/addtocart.png') no-repeat scroll 0 0; cursor: pointer; width: 108px; height: 30px;}
+#ptChekoutsingle .shortDescription .offerCode{font-weight:bold;}
+#ptChekoutsingle .checkout_box h4{background-color: #494D4B; color: white; font-weight: bold; padding: 5px 5px 5px 10px;}
+#ptChekoutsingle .ch_selected_products .detailscolumn{padding:8px 20px 20px 0;font-size:11px;width: 500px; }
+#ptChekoutsingle .ch_selected_products .detailscolumn .name{font-size:13px;font-weight:bold;}
+#ptChekoutsingle .ch_selected_products .quantitycolumn,#ptChekoutsingle .ch_selected_products .itemtotalcolumn{padding-top:8px;font-size:13px;width: 100px;}
+#ptChekoutsingle div.checkout_box td.detailscolumn div.name, #header .primaryNavigation .order, #header a#signInTrigger { display:none; }
+#ptChekoutsingle .order-totals .sub_total{float:right;width:100px;}
+#ptChekoutsingle .orderTotal{width:175px; float:right; margin-top:12px;font-size:11px;font-weight:bold;}
+#ptChekoutsingle .ordertotaldisclaimer{float:right;text-align: right;padding:2px 0px 6px 7px; width:405px;}
+#ptChekoutsingle .orderTotalFinal .cocartContainer{color:#86120D;text-transform: capitalize;font-size:14px; font-weight:bold;margin-top:3px;}
+#ptChekoutsingle .orderTotalFinal #orderTotal_2{float:right;}
+#ptChekoutsingle .cocartPrice{float: right;}
+#ptChekoutsingle .cocartLabel{text-align: right; display: block; float:right;}
+#ptChekoutsingle .shipping_total{text-align: right; padding: 5px;float:left;}
+#ptChekoutsingle .shippingmethodslist{text-align: left; margin-left: 145px;}
+#ptChekoutsingle .shippingmethodslist .labelwrapper{display: block; margin-bottom: 3px; position: relative;}
+#ptChekoutsingle .shippingmethodslist .overnight .shippinglabel{background: url('../images/next-day.png') 0 -15px no-repeat; position: absolute; left: -145px; top: -9px; width: 150px; height: 30px;}
+#ptChekoutsingle .upsell_details_inactive {display: none;}
+#ptChekoutsingle .upsellcontent .addtocartbtn{border: none; margin-top: 5px; background: transparent url('../images/addtocart.png') no-repeat scroll 0 0; cursor: pointer; width: 108px; height: 30px;}
+#ptChekoutsingle .upsellcontent .addtocartbtn span{display: none;}
+/* agree box */
+#ptChekoutsingle .agreeBox{float: right; width:385px;clear: both; text-align: right;margin-top:5px;font-size:11px;}
+#ptChekoutsingle .agreeBox .checkbox{float: right; position:relative;margin-top:2px;}
+#ptChekoutsingle .agreeBox .checkbox span.errormessage{ left: -150px; position: absolute; top: 15px; width: 243px;}
+#ptChekoutsingle .agreeBox .checkbox input{margin-top:4px;width:12px;}
+.agreeBox .checkbox label{display:none;}
+#ptChekoutsingle .agreeBox .checkbox input,.agreeBox #termsConditions,.agreeBox .requiredindicator{float: left;}
+#ptChekoutsingle .agreeBox #agreeTerms{cursor: text;width:82px;padding-top:6px;font-size:10px; float: right;}
+#ptChekoutsingle .agreeBox .requiredindicator{float:none;}
+#ptChekoutsingle .agreeBox input{display: inline;}
+#ptChekoutsingle .complete_order_btn{text-align: right; clear:both; padding-top:15px;}
+#ptChekoutsingle .continueBtn{border: none; height:auto;width: 218px; cursor: pointer;}
+#ptChekoutsingle .complete_order_btn .requiredIndicator{padding:0;width:auto;}
+#ptChekoutsingle .continueBtn .caption {background-position:right 9px; font:bold 14px Arial, Helvetica, sans-serif;float:left;padding: 7px 13px 7px 10px;}
+/*START: upsell */
+#ptChekoutsingle .hopupheader{height: 15px;}
+#ptChekoutsingle .hopupbody{text-align: center;padding: 0px 0px 0;min-height: 545px;min-height: 50px; }
+#ptChekoutsingle .hopupfooter{height: 15px;}
+#upsellForHopUp a.closebtn{position: absolute; float: right; background: url('../images/interface/dialog/close.png') no-repeat; width: 25px; height: 25px; display: block; border: none !important; top: -10px; right: -10px;float:right;text-indent: -9999px;}
+#upsellForHopUp .hopupclosebtn a span{display: none;}
+#ptChekoutsingle .hopupbodyinner{background: none repeat scroll 0 0 white; text-align: left;padding: 0;min-height: 425px;border-radius: 0;margin: 0 15px;}
+#ptChekoutsingle .confirmationBox{width: 100%;float: left;margin-top: 22px;}
+#ptChekoutsingle .hopuptitle{background: #6d8c22; border-radius: 5px 5px 0 0; color: white !important; padding: 10px; padding-bottom: 0;border-radius: 0;}
+#ptChekoutsingle .hopuoptitleinner{background-color: #6d8c22;color: white;font: bold 18px Arial, Helvetica, sans-serif;text-align: center;margin-bottom: 10px;text-transform: capitalize;}
+#ptChekoutsingle .hopupimage{text-align: center;}
+#ptChekoutsingle .hopupdetails{float: none; line-height: 14px;}
+#ptChekoutsingle .hopupcontrols{font-size: 11px;line-height: 13px;margin-top: 5px;text-align: left;position: relative;padding: 10px 10px 80px 10px;}
+#ptChekoutsingle .hopupdetails .nothanksbtn{font-size: 12px;margin-top: 10px;display:block; color: #333;outline: none;}
+#ptChekoutsingle #upsellForHopUp{margin-top: 160px;position: absolute;left: 43%;top: 0;z-index: 200;display: none;width: 496px;min-height: -545px;border: solid 1px #9cb269;background: #f1f4ce;}
+#ptChekoutsingle #upsellForHopUp .addtocartbtn{left: 0px;margin: 0;position: relative;top: -5px;background: url(../images/addtocart.png) top left no-repeat;height: 26px;width: 114px;text-indent:-9999px;border:none;cursor: pointer;}
+/*END: upsell */
+
+/* Most Upsell CSS from PA */
+#popupOverlay{background: white; width: 100%; height: 100%; position: fixed; z-index: 100; filter: alpha(opacity=50); opacity: 0.5; -moz-opacity: 0.5; -webkit-opacity: 0.5; top: 0; left: 0; display: none;}
+.upsellarea{}
+.upsellarea .upselldescription{display: none;}
+.upsellrecommendationpopup{display: none;}
+#upsellForHopUp{display: none; position: absolute; z-index: 101; top: 100px; left: 45%; width: 408px;}
+.hopupheader{height: 30px;}
+.hopupbody{min-height: 50px;}
+.hopupfooter{height: 30px;}
+
+.hopupclosebtn{}
+#upsellForHopUp .hopupclosebtn a span{display: none;}
+
+.hopupbodyinner{margin: 0 30px; background: white; border-radius: 5px;}
+.hopuptitle{background: green; border-radius: 5px 5px 0 0; color: white !important; padding: 10px; padding-bottom: 0;}
+.hopuoptitleinner{padding: 10px 0;}
+.hopupimage{text-align: center;}
+.hopupdetails{padding: 0 10px; font-size: .9em;}
+.hopupdetails p{font: 11px Arial,sans-serif;}
+.hopupcontrols{padding: 10px;}
+#upsellForHopUp .nothanksbtn{text-decoration: underline !important; border: none !important; color: #4E6780 !important;}
+#upsellForHopUp .nothanksbtn:hover{color: #4e4d4b;}
+#upsellForHopUp .addtocartbtn{margin-top: -5px; float: right; height: 26px; width: 114px; background: url(../images/interface/dialog/popupadd.png) left top no-repeat; border: none;}
+#upsellForHopUp .addtocartbtn:hover{background-position: left -26px;}
+#upsellForHopUp .addtocartbtn span{display: none;}
+/*  END CSS FROM PA */
+
+#ptChekoutsingle{margin:0 auto;padding:0;width:926px;}
+#ptChekoutsingle .offerSidebarLeft {background: none repeat scroll 0 0 transparent;float:left;margin-top:37px;text-align:center;width: 208px;}
+#ptChekoutsingle .checkoutform #personinfo  h4 {font-size: 13px;margin-bottom: 2px;border-bottom: 1px solid #687b09;color: #687b09;padding: 5px 0;font-family: Arial, Helvetica, sans-serif;}
+#ptChekoutsingle .checkoutHeader{ color: #86120D;  font-size: 14px;  font-weight: bold;}
+#ptChekoutsingle .checkoutHeader h1 {color: #000000; font: 37px Georgia,Times,serif; margin: 0; padding: 0;}
+#ptChekoutsingle .checkoutHeader p{margin-top:4px;width:515px;}
+/* checkout payment info */
+#ptChekoutsingle .checkoutBox.paymentInfo .paymentMethod,#ptChekoutsingle .checkoutBox.paymentInfo .cardNumber ,#ptChekoutsingle .checkoutBox.paymentInfo .expirationDate,#ptChekoutsingle .checkoutBox.paymentInfo .expirationDate .value{ float: left; width:auto;}
+#ptChekoutsingle .checkoutBox #shippingMessageBlock{padding: 9px 0px 6px 11px; font-size:11px;}
+#ptChekoutsingle .billingShipping .cartShipping .formfield{margin-bottom:10px;}
+#ptChekoutsingle .checkoutBox.paymentInfo .cardNumber{float:left;width:254px;}
+.checkoutBox.paymentInfo .expirationDate .value{width: 160px;}
+#ptChekoutsingle .checkoutBox.paymentInfo .expirationDate{width:185px;}
+#ptChekoutsingle .checkoutBox.paymentInfo .cardNumber input{width: 100px;}
+#ptChekoutsingle .checkoutBox.paymentInfo .paymentMethod select{width: 120px;height: 22px;}
+#ptChekoutsingle .checkoutBox.paymentInfo .expirationDate .month{float:left;width: 120px;}
+#ptChekoutsingle .checkoutBox.paymentInfo .expirationDate .year{ float: left;width: 60px;}
+#ptChekoutsingle .checkoutBox.paymentInfo .expirationDate .month select{width: 110px;height: 18px;}
+#ptChekoutsingle .checkoutBox.paymentInfo .expirationDate .year select{width: 60px;height: 18px;}
+#ptChekoutsingle .cartPromotion{margin:40px 0 33px; padding:0;float:left;}
+#ptChekoutsingle .cartPromotion .cartpromo{margin: 1px 0 9px; padding:0;}
+#ptChekoutsingle .requiredIndicator{float:left;padding-top: 17px;width:100%;}
+#personinfo .paymentInfo{display: block;}  
+/* Contact Form */
+#ptChekoutsingle .orderByPhone{padding-top:30px;}
+#ptChekoutsingle .orderByPhone,#ptChekoutsingle .cartLeftPromo{font:bold 20px arial; color:#7c8f24;position:relative;}
+#ptChekoutsingle .orderByPhone .orderPhone{text-align: center;padding-left: 15px; padding-top: 15px;font-size: 21px;font-weight: bold; width: 180px;}
+#ptChekoutsingle .orderByPhone .orderText{color: #464646;font-size: 16px;padding-left: 18px;padding-top: 10px;text-align: center; width: 170px;}
+#ptChekoutsingle .blockTop,#ptChekoutsingle .block,#ptChekoutsingle .blockContent,#ptChekoutsingle .blockTopRight,#ptChekoutsingle .blockGrey,#ptChekoutsingle .blockBottomRight,#ptChekoutsingle .blockBottom{background:none; padding:0;overflow:visible;}
+#ptChekoutsingle .productimage{text-align:center; margin-top:10px}
+#ptChekoutsingle .personInfform input[type='text']{height:18px; padding:0; width:215px;}
+#ptChekoutsingle .cbShipping .checkbox{float: right;  width: 113px;}
+#ptChekoutsingle label{font: 12px Arial,Verdana,Helvetica,sans-serif;padding: 0;line-height:15px;}
+#ptChekoutsingle .asbilling label{ float:none; font-weight:bold; color:#FFF;}
+#ptChekoutsingle .contactinfo .phone{padding-top:3px;}
+#ptChekoutsingle .contactinfo .row{width:220px; padding: 7px 8px 4px 0;}
+#ptChekoutsingle .contactinfo .row label{padding: 0px 0 3px 0;}
+#ptChekoutsingle .contactinfo .formfield{margin-bottom: 8px;}
+#ptChekoutsingle #dwfrm_personinf_contact_email,#ptChekoutsingle #dwfrm_personinf_contact_emailconfirm{width:206px;}
+#ptChekoutsingle #daytimePhone,#ptChekoutsingle #eveningPhone{width:160px;}
+#ptChekoutsingle .personInfform h4,#ptChekoutsingle .thankyoumessage h2,#ptChekoutsingle .checkout_box h4,.ptCheckoutRetention .rightColumn h2{font:bold 14px Arial, Helvetica, sans-serif; color:#FFF; padding: 6px 0 5px 9px; position:relative;background:url(../images/heading_bg.png) repeat;}
+#ptChekoutsingle .thankyoumessage{float:left;margin-bottom: 2px;float: left;}
+#ptChekoutsingle .thankyoumessage h2{padding:5px 10px;}
+#ptChekoutsingle .personInfform{float:left;margin:0;padding:0;}
+#ptChekoutsingle #dwfrm_personinf_useAsBillingAddress{float: left;}
+#ptChekoutsingle .billingShipping{float:left; margin-bottom:10px; width:100%;}
+#ptChekoutsingle .checkout_box{border: 1px solid #E3E3E3; background-color: white; margin-bottom: 5px; margin-top:4px; width:663px;}
+#ptChekoutsingle .orderTotalFinal{padding:5px 0; margin:6px 0 0 0; border-bottom: 1px solid #CCC;border-top: 1px solid #CCC; color: #666; text-align: right; font-weight: bold; font-size: 13px; float:right; height:22px; width:100%;}
+/* Payment module */
+#ptChekoutsingle .checkoutBox.paymentInfo,#ptChekoutsingle .contactinfo{width:662px}
+#ptChekoutsingle .checkoutBox.paymentInfo{border:1px solid #c0c0c0;float:left;width:662px; padding:0; margin-bottom:10px;}
+#ptChekoutsingle .checkoutBox.paymentInfo .checkoutBoxInner{float:left; width:100%; padding:9px 0 5px 0;}
+#ptChekoutsingle .checkoutBox.paymentInfo .paymentMethod{clear:both; width:100%;margin-bottom: 26px;}
+#ptChekoutsingle #creditCardNumber{width:240px;}
+#ptChekoutsingle .checkoutBox.paymentInfo .expirationDate .value{margin-top:2px;width:100%;}
+#ptChekoutsingle .checkoutBox .statezip .state{width:130px; float:left; margin-right:22px;}
+#ptChekoutsingle .billingShipping .selectbox{width:130px;}
+#ptChekoutsingle .personInfform .checkoutBox .zip{width:62px; float:left;}
+#ptChekoutsingle .formfield{padding:0 10px; margin-bottom:10px;}
+#ptChekoutsingle .formfield.statezip{margin-top:5px;}
+#ptChekoutsingle .cbBilling,#ptChekoutsingle .cbShipping{float:left;min-height:374px; width:328px}
+#ptChekoutsingle .cbShipping {margin-left:5px;}
+#ptChekoutsingle .cbBilling .formfield.firstName{margin-top:10px;}
+#ptChekoutsingle .cbShipping .formfield{margin-bottom:15px;}
+#ptChekoutsingle .remove_item{color:#86120D; float:left; font-size:10px;text-decoration:none;with:100%;}
+#ptChekoutsingle #shippingMessageBlock p a{color:#86120D;}
+#ptChekoutsingle .contactinfo,#ptChekoutsingle .billingShipping .cbBilling,#ptChekoutsingle .billingShipping .cbShipping{border:1px solid #c0c0c0;margin-top:12px; float:left;}
+#ptChekoutsingle .contactinfo{margin: 3px 0 0 0; padding:0;}
+#ptChekoutsingle .billingShipping .cbBilling,#ptChekoutsingle .billingShipping .cbShipping{margin-top:8px;} 
+#ptChekoutsingle #cartcontent  .checkoutform .billingShipping .cartShipping { margin-left: 5px;  min-height: 416px;}
+#ptChekoutsingle .checkoutSteps, .ptCheckoutRetention .checkoutSteps,.ptCheckOutOrder .checkoutSteps{border-bottom: 1px solid #CCCCCC; border-top: 1px solid #CCCCCC; height: 24px; margin: 21px 0 18px; padding: 5px 0;} 
+#ptChekoutsingle .billingShipping .cbBilling .formfield{margin-bottom: 14px;}
+#ptChekoutsingle .billingShipping .cbBilling .formfield label{padding:0 0 3px 0;}
+#ptChekoutsingle .billingShipping .cbBilling .formfield span.errormessage{float:left;width:100%;}
+#ptChekoutsingle .billingShipping .cbBilling .lastName{padding-bottom: 8px;}
+#ptChekoutsingle .billingShipping .cbBilling .statezip{padding-top:0px; margin-top:3px;}
+#ptChekoutsingle .checkoutRight{float: right; width: 665px; background-color: white; margin-top:30px;padding: 0;}
+#ptChekoutsingle .checkoutMainContent{margin-right: 0px; width:665px;}
+#ptChekoutsingle .checkout_box_inner{width:100%;}
+#ptChekoutsingle .ch_selected_products{width:663px;}
+#ptChekoutsingle .ch_selected_products .imagecolumn{width:200px;text-align:left;padding: 8px 15px 0;}
+#ptChekoutsingle .checkoutRight .completeyourorder .reviewContOrder .continueBtn{font:bold 14px Arial, Helvetica, sans-serif; padding:7px 0;}
+/* START: accessInfo */
+#ptChekoutsingle .checkoutBox.accessInfo .textinputpw, #ptChekoutsingle .checkoutBox.accessInfo .age input{padding:0;height:18px;} 
+#ptChekoutsingle .checkoutBox.accessInfo .textinputpw{width:170px;}
+#ptChekoutsingle .checkoutBox.accessInfo{float:left; border: 1px solid silver;width: 662px;padding: 0;margin:0 0 10px 0;}
+#ptChekoutsingle .checkoutBox.accessInfo .checkoutBoxInner{float: left;padding: 10px 0 0 10px;}
+#ptChekoutsingle .checkoutBox.accessInfo .infoText{font-size:12px;padding-right:5px;} 
+#ptChekoutsingle .checkoutBox.accessInfo label{padding:0 0 3px 0;}
+#ptChekoutsingle .accessInfo h3{float:left;font-size:12px;font-weight:bold;margin:15px 0 10px;width:100%;}
+#ptChekoutsingle .accessInfo .age .textinput#age{width:30px;}
+#ptChekoutsingle .accessInfo .passwordconfirm {padding: 10px 0;}
+#ptChekoutsingle .accessInfo .gender {padding: 8px 0;}
+#ptChekoutsingle .accessInfo .gender .options label{float:left;margin-right:10px;width:auto;}
+/* Order summary */
+#ptChekoutsingle .orderConfimationContainer .detailscolumn{font-size:13px;padding:0;width:700px;}
+#ptChekoutsingle #orderConfirmNum{display: inline;}
+#ptChekoutsingle .ordersummary,#ptChekoutsingle .yourinformation{margin:19px 0 0 0;;}
+#ptChekoutsingle .orderConfimationContainer{margin:0; padding:0;border: solid 1px #ccc;}
+#ptChekoutsingle .ordersummary{padding: 10px; margin-bottom: 12px; font-size:14px;}
+#ptChekoutsingle .ordersummaryprice div{padding-top: 1px;margin-bottom:12px;float: right;font-size:13px;clear: right;margin-right:32px;}
+#ptChekoutsingle .ordersummaryprice .merchandiseTotal{display: inline;}
+#ptChekoutsingle .ordersummaryprice .shippingMethod{display: inline;}
+#ptChekoutsingle .ordersummaryprice .totalPrice{display: inline;}
+#ptChekoutsingle .confirmemail,#ptChekoutsingle .orderno{padding-left:10px;}
+#ptChekoutsingle .paymentandshippinginfo{border-top: solid 1px #ccc; padding-top: 10px; margin-top: 10px;}
+#ptChekoutsingle .paymentandshippinginfo h3{font-weight: bold;}
+#ptChekoutsingle .paymentandshippinginfo .paymentinfo{float: left;} 
+#ptChekoutsingle .paymentandshippinginfo .shipptoaddress{float: right; width: 120px;}
+#ptChekoutsingle .paymentandshippinginfo .billtoaddress{float: right; width: 120px;}
+#ptChekoutsingle .campaignPhoneSection .phonevalue{font-size: .95em; font-weight: bold; border-bottom: 1px solid #D6D6D6; padding-left: 10px;}
+#ptChekoutsingle .orderConfimationContainer .quantitycolumn,#ptChekoutsingle .orderConfimationContainer .itemtotalcolumn{font-size:13px;text-align:right;width:75px;}
+#ptChekoutsingle .orderConfimationContainer .ch_selected_products td{padding: 10px 0 0;}
+#ptChekoutsingle .orderConfimationContainer .quantitycolumn .quantityLabel{padding-right:3px;}
+#ptChekoutsingle .custInfo{padding: 20px 0 14px;font-size: 14px;}
+#ptChekoutsingle .completeyourorder .reviewContOrder .continueBtn{font:bold 14px Arial,Verdana,Helvetica,sans-serif;padding:7px 34px; float: right; margin-bottom: 15px;}
+#ptChekoutsingle .selectedMethod{ padding: 10px 0;width: 300px;}
+#ptChekoutsingle .paymentandshippinginfo .paymentinfo .payPalAccount{width:230px;}
+#questionsimage{text-align: center;}
+#ptChekoutsingle .orderConfimationContainer .ordersummary{margin-bottom: 28px;}
+/* Empty cart */
+.emptyCartBlock h1{margin-top:20px 0 5px; font-size:40px;}
+.emptyCartBlock .cartempty{font-size:14px; font-weight:bold;margin:20px 0;}
+.emptyCartBlock .aButton span {color: #FFFFFF;font-size:14px; float: left; font-weight: bold; padding: 7px 0 7px 28px;}
+.emptyCartBlock  .backToShopping .aButton{width:190px;}
+/* Confirmation Cross Pop Up */
+.crosssellitem {background: none repeat scroll 0 0 white;  border: 1px solid #CCCCCC;  display: none; float: left; left: 22%; position: absolute; top: 50px; width: auto; z-index: 1000;}
+.crosssellitem-header a { background: url("../images/interface/dialog/close.png") no-repeat scroll center center transparent; height: 24px;margin: -12px -12px 0 0;position: absolute; right: 0; width: 25px; z-index: 10;}
+.crosssellitem-header a span { display: none;}
+.crosssellitem .crosssellitem-header a { background: url("../images/popup_close.gif") no-repeat scroll center center transparent; height: 26px;margin:0px 0px 0 0;position: absolute; right: 0; width: 27px; z-index: 10;}
+.crosssellitem .crosssellitem-header a span { display: none;}
+
+/* Total price */
+#ptChekoutsingle #totalshippingprice{text-align: right; line-height: 16px; height: 16px; float: right; padding-left: 20px; width: 300px;}
+#ptChekoutsingle #shipTotal{display: inline;}
+#ptChekoutsingle #totalshippingprice.loading{background: url(../images/ajax-loader-small.gif) left center no-repeat;}
+#ptChekoutsingle #paymentinfoerrors{clear: left; width:200px;}
+#ptChekoutsingle #paymentinfoerrors .errormessage{float: left; width: 50%;}
+#ptChekoutsingle .order-totals{float:left;font-size:11px; width:100%;}
+#ptChekoutsingle .order-totals .shippingTotalCont{background: none repeat scroll 0 0 #FAF4E5;border-bottom:1px solid #c0c0c0; margin-top:10px;float:left;width:100%;}
+/* Order summary */
+#ptChekoutsingle #orderConfirmNum{display: inline;}
+#ptChekoutsingle .orderConfimationContainer{margin:3px 0 0 0;float:left; padding:0 0 20px;border: solid 1px #ccc;width:100%;}
+#ptChekoutsingle .orderConfimationContainer .ch_selected_products{margin-top:10px;width: 613px;}
+#ptChekoutsingle .arrivePeriod, #ptChekoutsingle .ordersummary,#ptChekoutsingle .confirmemail,#ptChekoutsingle .orderno,#ptChekoutsingle .yourinformation{color:#313a40;float:left;font-size:14px;padding:0 5px 0 10px;width: 645px;}
+#ptChekoutsingle .ordersummary h2,#ptChekoutsingle .yourinformation h2{color: #86120d; font-weight:bold;padding-bottom: 9px;font-size:14px; border-bottom: solid 1px #ccc;}
+#ptChekoutsingle .ordersummaryprice{border-top: solid 1px #ccc; margin-top: 10px;padding-top: 13px;float:left;width:100%;}
+#ptChekoutsingle .ordersummaryprice .merchandiseTotal,#ptChekoutsingle .ordersummaryprice .shippingMethod,#ptChekoutsingle .ordersummaryprice .totalPrice{display: inline;float:right;}
+#ptChekoutsingle .ordersummaryprice #orderTotal,#ptChekoutsingle .ordersummaryprice .cocart-label{float:left;font-size:13px;text-transform: capitalize;}
+#ptChekoutsingle .ordersummaryprice .yourTotal{font-weight:bold;}
+#ptChekoutsingle .orderno{margin-top:10px;}
+#ptChekoutsingle .paymentandshippinginfo{border-top: solid 1px #ccc; padding-top: 10px; margin-top: 10px;}
+#ptChekoutsingle .paymentandshippinginfo h3{font-weight: bold;}
+#ptChekoutsingle .paymentandshippinginfo .paymentinfo{float: left;}
+#ptChekoutsingle .paymentandshippinginfo .paymentinfo,#ptChekoutsingle .paymentandshippinginfo .expires,#ptChekoutsingle .paymentandshippinginfo .billtoaddress{float: left; width: 25%;}
+#ptChekoutsingle .paymentandshippinginfo .shipptoaddress{float: right; width: 20%;}
+#ptChekoutsingle .campaignPhoneSection .phonevalue{font-size: .95em; font-weight: bold; border-bottom: 1px solid #D6D6D6; padding-left: 10px;}
+#ptChekoutsingle #questionsimage{text-align: center;}
+#ptChekoutsingle .orderConfimationContainer .serviceMessage{float: left;font-size:13px;margin: 20px 0;width: 650px;}
+/* Total price */
+#ptChekoutsingle .checkoutBottom{float:left;width:100%;margin-top:8px;}
+#ptChekoutsingle #totalshippingprice{text-align: right; line-height: 16px; height: 16px; float: right; padding-left: 20px;}
+#ptChekoutsingle #shipTotal{display: inline;}
+#ptChekoutsingle #totalshippingprice.loading{background: url(../images/ajax-loader-small.gif) left center no-repeat;}
+#ptChekoutsingle #paymentinfoerrors{clear: left; width:200px;}
+#ptChekoutsingle #paymentinfoerrors .errormessage{float: left; width: 50%;}
+/* END:ACQ. checkout page */
+
+#container{ float:left; width:100%;}
+#idMainWide{ width:926px; margin:0 auto; float:none;}
+#idMainWide .sas-head h1{margin-bottom:10px; color: #000000;  font: 41px arial; height:39px;}
+#idMainWide .sas-head {margin: 30px 0 15px;float: left;width: 925px;}
+#idMainWide .sas-top-banner{ padding-bottom: 10px;}
+#selectasystem #idMainWide .selectedKit2 .sas-top-banner{ padding-bottom: 0px;}
+#selectasystem #idMainWide .sas-head{width:100%;}
+#idMainWide .sas-head .sasLivechat{float:right; padding-top: 37px;}
+#idMainWide .sas-head .intro{ color: #86120D;    font: bold 14px arial;float:left;}
+#idMainWide .sas-head .intro span{color: #717171;    font: italic bold 12px arial;}
+#idMainWide .selectKit{background: none;    border-radius: 0 0 0 0;    height: auto; border: medium none; float:left;}
+#idMainWide .selectedKit ul li.sasTabs{display:none}
+#idMainWide .selectedKit ul li.first{display:block}
+#idMainWide .selectKit ul.twoKits li{border:1px #fff solid; border-bottom:none;border-radius: 0 0 0 0;    cursor: pointer;    float: left;    height: 163px;    margin: 0px;    width: 461px;text-align: center; }
+#idMainWide .selectKit ul.twoKits li.tab1.activated{background:url("../images/wen/bg-sas-dx2.gif") repeat scroll 0 0 transparent; border:1px #c2c1c1 solid; border-bottom:none;}
+#idMainWide .selectedKit{float: left;background: none repeat scroll 0 0 transparent;    border: medium none;margin: 0;}
+#idMainWide .selectedKit #system_2 div.tab2image{ border:none;}
+#idMainWide .selectedKit .theKits li.first{ background: url("../images/wen/selkit-dx-bg.gif") repeat-x scroll 0 0 #FFFFFF;    float: left;border: 1px solid #C2C1C1; border-top:none;}
+#idMainWide .selectedKit li .SelectSidePanel{background: url("../images/wen/top-line-li.gif") no-repeat right top; border: medium none;   border-radius: 0 0 0 0;    float: right;    margin: 0;    width: 100%;}
+#idMainWide .selectedKit li .SelectSidePanel .DetailDescription{ float: left;    margin: 0;    padding: 16px 20px 20px 16px;width: auto;}
+#idMainWide .selectedKit li .SelectSidePanel .DetailDescription h5{border-bottom: medium none;    color: #262626;    font-size: 34px;    font-weight: bold;    margin: 0;    padding: 0;}
+#idMainWide .selectedKit li .SelectSidePanel .DetailDescription .nameDesc{color: #717171;    font: 14px arial;    padding-top: 2px;}
+#idMainWide .selectedKit li .SelectSidePanel .DetailDescription .productimage{margin: 40px 0 12px 40px;}
+#idMainWide .selectedKit .theKits li{width: 100%;float: left;}
+#idMainWide .selectedKit li .SelectSidePanel .DetailDescription .l-panel{ float: left;    width: 630px;}
+#idMainWide .selectedKit li .SelectSidePanel .DetailDescription .r-panel{ border-left: 1px solid #CBC9C7;    float: right;    margin-top: 73px;    padding-left: 22px;   width: 232px;}
+#idMainWide .selectedKit li .SelectSidePanel .DetailDescription .h-lable{color: #7C8F24;    font: bold 16px arial;    margin-bottom: 10px;}
+#idMainWide .selectedKit .theKits .r-panel li input{  float: left;    margin: 19px 5px 0 13px;}
+#idMainWide .selectedKit li .SelectSidePanel .DetailDescription .l-panel .text{color: #717171;    float: left;    font: 14px arial;    width: 382px;padding-right: 15px; border-right:1px solid #CBCBCB;}
+#idMainWide .selectedKit li .SelectSidePanel .DetailDescription .l-panel .text strong{font-weight:bold;}
+#idMainWide .selectedKit li .SelectSidePanel .DetailDescription .r-panel .kitselectionul li{color: #717171;    float: left;    font: 16px/22px arial;    margin: 11px 0;}
+#idMainWide .selectedKit .theKits .r-panel .kitselectionul li input{  margin-right: 10px;    margin-top: 5px;}
+#idMainWide .selectedKit li .SelectSidePanel .DetailDescription .r-panel .kitselectionul li .opText{float: left;    font-weight: bold;}
+#idMainWide .selectedKit li .SelectSidePanel .DetailDescription .r-panel .kitselectionul li .opText span{color: #86120D;    float: none;font-style: italic;}
+#idMainWide .selectedKit li .SelectSidePanel .DetailDescription .r-panel .topSpacing{ margin-top:20px; float: left;}
+#idMainWide .selectedKit li .SelectSidePanel .DetailDescription .r-panel .orderVarButtonWraper{background: url("../images/wen/btn-gr-bg.jpg") repeat-x scroll 0 0 transparent;color: #FFFFFF;    float: left;   font: bold 14px arial;    height: 32px;    text-align: center;    text-transform: uppercase;    width: 230px;margin-top: 10px; cursor: pointer;}
+#idMainWide .selectedKit li .SelectSidePanel .DetailDescription .r-panel .orderVarButtonWraper a{ background: url("../images/wen/btn-gr-arrow.gif") no-repeat scroll right 10px transparent;    color: #FFFFFF;    float: left;     padding: 8px 15px 0 16px;}
+#idMainWide .selectedKit li .SelectSidePanel .DetailDescription .r-panel .orderVarButtonWraper a:hover{color:#fff;}
+#idMainWide .selectedKit .theKits li.tab2{ background: url("../images/wen/tab-2bg.gif") repeat-x scroll 0 0 #FFFFFF;    float: left;border: 1px solid #C2C1C1; border-top:none;}
+#idMainWide .selectKit ul.twoKits li.tab2.activated{background:url("../images/wen/basic-bg.gif") repeat scroll 0 0 transparent; border:1px #c2c1c1 solid; border-bottom:none;}
+#idMainWide .selectedKit li.tab2 .SelectSidePanel{background: url("../images/wen/top-line-li.gif") no-repeat left top; border: medium none;   border-radius: 0 0 0 0;    float: right;    margin: 0;    width: 100%;}
+#idMainWide .selectKit ul.twoKits li div{position:relative;padding-top:11px; padding-left: 6px;}
+#idMainWide .selectKit ul.twoKits li div a{   background: url("../images/wen/gr-arrow.gif") no-repeat scroll right 2px transparent;    bottom: 11px;    color: #7C8F24;    font: bold 14px arial;    left: 28px;    padding-right: 12px;    position: absolute;   text-decoration: none;    text-transform: uppercase;}
+#idMainWide .selectKit ul.twoKits li .tab2image a{  left: 36px;}
+
+/*------------------------------------------------
+			START:Account pages 
+--------------------------------------------------*/
+.accountContainer{margin:0 auto; padding:0;width:926px;}
+.accountContainer label{font-size:12px;padding: 3px 0 2px; }
+.accountContainer .orderHistoryContainer .shipmentAddress label{ float:none; }
+.accountContainer .btnWraper{float:left;margin:0 0 10px;width:100%;}
+.accountContainer .redMessage{color:red;}
+.accountContainer .messageContainer{margin:0;padding: 30px 0 0; float:left;}
+.accountContainer .formfield #accountnumber1, .accountContainer .formfield #accountnumber2, .accountContainer .formfield #accountnumber3,.accountContainer .formfield #password,.accountContainer .formfield .ZipCode{background-color: #D4D0C8;}
+/* secondary tabs */
+.secondarynavtap{margin-top:38px;width: 100%;float: left;position: relative;background: url(../images/topnav/subnavtop-border.png) center bottom no-repeat;padding: 0 0 3px; font:normal 11px arial;}
+.secondarynavtap ul {padding:0px; margin:0 auto 0 174px;width: 925px;margin: 0 auto;position: relative;}
+.secondarynavtap li {float: left;background: url(../images/topnav/inactive_bg.png) right top repeat;border:1px solid #bababa;border-bottom:none; margin-right:5px;}
+.secondarynavtap li.active, .secondarynavtap li.ui-state-active{background: url(../images/topnav/activetab_bg.png) left top repeat;}
+.secondarynavtap ul li.active a span {color: #252525;float:left;}
+.secondarynavtap ul li.accountProfileTab a span{float:left; padding: 7px 23px;}
+.secondarynavtap ul li.orderStatusTab a span { padding: 7px 5px 7px 7px;float:left;}
+.secondarynavtap ul li a span{color: #707070;} 
+/* top tabs */
+#ptAccount .profiletab {font:normal 11px Arial,sans-serif;clear:both; height: 30px; line-height: 15px;  margin: 0 auto; width: 926px;}
+#ptAccount .profiletab ul li.first {padding-left: 4px;}
+#ptAccount .profiletab ul li.active a{color: #4E4D4B;border:none;}
+#ptAccount .profiletab ul li {display: inline-block; float: left; min-width: 91px; padding-top: 6px;}
+#ptAccount .profiletab ul li a {color: #95B400;border-bottom: 1px solid #95B400;float:left;margin: 0 10px;text-decoration: none;}
+#ptAccount .profiletab ul li.active span {color: #4E4D4B !important;}
+#ptAccount .profiletab ul li span {color: #C8B680;padding: 0 6px;}
+
+/* fields formating */
+.accountContainer .saveChangesBtn span{float:left; padding: 0 13px 0 12px;}
+.accountContainer .cancelBtn{width:99px;}
+.accountContainer .cancelBtn span,.accountContainer .changeBtn span,.accountContainer .editlink span,.accountContainer .deletelink span, .accountContainer .addAddressBtn{
+	font:bold 14px Arial, Helvetica, sans-serif;
+}
+.accountContainer .cancelBtn span{float:left;padding: 8px 22px;}
+.accountContainer .changeBtn span{float:left;padding-left:19px;}
+.accountContainer .grayButton.changeBtn span{float:left;padding:7px 0 7px 19px;}
+.accountContainer .editlink span{float:left;float: left;padding: 8px 13px 8px 32px;}
+.accountContainer .deletelink span{float: left;padding: 8px 19px 8px 23px;}
+.accountContainer .addAddressBtn{float:left; padding: 0 13px 0 15px;}
+.accountContainer .signInBtn{float:left;padding: 0px 13px 0 22px;}
+.accountContainer #accountnumber1 { width: 25px;}
+.accountContainer #accountnumber2 {  width: 28px;}
+.accountContainer .firstName,.accountContainer .lastName{float:left;margin:0;padding:0; width:150px;} 
+.accountContainer .password{float:left; margin-right:10px;}
+.accountContainer .remember input,.accountContainer .remember label{float:left;margin:3px 0 0 0;width:auto;}
+.accountContainer .remember label{margin:0 0 0 5px;}
+.accountContainer .requiredcaption{float:left;margin: 5px 0 18px;}
+.accountContainer button{margin:0 10px 0 0;padding:0;width:150px}
+.accountContainer .cancel,.accountContainer button{cursor:pointer;color:#FFF;float:left;font:bold 14px Arial, Helvetica, sans-serif;}
+.accountContainer .cancel{text-decoration:none; width:100px;}
+#paymentinfoerrors .errormessage{float: left; width: 50%;}
+/* Account Information */
+.accountContainer{font:normal 12px Arial,sans-serif; margin:0 auto; padding:0; overflow:visible;}
+.accountContainer .formTitle{color:#252525;float:left;font:normal 40px "CenturyGothic, AppleGothic, sans-serif"; margin:20px 0 0;padding:0;width:100%;text-transform: uppercase;}
+.accountContainer .accountForm{float:left;margin:0;padding:0;width:100%;}
+#ptAccount .accountContainer .resetPwdContainer{min-height: 425px;}
+.accountContainer .regRow{float:left; margin:0 0 15px;padding:0; width:100%}
+.accountContainer fieldset{float:left;}
+.accountContainer .nameContainer{ margin:0 0 12px;}
+.accountContainer .accountInfo .phoneContainer{font-size:12px;margin-bottom: 8px;}
+.accountContainer .accountInfo .emailAddress{margin-bottom:11px;}
+.accountContainer .accountInfo .changePassword{margin-top: 5px;float: left;}
+.accountContainer .accountInfo .password{margin:3px 6px 0 0;}
+.accountContainer .accountInfo .zip{margin-bottom: 8px;}
+.accountContainer .accountInfo .remember{margin-bottom:22px;} 
+.accountContainer .accountForm .phone .small,.accountContainer .accountInfo .account .small{margin-right:5px; width:25px;}
+.accountContainer .accountForm #phone2,.accountContainer .accountForm #accountnumber3{margin-right:4px;}
+.accountContainer .accountForm .phone .numberbox{width:49px;}
+.accountContainer .accountInfo .accountContainer{margin-bottom: 10px;}
+.accountContainer .accountInfo .account{margin-top:3px;}
+.accountContainer .accountInfo #accountnumber2{margin-right:4px;}
+.accountContainer .accountInfo .pwdContainer{margin-bottom:14px;}
+.accountContainer .aButton{font-size:14px;font-weight:bold;text-transform: uppercase;}
+.accountContainer .accountInfo fieldset{float:left;margin-top:5px;}
+.accountContainer input[type='text'],.accountContainer input[type='password']{height:15px; padding:0; margin:0}
+.accountContainer .mail,.accountContainer .textinputpw{width:272px;}
+.accountContainer .changePassword,.accountContainer #PasswordReset{color:#95b400; font-size:11px;}
+.accountContainer .grayOut{background-color:#D4D0C8;}
+/* START: Address Book Page*/
+.accountContainer .addNewAddress{float: left;margin: 9px 0 10px;width: 100%;}
+.accountContainer .addNewAddress .aButton{width:190px;}
+.accountContainer .addNewAddress .aButton span{background-position:right 10px;float:left;padding:0px 0px 0 22px;}
+.accountContainer .addNewAddress .topLabel{margin: 7px 0 20px;}
+.accountContainer .addressList{float:left;margin:0 auto; padding:0; width:100%;}
+.accountContainer .addressList h4{font-weight:bold; font-size:14px; margin: 0 0 10px;}
+.accountContainer .formfields{margin:0; padding:0;} 
+.accountContainer .accountaddressInner{min-height:207px;}
+.accountContainer .topHeading{border-bottom:1px solid #4a4947; font-size:14px;font-weight:bold;color:#4e4d4b; float:left;padding-bottom: 2px; width:100%;}
+.accountContainer .topLabel{margin: 8px 0 20px;padding:0;}
+.accountContainer .addressList .miniaddress{float:left;margin:8px 0 15px 0;line-height: 20px;min-height: 120px;width:100%;}
+.accountContainer .addressList .miniaddress .name{font-weight:bold;}
+.accountContainer .addressList .actions .aButton{width: 98px;}
+.accountContainer .actions{float:left;margin:0; padding:0 0 10px 0;width:100%}
+.accountContainer .addressList .default {float: left;margin:0 10px 20px 0;}
+.accountContainer .accountoverview .whiteBg,.accountContainer .addressList .whiteBg {border: 3px solid #ebebeb; padding: 20px;position: relative;float:left;}
+.accountContainer .addressBookCont .addressList .whiteBg{padding: 16px 18px 5px 18px;width: 406px;}
+.accountContainer .youSaveAccount{float:left;margin-top:17px;}
+.accountContainer .addressBookCont .addressList .youSaveAccount h4{margin: 0 0 9px;}
+.accountContainer .addressBookCont .addressList .youSaveAccount .whiteBg{padding-top: 5px;}
+.accountContainer .youSaveAccount .accountaddressInner{min-height:190px;}
+.accountContainer .accountoverview .widthwhiteBg{width: 400px;}
+.accountContainer .InfoTitle{font-weight:bold;}
+.accountContainer .addressList .actions .deletelink{margin-left:10px;padding: 0px 18px 0 0px; width:82px;} 
+.accountContainer .textInfo,.accountContainer .InfoTitle{font-size:14px;}
+.accountContainer .addAddress .address1{margin-bottom: 12px;}
+.addAddress .addressContainer,.accountContainer .addAddress .address2{margin-bottom: 9px;}
+.accountContainer .addAddress .nameContainer{margin-top:4px;}
+.addAddress .addressContainer .city{width:145px;} 
+.addAddress .addressContainer .state{margin-left:0px;width:55px;}
+.addAddress .addressContainer .state .selectbox{height:19px;} 
+.addAddress .addressContainer .city input, .addAddress .nameContainer input,.addAddress  .country input {width:120px;}
+.accountContainer .addAddress .phoneContainer{margin-bottom:8px;}
+.accountContainer .addAddress .actions{margin-top:25px; margin-bottom:7px;}
+.accountContainer .addAddress .actions button{width:142px;}
+.accountContainer .addAddress .actions .editFormButton{width:150px;}
+.accountContainer .addAddress #addAddressMessage{float:left;margin:4px 0 1px;}
+.accountContainer .addAddress #addAddressMessage h2{font-size:18px;}
+/*Rounded Corner */
+.accountContainer .top-l-corner{background:url(../images/white-roundbg.jpg) no-repeat;  height: 10px;  left: -4px; position: absolute; top:-4px;width:10px; }
+.accountContainer .top-r-corner{background:url(../images/white-roundbg-right.jpg) no-repeat; height: 10px;  right: -3px; position: absolute; top:-3px;width:10px;}
+.accountContainer .bot-l-corner{background:url(../images/bot-left-bg.jpg) no-repeat; position:absolute; bottom:-3px; left:-3px;height: 10px;width:10px;}
+.accountContainer .bot-r-corner{background:url(../images/bot-right-bg.jpg) no-repeat; position:absolute; bottom:-3px; right:-3px;height: 10px;width:10px}
+/* End Address Book Page*/
+/*START: Account Login page */
+.accountContainer .accountLogin{float:left;margin: 12px 0 0 0; padding:0; width:700px;}
+.accountContainer .accountLogin .rememberme label{padding: 2px;}
+.accountContainer .loginCustomers label{padding: 3px 0 4px;}
+.accountContainer .createAccount{border-left:1px solid #d6d6d6;min-height:220px;padding:0 35px 0 48px;}
+.accountContainer .createAccount h3{font-weight:bold;}
+.accountContainer .accountLogin h3{margin-bottom:10px;}
+.accountContainer .returningcustomers h3,.accountContainer .formContainer h3{font-size:14px;}
+.accountContainer .loginCustomers,.accountContainer .loginCreate{float:left;margin-top:8px;width:345px;}
+.accountContainer .loginCustomers .username{margin:10px 0 7px 0;}
+.accountContainer .loginCustomers .password{margin-bottom:7px;}
+.accountContainer .loginCustomers h3{font-size:14px;}
+.accountContainer .requiredtexttext{float:left;}
+.accountContainer .loginCustomers .username input,.accountContainer .loginCustomers .password input{height: 18px;width: 273px;}
+.accountContainer .checkbox label{float:right;margin-right:5px;width:auto;}
+.accountContainer .checkbox{float: left;}
+.accountContainer .rightcoloum {float: left; margin-top: 70px;}
+.accountContainer .createaccountbutton button{text-transform: uppercase;width:225px; margin-top:20px;}
+.accountContainer .brownButton{text-transform: uppercase;padding:7px 0;}
+.accountContainer .rememberme .checkinput{float:left;margin-right:3px;}
+.accountContainer .rememberme label{padding:0;}
+.accountContainer .rememberme .checkbox{margin:0;padding:0;}
+.accountContainer .accountLogin .actions{padding-top:6px;}
+.accountContainer .accountLogin .actions button{font:bold 14px Arial, Helvetica, sans-serif;font-size:14px;  padding:7px 0;color:#fff; font-weight:bold;text-transform: uppercase;width:98px;}
+.accountContainer .accountLogin .forgotpassword {margin-top: 13px;}
+.accountContainer .accountLogin .requiredtexttext{padding: 7px 0 0 0;}
+.accountContainer .accountLogin .onlineAccTitle{font-size:14px;margin-bottom:25px;font-weight:normal;}
+.accountContainer .accountLogin .createaccountbutton button{float:left;margin-bottom:10px;padding:7px 0;width: 190px;font:bold 12px Arial, Helvetica, sans-serif;color:#fff; font-weight:bold;text-transform: uppercase;}
+/*START: Account Forgot password page */
+.accountContainer .forgotPwdForm{float:left;margin: 7px 50px 0 2px; padding:0;width:347px;}
+.accountContainer .forgotPwdForm .formContainer p{margin: 25px 0 22px;}
+.accountContainer .forgotPwdForm .passwordemail{margin: 0 0 19px;}
+.accountContainer .formContainer{border-right:1px solid #d6d6d6;min-height:300px;padding-right:50px;}
+.accountContainer .recaptchatable #recaptcha_response_field {bottom: auto !important;font-size: 10pt; margin: 0 !important; padding: 0 !important;position: relative !important; width: 145px !important;}
+.accountContainer .forgotPwdForm .actions{padding: 7px 0 10px 0;}
+.accountContainer .forgotPwdForm .actions button{width:160px;}
+.accountContainer .forgotPwdForm .actions{font:bold 14px Arial, Helvetica, sans-serif;float:left; padding: 0 13px 0 0px;}
+.accountContainer .forgotPwdForm .requiredtexttext{margin-top: 12px;}
+.forgotPwdContainer .rightcoloum{margin-top: 12px;}
+/*START: Reset password */
+.accountContainer .passwordResetConfirmation{margin:0; padding:0;min-height:550px;}
+.accountContainer .passwordResetConfirmation h3{font-size:14; font-weight:bold;}
+.accountContainer .passwordResetConfirmation p{margin-top:30px;}
+.accountContainer .resetPwdContainer fieldset{margin-top: 6px;}
+.accountContainer .resetPwdContainer .oldpassword,.accountContainer .resetPwdContainer .newpassword{margin-bottom: 12px;}
+.accountContainer .resetPwdContainer .confirmnewpassword{margin-bottom: 8px;}
+.accountContainer .resetPwdContainer .actions{float: left;margin:5px 0 12px;}
+.accountContainer .passwordResetConfirmation{float:left;width:100%;}
+.accountContainer .passwordResetConfirmation .formTitle{margin-bottom: 8px;}
+.accountContainer .passwordResetConfirmation p{margin-top: 23px;}
+/*START: New Address */
+.accountContainer .address1 input,.accountContainer .address2 input{width: 270px;font-size: 11px;}
+.addressContainer .city {float: left;width: 122px;}
+.addressContainer .state {float: left;margin-left: 30px;width: 46px;}
+.addressContainer .zipfield {float: left;margin-left: 14px;width: 64px;}
+.addressContainer .zipfield input {width: 57px;}
+/* change Password */
+.addressContainer .passwordreset{float:left;padding:0;margin:0;}
+.accountContainer .passwordHelp{font-size:11px;width:305px;}
+/* Payment Info. */
+.accountContainer .creditcard .deletelink{margin-left:10px;}
+.accountContainer .expirationdate .month, .accountContainer .expirationdate .year {float: left; width: 130px;}
+.accountContainer .expirationdate .year{margin-left:15px;}
+.accountContainer .expirationdate select{width:130px;}
+.accountContainer .cardNumber input{width:280px;}
+/* change payment method */
+.accountContainer .newLableMsg h3{font-size:18px;}
+.accountContainer .paymentMethod .btnWraper{margin: 10px 0 28px 2px;}
+.accountContainer .paymentMethod .btnWraper .addcreditcardChanged{width: 218px;}
+.accountContainer .paymentMethod .btnWraper .addcreditcardChanged span{font:bold 12px Arial, Helvetica, sans-serif;float: left;padding: 0px 13px 0 28px;}
+.accountContainer .paymentMethod .whiteBg{padding: 16px 20px;min-height: 135px;width:404px;}
+.accountContainer .paymentMethod .youSaveAccount .whiteBg{width:425px;padding:7px 0 0 18px;}
+.accountContainer .paymentMethod .whiteBg .minicreditcard{float:left;margin:8px 0; width:100%;}
+.accountContainer .paymentMethod .whiteBg .minicreditcard .number{padding: 5px 0;}
+.accountContainer .newPaymeMethod .creditcardlist select{width: 277px;}
+.accountContainer .newPaymeMethod .creditcardlist{margin-bottom:20px;}
+.accountContainer .newPaymeMethod .topLabel{margin: 8px 0 12px;}
+.accountContainer .newPaymeMethod .newLableMsg{margin: 5px 0 2px;}
+.accountContainer .paymentMethod .actions{padding: 10px 0 0px 0;}
+.accountContainer .newPaymeMethod .actions{padding: 0 0 18px 0;}
+.accountContainer .newPaymeMethod .cardtype{margin: 12px 0 9px;}
+.accountContainer .newPaymeMethod .cardNumber{margin-bottom: 10px;}
+.accountContainer .newPaymeMethod .expirationdate .month{width: 136px;}
+.accountContainer .newPaymeMethod .expirationdate{margin-bottom:17px;}
+.accountContainer .newPaymeMethod span.errormessage, .accountContainer .newPaymeMethod div.errormessage{float:left;width:100%;}
+/* Order status & history page */
+.accountContainer .orderHistoryContainer{float: left;margin:10px 0 0 0;padding: 0;width: 100%;}
+.accountContainer .orders,.accountContainer .orderDetails{float:left;margin:5px 0 0 0;padding:0;width:906px;}
+.accountContainer .orders .orderDetails{border:1px solid #c0c0c0;margin-bottom:10px;}
+.accountContainer .orders h2 {font: 14px Arial, Helvetica, sans-serif bold;font-weight: bold;color: #636361;float: left;}
+.accountContainer .shipmentAddress{border:1px solid c0c0c0;float:left; margin:0; padding:0; width:100%;}
+.accountContainer .shipmentTitle {margin: 13px 0 10px 0px;padding: 4px 19px 4px 9px;}
+.accountContainer .orderHistoryContainer .shipmentTitle {margin: 13px 0 30px 0px;padding: 3px 19px 0px 20px;}
+.accountContainer .orderTitle{font:bold 14px Arial, Helvetica, sans-serif; color:#FFF; padding:0 20px;position:relative;background:url(../images/heading_bg.png) repeat;height: 25px;line-height: 25px;}
+.accountContainer .orderTitle .orderid {float: left;}
+.accountContainer .rightLinks{float: right;font-size: 12px;}
+.accountContainer .rightLinks .close{display:none;}
+.accountContainer .viewDetailsCont a,.accountContainer .closeCont a, .accountContainer .rightLinks .close a{color:#FFF;}
+.accountContainer .leftPanel{float: left;width: 424px;}
+.accountContainer .leftPanelOrder{float:left;width:247px;}
+.accountContainer .rightPanel{width: 537px;margin-left: 0px;float: right;}
+.accountContainer .orderHistoryContainer .leftPanel{padding-bottom:15px;float: left;width: 445px;}
+.accountContainer .orderHistoryContainer .rightPanel{padding-bottom:6px;margin-left: 0px;float: right;width: 460px;}
+.accountContainer .midPanel{float: left;}
+.accountContainer .innerLeft {float:left;padding: 0px 9px;}
+.accountContainer .orderHistoryContainer .innerLeft {float:left;padding: 0px 0 0 20px;}
+.accountContainer .orderHistoryContainer .innerLeft .kitName{text-align: justify;}
+.accountContainer .orderHistoryContainer .regRow{margin: 0 0 3px;}
+.accountContainer .innerLeft .orderDate{font-size:18px; font-weight:bold;}
+.accountContainer  .itemNumber{float:left;margin:0; padding:0;}
+.accountContainer .innerLeft label {padding:0 5px 0 0;font-weight: normal; font-size:12px; width:auto;}
+.accountContainer .prodDesc{float:left;width: 286px;}
+.accountContainer .reOrder{float:right;margin-left: 30px;margin-top: 2px;}
+.accountContainer .reOrder .reOrdertn .caption{float: left;padding: 0 13px 0 32px;}
+.accountContainer .ordersub {float: left;  padding-top: 21px;}
+.accountContainer .panelWraper{padding:20px 0 10px 2px;overflow: visible; float:left;width:100%;}
+.accountContainer .orderHistoryContainer .pName{float: left;    font-size: 18px;    font-weight: bold;width:100%;}
+.accountContainer .prodDesc{float:left;width: 286px;}
+.accountContainer .quantity{display:none;}
+.accountContainer .orderHistory{float:left;margin:0;padding:0;}
+.accountContainer .linkID{display:none;}
+.accountContainer .vieworderdetails{float:right;margin:20px 0;}
+.accountContainer .vieworderdetails .aButton{margin-left:20px; width:190px;}
+.accountContainer .vieworderdetails .aButton span{background-position:right 10px;float:left; font:bold 12px Arial, Helvetica, sans-serif bold;padding: 0px 13px 0 30px; }
+.accountContainer .orderMoreDetails{padding:0 9px 0 20px; margin:0;}
+.accountContainer .orderMoreDetails .name,.accountContainer .orderMoreDetails .billingInfo .name{font-size:14px;font-weight:bold;width:100%;}
+.accountContainer .orderMoreDetails .addressTitle,.accountContainer .orderMoreDetails .addressTitle{font-size:12px; font-weight:bold; margin:5px 0;}
+.accountContainer .orderMoreDetails .priceInfo,.accountContainer .orderMoreDetails .taxInfo{float:left;width:100%;}
+.accountContainer .orderMoreDetails .priceInfo label,.accountContainer .orderMoreDetails .taxInfo label,.accountContainer .orderMoreDetails .priceInfo span,.accountContainer .orderMoreDetails .taxInfo span{font-size:14px;}
+.accountContainer .orderMoreDetails .priceInfo,.accountContainer .orderMoreDetails .taxInfo,.accountContainer .orderMoreDetails shippingInfo,.accountContainer .orderMoreDetails .billingInfo{float:left;margin:20px 0;}
+.accountContainer .orderMoreDetails .priceInfo label,.accountContainer .orderMoreDetails .taxInfo label{float:left;width:50%;}
+.accountContainer .orderMoreDetails .priceInfo span,.accountContainer .orderMoreDetails .taxInfo span{float:right;padding: 3px 20px 3px 0;text-align:right;width:45%;}
+.accountContainer .orderMoreDetails .taxInfo .orderTotal{font-weight:bold;}
+.accountContainer .orderHistoryContainer .orders .topLabel{float:left; width:100%;}
+.accountContainer .orderHistoryContainer .orders .textInfo{font-size: 12px;margin-top: 23px;width:auto;}
+
+/* Registration Form */
+.accountContainer .registrationForm{float:left; margin:0 auto;padding:12px 0 0 0; width:690px;}
+.accountContainer .registrationRight{float:right;margin:100px 0 0;}
+.accountContainer .registrationForm .accountNumber{margin:2px 0 0 0;padding:0;}
+.accountContainer .registrationForm .nameContainer{margin: 0 0 8px;}
+.accountContainer .registrationForm .requiredCaption{float:left;margin:7px 0 12px;}
+.accountContainer .registrationForm .requiredText{margin:24px 0 22px;}
+.accountContainer .registrationForm .requiredCaption li{line-height:18px;}
+.accountContainer .registrationForm .billing{float:left;margin-right: 53px; width:98px;}
+.accountContainer .registrationForm .billing .errormessage{float:left;}
+.accountContainer .registrationForm .billing .ZipCode{float:left;width:58px;height:18px;}
+.accountContainer .registrationForm .dayPhone{float:left; margin-top:4px;width:130px;}
+.accountContainer .registrationForm .zipphone{margin-bottom:5px;}
+.accountContainer .registrationForm .emailAddress{margin-bottom:12px;}
+.accountContainer .registrationForm .verifyEmail{margin-bottom:10px;}
+.accountContainer .registrationForm .passwordContainer{margin-bottom:6px;}
+.accountContainer .registrationForm input.small,.accountContainer .registrationForm input.number{margin-right:3px;width:28px;/*border-bottom: 1px solid #C3C3C3;border-left: 1px solid #C3C3C3;border-right: 1px solid #C3C3C3;height:18px;*/color: #666666;}
+.accountContainer .registrationForm .accountNumber #accountnumber1{margin-right:6px;}
+.accountContainer .registrationForm .billing .ZipCode,.accountContainer .registrationForm .accountNumber #accountnumber1,.accountContainer .registrationForm .accountNumber #accountnumber3{background-color:transparent;}
+.accountContainer .registrationForm input.numberbox{width:48px}
+.accountContainer .registrationForm .accNumberBox{height:18px; width:98px}
+.accountContainer .registrationForm .formfields{margin-top:15px;}
+.accountContainer .registrationForm .nameContainer input{width:120px;}
+.accountContainer .registrationForm .accountNumber #accountNoSpan{float:left;}
+.accountContainer .registrationForm .labelHelp{float:right;font-size:11px;margin-right:153px;width:345px;}
+.accountContainer .registrationForm .tooltip{color:#95b400;cursor:pointer; text-decoration:underline;}
+.accountContainer .registrationForm .password,.accountContainer .registrationForm .rePassword{float:left;width:140px;}
+.accountContainer .registrationForm .textinputpw{width:126px;}
+.accountContainer .registrationForm .createAccountBtn{font:bold 14px Arial, Helvetica, sans-serif;padding:7px 0;width:190px;}
+.accountContainer .registrationForm .createAccountBtn .caption{ background-position:right 2px; float:left;font-size: 11px; padding: 0 13px 0 20px;}
+.accountContainer .registrationForm .labelpassword{width:280px;}
+.accountContainer .registrationForm .labelpassword,.accountContainer .registrationForm .privacypolicy p,.accountContainer .registrationForm .requiredCaption li{font-size:11px;}
+.accountContainer .registrationForm #termsConditions,.accountContainer .registrationForm #privacyPolicy{color: #95B400;cursor:pointer;text-decoration:underline;}
+.accountContainer .registrationForm .passerror{float:left;margin:0;padding:0;width:100%;}
+/*START: Privacy Policy */
+#ui-dialog-title-privacypolicy,#ui-dialog-title-security{padding: 0.1em 0 0.2em 2em;}
+#privacypolicy h3{color: #313A40;font-family: Arial,Helvetica,sans-serif;font-size: 11px;font-weight: bold;}
+#privacypolicy .contentSection a, #security .contentSectionPrivacy a{color: #313A40;}
+#terms h3{ color: #313A40;padding-top: 5px; font-size: 11px;font-weight: bold;  font-family: Arial,Helvetica,sans-serif;}
+#terms p,#privacypolicy p{color: #313A40; font: 11px/13px arial; padding: 7px 0;}
+#ui-dialog-title-terms{padding: 0.1em 0 0.2em 2em;}
+/* START: Your account page */
+.accountContainer .accountOverView .formTitle{margin-bottom:13px;}
+.accountContainer .accountOverView .panelWraper{padding: 20px 0px;margin-bottom:10px !important;width:904px;}
+.accountContainer .accountOverView .whiteBg .title{padding: 0 0 0 22px;}
+.accountContainer .accountOverView .innerPanel .leftPanel, .accountContainer .accountOverView .innerPanel .rightPanel{width: 425px;}
+.accountContainer .accountOverView,.accountContainer .accountOverView .orderWraper{float: left;margin: 0;padding: 0;width: 906px;}
+.accountContainer .accountOverView .innerPanel.panelBottom .leftPanel, .accountContainer .accountOverView .innerPanel.panelBottom .rightPanel{min-height:85px;}
+.accountContainer .accountOverView .orderWraper{margin-bottom:20px;}
+.accountContainer .accountOverView .panelBottom{margin-top:20px;}
+.accountContainer .accountOverView .orderWraper .customizeKit{background-position: right 0px;margin:20px 0;font-size:12px;float:left;font-weight:bold; padding: 8px 12px 8px 20px;width: 132px;}
+.accountContainer .whiteBg .title{background: url("../images/heading_bg.png") repeat scroll 0 0 transparent;color: #FFFFFF;font: bold 14px/25px Arial,Helvetica,sans-serif; height: 25px;padding: 0 10px; position: relative;}
+.accountContainer .accountOverView .innerTitle{background-color:#efefef;padding:5px 0 5px 10px;font-size:14px;font-weight:bold;}
+.accountContainer .accountOverView .whiteBg{float:left;margin:0;padding:0;}
+.accountContainer .accountOverView .innerPanel{padding:0 10px;float:left;width:98%;}
+.accountContainer .accountOverView .innerPanel .leftPanel,.accountContainer .accountOverView .innerPanel .rightPanel{position:relative;min-height:200px; padding-bottom:50px;width:428px;}
+.accountContainer .accountOverView .innerPanel .innerBox{float:left;padding:2px 0 0 10px;}
+.accountContainer .accountOverView .innerPanel .innerBox .minicreditcard div{padding:6px 0 0;}
+.accountContainer .accountOverView .innerPanel .rightPanel .innerBox{padding-top:10px;}
+.accountContainer .accountOverView .innerPanel .innerBox .row{padding:6px 0 0 0;}
+.accountContainer .accountOverView .innerPanel .innerBox .row .paypalImage{margin-top:20px;padding:0;}
+.accountContainer .accountOverView .innerPanel .password,.accountContainer .accountOverView .innerPanel .changePwd{float:left; margin:0; padding:0;}
+.accountContainer .accountOverView .innerPanel .changePwd a{color:#a3be22;margin-left:10px;}
+.accountContainer .accountOverView .panelWraper,.accountContainer .accountOverView .orderWraper .leftPanel,.accountContainer .accountOverView .orderWraper .rightPanel{border:1px solid #c0c0c0;margin-bottom:5px;}
+.accountContainer .accountOverView .orderWraper .leftPanel,.accountContainer .accountOverView .orderWraper .rightPanel{float:left;margin:0;padding:0;min-height:170px;width:450px;}
+.accountContainer .accountOverView .orderWraper .rightPanel{float:right;width:446px;}
+.accountContainer .accountOverView .orderWraper .innerBox{padding: 18px 10px 0 22px;}
+.accountContainer .accountOverView .orderWraper .innerBox .no_orders{letter-spacing: 0.1px;}
+.accountContainer .accountOverView .aButton{font-size: 14px;font-weight: bold;text-transform: uppercase;bottom: 0;left: 11px;width:98px;}
+.accountContainer .accountOverView .accountProfile .aButton{position: absolute;}
+
+/* START: about You */
+.aboutUs .questionLabel{font-size:12px;}
+.aboutUs .genderWrapper{margin:0;padding-bottom:2px;}
+.aboutUs .regRow{margin: 0 0 8px;}
+.aboutUs .radioFields{margin: 4px 0 0 0px;float: left;width:100%;}
+.aboutUs .radioFields label{padding:0; font-size:11px;}
+.aboutUs .radioFields label input{position:relative; top:2px;}
+.aboutUs .age input{height:16px;width:57px;}
+.aboutUs .gender select{height:20px;min-width:122px;}
+.aboutUs .month label,.aboutUs .year label{float:left;width:auto;}
+.aboutUs .dateWrapper{padding:0 0 2px;;}
+.aboutUs .dateWrapper span.labeltext{padding-right:5px;}
+.aboutUs .dateWrapper .month{padding-right: 10px;}
+.aboutUs .quizfields{margin-bottom:12px;}
+.aboutUs .formactions{float: left;margin: 25px 0 20px;}
+.aboutUs .formactions button, .aboutUs .formactions .aButton span{font:bold 14px Arial, Helvetica, sans-serif;}
+.aboutUs .formactions .aButton span{padding: 7px 22px;}
+.aboutUs .tooltip .tooltip-body{border:1px solid red !important;min-height: 25px; padding: 7px 10px;width: 200px;}
+.shadow{
+    -moz-box-shadow: 3px 3px 4px #b6b6b6;
+    -webkit-box-shadow: 3px 3px 4px #b6b6b6;
+    box-shadow: 3px 3px 4px #b6b6b6; /* For IE 8 */
+    -ms-filter: "progid:DXImageTransform.Microsoft.Shadow(Strength=4, Direction=135, Color='#b6b6b6')"; /* For IE 5.5 - 7 */
+    filter: progid:DXImageTransform.Microsoft.Shadow(Strength = 4, Direction = 135, Color = '#b6b6b6');
+}
+/*sas page*/
+.order{ background:#fff;}
+/*home page css starts here*/
+.core{ background:#fff;}
+.core .homeBannerNewWraper .homeBannerNew{width:1158px; margin:0 auto;position: relative;}
+.core .homeBannerNewWraper .homeBannerNew .bannerBtn{ display: block;    position: absolute;    right: 383px;    top: 103px;}
+.core .homeSmBanners,.travel .homeSmBanners {margin: 18px auto;    width: 925px;}
+.core .homeSmBanners .SmBanner1,.travel .homeSmBanners .SmBanner1{border-right: 1px solid #CBCBCB;    float: left;    padding: 13px 15px 10px 0px;    width: 289px;}
+.core .homeSmBanners .SmBanner2,.travel .homeSmBanners .SmBanner2{border-right: 1px solid #CBCBCB;    float: left;    padding: 13px 15px 10px 15px;    width: 289px;}
+.core .homeSmBanners .SmBanner3,.travel .homeSmBanners .SmBanner3{float: left;    padding: 13px 0px 10px 15px;    width: 285px;}
+.core .homeSmBanners h3,.travel .homeSmBanners h3{color: #86120D;    font-size: 20px ;    padding: 15px 0 10px;   text-transform: uppercase;}
+.core .homeSmBanners p,.travel .homeSmBanners p{color: #757575;    font: 12px/14px arial;}
+.core .homeSmBanners a,.travel .homeSmBanners a{ color: #7C8F24;float: left;background: url(../images/wen/arrow-gr.jpg) right 12px no-repeat;    display: block;    font: bold 14px arial;    padding-top: 10px;    text-decoration: none;    text-transform: uppercase;padding-right: 15px;}
+.core .homeSmBanners a:hover,.travel .homeSmBanners a:hover { text-decoration: underline;}
+#totalshippingprice{text-align: right; line-height: 16px; height: 16px; float: right; padding-left: 20px;}
+#shipTotal{display: inline;}
+#totalshippingprice.loading{background: url(../images/ajax-loader-small.gif) left center no-repeat;}
+#paymentinfoerrors{clear: left; width:200px;}
+#paymentinfoerrors .errormessage{float: left; width: 50%;}
+/*trywen home page css starts here*/
+.trywen { background:#fff;}
+.trywen .homeBannerNewWraper .homeBannerNew{width:1158px; margin:0 auto;position: relative;}
+.trywen .homeBannerNewWraper .homeBannerNew .bannerBtn{ display: block;    position: absolute;    right: 383px;    top: 103px;}
+.trywen .homeSmBanners {margin: 18px auto;    width: 925px;}
+.trywen .homeSmBanners .SmBanner1 {border-right: 1px solid #CBCBCB;    float: left;    padding: 13px 15px 10px 0px;    width: 289px;}
+.trywen .homeSmBanners .SmBanner2 {border-right: 1px solid #CBCBCB;    float: left;    padding: 13px 15px 10px 15px;    width: 289px;}
+.trywen .homeSmBanners .SmBanner3 {float: left;    padding: 13px 0px 10px 15px;    width: 285px;}
+.trywen .homeSmBanners h3 {color: #86120D;    font-size: 20px ;    padding: 15px 0 10px;   text-transform: uppercase;}
+.trywen .homeSmBanners p {color: #757575;    font: 12px/14px arial;}
+.trywen .homeSmBanners a { color: #7C8F24;float: left;background: url(../images/wen/arrow-gr.jpg) right 12px no-repeat;    display: block;    font: bold 14px arial;    padding-top: 10px;    text-decoration: none;    text-transform: uppercase;padding-right: 15px;}
+.trywen .homeSmBanners a:hover { text-decoration: underline;}
+
+
+/*sas page*/
+.order{ background:#fff;}
+/*home page css starts here*/
+.core{ background:#fff;}
+.core .homeBannerNewWraper .homeBannerNew{ background: url("../images/wen/homebanner-new.jpg") no-repeat scroll center top transparent;    display: block;    float: left;    height: 415px;    width: 100%; position:relative;}
+.core .core-homepage-banner .homeBannerNewWraper .homeBannerNew{min-width:925px;}
+.core .homeBannerNewWraper .homeBannerNew .bannerBtn{ display: block;    position: absolute;    right: 520px;    top: 103px;}
+.core .homeSmBanners{margin: 18px auto;    width: 925px;}
+.core .homeSmBanners .SmBanner1{border-right: 1px solid #CBCBCB;    float: left;    padding: 13px 15px 10px 0px;    width: 289px;}
+.core .homeSmBanners .SmBanner2{border-right: 1px solid #CBCBCB;    float: left;    padding: 13px 15px 10px 15px;    width: 289px;}
+.core .homeSmBanners .SmBanner3{float: left;    padding: 13px 0px 10px 15px;    width: 285px;}
+.core .homeSmBanners h3{color: #86120D;    font-size: 19px;    padding: 15px 0 10px;   text-transform: uppercase;}
+.core .homeSmBanners p{color: #757575;    font: 12px/14px arial;}
+.core .homeSmBanners a{ color: #7C8F24;float: left;background: url(../images/wen/arrow-gr.jpg) right 12px no-repeat;    display: block;    font: bold 14px arial;    padding-top: 10px;    text-decoration: none;    text-transform: uppercase;padding-right: 15px;}
+.core .homeSmBanners a:hover{ text-decoration: underline;}
+.selectedKit li .SelectSidePanel .DetailDescription .l-panel .text2{float: right;    min-height: 174px;    padding: 0 18px 0 0;    width: 197px;}
+.selectedKit li .SelectSidePanel .DetailDescription .l-panel .text2 .headingKit{color: #7C8F24;    font: bold 16px arial;    margin-bottom: 10px;}
+.selectedKit li .SelectSidePanel .DetailDescription .l-panel .text2 .headingKit span{ color: #717171;    font: italic bold 10px arial;    padding-left: 2px;}
+.selectedKit li .SelectSidePanel .DetailDescription .l-panel .text2 ul li{ color: #717171;    font: 12px/24px arial;}
+.selectedKit li .SelectSidePanel .DetailDescription .l-panel .text2 ul li a{text-decoration: none;color: #717171; background:url(../images/wen/KitContents_LeftArrow.gif) no-repeat left 5px; padding-left:10px;}
+.selectedKit li .SelectSidePanel .DetailDescription .l-panel .text2 ul li a:hover{color: #717171;text-decoration:underline;}
+.headerWraper{ background:#262626; float: left;min-width:925px;}
+.core .core-homepage-banner h1, .travel .travel-homepage-banner h1 {    text-indent: -9999px;}
+/*trywen home page css starts here*/
+.trywen .trywen-homepage-banner h1 {    text-indent: -9999px;}
+.trywen{ background:#fff;}
+.trywen .homeBannerNewWraper{background: url(../images/wen/home-bg2.jpg) left top repeat-x; clear: both;}
+.trywen .homeBannerNewWraper .homeBannerNew{ background: url("../images/wen/homebanner-new.jpg") no-repeat scroll center top transparent;    display: block;    float: left;    height: 415px;    width: 100%; position:relative;}
+.trywen .core-homepage-banner .homeBannerNewWraper .homeBannerNew{min-width:925px;}
+.trywen .homeBannerNewWraper .homeBannerNew .bannerBtn{ display: block;    position: absolute;    right: 520px;    top: 103px;}
+.trywen .homeSmBanners{margin: 18px auto;    width: 925px;}
+.trywen .homeSmBanners .SmBanner1{border-right: 1px solid #CBCBCB;    float: left;    padding: 13px 15px 10px 0px;    width: 289px;}
+.trywen .homeSmBanners .SmBanner2{border-right: 1px solid #CBCBCB;    float: left;    padding: 13px 15px 10px 15px;    width: 289px;}
+.trywen .homeSmBanners .SmBanner3{float: left;    padding: 13px 0px 10px 15px;    width: 285px;}
+.trywen .homeSmBanners h3{color: #86120D;    font-size: 19px;    padding: 15px 0 10px;   text-transform: uppercase;}
+.trywen .homeSmBanners p{color: #757575;    font: 12px/14px arial;}
+.trywen .homeSmBanners a{ color: #7C8F24;float: left;background: url(../images/wen/arrow-gr.jpg) right 12px no-repeat;    display: block;    font: bold 14px arial;    padding-top: 10px;    text-decoration: none;    text-transform: uppercase;padding-right: 15px;}
+.trywen .homeSmBanners a:hover{ text-decoration: underline;}
+/* START: Home page [Retention] */
+
+/* Banner */
+.pdpHomeBanner{float:left;margin:0;padding:0 0 18px 0;width: 100%;}
+.homeBanner{margin:0 auto; padding:0; height:441px;width:898px; position:relative;z-index:1;}
+.homeBanner .homeBannerTopText{top: 156px;left: 231px; position:absolute;font:normal 14px arial; width: 570px;}
+/*this section is hidden when generic frgrances banner is active - unhide when seasonal fragrances are active
+.homeBanner .buyOneButtons{margin:0;padding:0;left: 240px; bottom: 50px;position:absolute;}
+.homeBanner .buyOneButtons li,.homeBanner .buyTwoButtons li{float:left; margin:0; padding:0; list-style:none; margin-right:10px;}
+.homeBanner .buyTwoButtons{margin:0;padding:0;right: 104px; bottom: 50px;position:absolute;}
+.homeBanner .detailsButton,.homeBanner .addCart{font-size:14px;font-weight:bold;}
+.homeBanner .detailsButton{font-size:14px;font-weight:bold;width:98px;}
+.homeBanner .addCart{width:136px;}
+.homeBanner .aButton .caption{margin:9px 0px 0 15px;float: left;}
+.homeBanner .detailsButton span,.homeBanner .addCart span{margin: 8px 0 8px 20px;float: left; color:#FFF;}*/
+
+/* Products listing */
+.pdpContainer{float:left;margin:0;padding:0;width:100%;color: #222222;}
+#QuickViewDialog .pdpContainer,#QuickViewDialog{width: 806px!important;}
+.pdpContainer .categoryTitle{float:left;font-size:24px; margin:15px 16px 10px; color:#000;}
+.pdpContainer .productName{margin:25px 0 10px 0px;padding: 4px 0 0 8px;min-height:30px;text-align:left;width:171px;}
+.pdpContainer .productName a{color:#636363;font-size:12px;font-weight:bold;text-decoration:none;}
+.pdpContainer .stars-imgnew{border-bottom:1px dotted #524b70;margin:0 0 13px 0;padding:15px 0 5px;width:100%;}
+.pdpContainer .memberprice{margin-top:5px;color:#cc9d13;font-weight:bold;}
+.pdpContainer .productleft .memberprice{font-size:13px;}
+.pdpContainer .productleft .quanity{padding-top: 5px;}
+.pdpContainer .productsContainer{margin:0 auto; padding:0;width:910px;}
+.pdpContainer .productsDetails{background:#fef6df;margin:0;padding:23px 3px 0 15px;float:left;width:98%;}
+.pdpContainer .productsDetails .product{background:#FFF;float:left;min-height:371px;margin:26px 10px 20px 0;padding:0 10px 20px;width:190px;position:relative;-moz-border-radius:5px;-webkit-border-radius:5px;border-radius:5px;border-bottom:1px solid #c9c3b1;border-right:1px solid #c9c3b1;border-left:1px solid #c9c3b1;}
+.pdpContainer .productImage{margin:0;padding:0;width:186px;height:167px; position: relative;}
+.pdpContainer .stars-imgnew,.pdpContainer .memberprice,.pdpContainer .regularprice,.pdpContainer .buttonCont{text-align:center;width:186px;}
+.pdpContainer .addtocartbutton{font:bold 14px arial;font-size:14px;font-weight:bold;padding: 7px 0px;cursor:pointer;height:auto;width:135px;}
+.pdpContainer .quickviewbutton a { background: url("../images/quick-view.jpg") no-repeat scroll center center transparent;    display: block;    height: 29px;    width: 134px;}
+.pdpContainer .quickviewbutton{ width:80%; padding: 69px 8px 87px 25px; text-align:center;position: absolute;top:0px;-moz-opacity:50%;}
+.pdpContainer .productsContainer .overlay,.ptProductDetails .maywerecommend .overlay{position:absolute;right:-5px; top:-25px;}
+ .pdpContainer .buttonCont{margin-top: 17px;}
+/* Quick View*/
+.ptProductDetails {float: left;width: 100%;}
+.ptProductDetails .addtocartbar .addtocartbutton{margin:14px 0 0 1px;width:136px;}
+.ptProductDetails .productDetailCont {background: none repeat scroll 0 0 #FFFFFF;margin: 0 auto; padding: 40px 0 0; width: 910px;}
+.ptProductDetails .productDetailCont .productImage {margin:0;padding:0;float: left; height:auto;width: 412px;}
+.ptProductDetails .productDetails{float:right;width:472px;margin:0 0 0 22px;;padding:0}
+.ptProductDetails .productDetails .productTitle{padding-bottom:10px;}
+.pdpContainer .productleft {float: left;position: relative;width: 220px;overflow:hidden;padding-top:28px;}
+.pdpContainer .productTitle{font-size:17px;color:#6a3b26;float:left;font-weight:bold;width:330px;}
+.pdpContainer .productTitle a{text-decoration:none;}
+.ptProductDetails .productDetails .ptProductDetails #BVCustomerRatings{margin-top:20px;}
+.ptProductDetails #BVCustomerRatings{float:left;float:left;margin-top:10px;width:100%;}
+.ptProductDetails .productleft .memberprice,.ptProductDetails .productleft .regularprice{line-height:21px;text-align:left;}
+.ptProductDetails #pdpATCDivpdpMain .quanity{line-height:27px;font-size:12px; font-weight:bold;}
+.ptProductDetails .productDetailCont .memberprice{color:#cc9d13}
+.ptProductDetails .productDetailCont .productImage .overlay {position: absolute;right: -5px; top: -20px;}
+.ptProductDetails .productReviews{margin:0 auto;padding:0;width:930px;}
+.ptProductDetails .pdpContainer .stars-imgnew{margin:0 0 13px 7px;padding:15px 0 5px;width:181px;float:right;}
+#QuickViewDialog .productleft.landing{padding:0;}
+#QuickViewDialog .pdpContainer .productImage .overlay{ position: absolute;right: -5px;top: -20px;}
+/* PDP: Tabs */
+.ptProductDetails #producttab ul{padding:0;margin:0;float:left;width:auto;}
+.ptProductDetails #producttab ul li a{ padding: 7px 11px;float: left;text-decoration: none;}
+.ptProductDetails #producttab ul{padding:0;}
+.ptProductDetails #producttab{color: #4E4D4B;float: right;font-size: 11px;margin-right:2px;padding:20px 0 0;width: 244px;}
+.ptProductDetails #pdpTabsDiv {margin-top:100px;}
+.ptProductDetails #pdpQATab{padding:1em 0;}
+.ptProductDetails #producttab ul li{border:1px solid #b7b7b7 !important;float:left;margin:0;padding:0;position:relative;}
+.ptProductDetails #producttab ul li.ui-state-active{border-bottom-width:0 !important;}
+.ptProductDetails #producttab .productdescription {overflow-y: auto;width: 218px;float: right;height: 244px;padding: 15px 12px;color: #555;font-family: Arial,Geneva,sans-serif;font-size: 11px;margin:-2px 0 0 0;border: 1px solid #b7b7b7;}
+/* Recommendation */
+.ptProductDetails .maywerecommend{float:left;margin:0;padding:15px 0 0;width:100%;}
+.ptProductDetails .maywerecommend .jcarousel-scroll{float: right;width: 130px; overflow: hidden;}
+.ptProductDetails .maywerecommend .jcarousel-scroll #mycarousel-prev{float: left;margin-right: 5px;}
+.ptProductDetails .maywerecommend .jcarousel-scroll #count{float: left;margin-right: 5px;}
+.ptProductDetails .maywerecommend .jcarousel-scroll #mycarousel-next{float: left;}
+.ptProductDetails .maywerecommend #mycarousel{margin:0;padding:0;width:100%;}
+.ptProductDetails .maywerecommend #mycarousel li{float:left; width: 898px;}
+.ptProductDetails .jcarousel-list li,.ptProductDetails .jcarousel-item{margin:0;padding:0;height:auto;width:auto;}
+.jcarousel-scroll {background-color: #EFEFEF;float: right;font-size: 11px;margin-top: 9px;width: 127px;}
+.jcarousel-scroll #mycarousel-prev { background: url("../images/wen/arrow-left.jpg") no-repeat scroll right top transparent; float: left;height: 1px;padding: 14px 13px;text-indent: -9999px;width: 1px;}
+.jcarousel-scroll #mycarousel-next {background: url("../images/wen/arrow-right.jpg") no-repeat scroll right top transparent; float: right;height: 1px;padding: 14px 13px;text-indent: -9999px;width: 1px;}
+.jcarousel-scroll #count {float: left; padding: 7px 5px 7px 6px;}
+.ptProductDetails .jcarousel-list li{}
+/* Quick view pupup */
+.quickview .quickViewDialog-close{float:right;}
+.quickview .quickViewDialog-close .ui-icon-closethick{ background: url("../images/quick_close.png") no-repeat scroll 0 0 transparent; position: absolute;right: 0; top: 0;height:36px;width:36px;}
+.quickview .ui-dialog .ui-dialog-content { background-color: #FFFFFF; border: 0 none; font-family: arial; font-size: 11px; overflow: auto; padding: 0 25px;}
+#QuickViewDialog .pdpContainer .QuickViewQues {background-color: #EBEBEB; border-radius: 0 0 5px 5px; color: #4E4D4B;font-size: 10px;line-height: 23px;padding: 4px 4px 4px 7px;position: absolute;right: 58px;top: 0;width: 226px;}
+#QuickViewDialog .pdpContainer .QuickViewQues #inqC2C3ImgContainer{float: right}
+#QuickViewDialog .productDetailCont .longdiscription{float:left;margin: 22px 0 12px;padding:0;width:100%;}
+#QuickViewDialog .pdpContainer .productImage{float: left;margin: 48px 0 0 0;padding: 0;width: 412px;}
+#QuickViewDialog .aButton{width:143px;}
+#QuickViewDialog #BVCustomerRatings{float:left;margin:19px 0;width:100%;}
+#QuickViewDialog .aButton .caption{font-size:14px;font-weight:bold;}
+#QuickViewDialog .addtocartbutton{width:137px; position: absolute; right: 3px; top: 40px;} 
+#QuickViewDialog .pdpContainer .productDetails {float: right; margin: 48px 0 0 0;;padding: 0; width: 360px;}
+#QuickViewDialog .pdpContainer #inqC2C9ImgContainer{ float: right;height: 25px; width: 76px;}
+#QuickViewDialog .productleft .memberprice, #QuickViewDialog .productleft .regularprice{line-height: 21px; text-align: left;}
+#QuickViewDialog .pdpContainer .productleft{width:100%;}
+#QuickViewDialog .productid{float:left;width:100%; margin:0 0 40px 0;line-height:18px;}
+#QuickViewDialog .pdpContainer .productTitle a{color:#6a3b26;font:bold 16px arial;}
+#QuickViewDialog .aButton span{float:left;font-weight:bold;font-size:14px;padding: 7px 10px 7px 22px;text-transform:uppercase;}
+#QuickViewDialog .productleft{padding-left: 3px;}
+#QuickViewDialog #quantity{margin-left:10px;}
+/* START: PDP: BVR*/
+.productDetails .BVRRRatingSummaryStyle2{padding:10px 0; float:left;border-top:1px dotted #524b70; border-bottom:1px dotted #524b70;width:100%;}
+.productDetails #BVRRRatingSummaryNoReviewsWriteImageLinkID{float:left;  padding-right: 15px;}
+.productDetails .BVRRRatingSummaryStyle2 .BVRRRatingSummaryLinkWriteFirst a,.productDetails .BVRRRatingSummaryLinks a{color:#95b400;}
+
+/*----------------overlay_modal SAS--------------*/
+
+#overlay_modal,.dialog{position:relative;width: 370px; height: 510px; z-index: 14;}
+.overlay_wen,.overlay_invoice,.overlay_security,.overlay_remember,.overlay_shipping,.overlay_howto,.overlay_promocode{background-color:#fff;filter:alpha(opacity=60);-moz-opacity:.6;opacity:.6;}
+.top.table_window,.bot.table_window{width:100%;}
+.table_window{border-collapse:collapse;border:0;}
+.wen_nw,.invoice_nw,.security_nw,.remember_nw,.shipping_nw,.howto_nw{background:transparent url(../images/interface/dialog/top-left.png) no-repeat 0 0;width:6px;height:28px;}
+.promocode_nw{height:13px;width:6px;background:transparent url(../images/interface/dialog/promodialog/top-left.png) no-repeat 0 0;}
+.wen_n,.invoice_n,.security_n,.remember_n,.shipping_n,.howto_n{background:transparent url(../images/interface/dialog/top.png) repeat-x 0 0;}
+.promocode_n{background:transparent url(../images/interface/dialog/promodialog/top.png) repeat-x 0 0;}
+.wen_ne,.invoice_ne,.security_ne,.remember_ne,.shipping_ne,.howto_ne{width:6px;height:28px;background:transparent url(../images/interface/dialog/top-right.png) no-repeat 0 0;}
+.promocode_ne{height:13px;width:6px;background:transparent url(../images/interface/dialog/promodialog/top-right.png) no-repeat 0 0;}
+.wen_w,.invoice_w,.security_w,.remember_w,.shipping_w,.howto_w,.promocode_w{background:transparent url(../images/interface/dialog/left.png) repeat-y top left;width:6px;}
+.promocode_w{background:transparent url(../images/interface/dialog/promodialog/left.png) repeat-y top left;width:6px;}
+.wen_e,.invoice_e,.security_e,.remember_e,.shipping_e,.howto_e{background:transparent url(../images/interface/dialog/right.png) repeat-y top right;width:6px;}
+.promocode_e{background:transparent url(../images/interface/dialog/promodialog/right.png) repeat-y top right;width:6px;}
+.wen_sw,.invoice_sw,.security_sw,.remember_sw,.shipping_sw,.howto_sw{background:transparent url(../images/interface/dialog/bottom-left.png) no-repeat 0 0;width:6px;height:6px;}
+.promocode_sw{background:transparent url(../images/interface/dialog/promodialog/bottom-left.png) no-repeat 0 0;width:6px;height:6px;}
+.wen_s,.invoice_s,.security_s,.remember_s,.shipping_s,.howto_s{background:transparent url(../images/interface/dialog/bottom.png) repeat-x 0 0;height:6px;}
+.promocode_s{background:transparent url(../images/interface/dialog/promodialog/bottom.png) repeat-x 0 0;height:6px;}
+.wen_se,.invoice_se,.security_se,.remember_se,.shipping_se,.howto_se{background:transparent url(../images/interface/dialog/bottom-right.png) no-repeat 0 0;width:6px;height:6px;}
+.promocode_se{background:transparent url(../images/interface/dialog/promodialog/bottom-right.png) no-repeat 0 0;width:6px;height:6px;}
+.wen_close,.invoice_close,.security_close,.remember_close,.shipping_close,.howto_close,.promocode_close{width:20px;height:20px;background:transparent url(../images/interface/btn-circles.png) no-repeat 0 -300px;position:absolute;top:10px;right:18px;cursor:pointer;z-index:1000;}
+.promocode_close{right:10px;}
+.wen_close:hover,.invoice_close:hover,.security_close:hover,.remember_close:hover,.shipping_close:hover,.howto_close:hover,.promocode_close:hover{background-position:-300px -300px;}
+div.title_window{height:1px;float:left;}
+.promocode_title{line-height:0;}
+.wen_content,.invoice_content,.security_content,.remember_content,.shipping_content,.howto_content,.promocode_content{overflow:hidden;background:#fff;font-size:.84em;line-height:1.2em;}
+.wen_content h2,.invoice_content h2,.security_content h2,.remember_content h2,.shipping_content h2,.howto_content h2,.promocode_content h2{border-bottom:1px solid #ccc;margin:0 15px 10px 15px;}
+.wen_content h3,.invoice_content h3,.security_content h3,.remember_content h3,.shipping_content h3,.howto_content h3,.promocode_content h3,.wen_content strong,body.body_overlay div.blockTeal h3{font-weight:bold;margin:10px 15px 0 15px;}
+.wen_content strong,body.body_overlay div.blockTeal h3{margin:0;}
+body.body_overlay div.blockTeal.product h3{color:#67bacb;}
+#overlay_product p {margin-bottom: 12px; font-size:12px;line-height: 18px; margin-left:2px;}
+.wen_content p,.wen_content ul,.wen_content table,.invoice_content p,.invoice_content ul,.invoice_content table,.security_content p,.security_content ul,.security_content table,.remember_content p,.remember_content ul,.remember_content table,.shipping_content p,.shipping_content ul,.shipping_content table,.howto_content p,.howto_content ul,.howto_content table,.promocode_content p,.promocode_content ul,.promocode_content table,.promocode_content form{margin:0 15px;}
+#overlay_product{height:480px;height:430px;}
+#overlay_product .tabs{position:absolute;top:463px;left:15px;}
+#overlay_product .tabs li{display:inline;}
+#overlay_product .tabs li a{background-image:url(../images/interface/btn-w-4.0.popup.png);display:block;float:left;width:120px;height:27px;text-indent:-99999em;}
+#overlay_product .tabs a#tabDescription{background-position:0 -100px;}
+#overlay_product .tabs a#tabDescription:hover{background-position:-300px -100px;}
+#overlay_product .tabs a#tabDescription.selected,#overlay_product .tabs a#tabDescription.selected:hover{background-position:-600px -100px;}
+#overlay_product .tabs a#tabDirections{background-position:0 -200px;}
+#overlay_product .tabs a#tabDirections:hover{background-position:-300px -200px;}
+#overlay_product .tabs a#tabDirections.selected,#overlay_product .tabs a#tabDirections.selected:hover{background-position:-600px -200px;}
+#overlay_product .tabs a#tabIngredients{background-position:0 0;}
+#overlay_product .tabs a#tabIngredients:hover{background-position:-300px 0;}
+#overlay_product .tabs a#tabIngredients.selected,#overlay_product .tabs a#tabIngredients.selected:hover{background-position:-600px 0;}
+.body_overlay .blockTeal.product{width:786px;margin:0 auto;}
+.body_overlay .blockTeal.product.narrow{width:535px;margin:0 auto 90px;}
+#overlay_product h2{   font-size: 17px;font-weight: bold;height: 25px;margin-bottom: 14px;padding-bottom: 0; padding-top: 10px;}
+#overlay_product #descriptionContent,#overlay_product #ingredientsContent,#overlay_product #directionsContent{display:none;visibility:hidden;}
+#overlay_product #descriptionContent.selectedTab,#overlay_product #ingredientsContent.selectedTab,#overlay_product #directionsContent.selectedTab{display:block;visibility:visible;}
+#overlay_product p{margin-bottom:12px;}
+#overlay_product #description p{width:155px;}
+#overlay_product div.overlayImg{float:right;display:inline;margin:0 35px;height:375px;width:107px;}
+#overlay_product img{float:right;display:inline;margin:0 20px;}
+#overlay_product #ingredients .scroll{height:410px;width:355px;overflow:auto;overflow-y:auto;overflow-x:hidden;}
+#Select300_Bazaar{float: left;}
+/*----------  Shopping Cart Specific Styles ----------*/
+.ptCart .cart{ padding:38px 0px; width: 100%;float: left;min-height: 598px;}
+.ptCart .cart h1{ font-size:40px; color:#4e4d4b; line-height:40px; font-weight:normal; text-transform:uppercase; letter-spacing:1px; }
+.ptCart .cart h2{ font-size:14px; color:#4e4d4b; line-height:18px; font-weight:normal;  }
+.ptCart .cart .actions { width:100%; margin:10px 0; overflow:hidden; }
+.ptCart .cart .actions .continueShopping{height:auto;font-size:14px; font-weight:bold; border:0; margin-right:10px; font-weight:bold; text-transform:uppercase;width:191px;}
+.ptCart .cart .actions .continueShopping span{float:left; padding: 7px 0 7px 18px;font-family:Arial,sans-serif;}
+.ptCart .cart .actions .continue{ height:auto;padding:0px 20px; line-height:32px; font-size:14px; font-weight:bold; border:0; text-transform:uppercase; font-weight:bold;}
+.ptCart .cart .actions .proceedCheckOutBtn{float:left;height:auto;width:216px;font-size:14px; font-weight:bold;}
+.ptCart .cart .actions .proceedCheckOutBtn span{float:left; border:0; text-transform:uppercase; font-weight:bold; padding: 7px 0 7px 18px;font-family:Arial,sans-serif;}
+.ptCart .actions ul {float:right;margin-right:21px;}
+.ptCart .actions ul li{float:left;}
+.ptCart .cart .imagecolumn .productimage img{ border:0; padding:0; }
+.ptCart .cart .imagecolumn { width:114px; padding-right:19px; }
+.ptCart .cart .carttable{width:908px;}
+.ptCart .cart .carttable .productimage img{width:110px; height:110px;}
+.ptCart .cart .carttable tr.blankspace {border-top:1px solid #d7d7d7;}
+.ptCart .cart .carttable tr.tablerow td{vertical-align: top;}
+.ptCart .cart .carttable tr.tablerow td.detailscolumn { width:573px; }
+.ptCart .cart .carttable tr.tablerow td.quantitycolumndetails {width:68px;}
+.ptCart .cart .carttable tr.tablerow td.detailscolumn .name { min-height:75px; font-size:18px; font-weight:bold; color:#4e4d4b; line-height:15px;padding-top:5px;}
+.ptCart .cart .carttable tr.tablerow td.detailscolumn .name a{ color:#4e4d4b; text-decoration:none; }
+.ptCart .cart .carttable tr.tablerow td.detailscolumn .name a:hover{ color:#95b400; }
+.ptCart .cart .carttable tr.tablerow td.itemtotalcolumn .itemtotals .value{float:right;width:100%;}
+.ptCart .cart .productattributes { font-size:12px; line-height:18px; color:#4e4d4b; }
+.ptCart .cart .itemtotals , .ptCart .cart .quantitycolumndetails , .ptCart .cart .quantitycolumn{ padding-top:5px;font-size:12px; line-height:18px; color:#4e4d4b; text-align:right;}
+.ptCart .cart #removeProduct,.ptCart .cart .promoCoupoun .detailscolumn .textbutton { margin-left:-3px; background:transparent; border:0; cursor: pointer; padding:0; font-size:12px; text-decoration:underline; color:#95b400; line-height:18px;padding-left:2px;}
+.ptCart .cart .promoCoupoun { background:#eceaea;  border-bottom:1px solid #d7d7d7;}
+.ptCart .cart .promoCoupoun td { padding-top:20px; padding-bottom:15px;}
+.ptCart .cart .promoCoupoun .detailscolumn {width: 578px;}
+.ptCart .cart .promoCoupoun .detailscolumn span{ display:block; font-size:16px; font-weight:bold; color:#4e4d4b; }
+.ptCart .cart .promoCoupoun .detailscolumn p{ font-size:12px; color:#4e4d4b; line-height:18px; }
+.ptCart .cart .promoCoupoun .detailscolumn a{ color:#95b400; font-size:12px; line-height:18px; }
+.ptCart .cart .promoCoupoun .quantitycolumndetails {padding-right:2px;}
+.ptCart .cart .promoCoupoun .quantitycolumn{text-align:left;}
+.ptCart .cart .orderSubTotal { padding:9px 0px; text-align:right; border-bottom:1px solid #d7d7d7;width:908px; }
+.ptCart .cart .orderSubTotal p{font-size:12px; color:#4e4d4b; line-height:18px; font-weight:bold; }
+.ptCart .cart .memberSaving { text-align:center;padding:11px 0px;border-bottom:1px solid #d7d7d7;margin-bottom:22px;width:908px;}
+.ptCart .cart .memberSaving p{ font-size:15px; color:#556606; }
+.ptCart .cart .memberSaving p span{ font-weight:bold; }
+.ptCart .cart .applicable{ text-align:right; margin-top:36px;width: 908px;}
+.ptCart .cart .applicable p{ font-size:12px; color:#4e4d4b; line-height:18px; }
+/* START:shipping address */
+.ptCheckoutRetention{padding:0;margin:0;width:100%;}
+.ptCheckoutRetention .checkoutSteps li{margin-right:30px;}
+.ptCheckoutRetention .accountContainer .topLabel{margin: 8px 0 24px;}
+.ptCheckoutRetention .checkOutContainer{float:left;font: normal 12px Arial,sans-serif;margin: 0 auto;padding:0;width: 100%;}
+.ptCheckoutRetention .checkOutContainer .checkoutSteps{margin: 40px 0 14px;}
+.ptCheckoutRetention .addressformentry{float:left;margin:0;padding:0;width:100%;}
+.ptCheckoutRetention .addressformentry .addresslist{float: left;margin-bottom: 6px;width:100%;}
+.ptCheckoutRetention .addressformentry .addressContainer{margin-bottom:7px;}
+.ptCheckoutRetention .accountContainer .nameContainer,.ptCheckoutRetention .addressformentry .address1{margin: 0 0 11px;}
+.ptCheckoutRetention .addressformentry .address2{margin-bottom:8px;}
+.ptCheckoutRetention .addresslist select{width:275px;}
+.ptCheckoutRetention .checkOutContent{margin:0 auto;padding:0; width:926px;}
+.ptCheckoutRetention .leftColumn{float:left;margin:0 auto;width:535px;}
+.ptCheckoutRetention .rightColumn{float:right;min-height:130px;width: 380px;}
+.ptCheckoutRetention .rightColumn .additionalInfo{border:1px solid #c0c0c0;float:right;margin:108px 20px 0 0;min-height:105px;width:217px;}
+.ptCheckoutRetention .rightColumn .blockcontent{float: left;padding:20px;}
+.ptCheckoutRetention .rightColumn .blockcontent p{font-size: 12px;color: #AAC333;line-height: 18px;text-decoration: underline;cursor: pointer;}
+.ptCheckoutRetention .checkoutSteps span{font:bold 16px Helvetica;padding: 0 6px;height:auto;width:auto;}
+.ptCheckoutRetention .checkoutSteps p{font-family:"CenturyGothic, AppleGothic, sans-serif";font-size:14px;margin:0;}
+.ptCheckoutRetention .checkoutSteps p a{margin: 2px 5px 0px 5px;} 
+.ptCheckoutRetention .checkoutSteps li.inactive span{ background: none repeat scroll 0 0 #d7d7d7;}
+.ptCheckoutRetention .addressform{float: left;margin: 0 auto;padding:0;width: 690px;}
+.ptCheckoutRetention .addressform .formTitle{margin:0;}
+.ptCheckoutRetention .addressContainer .city input, .ptCheckoutRetention .nameContainer input, .ptCheckoutRetention .country input{height:17px;width:120px;}
+.ptCheckoutRetention .addressContainer .state {margin-left: 0px;width: 55px;}
+.ptCheckoutRetention .addressContainer .city {float:left;width: 145px;}
+.ptCheckoutRetention .addressContainer .state .selectbox {height: 19px;}
+.ptCheckoutRetention .country {margin-bottom:10px;position:relative;}
+.ptCheckoutRetention .phone{margin-bottom:11px;}
+.ptCheckoutRetention .rememberme{margin-bottom:3px;}
+.ptCheckoutRetention .country .usaonly{position:absolute;left: 140px;top: 18px;width: 330px;}
+.ptCheckoutRetention .country .usaonly a{color:#95b400;}
+.ptCheckoutRetention .phone .small{margin-right: 5px;width: 25px;}
+.ptCheckoutRetention .phone .numberbox {width: 49px;}
+.ptCheckoutRetention #shippingmethodform{float:left;padding:0;margin: 14px 0 0 0;width:100%;}
+.ptCheckoutRetention #shippingmethodform .topLabel{margin-bottom:14px;}
+.ptCheckoutRetention .accountContainer .rememberme label{padding: 0;}
+.ptCheckoutRetention .addressform .actions{padding: 8px 0 10px 0;}
+.ptCheckoutRetention .addressform .actions button{width:110px;}
+.ptCheckoutRetention .checkoutForm,.ptCheckoutRetention .shippingmethods{float:left;}
+.ptCheckoutRetention .shippingmethod{float:left;margin:0 0 10px 0;padding:0;width:100%;}
+.ptCheckoutRetention .shippingmethod input{float:left;margin-right:5px;}
+.ptCheckoutRetention .accountContainer label{padding: 3px 0 4px;}
+.ptCheckoutRetention .shippingmethod label{float:left;padding:0; margin:0;width:auto;}
+/*START: Billing Address */
+.ptCheckoutRetention #paymentmethodform{float:left;padding:0;margin: 22px 0 0 0;width:100%;}
+.ptCheckoutRetention .paymentform{float:left;margin:0;padding:0; width:100%;}
+.ptCheckoutRetention .billingForm .paymentmethods{float:left;padding-top:10px;}
+.ptCheckoutRetention .billingForm .paymentmethod{float: left;margin:0 13px 18px 0;padding: 0;}
+.ptCheckoutRetention .billingForm .paymentmethod input {float: left;margin-right: 5px;}
+.ptCheckoutRetention .billingForm .paymentmethod label {float: left;padding: 0;margin: 0;width: auto;}
+.ptCheckoutRetention .accountContainer .billingForm .topLabel{margin: 5px 0 20px;}
+.ptCheckoutRetention .accountContainer .billingForm .noteText{margin-bottom:18px;}
+.ptCheckoutRetention .accountContainer .billingForm .addresslist{margin-bottom: 14px;}
+.ptCheckoutRetention .billingForm .sameasshipping{margin-bottom:15px;}
+.ptCheckoutRetention #paymentmethodform .saveMethod{margin-bottom:10px;}
+.ptCheckoutRetention #paymentmethodform .creditcardlist{margin-bottom: 6px;}
+.ptCheckoutRetention #paymentmethodform .cardtype,.ptCheckoutRetention #paymentmethodform .cardNumber,.ptCheckoutRetention #paymentmethodform .expirationdate{margin-bottom:9px;}
+.ptCheckoutRetention #paymentmethodform #reqindicator{margin-top:14px;font-weight:bold;}
+.ptCheckoutRetention .paymentform a{cursor: pointer;}
+.ptCheckoutRetention .paymentform .paypalImage{padding:20px 0;}
+/* START: Rent-Empty cart */
+.emptyCartBlock  .continueshopping .continueShoppingBtn{color: #FFFFFF;cursor: pointer;font: bold 14px Arial,sans-serif;padding:7px 0;text-transform:uppercase;width:190px;}
+/* START: Check Order */
+.ptCheckOutOrder {font:normal 12px Arial, Helvetica, sans-serif; padding: 0;margin: 0;width: 100%;}
+.ptCheckOutOrder .checkOutContainer{float:left;padding:0;margin:0 auto;width:100%;}
+.ptCheckOutOrder .checkOutContainer .checkoutSteps span{font-size:16px;font-weight:bold;height:auto;padding: 0px 5px 0px 5px;width:auto;}
+.ptCheckOutOrder .checkOutContent{margin:0 auto; padding:0;width:926px}
+.ptCheckOutOrder .checkOutContainer .checkOutContent .accountOverView .formTitle{margin-bottom:10px;}
+.ptCheckOutOrder .checkOutContainer .checkOutContent .accountOverView .topLabel{margin-top:0px;}
+.ptCheckOutOrder .checkOutContainer .checkOutContent .accountOverView .panelWraper{padding: 14px 0px 20px;}
+.ptCheckOutOrder .accountContainer .accountOverView .innerTitle{padding: 5px 13px 5px 8px;}
+.ptCheckOutOrder .innerTitle .changeLink{font-size:12px;color:#95b400;float:right;}
+.ptCheckOutOrder .checkoutminisummary{float:left; margin:0; padding:0; width:100%;}
+.ptCheckOutOrder .checkoutsummaryheader{margin:0; padding:16px 0; width:100%;}
+.ptCheckOutOrder .checkoutminisummary .title{color:#4e4d4b;font-size:16px; font-weight:bold;}
+.ptCheckOutOrder .checkoutminisummary .orderEdit{color:#95b400;font-size:12px;float:right;}
+.ptCheckOutOrder .checkoutminisummary .checkoutminicart,.ptCheckOutOrder .checkoutminisummary .noteWraper{float:left;margin:0;padding:0;width:100%;}
+.ptCheckOutOrder .summaryproduct,.ptCheckOutOrder .checkoutminisummary .checkoutordertotals{border-top:1px solid #d7d7d7; float:left;margin:0;padding:20px 0;width:100%;}
+.ptCheckOutOrder .summaryproduct{padding:20px 0 16px;}
+.ptCheckOutOrder .checkoutminisummary .ordertotals{float: right;text-align: right; width:50%;}
+.ptCheckOutOrder #orderDetailOverview .checkoutminisummary .ordertotals .ordertotalstable,.ptCheckOutOrder .checkoutminisummary .ordertotals .ordertotalstable{width:100%;}
+.ptCheckOutOrder #orderDetailOverview .checkoutminisummary .ordertotals .ordertotalstable tr td.l-align,.ptCheckOutOrder .checkoutminisummary .ordertotals .ordertotalstable tr td.l-align{width:87%; padding-bottom:4px;}
+.ptCheckOutOrder #orderDetailOverview .checkoutminisummary .ordertotals .ordertotalstable tr td.r-align,.ptCheckOutOrder .checkoutminisummary .ordertotals .ordertotalstable tr td.r-align{width:13%;padding-bottom:4px;}
+.ptCheckOutOrder .checkoutminisummary .actions .continuecheckout{float:right;margin:0;padding:0;text-transform: uppercase;}
+.ptCheckOutOrder .checkoutminisummary .actions .continuecheckout span{float: left;font-family:Arial, Helvetica, sans-serif;padding: 7px 0 7px 19px;}
+.ptCheckOutOrder .summaryproduct .image{float:left;width:132px;}
+.ptCheckOutOrder .summaryproduct .description{float:left;width:575px;}
+.ptCheckOutOrder .summaryproduct .description .name{font:normal 18px Arial, Helvetica, sans-serif; }
+.ptCheckOutOrder .summaryproduct .description .itemNumber{padding:40px 0; }
+.ptCheckOutOrder .summaryproduct .qty{float:left;text-align:center;width:66px;}
+.ptCheckOutOrder .summaryproduct .yourPrice{float:left;text-align:right;width:66px;}
+.ptCheckOutOrder .summaryproduct .yourPrice span{float:right;width:100%;}
+.ptCheckOutOrder .summaryproduct .pricing{float:left;text-align:right;width:66px;}
+.ptCheckOutOrder .summaryproduct .image img{width:110px; height:110px;}
+.ptCheckOutOrder .checkoutminisummary .noteWraper .row{float:right;text-align:right;}
+.ptCheckOutOrder .checkoutminisummary #privacyPolicy,.ptCheckOutOrder .checkoutminisummary #termsConditions{color:#95b400;cursor: pointer;}
+.ptCheckOutOrder .checkOutContainer .innerPanel .leftPanel,.ptCheckOutOrder .checkOutContainer .innerPanel .rightPanel{min-height: 167px;}
+/* END:check out page */
+/* START: OrderDetails Page */
+.ptOrderConfirmation{padding:0;margin:0;width:100%;}
+.ptOrderConfirmation .checkOutContainer .checkOutContent,.ptOrderConfirmation .orderconfirmationdetails{float:left;margin:0;padding:0;width:100%;}
+.ptOrderConfirmation .orderconfirmationdetails .orderHeader{float: left;margin:0;padding:0;width: 652px;}
+.ptOrderConfirmation .orderconfirmationdetails .whiteBg .title{padding: 0 20px;} 
+.ptOrderConfirmation .orderHeader .whiteBg{border:1px solid #c0c0c0;float:left;width:100%;}
+.ptOrderConfirmation .orderHeader .summaryWraper{float:left;margin:0;padding: 15px 20px;width:100%;}
+.ptOrderConfirmation .summaryWraper .detailsRow{color:#4e4d4b;font:normal 12px Arial, Helvetica, sans-serif; line-height:18px;}
+.ptOrderConfirmation .orderHeader .actions{float:left;padding: 15px 0 5px; margin:0;} 
+.ptOrderConfirmation .contShoppingBtn{float:left;margin-right:10px;width:198px;}
+.ptOrderConfirmation .contShoppingBtn span{float:left;padding:7px 13px 7px 25px;}
+.ptOrderConfirmation .viewOrderDetailsBtn {float:left;width:192px;}
+.ptOrderConfirmation .viewOrderDetailsBtn span{float:left;padding:7px 13px 7px 22px;}
+.ptOrderConfirmation .orderconfirmationdetails .contShoppingBtn {padding: 0;}
+/* START: Tool Tip css*/
+#tooltip {	position: absolute;	z-index: 3000;background-color:#fff; padding:10px;-moz-box-shadow:0px 0px 20px #e6e6e6;-webkit-box-shadow: 0px 0px 20px #e6e6e6;box-shadow:0px 0px 20px #e6e6e6; /* For IE 8 */-ms-filter: "progid:DXImageTransform.Microsoft.Shadow(Strength=4, Direction=90, Color='#e6e6e6')"; /* For IE 5.5 - 7 */filter: progid:DXImageTransform.Microsoft.Shadow(Strength = 4, Direction = 90, Color = '#b6b6b6'); }
+#tooltip h3, #tooltip div { margin: 0; }
+#tooltip.pretty {font-family: Arial;border: none;width: 210px;padding:20px;height: 135px;}
+#tooltip.pretty h3 {margin-bottom: 0.75em;font-size: 12pt;width: 220px;	text-align: center;}
+#tooltip.pretty div { width: 220px; text-align: left; }
+#tooltip.fancy {padding-top: 5em;height: 100px;}
+/* END: Tool Tip css */
+
+
+/* START: minicart */
+#minicartOuter{float:right;margin:0;padding:0;position: relative;width:200px;z-index:10;}
+#minicartOuter.minicartOuter{position:fixed;right: 0;}
+#minicartOuter .productSummryCont{max-height: 246px;overflow-y: auto;width: 297px;}
+#minicartOuter .minicartcontent{background:url(../images/wen/cartTop.png) no-repeat 0 0;right:0px;  top: 39px;position: absolute;padding:0 0 8px;float:left;z-index:9999;}
+#minicartOuter .miniCartArea{background:url(../images/wen/cartBottom.png) no-repeat left bottom;float:left;padding:0 0 8px;width:300px;z-index:9999999;}
+#minicartOuter #minicart{background: url(../images/wen/minicart.png) no-repeat 0 3px;float:left;margin:0;height:44px;padding:0;width:100%;}
+#minicartOuter #minicart:hover, #minicartOuter.minicartOuter #minicart{background: url(../images/wen/cartHead.png) no-repeat;}
+.ptCartblock #minicartOuter #minicart:hover{background:url(../images/wen/minicart.png) no-repeat 0 3px;}
+#minicartOuter .minicart.minicartempty{background: url(../images/wen/minicart.png) no-repeat 0 3px !important;float:left !important;margin:0 !important;height:44px !important;padding:0 !important;width:100% !important;}
+#minicartOuter #minicart.showMiniCart{background: url(../images/wen/cartHead.png) no-repeat; }
+#minicartOuter .minicarttotal{font-size:12px;padding:7px 10px 0;float:right;height:25px;width:180px;z-index:9999;}
+#minicartOuter .minicarttotal .shoppingCart{cursor: pointer;font-weight:bold;font-size:12px;float:left;}
+#minicartOuter .minicarttotal .shoppingCart .cartImage{background: url("../images/wen/basket.png") no-repeat scroll 0 0 transparent; float: left; height: 17px;padding-right: 10px; width: 21px;}
+#minicartOuter .minicarttotal .numberItems{float:right;}
+#minicartOuter .minicarttotal .numberItems .linkminicart{font-weight:bold; color:#8e3b17;text-decoration:none;}
+#minicartOuter .checkoutminicart{ float: left; margin:0;padding: 0;}
+#minicartOuter .product .productPrice{color:#cc9d13;padding-top:30px;}
+#minicartOuter .product .productPrice,#minicartOuter .product .productQty{font-size:11px;}
+#minicartOuter .productSummry{margin:0;padding:0 0 0 14px;float:left;}
+#minicartOuter .productSummry .image{float:left; width:70px;}
+#minicartOuter .productSummry .productDec{border-bottom:1px dotted #595959;float:left; margin:0 auto;padding:10px 0;width:265px;}
+#minicartOuter .productSummry .product{float:left;padding-left:12px;width:165px;}
+#minicartOuter .productsList{border-left:1px solid #353535;border-right:1px solid #353535;background:#fef6df;float:left;margin:10px 0 0;padding:0 0 10px 0;width: 297px;}
+#minicartOuter .productsList .minicarttotals .ordertotals,.productsList .cartFormAction .actions{border-bottom:1px dotted #595959;color:#8e3b17;float:right;font:bold 12px arial;margin:0 auto;padding: 6px 0;width: 272px;}
+#minicartOuter .miniCartSprite{ background:url(../images/wen/miniCartSprite.png) no-repeat;}
+#minicartOuter .productsList .cartFormAction{ float: left;margin: 0;padding: 0 14px; text-align: right;}
+#minicartOuter .productsList .cartFormAction .actions .viewCartBtn{margin-right: 10px;}
+#minicartOuter .minicarttotals{float:left;margin:0;padding:0 14px;height:30px;text-align:right;}
+#minicartOuter .productsList .minicarttotals .ordertotals .ordertotalstable{float:right;}
+#minicartOuter .linkCart{text-align:right;float: right;    padding: 0 14px;}
+#minicartOuter .linkCart span{float: left;padding: 7px 26px;}
+#minicartOuter .linkCart .aButton{font:bold 14px arial; margin: 10px 0 0 10px; width:120px;}
+#minicartOuter .minicarttotals .ordertotalstable .ordersubtotal{text-transform: uppercase;}
+
+/*soft login box starts here*/
+#persistcartdialog{float:left; padding:30px 63px 34px 34px; color: #4E4D4B; border:1px #bcbbb7 solid; }
+#persistcartdialog .head-popup{font: bold 14px/18px arial;}
+#persistcartdialog .head-text{font: 12px/18px arial;}
+#persistcartdialog a{font-size: 14px;    font-weight: bold;    height: auto;  padding: 8px 19px;    text-align: center;    text-transform: uppercase;    width: auto; margin-top:20px;}
+#persistcartdialog .greenButton{margin-right: 10px;}
+#checkoutlogincontent{height: auto;   padding: 25px 38px 38px;    width: auto;}
+.loginCustomers .signInBtn{padding:7px 12px;}
+.accountlogin.box{ float: left;    width: 565px;}
+.accountlogin.box .loginCustomers{ border-right: 1px solid #D6D6D6;    float: left;    width: 315px;}
+.accountlogin.box .loginCustomers h3{ color: #262626;    font-size: 14px;    font-weight: normal;    padding-bottom: 18px;}
+.accountlogin.box .loginCustomers input[type=text],.accountlogin .loginCustomers input[type=password]{width: 276px;}
+.accountlogin.box .loginCustomers label{ color: #4E4D4B;    font-size: 12px;    margin-bottom: 0;    padding: 0 0 4px;}
+.accountlogin.box .logincustomers .formfield{  float: left;    margin-top: 0;    padding: 3px 0;    width: 100%;}
+.accountlogin.box .logincustomers .formfield .checkbox input{   float: left;    margin: 2px 3px 0 0;}
+.accountlogin.box .logincustomers .formfield .checkbox label{float:none;font-size: 11px;width: auto;}
+.accountlogin.box .logincustomers  .brownButton{text-transform: uppercase; font-weight: bold;font-family: arial;    font-size: 14px;    font-weight: bold;  padding-left: 15px;
+    padding-right: 10px; margin-top: 10px;}
+.accountlogin.box .logincustomers  .brownButton .rightDirection{margin: 0;    padding: 4px 10px 0 0;}
+.accountlogin.box .logincustomers .forgotpassword a{ border-bottom: medium none;   color: #95B400;    font: 11px arial;padding-top: 15px; float: left;}
+.accountlogin.box .logincustomers .requiredtexttext{ padding-top: 21px;font-size: 12px;}
+.ui-dialog .ui-dialog-titlebar-close span{ background: url("../images/wen/sm-close.gif") no-repeat scroll 0 0 transparent;    height: 26px;    position: absolute;    right: -4px;    top: -4px;    width: 27px;text-indent: -9999px;}
+.accountlogin.box .logincustomers .username{  margin-bottom: 5px;}
+.accountlogin.box #inqC2C5ImgContainer{float: right; width:209px; height:200px;background: url("../images/wen/live-chat.jpg") no-repeat scroll 0 0 transparent; }
+.accountlogin.box .rightcoloum{float: right;    width: 207px;}
+.wapper-dialog-error{  border: 1px solid #bcbbb7;padding: 0;}
+.wapper-dialog-error #ui-dialog-title-qty_limit{padding: 0;}
+.wapper-dialog-error #qty_limit .title{color: #C10100;    font-size: 14px;font-weight: bold;}
+.wapper-dialog-error #li_limit .title{color: #C10100;    font-size: 14px;font-weight: bold;}
+.wapper-dialog-error #qty_li_limit .title{color: #C10100;    font-size: 14px;font-weight: bold;}
+.wapper-dialog-error #qty_limit {color: #C10100;    font-size: 12px;padding:6px 38px 25px;}
+.wapper-dialog-error #li_limit {color: #C10100;    font-size: 12px;padding:6px 38px 25px;}
+.wapper-dialog-error #qty_li_limit {color: #C10100;    font-size: 12px;padding:6px 38px 25px;}
+.wapper-dialog-error #qty_limit .text{line-height:18px;}
+.wapper-dialog-error #li_limit .text{line-height:18px;}
+.wapper-dialog-error #qty_li_limit .text{line-height:18px;}
+.ui-dialog .ui-dialog-titlebar-close span{right: -6px;}
+
+/* contact us css starts from here*/
+#ptAccount .contactWraper{    clear: both;    margin: 0 auto;    padding: 30px 0 0px;    width: 925px;}
+#ptAccount .contactWraper .contactusLeft{width:688px; float:left;border-right:1px #cbcbcb solid;margin-bottom: 56px;}
+#ptAccount .contactWraper .contactusLeft .formfields{float: left;    padding-left: 17px; padding-right: 20px;}
+#ptAccount .contactWraper .contactusLeft .formrow{float: left;    width: 100%;padding-top: 2px;}
+#ptAccount .contactWraper .contactusLeft #recaptcha_widget_div{float: left;    width: 100%;padding-top: 20px;}
+#ptAccount .contactWraper .contactusLeft h2{ font:41px CenturyGothic, AppleGothic, sans-serif bold; text-transform:uppercase; line-height:34px;}
+#ptAccount .contactWraper .contactusLeft input{ border: 1px solid #B7B7B7;   height: 20px;    width: 207px;}
+#ptAccount .contactWraper .contactusLeft .formfields label{ color: #313A40;    font-size: 12px;    padding: 1px 0;}
+#ptAccount .contactWraper .contactusLeft .formfields .formfield {    float: left;    padding: 6px 0;    width: 227px;}
+#ptAccount .contactWraper .contactusLeft .formfields .contactMoreText{  color: #313A40;    float: left;    font-size: 12px;    padding:13px 0 8px;}
+#ptAccount .contactWraper .contactusLeft .requirenote .requiredindicator{ padding-right: 3px;}
+#ptAccount .contactWraper .contactusLeft .formfields .citystate{clear: both;    width: 209px; float: left;}
+#ptAccount .contactWraper .contactusLeft .formfields .citystate #state {width: 130px;}
+#ptAccount .contactWraper .contactusLeft .formfields .citystate #state select {width: 130px;}
+#ptAccount .contactWraper .contactusLeft .formfields .citystate #zip{ float: right;    width: 67px;}
+#ptAccount .contactWraper .contactusLeft .formfields .citystate #zip input{width: 64px;}
+#ptAccount .contactWraper .contactusLeft .formfields .phone,#ptAccount .contactWraper .contactusLeft .formfields .myquestion,#ptAccount .contactWraper .contactusLeft .formfields .messege{ clear: both;}
+#ptAccount .contactWraper .contactusLeft .formfields .messege{ width: 448px;}
+#ptAccount .contactWraper .contactusLeft .formfields .myquestion{width: 100%;}
+#ptAccount .contactWraper .contactusLeft .formfields .messege textarea{ height: 127px;    width: 445px; resize: both;border: 1px solid #B7B7B7;}
+#ptAccount .contactWraper .contactusLeft .formactions{ float: right;    padding-right: 35px;}
+#ptAccount .contactWraper .contactusLeft .greenButton span{font: bold 14px arial;    padding: 0 19px;    text-transform: uppercase;}
+#ptAccount .contactWraper .contactusLeft .formfields .phone .label{font-size:12px;}
+#ptAccount .contactWraper .contactusLeft .formfields .myquestion label{ padding: 0 0 6px;}
+#ptAccount .contactWraper .contactusLeft .formfields .requirenote{ padding-left: 4px;}
+#ptAccount .contactWraper .contactusLeft .formfields .city{ clear: left;}
+#ptAccount .contactWraper .contactusLeft .recaptchatable #recaptcha_response_field{position: static !important; height: auto;    width: auto;}
+#ptAccount .contactWraper .contactusLeft .formactions .greenButton {background: url("../images/wen/submit-bg.gif") repeat scroll left top transparent;    border: 0 none;    color: #FFFFFF;    cursor: pointer;    height: 32px;   margin: 0;   padding: 0;}
+#ptAccount .contactWraper .rightcoloum{float: right;}
+#ptAccount .contactWraper select{border:1px solid #B7B7B7;}
+#ptAccount .contactWraper .banner{ margin:38px 0 50px;}
+.contactusThankyou h1{font:41px CenturyGothic, AppleGothic, sans-serif bold; text-transform:uppercase; line-height:34px; padding:10px 0px 20px 0px;}
+#ptAccount .contactWraper .errorlabel.errormessage{ float:left;}
+.contactusThankyou{ clear: both;    margin: 0 auto;    padding-bottom: 120px;    padding-top: 30px;    width: 925px;min-height: 500px;}
+.contactusThankyou .contactus.messagesent{float: left;    padding:12px 0 0 6px;position:relative;}
+.contactusThankyou .contactus.messagesent p{font-size:14px; line-height:18px;}
+.call-Us{position:absolute; right:0px; top:-48px;color:#86120D;font-size:15px; padding-left:35px; height:28px; line-height:28px;background: url("../images/wen/phone.gif") no-repeat left top;}
+.clear{clear: both;}
+.ptProductDetails .productReviews{margin-top: 0;}
+.ptProductDetails .productReviews #pdpReviewsTab #Select300_Bazaar{ width: 100%;}
+.ptProductDetails .productReviews #pdpReviewsTab{padding:0;}
+
+/*old SAS Page css*/
+#selectasystem #container{float: none;    margin: 0 auto;    width: 931px;}
+#selectasystem #idMainWide{float: left;    padding: 10px 0px;    width: 931px;}
+#selectasystem #idMainWide .sasWrap{width:903px; margin:0 auto;}
+#selectasystem #idMainWide .sas-head{margin: 0;}
+#selectasystem #idMainWide .sas-head h2{ color: #000000;  font:41px Century Gothic, Apple Gothic, sans-serif;height: auto;    margin: 0;   float: left; width:500px;}
+#selectasystem #idMainWide .sas-head .intro{ color: #86120D; font: bold 12px Arial,Verdana,Helvetica,sans-serif;    text-decoration: none; text-transform: uppercase;}
+#selectasystem #idMainWide .selectedKit2{position: relative; margin-bottom: 25px;    padding: 10px 0px 25px;margin-top:5px; float: left;}
+#selectasystem #idMainWide .selectedKit2 .sasLivechat{position: absolute;    right: 7px;    top: 17px;}
+#selectasystem #idMainWide #freeShipTopBanner{height: 40px; background-color: #8C1D18;    border: 1px solid #6D100C;    color: #FFFFFF;    display: block;    font: 24px/40px Georgia,Times,serif;    text-align: center;}
+#selectasystem #idMainWide .DetailDescription h5{font-family: georgia;    font-size: 20px;    font-style: italic;    height: auto;    margin-bottom: 5px;    margin-top: 15px;    text-align: center;font-weight: bold;}
+#selectasystem #idMainWide .sasTabs{ width:441px;  float: left;    position: relative;}
+#selectasystem #idMainWide .sasTabs.tab1{ border-right: 1px solid #999999;padding-right: 10px;}
+#selectasystem #idMainWide .sasTabs.tab2{padding-left: 10px;}
+#selectasystem #idMainWide .sasTabs.tab2 .nameDesc{margin-left: 7px;}
+#selectasystem #idMainWide p{margin-bottom:15px;}
+#selectasystem #idMainWide .sas-head p{margin-bottom:0px;}
+#selectasystem #idMainWide .DetailDescription .nameDesc{ font-size: 12px;    margin: 7px 0 0; min-height: 31px;}
+#selectasystem #idMainWide .DetailDescription .productimage{text-align: center;}
+#selectasystem #idMainWide .DetailDescription .text{  margin-bottom: 30px; background-color: #EFF4F3;    color: #333333;    font-size: 12px;    height: 240px;    line-height: 18px;    padding: 12px 20px;}
+#selectasystem #idMainWide .sasTabs.tab1 .productimage,#selectasystem .sasTabs.tab2 .productimage{   margin-top: 17px;}
+#selectasystem #idMainWide .sasTabs.tab2 .text{ margin-left: 30px;}
+#selectasystem #idMainWide .sasTabs.tab1 .text{margin-right: 28px; }
+#selectasystem #idMainWide .DetailDescription .h-lable{margin:22px 15px 30px 0px; font-family: Arial,Helvetica,sans-serif;    font-size: 16px;    margin-bottom: 20px;    margin-top: 20px;    text-align: center;}
+#selectasystem #idMainWide .DetailDescription .fragHeading {   margin-right: 15px;   font-family: Georgia,"Times New Roman",Times,serif;    font-size: 16px;    font-style: italic;    margin-bottom: 30px;   margin-top: 30px;    text-align: center;}
+#selectasystem #idMainWide .DetailDescription .fragranceul .radiobutton{ display: inline-table; font-weight: bold; margin: 0 2px; width: 95px; cursor: pointer;}
+#selectasystem #idMainWide .DetailDescription .fragranceul .radiobutton img{margin-top:5px;}
+#selectasystem #idMainWide .DetailDescription .OrderSubline{font-family: Arial,Helvetica,sans-serif;    font-size: 18px;    font-weight: normal; text-align: center; padding-top:3px; width:100%; float:left;}
+#selectasystem #idMainWide .DetailDescription .kitselectionul{width:100%; float:left;}
+#selectasystem #idMainWide .DetailDescription .fragranceul{ padding-right: 24px;    text-align: center;}
+#selectasystem #idMainWide .DetailDescription .kitselectionul li{ border-bottom: 1px solid #999999;   height: auto;    margin:19px 70px 0;    padding-bottom: 20px;    font: 18px Arial,Verdana,sans-serif;}
+/*#selectasystem #idMainWide .DetailDescription .kitselectionul li .opText {text-align:left;}*/
+#selectasystem #idMainWide .DetailDescription .kitselectionul li .opText span{font-weight:bold;}
+#selectasystem #idMainWide .DetailDescription .kitselectionul li:last-child{border-bottom: medium none;}
+#selectasystem #idMainWide .DetailDescription .kitselectionul li input{   float: left;    margin: 5px 7px 0 0;}
+#selectasystem #idMainWide .DetailDescription .orderVarButtonWraper{text-align: center;}
+#selectasystem #idMainWide .DetailDescription .orderVarButtonWraper a{ background: url("../images/wen/select_basic_ctn.gif") no-repeat scroll center center transparent;    border: medium none;    color: transparent;    font-size: 0;    height: 37px;    width: 291px; text-indent:-99999px;display: inline-block;   cursor: pointer;   margin: 20px 61px;float: left;}
+#selectasystem #idMainWide .DetailDescription .orderVarButtonWraper a.orderVarButton-deluxe{background: url("../images/wen/select_deluxe_ctn.gif") no-repeat scroll center center transparent;margin-left: 76px;}
+#selectasystem #idMainWide .DetailDescription .hilite{text-align: center;}
+#selectasystem #idMainWide .DetailDescription .deluxeOrderHeader{  clear: both;    color: #333333;    float: left;    font-family: Arial,Helvetica,sans-serif;    font-size: 20px;    font-weight: bold;    padding: 50px 0px 0; width:100%; text-align:center; float:left;}
+#selectasystem #idMainWide .sasTabs.tab2 .fragHeading,#selectasystem #idMainWide .sasTabs.tab2 .h-lable{margin-left:15px; margin-right:0px; }
+#selectasystem #idMainWide .sasTabs.tab2 .fragranceul{left: 30px;    position: relative;}
+#selectasystem #idMainWide .sasTabs.tab2 .opText span{color: #8C1D18;}
+
+#selectasystem #idMainWide .DetailDescription .orderNowSideBySide{ float:left; width:100%; text-align:center;}
+#selectasystem #idMainWide .sasTabs.tab2 .orderNowSideBySide{ margin-left:15px; width:100%; text-align:center;}
+
+/* kitCustomizer css begin */
+
+.kitCustomizer{margin: 0 auto;padding: 0;width: 926px;}
+#kitCustomizer .kitCustomizer{background:url("../images/wen/kitCustomizeBg.png") right top no-repeat; position:relative; height:606px; width:926px;}
+.kitCustomizerLeftImg{margin:17px 0 0 68px;}
+.kitCustomizerRight{width:360px; height:auto; position:absolute; top: 80px;left:0px;}
+#kitCustomizer .kitCopy{font-size: 14px;margin-bottom:26px; line-height:19px;}
+#kitCustomizer .kitTitle{margin-bottom:25px;}
+.changeFrequency{border:1px solid #E3E3E3;background-color:white;margin:0 0 20px 0; width:905px; float:left;}
+#formTitleChangeFrequency{margin:30px 0 3px 0;}
+.changeFrequencyTopText{padding-bottom:36px; font-size:14px; line-height:18px;}
+.changeFrequency .checkout_box h4{font:bold 14px Arial, Helvetica, sans-serif; color:#FFF; padding: 6px 0 5px 13px; position:relative;background:url(../images/heading_bg.png) repeat;}
+.changeFrequency #newShippingfreq{width:873px; height:auto; float:left; padding:16px 18px 20px 14px;}
+.changeFrequency #newShippingfreq p{line-height: 18px;font-size: 12px;margin-bottom: 18px;}
+.changeFrequency #newShippingfreq p.selectNewFrequency{margin-bottom:12px;}
+.changeFrequency #newShippingfreq .currentFrequency span{font-weight:bold;}
+.changeFrequency #newShippingfreq #frequencyselectbox{top:1px; left:0px;}
+.changeFrequency #newShippingfreq button#change,.changeFrequency #newShippingfreq a#shipnow{background:url("../images/wen/brown_button_bg.png") left top repeat; border:0; margin:00; padding:0px; float:right;cursor:pointer;color:#FFF;font-weight:bold;font-size:14px; height:32px; text-transform:uppercase; width:101px; text-decoration:none; text-align:center; line-height:32px;}
+.changeFrequency #newShippingfreq a#shipnow{margin-top:19px; width:112px;}
+.ui-dialog #dialogbox-kit{float: left;padding-top: 26px;padding-bottom: 20px;}
+.ui-dialog #dialogbox-kit.kitbox{padding-top: 17px;}
+.ui-dialog #dialogbox-kit .btn{padding-left: 157px;padding-top:18px;float: left;}
+.ui-dialog #dialogbox-kit.kitbox .btn{padding-top: 26px;}
+.ui-dialog #dialogbox-kit .btn .brownButton,.ui-dialog #dialogbox-kit .btn .grayButton{padding:9px;text-decoration: none;font-weight: bold; float: left;text-align: center;}
+.ui-dialog #dialogbox-kit .btn .brownButton{margin-right:10px; width: 30px;}
+
+.aboutChangingYourFrequency{width:100%; float:left; margin-top:16px;}
+.aboutChangingYourFrequencyMiddle{padding-left:12px;}
+.aboutChangingYourFrequency h2{float:left;font-size:24px;margin:0px 0px 12px; width:100%;}
+.aboutChangingYourFrequency p{font-size:12px; line-height:16px; margin-bottom:15px;}
+.aboutChangingYourFrequency p strong{font-size:14px;}
+
+.changeFrequencyError{color: #C00;float:left;position: relative;top: 16px;}
+
+
+#selectasystem #idMainWide .DetailDescription .orderlabel .orderVarButton{color: #86120D;    font-family: Arial,Helvetica,sans-serif;    font-size: 18px;    font-weight: bold;    margin-top: 5px;    text-align: center;margin-right: 15px; cursor: pointer; text-decoration: underline;}
+#selectasystem #idMainWide .DetailDescription .orderlabel{ padding-bottom: 20px;    text-align: center;}
+#selectasystem #idMainWide .sas-head .headerRight{float: right;}
+#selectasystem #idMainWide .sas-head .headerLeft{float:left; margin-top:15px;width: 418px}
+.wapper-dialog #overlay_shipping .heading{ line-height: 24px;  border-bottom: 1px solid #CCCCCC;    font-size: 14px;    font-weight: bold;    margin-bottom: 7px;    text-indent: 0;}
+#overlay_shipping table {    margin-bottom: 10px;    margin-top: 10px;    width: 533px;}
+#overlay_shipping table th {    color: #6E9872;    font-weight: bold;    padding: 3px 15px 3px 2px;}
+#overlay_shipping table td {    border-top: 1px solid #CCCCCC;   padding: 5px 3px;}
+#security .contentSectionPrivacy p{color: #313A40;    font: 11px/13px arial;    padding: 7px 0;}
+#security .contentSectionPrivacy h1{font-size:14px;font-weight: bold; }
+#security .contentSectionPrivacy h3{font-weight: bold;}
+#ptChekoutsingle .checkout-maincontent .cbShipping .checkbox{ float: right;    width: 133px;}
+#ptChekoutsingle .checkout-maincontent .asbilling label{display: block;width: 113px;padding-top: 2px; float: right;}
+.accountContainer .changeFrequencyTopText a{color: #000000;    font-size: 12px;    font-weight: bold;}
+#minicartOuter .productSummry .productDec:first-child{padding-top:10px;}
+.minHeight,.orderconfirmation{min-height:500px;}
+/*Dialog css starts here*/
+
+#popup_wen_cleansing_conditioner-body .wen_close,#popup_wen_styling_creme-body .wen_close,#popup_wen_intensive_hair_treatment-body .wen_close,#popup_wen_treatment_mist-body .wen_close,#popup_wen_texture_balm-body .wen_close,#popup_wen_wide_tooth_comb-body .wen_close{ background: url("../images/wen/close.gif") no-repeat scroll 0 0 transparent;    height: 26px;    position: absolute;    right: 0;    top: 0;    width: 27px;}
+#popup_wen_cleansing_conditioner-body .dialog,#popup_wen_styling_creme-body .dialog,#popup_wen_intensive_hair_treatment-body .dialog,#popup_wen_treatment_mist-body .dialog,#popup_wen_texture_balm-body .dialog,#popup_wen_wide_tooth_comb-body .dialog{background: none repeat scroll 0 0 #FFFFFF;    border: 1px solid #CCCCCC;    height: auto;    padding: 25px;    width: 465px;}
+#popup_wen_cleansing_conditioner-body .dialog .mid.table_window,#popup_wen_intensive_hair_treatment-body .dialog .mid.table_window,#popup_wen_treatment_mist-body .dialog .mid.table_window,#popup_wen_texture_balm-body .dialog .mid.table_window,#popup_wen_wide_tooth_comb-body .dialog .mid.table_window{width: 100%;}
+#popup_wen_cleansing_conditioner-body .dialog .mid.table_window h2,#popup_wen_styling_creme-body .dialog .mid.table_window h2,#popup_wen_intensive_hair_treatment-body .dialog .mid.table_window h2,#popup_wen_treatment_mist-body .dialog .mid.table_window h2,#popup_wen_texture_balm-body .dialog .mid.table_window h2,#popup_wen_wide_tooth_comb-body .dialog .mid.table_window h2{ border: medium none;
+    font-family: Century Gothic,Apple Gothic,sans-serif;    font-size: 22px;    font-weight: normal;    height: 22px;    line-height: 22px;    margin: 0;    padding: 0 0 15px;    text-transform: uppercase;}
+#popup_wen_cleansing_conditioner-body .dialog .mid.table_window #directionsContent,#popup_wen_intensive_hair_treatment-body .dialog .mid.table_window #directionsContent,#popup_wen_treatment_mist-body .dialog .mid.table_window #directionsContent,#popup_wen_texture_balm-body .dialog .mid.table_window #directionsContent,#popup_wen_wide_tooth_comb-body .dialog .mid.table_window #directionsContent{ float: left;    width: 100%;}
+#popup_wen_cleansing_conditioner-body .dialog .mid.table_window #directionsContent .kitContent,#popup_wen_intensive_hair_treatment-body .dialog .mid.table_window #directionsContent .kitContent,#popup_wen_treatment_mist-body .dialog .mid.table_window #directionsContent .kitContent,#popup_wen_texture_balm-body .dialog .mid.table_window #directionsContent .kitContent,#popup_wen_wide_tooth_comb-body .dialog .mid.table_window #directionsContent .kitContent{ float: left;    padding-right: 10px;    width: 270px; font: 12px/18px arial;}
+#popup_wen_cleansing_conditioner-body .dialog .mid.table_window #directionsContent .kitImage,#popup_wen_intensive_hair_treatment-body .dialog .mid.table_window #directionsContent .kitImage,#popup_wen_treatment_mist-body .dialog .mid.table_window #directionsContent .kitImage,#popup_wen_texture_balm-body .dialog .mid.table_window #directionsContent .kitImage,#popup_wen_wide_tooth_comb-body .dialog .mid.table_window #directionsContent .kitImage{ float: left;    width: 170px;}
+#popup_wen_cleansing_conditioner-body .dialog .mid.table_window #overlay_product,#popup_wen_intensive_hair_treatment-body .dialog .mid.table_window #overlay_product,#popup_wen_treatment_mist-body .dialog .mid.table_window #overlay_product,#popup_wen_texture_balm-body .dialog .mid.table_window #overlay_product,#popup_wen_wide_tooth_comb-body .dialog .mid.table_window #overlay_product{height: auto;}
+#cartwenhaircare-single-flavorsref .formfield .zip{}
+.cartShipping .checkoutBoxInner.inputbg input,.cartShipping .checkoutBoxInner.inputbg select{background:#d4d0c8;}
+.lp-formulas .headerWraper .formula-home-header{width:900px; margin:0px auto;}
+#selectasystem #idMainWide .BVBrowserFF{float: left;margin-left: 40px;margin-top: 29px;  width: auto;}
+#selectasystem #idMainWide .sas-head #BVCustomerRatings{float: left;margin-left: 60px;margin-top: 29px;  width: 304px;}
+.travel .travel-homepage-banner{ width:100%; clear: both;}
+.core .core-homepage-banner,.core .core-homepage-bottombanner,.core .core-homepage-bottombanner-winter-vanilla{float: left;  width: 100%;}
+
+
+/* order detail */
+.accountContainer #orderDetailOverview .innerPanel{padding:0;float:left;width:100%;}
+.ptCheckOutOrder .checkOutContainer .checkOutContent #orderDetailOverview .panelWraper{padding:20px 0px 20px;}
+.accountContainer #orderDetailOverview .panelWraper{border: none;border-top:1px solid #D7D7D7;margin-bottom:5px;}
+.ptCheckOutOrder .checkOutContainer #orderDetailOverview .innerPanel .leftPanel,.ptCheckOutOrder .checkOutContainer #orderDetailOverview .innerPanel .rightPanel{min-height: 130px;}
+.accountContainer #orderDetailOverview .innerPanel.panelBottom .leftPanel, .accountContainer #orderDetailOverview .innerPanel.panelBottom .rightPanel{min-height:95px; padding-bottom:0px;}
+.ptCheckOutOrder .checkOutContainer .checkOutContent #orderDetailOverview  .topLabel{margin-top:0px; padding-bottom:17px;}
+.leftPanel,#ptAccount .accountContainer .accountOverView .orderWraper .rightPanel{min-height:170px;}
+#ptAccount .accountContainer .accountOverView .innerPanel.panelBottom .leftPanel,#ptAccount .accountContainer .accountOverView .innerPanel.panelBottom .rightPanel{min-height:165px;}
+#ptAccount .accountContainer .accountOverView .innerPanel .leftPanel,#ptAccount .accountContainer .accountOverView .innerPanel .rightPanel{min-height:261px;}
+#ptAccount .accountContainer .accountOverView .orderWraper .leftPanel .aButton{font:bold 12px Arial, Helvetica, sans-serif;float:left;  padding: 8px 0 8px 21px; margin:20px 0; width:98px;}
+#ptAccount .accountContainer .accountOverView .orderWraper .whiteBg{width: 100%;}
+input.errormessage,select.errormessage{ color:#000;}
+
+/*Moved BazaarVoice Inline Css from int_bazaarvoice\cartridge\templates\default\bv\display\rr\reviews.isml*/
+.reviewsBg {padding: 5px; margin-right: -5px;}
+.core .homeSmBanners .homeBotext,.travel .homeSmBanners .homeBotext{color: #757575;    float: left;    font: 11px/14px arial;    padding-left: 2%;    padding-top: 15px;    text-align: center;    width: 93%;}
+#ptAccount .contactWraper .contactusLeft h2{padding-bottom: 27px;}
+#container.pt_account{ overflow-x: hidden;float:none;}
+#container.pt_account #main{margin: 0px auto; width: 925px;}
+#container.pt_account #main #bvSubmitContentMain{float: left;}
+
+.notfound{ min-height: 500px; padding: 27px 0 0;}
+.notfound .errorpagemessage a{color: #95B400;text-decoration: underline;}
+.notfound .errorpagemessage a:hover{color: #000; text-decoration: none;}
+#ptChekoutsingle .order-totals.shippingTotal .orderTotal{float: right;font-size: 11px;font-weight: bold; margin-top: 10px;padding-right:34px; text-transform: capitalize;width: 125px;}
+#ptChekoutsingle .order-totals.shippingTotal .sub_total{padding-right:34px;}
+#ptChekoutsingle .order-totals.shippingTotal #totalshippingprice{padding-right:34px;width:50%;}
+#ptChekoutsingle .order-totals.shippingTotal{width: 657px; padding: 10px;}
+sup{position: relative;    top: -0.3em;}
+.accountOverView .updatepass{padding-top: 31px; font-weight:bold;}
+#selectasystem #idMainWide .sasTabs.tab2 h5{ margin-left: 6px;}
+.txtWraper{min-height:46px;}
+#selectasystem #idMainWide .sasTabs h5 sup{font-size: 60%;}
+.ptCheckOutOrder .checkOutContainer .checkOutContent .accountOverView .orderreviewHeader .topLabel{ width:650px;}
+.ptCheckOutOrder .checkOutContainer .checkOutContent .accountOverView .orderreviewHeader .actions{width: 200px; float: right;text-transform: uppercase;}
+.ptCheckOutOrder .checkOutContainer .checkOutContent .accountOverView .orderreviewHeader .actions button{ float:right; margin: 0;}
+.topNav ul li.btnOrdernow:hover a{border-bottom:none;} 
+/* manage headings */
+.pageTitle{color: #4E4D4B;font: 41px/34px Century Gothic,Apple Gothic,sans-serif;text-transform: uppercase;}
+.titleTextIntend{font-size: 0;line-height: 0;margin: 0; padding: 0; text-indent: -9999px; height: 0px !important;}
+#guarantee .pageTitle{ font: 40px Century Gothic,Apple Gothic,sans-serif; margin-top: -12px;}
+.ptOrderConfirmation .viewOrderDetailsBtn.newOrderbtn{float: left;    font-size: 14px;    font-weight: bold;    padding: 6px 26px;    width: 216px;}
+#header-category{width:100%; background:url(../images/topnav/topnav-tile.png) left top repeat-x; height:35px;  float:left; }
+#header-category .wrapper{margin: 0 auto; width: 925px;}
+#header-category .category-nav{float: left;position:relative;padding:0px 0 0 0;}
+#header-category .category-nav li{float:left; display:inline-block; position: relative; background:url(../images/topnav/topnav-separator.png) left -1px no-repeat;font-size:12px; }
+#header-category .category-nav li:first-child{background:none;}
+#header-category .category-nav li.active{ background-color:#617310;}
+#header-category .category-nav li a{font-size:13px;float: left; color:#fff; text-decoration: none;  font-weight:bold; padding:10px 13px 0;}
+#header-category .solution a{font-size:13px;float: left; color:#262626;text-decoration: none;  font-weight:bold; padding-left:13px; }
+#header-category .category-nav li:hover a{color:#000; background:url(../images/topnav/topnav-hover-tile.png) left top repeat; padding-top:10px; padding-bottom:10px;}
+#header-category .category-nav li{height:35px;}
+#header-category .category-nav li div.subnav{background:#eeeeee;position: absolute;top:43px;width:321px;left:-1px;  display: none; z-index:99999; padding:11px 10px; }
+#header-category .category-nav li.right div.subnav{left:auto;right:0px;}
+#header-category .category-nav li:hover div.subnav{z-index: 999999;}
+#header-category .category-nav li:hover div.subnav li{ padding:10px 13px; } 
+#header-category .category-nav li div.subnav .product{ float:left; color:#fff; padding:0 20px 19px 0;width: 320px; margin-bottom:30px; }
+#header-category .category-nav li div.subnav .product img{float:left; border:1px solid #646464; margin-right:5px;}
+#header-category .category-nav li div.subnav .product a{ float:left;line-height: 14px; color:#707070; background:none; padding:0px 0 0 9px;width:151px; font-size:11px;}
+#header-category .category-nav li div.subnav .seemore{ border-top: 1px dotted #999999;float: right;margin-right: 0;width: 320px;height: 32px;}
+#header-category .category-nav li div.subnav .seemore a{ background:none;float: right;}
+#header_new .wrapper .toporder a{margin-top:9px;background:url(../images/nav-order-proactiv.png) no-repeat left bottom;width:5px;height:2px;text-indent:-9999px;float:left;padding:18px 58px;margin-left:37px;}
+#header_new .wrapper {width:928px;} 
+#header-category .solutionbox{float:left; width: 140px; height:34px; background:url(../images/topnav/solution-finder-bg.png) no-repeat left top; } 
+#header-category .solution{float: right;position:relative; padding:3px 12px 0 0; margin:7px 13px 12px 8px; background:url(../images/topnav/topnav-solution.gif) 105px 9px no-repeat; width:102px; height:34px; }
+#header-category .solution a{padding:0px; color:#fff; background:url(../images/topnav/topnav-solution.gif) 115px 16px no-repeat;font-size:13px;}
+#header-category .solution.hover{padding:10px 13px 13px 11px; margin:0px; width:114px; background:url(../images/topnav/topnav-hover-tile.png) left top repeat; }
+#header-category .solution.hover a{background:url(../images/menu-up-arrow.jpg) 105px 3px no-repeat; width:120px;}
+#header-category .solution a.hover{color:#262626; border:0px;}
+#header-category .solution .subnav ul{width: auto; float:right;}
+#header-category .solution .subnav ul li {width: auto; width:193px;padding:0 0 13px 10px; }
+#header-category .solution .subnav ul li img { float:left; width:56px; height:56px; display:none;}
+#header-category .solution .subnav ul li a{ float:left; background:none; padding: 5px 0px;line-height: 16px;width: 150px;margin: 0 24px;}
+#header-category .solution  div.subnav{background:#eee; position: absolute;top:34px;width:400px; right:0px;  display: none; z-index:99999; padding:11px 10px; box-shadow:0 4px 3px 0 #929292; -ms-filter: "progid:DXImageTransform.Microsoft.Shadow(Strength=12, Direction=135, Color='#929292')";filter: progid:DXImageTransform.Microsoft.Shadow(Strength=5, Direction=150, Color='#929292');}
+#header-category .solution .subnav ul li a:hover{text-decoration: underline;}
+#header-category .solution.hover div.subnav{ display:block;}
+#header-category #shop-image{ float:left; width:96px; height:44px; background:url('../images/topnav/topnav-shop.png') no-repeat; /*margin-top:-4px;*/ }
+.sitesearch { background: none repeat scroll 0 0 #EBEBEB; border-radius: 5px 5px 5px 5px; float: right; margin-top: -10px; padding: 1px;}
+.sitesearch input { background-color: #EBEBEB; border: medium none; font-size: 15px; float:left; height: 28px; outline: medium none; padding: 2px 2px 2px 10px; width: 152px;}
+.sitesearch button { background: url("../images/topnav/search-button.png") no-repeat 0 3px ; border: 0 none; height: 28px; text-indent: -999px; width: 29px; cursor:pointer;}
+.content .producthits { float: left; width: 100%; } 
+.content .producthits  .search { margin: 0 auto; width: 928px;}
+#content {background-color: #FFFFFF; margin: 0 auto; width:928px; }
+#search {margin-top: 0; padding: 0 10px; float: left;}
+#search .nohits {padding-top: 15px;min-height: 400px;}
+#search .nohits h1 {font-size: 24px; padding-bottom: 10px;}
+#search .nohitsmessage {color: #4E4D4B; font: bold 15px Arial,Helvetica,sans-serif;} 
+#search .noresults-help {padding-top: 18px; }
+#search .didyoumean, #search .noresults-help {color: #4E4D4B; font: 11px/20px Arial,Helvetica,sans-serif;}
+#search .searchagain {border-bottom: 1px solid #EBEBEB; border-top: 1px solid #EBEBEB; font-size: 11px; margin-top: 14px; padding: 10px 0; width:928px;}
+#search .nohitssearch label {float: left;}
+#search input {height: 29px; margin: 0 6px 0 0; width: 274px; float: left;}
+#search .nohitssearch .btnHeadLogin { float: left;  margin-top: 2px; padding:5px; cursor:pointer}
+.sorthitscontainer.gridpage {float: right;}
+.sortby fieldset {padding: 14px; width: 166px;}
+.sortby fieldset label{float: left; width: 68px; font-size: 14px;}
+.pdpContainer .content h2.search-result{font-size: 28px; line-height: 36px; padding: 51px 0 5px 17px; color: #4e4d4b; float:left;}
+.searchtap {width: 100%; float: left; position: relative; background: url(../images/topnav/subnavtop-border.png) center 47px no-repeat; padding: 20px 0px 0; }
+.searchtap ul {padding: 0px 0 32px 20px; width: 925px; margin: 0 auto; position: relative; }
+.searchtap li {float: left; padding: 0px 1px 4px 9px; background: url(../images/topnav/sub-tab.png) left top no-repeat; }
+.searchtap li.active {background: url(../images/topnav/sub-tab-active.png) left top no-repeat;}
+.searchtap li a {text-decoration: none; font-size: 12px; color: #252525; float: left; background: url(../images/topnav/sub-tab-r.png) right top no-repeat; padding: 11px 23px 7px 15px; }
+.searchtap ul li.active a {color: #474C48; padding: 11px 23px 7px 15px; background: url(../images/topnav/sub-tab-r-active.png) right top no-repeat; }
+.solution-finder-image {background: url(../images/topnav/solution-finder.jpg) 22px 32px no-repeat; height: 216px; width: 180px; float: left;}
+.sortby {float: left;margin-top:5px; min-width:200px;}
+#SimpleSearchForm > fieldset button span{display:none;}
+.searchtap li a strong span, .searchtap li.active a strong span { background: url(../images/topnav/tab-count-right.png) right 0px no-repeat; line-height: 19px; padding: 4px 10px 3px 3px; height: 22px; }
+.searchtap li a strong, .searchtap li.active a strong {background: url(../images/topnav/tab-count.png) left 0px no-repeat; padding: 4px 0 2px 5px; line-height: 19px; }
+#articles .article-wraper .article { border-bottom: 1px dotted #a4a4a4; padding: 18px 10px; }
+.article .articlename{font-size: 15px; margin: 0; font-weight: bold;}
+.article .articletitle{padding: 12px 0;}
+.article .articletitle a{color: #898989; font-size: 11px;}
+.article .description{color: #4E4D4B; font-size: 11px; line-height: 16px;}
+#video .contenthits .articlerow .article .articlename a{  color: #A18D53!important;    font-size: 13px;    font-weight: bold;}
+#video .contenthits{ font-size:11px; padding-bottom: 26px;  font-size: 11px; }
+#video .contenthits .articlerow .article { float:left; width:217px; border:1px #ccc solid; margin:0px 2px; }
+#video .contenthits .articlerow{ margin-top:20px;}
+#video .contenthits .articlerow .article .inner-con{ padding:0px 15px; margin:17px 0 11px 0px;}
+#video .contenthits .articlerow .article .inner-con .v-sm-text{ border-bottom:1px #a4a4a4 dotted; padding:18px 0px 10px 0px;}
+#video .contenthits .articlerow .article .inner-con .v-sm-text a{padding:0px 3px; color:#363636;}
+#video .contenthits .articlerow .article .inner-con .v-sm-text-links{padding-top:10px;}
+#video .contenthits .articlerow .article .inner-con .v-sm-text-links a{ color:#898989; text-decoration:underline;}
+#video .contenthits .articlerow .article .contentimage{text-align:center; width: 218px;height: 126px;position: relative;}
+#video .contenthits .articlerow .article .contentimage .play{background: url("../images/play.png") center 0px  no-repeat; height: 46px;left: 83px;position: absolute;text-align: center;top: 39px; width: 46px;}
+
+.videopopup h2{ border-bottom: 1px dotted #919191; font-size:16px; font-weight:700; padding: 0 0 6px;margin-bottom: 8px;color:#363636;}
+.videopopup h3{font-size:12px; font-weight:bold;padding:12px 0;}
+.vedescription{color:#363636;font-size:11px; float: left; padding: 10px 0;}
+.quickViewDialog-close .ui-icon-closethick{ background: url("../images/quick_close.png") no-repeat scroll 0 0 transparent; position: absolute;right: 0; top: 0;height:36px;width:36px;}
+.article .keyword{padding: 6px 0 0;font-size: 11px;color:#898989 ;}
+.article .keyword a{color:#898989 !important;text-decoration: underline !important;}
+.suggestions {background-color: #FFFFFF; border: 1px solid #CCCCCC; cursor: pointer; display: none; padding: 0; width:190px !important; font-size:11px; font-weight:normal;top: 97px !important;}
+.suggestions div {clear: both; overflow: hidden; padding: 2px 5px; white-space: nowrap}
+.suggestions div.selected {background-color: #ececec; color: #494949}
+.suggestions div.selected, .suggestions div.unselected {border-bottom:1px #EEE solid; padding:10px 0;}
+.suggestions div.selected:last-child, .suggestions div.unselected:last-child {border-bottom:none}
+.suggestions div div.suggestionterm {float: left; overflow: hidden; width: 107px; font-weight:bold; text-transform:capitalize}
+.suggestions div span.hits {float: right; text-align: right ; padding-right:5px; padding-top:2px}
+#search.search { padding-top: 40px; }
+.loading{ width:928px; text-align:center; padding-top:20px; min-height:600px;}
+.loading > img{ margin-top:300px;}
+
+/* Wen Inline Panel */
+#moreInfo .termslist {float: left;height:455px;margin-top: -10px;padding-top: 10px;width: 716px;}
+#moreInfo .termslist .contentSection {height: 435px;overflow-x: hidden;overflow-y: scroll;width: 100%;}
+#moreInfo .termslist .contentSection b{font-weight:normal;}
+#moreInfo .termslist .pageTitle { border-bottom: 1px solid #CCCCCC;float: left;font-size: 24px;margin-bottom: 10px;text-transform: capitalize;width: 100%;margin-top:-10px;}
+#moreInfo .termslist ul,#moreInfo .termslist ol{width:95%;padding-left:20px;}
+
+
+.homeBannerNewWraper .homeBannerNew{min-width:925px;    display: block;    float: left;    height: 415px;    width: 100%; position:relative;}
+.homeBannerNewWraper .homeBannerNew .bannerBtn{ display: block;    position: absolute;    right: 520px;    top: 103px;}
+.homeSmBanners{margin: 18px auto;    width: 925px;}
+.homeSmBanners .SmBanner1{border-right: 1px solid #CBCBCB;    float: left;    padding: 13px 15px 10px 0px;    width: 289px;}
+.homeSmBanners .SmBanner2{border-right: 1px solid #CBCBCB;    float: left;    padding: 13px 15px 10px 15px;    width: 289px;}
+.homeSmBanners .SmBanner3{float: left;    padding: 13px 0px 10px 15px;    width: 285px;}
+.homeSmBanners h3{color: #86120D;    font-size: 19px;    padding: 15px 0 10px;   text-transform: uppercase;}
+.homeSmBanners p{color: #757575;    font: 12px/14px arial;}
+.homeSmBanners a{ color: #7C8F24;float: left;background: url(../images/wen/arrow-gr.jpg) right 12px no-repeat;    display: block;    font: bold 14px arial;    padding-top: 10px;    text-decoration: none;    text-transform: uppercase;padding-right: 15px;}
+.homeSmBanners a:hover{ text-decoration: underline;}
+.core-homepage-bottombanner-winter-vanilla{float: left;  width: 100%;}
+
+
+/*-------------MORE HEADER CSS TO ACCOMMODATE ROLLOVER SUBNAV-------------*/
+.subtopnav{ display:none; }
+.subtopnav{ position:absolute; margin-top:26px; margin-left:-14px; z-index:1000; background:#262626 url('../images/shadow-tile.png') repeat-x; }
+.topNav ul li.active .subtopnav a, .topNav ul li:hover .subtopnav a{ border-bottom:0 !important; }
+.topNav li{ height:43px; }
+.subtopnav li{ clear:both; height:auto; }
+.subtopnav a{ font-size:12px !important; }
+.subtopnav li div{ padding:8px 0; }

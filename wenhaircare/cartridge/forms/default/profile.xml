@@ -1,0 +1,166 @@
+<?xml version="1.0"?>
+<form xmlns="http://www.demandware.com/xml/form/2008-04-19" secure="true">
+	<group formid="customer">
+		<field formid="firstname" label="profile.firstname" type="string" mandatory="true" binding="firstName" missing-error="profile.firstname.missingerror" max-length="30" min-length="2" regexp="^[a-zA-Z -]+$" parse-error="forms.profile.invalid.firstname"/>
+		<field formid="lastname" label="profile.lastname" type="string" mandatory="true" binding="lastName" missing-error="profile.lastname.missingerror" max-length="30" min-length="2"  regexp="^[a-zA-Z -]+$" parse-error="forms.profile.invalid.lastname"/>
+		<field formid="email" label="profile.email" type="string" mandatory="true" regexp="^[\w-\.]{1,}\@([\da-zA-Z-]{1,}\.){1,}[\da-zA-Z-]{2,3}$" parse-error="profile.emailparseerror" binding="email" missing-error="profile.email.missingerror" max-length="50" value-error="profile.usernametaken"/>
+		<field formid="emailconfirm" label="profile.confirmemail" type="string" mandatory="true" regexp="^[\w-\.]{1,}\@([\da-zA-Z-]{1,}\.){1,}[\da-zA-Z-]{2,3}$" parse-error="profile.emailparseerror" missing-error="profile.confirmemail.missingerror"  max-length="50" value-error="profile.emailnomatch"/>
+
+		<field formid="birthday" label="profile.dob"  description="profile.dobexample" type="date" mandatory="false" format="MM/dd/yyyy" max="now" binding="birthday" max-length="10"/>		
+		<field formid="phone" label="profile.phone" type="string" description="profile.phoneexample" mandatory="false" binding="phoneHome" missing-error="profile.phone.missingerror" max-length="10" min-length="10" regexp="^[0-9]+$"/>		
+		<field formid="addtoemaillist" label="productlist.public"  type="boolean"/>
+
+		<!-- Fields added for GRP -->
+			
+		<field formid="screenName" label="profile.screenname" type="string" mandatory="false" binding="screenName" max-length="50"/>
+		<field formid="billingZipCode" label="profile.billingZipCode" type="string" mandatory="true" binding="custom.billingZipCode" max-length="5" regexp="^[0-9]+$" parse-error="forms.invalidZipCode"/>
+		<field formid="accountNumber" label="profile.accountNumber" type="string" mandatory="false" binding="custom.accountNumber" max-length="14" min-length="9" regexp="^[0-9]+$"/>
+		<field formid="mpgm" label="profile.accountNumber" type="string" mandatory="true" binding="custom.mpgm" max-length="3" min-length="3" regexp="^[0-9]+$"/>
+		
+		<!-- About You -->
+		<field formid="age" label="profile.age" type="number" mandatory="false" binding="custom.age" format="0.#" max-length="2" regexp="^[0-9]+$" parse-error="profile.invalidage"/>
+		
+		<field formid="gender" label="Gender" type="string" mandatory="false" binding="gender">
+			<options>
+				<option optionid="Select" 	label="Select Gender"	value=""/>
+				<option optionid="Female" 	label="Female"	value="2"/>
+				<option optionid="Male" 	label="Male"	value="1"/>
+				
+			</options>	
+		</field>
+		<field formid="month" label="Month" type="string" mandatory="false" binding="custom.birthMonth">
+			<options>
+				<option optionid="Select" value="" label="Select a month"/>
+        		<option optionid="January" value="01" label="January"/>
+        		<option optionid="February" value="02" label="February"/>
+        		<option optionid="March" value="03" label="March"/>
+       			<option optionid="April" value="04" label="April"/>
+		        <option optionid="May" value="05" label="May"/>
+		        <option optionid="June" value="06" label="June"/>
+		        <option optionid="July" value="07" label="July"/>
+		        <option optionid="August" value="08" label="August"/>
+		        <option optionid="September" value="09" label="September"/>
+		        <option optionid="October" value="10" label="October"/>
+		        <option optionid="November" value="11" label="November"/>
+		        <option optionid="December" value="12" label="December"/>
+			</options>	
+		</field>
+		<field formid="date" label="Day" type="string" mandatory="false" binding="custom.birthDate">
+			<options>
+				<option optionid="Select" value="" label="Select a day"/>
+		        <option optionid="01" value="01" label="01"/>
+		        <option optionid="02" value="02" label="02"/>
+		        <option optionid="03" value="03" label="03"/>
+		        <option optionid="04" value="04" label="04"/>
+		        <option optionid="05" value="05" label="05"/>
+		        <option optionid="06" value="06" label="06"/>
+		        <option optionid="07" value="07" label="07"/>
+		        <option optionid="08" value="08" label="08"/>
+		        <option optionid="09" value="09" label="09"/>
+		        <option optionid="10" value="10" label="10"/>
+		        <option optionid="11" value="11" label="11"/>
+		        <option optionid="12" value="12" label="12"/>
+		        <option optionid="13" value="13" label="13"/>
+		        <option optionid="14" value="14" label="14"/>
+		        <option optionid="15" value="15" label="15"/>
+		        <option optionid="16" value="16" label="16"/>
+		        <option optionid="17" value="17" label="17"/>
+		        <option optionid="18" value="18" label="18"/>
+		        <option optionid="19" value="19" label="19"/>
+		        <option optionid="20" value="20" label="20"/>
+		        <option optionid="21" value="21" label="21"/>
+		        <option optionid="22" value="22" label="22"/>
+		        <option optionid="23" value="23" label="23"/>
+		        <option optionid="24" value="24" label="24"/>
+		        <option optionid="25" value="25" label="25"/>
+		        <option optionid="26" value="26" label="26"/>
+		        <option optionid="27" value="27" label="27"/>
+		        <option optionid="28" value="28" label="28"/>
+		        <option optionid="29" value="29" label="29"/>
+		        <option optionid="30" value="30" label="30"/>
+		        <option optionid="31" value="31" label="31"/>
+			</options>	
+		</field>
+		<field formid="hairLength" label="Hair Length" type="string" mandatory="false" binding="custom.hairLength">
+			<options>
+				<option optionid="short" value="short" label="short" />
+				<option optionid="medium" value="medium" label="medium" />
+				<option optionid="long" value="long" label="long" />
+				<option optionid="very-long" value="very-long" label="very-long" />
+			</options>
+		</field>
+		<field formid="hairType" label="Hair Type" type="string" mandatory="false" binding="custom.hairType">
+			<options>
+				<option optionid="straight" value="straight" label="straight" />
+				<option optionid="wavy" value="wavy" label="wavy" />
+				<option optionid="curly" value="curly" label="curly" />
+				<option optionid="very-curly" value="very-curly" label="very-curly" />
+			</options>
+		</field>
+		<field formid="hairTexture" label="Hair Texture" type="string" mandatory="false" binding="custom.hairTexture">
+			<options>
+				<option optionid="fine" value="fine" label="fine" />
+				<option optionid="medium" value="medium" label="medium" />
+				<option optionid="coarse" value="coarse" label="coarse" />
+			</options>
+		</field>
+		<field formid="hairVolume" label="Hair Volume" type="string" mandatory="false" binding="custom.hairVolume">
+			<options>
+				<option optionid="thin" value="thin" label="thin" />
+				<option optionid="normal" value="normal" label="normal" />
+				<option optionid="thick" value="thick" label="thick" />
+			</options>
+		</field>
+		<!-- About You -->
+		<action formid="editprofile" valid-form="true"/>
+	</group>	
+
+
+	
+	<group formid="login">
+	
+		<field formid="username" 
+			label="label.username" 
+			description="forms.5_20characters" 
+			type="string" 
+			mandatory="true" 
+			binding="login" 
+			regexp="^[-\w\.@_ ]{5,100}$" 
+			parse-error="profile.usernameerror"
+			value-error="profile.usernametaken"
+			missing-error="profile.usernamemissingerror"  />
+			   
+		<field formid="password" label="label.password" type="string" mandatory="true" min-length="8" max-length="32" missing-error="profile.password.missingerror"
+			   range-error="forms.5_20characters"/>	
+		<field formid="passwordconfirm" label="profile.passwordconfirm" type="string" mandatory="true" min-length="8" max-length="32" missing-error="profile.confirmpassword.missingerror"
+			   range-error="forms.5_20characters" value-error="profile.passwordnomatch"/>
+		<field formid="question" label="profile.accountquestion" type="string" mandatory="false" binding="passwordQuestion">
+			<options>
+				<option optionid="MothersMaidenName" value="Mother's Maiden Name" label="profile.question1"/>
+				<option optionid="MakeOfFirstCar" value="Make of First Car" label="profile.question2"/>
+				<option optionid="FavouritePetsName" value="Favourite Pet's Name" label="profile.question3"/>
+				<option optionid="FathersFirstName" value="Father's First Name" label="profile.question4"/>
+				<option optionid="PlaceOfBirth" value="Place of Birth" label="profile.question5"/>
+			</options>	
+		</field>
+		<field formid="answer" label="profile.accountanswer" type="string" mandatory="true" binding="passwordAnswer" max-length="50"/>
+		<field formid="rememberme" label="profile.remember" type="boolean" mandatory="false" />
+
+		<action formid="editlogin" valid-form="true"/>
+	</group>	
+
+	<include formid="address" name="customeraddress"/>
+	
+	<group formid="addressbook">
+		<list formid="addresses">
+			<action formid="edit" valid-form="false"/>
+			<action formid="remove" valid-form="false"/>
+		</list>	
+		<action formid="add" valid-form="false"/>
+	</group>
+
+	<action formid="confirm" valid-form="true"/>
+	<action formid="register" valid-form="true"/>
+	<action formid="cancel" valid-form="false"/>
+	<action formid="save" valid-form="true"/>
+</form>

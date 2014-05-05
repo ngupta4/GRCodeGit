@@ -1,0 +1,790 @@
+/**
+* Demandware Script File
+* To define input and output parameters, create entries of the form:
+**/
+
+importPackage( dw.system );
+importPackage( dw.util );
+importPackage( dw.object );
+importPackage( dw.web );
+importPackage( dw.catalog );
+importPackage( dw.content );
+
+var localRequest : Request = request;
+
+
+function shouldShowDebugInfo() : boolean
+{
+	var shouldShowDebugInfo : Boolean = Site.getCurrent().getCustomPreferenceValue("shouldShowDebugInfo");
+	
+	if( !empty(shouldShowDebugInfo) && shouldShowDebugInfo.valueOf() && dw.system.System.getInstanceType()!=dw.system.System.PRODUCTION_SYSTEM ) {
+		return true;	
+	}
+	
+	return false;
+}
+
+/** Campaign specific low-level API **/
+function getSiteLocaleDefaultCampaignCode() {
+	var code:String = "";
+	var pref:Array = Site.getCurrent().getCustomPreferenceValue("defaultLocaleCampaignCode");
+	var filteredPref = pref.filter(function(e:String,i:Number,a:Array){return e.split(":")[0] == localRequest.locale;});
+	try{
+		code = filteredPref[0].split(":")[1];
+	}catch(ex){
+		//use first in list as default...
+		code = pref[0].split(":")[1];	
+	}
+	return code;
+}
+/** Returns currently sessioned information **/
+function getCurrentCampaignCode() {
+	var campaignID:String = getSiteLocaleDefaultCampaignCode();
+	
+	if( 'campaignID' in session.privacy && !empty(session.privacy.campaignID) ) {
+		if(request.locale != 'default'){
+			//check that we have a local specific campaign...
+			if(session.privacy.campaignID.match(new RegExp('.*-'+ request.locale))){
+				campaignID = session.privacy.campaignID;
+			}
+		}else{
+			campaignID = session.privacy.campaignID;
+		}
+	}
+	return campaignID;
+}
+/** Saves current sessioned information **/
+function setCurrentCampaignCode( newID : String ) {
+	var s : Session = session, r : Request = request;
+	if( newID != session.privacy.campaignID ) {
+		session.privacy.campaignID = newID;	
+		session.custom.campaignID = newID;	
+	}
+}
+/** Saves current UCICode to session **/
+function setCurrentCampaignUCICode( ucicode : String ) {
+	session.privacy.campaignUCIID = ucicode;	
+	session.custom.campaignUCIID = ucicode;	
+}
+/** Saves current sessioned information **/
+function setCurrentPhoneNumber( phoneNumber : String ) {
+	Logger.debug ("Setting Session PhoneNumber to: " + phoneNumber);
+	session.privacy.phoneNumber = phoneNumber;	
+}
+function getCurrentPhoneNumber() {
+	return session.privacy.phoneNumber;	
+}
+
+/** Returns parent campaign information **/
+function getParentCampaignConfig( outConfig : CustomObject ) : CustomObject {
+	if( empty(outConfig) || !("parentCampaignCode" in outConfig.custom) || empty(outConfig.custom.parentCampaignCode) ) return null;
+	
+	// Now that we have the correct configuration object, look for a parent object as well
+	var parentCampaignCode : String = outConfig.custom.parentCampaignCode;
+	var parentConfig : CustomObject = null;
+	
+	if( !empty(parentCampaignCode) ) {
+		parentConfig = getCampaignForCampaignCode(parentCampaignCode,true);
+	}
+	return parentConfig;
+}
+
+function getCampaignForID( campaignID : String ) : CustomObject
+{
+	var outObject : CustomObject = null;
+	if( !empty(campaignID) ) {
+		outObject = CustomObjectMgr.getCustomObject("CampaignConfiguration", campaignID);		
+	}
+
+	return outObject;
+}
+
+
+/** this id relies on the session variable already preset **/
+function getSharedCurrentConfig( CCC : CustomObject, isCampaignCodeValid : Boolean, phoneNumber : String ) : Object {
+	var PCC : CustomObject = getParentCampaignConfig( CCC );
+
+	// Ignore parent campaigns settings if told to do so
+	if( "forceUCILookup" in CCC.custom && !empty(CCC.custom.forceUCILookup) && CCC.custom.forceUCILookup.valueOf() ) {
+		PCC = null;	
+	}
+	
+	var phone : String = null;
+	var currentPhoneNumber : String = getCurrentPhoneNumber();
+	if( !empty(currentPhoneNumber) && currentPhoneNumber.length==10) {
+		phone = Resource.msgf("format.phone","locale",null,currentPhoneNumber.substring(0,3),currentPhoneNumber.substring(3,6),currentPhoneNumber.substring(6,10));
+	}else if(!empty(currentPhoneNumber)){
+		phone = currentPhoneNumber;
+	}
+	
+	return {
+		"landingTemplate" : !empty(PCC) ? PCC.custom.landingTemplate : CCC.custom.landingTemplate,
+		"orderTemplate" : !empty(PCC) ? PCC.custom.orderTemplate : CCC.custom.orderTemplate,
+		"campaignCode" : !empty(PCC) ? PCC.custom.campaignCode : CCC.custom.campaignCode,
+		"uciCode" : !empty(CCC) ? CCC.custom.uciCode : '000',
+		"isCampaignCodeValid" : isCampaignCodeValid,
+		"isAddToCart" : CCC.custom.addToCart.valueOf(),
+		"showHeader" : !empty(PCC) ? PCC.custom.showHeader.valueOf() : CCC.custom.showHeader.valueOf(),
+		"showFooter" : !empty(PCC) ? PCC.custom.showFooter.valueOf() : CCC.custom.showFooter.valueOf(),
+		"showNav" : !empty(PCC) ? PCC.custom.showNav.valueOf() : CCC.custom.showNav.valueOf(),
+		"showOrderButton" : !empty(PCC) ? PCC.custom.showOrderButton.valueOf() : CCC.custom.showOrderButton.valueOf(),
+		"cssStyle" : !empty(PCC) ? PCC.custom.cssStyle : CCC.custom.cssStyle,
+		"sasOfferCodes" : CCC.custom.sasOfferCodes.split(','),
+		"mobileExperience" : !empty(PCC) ? PCC.custom.mobileExperience : CCC.custom.mobileExperience,
+		"enableSlpSas" : !empty(PCC) ? PCC.custom.enableSlpSas : CCC.custom.enableSlpSas,
+		"isCartWinback" : (!empty(CCC) && (CCC.custom.isCartWinback != null))? CCC.custom.isCartWinback : false,
+		"alternateMixPercent" : "alternateMixPercent" in CCC.custom && !empty(CCC.custom.alternateMixPercent) ? CCC.custom.alternateMixPercent+"" : "0",
+		"getContainerClasses" : function(){
+			var containerClasses = "";
+			if( !this.showHeader ) {
+				containerClasses += " no-header";
+			}
+			if( !this.showNav ) {
+				containerClasses += " no-nav";
+			}
+			if( !this.showFooter ) {
+				containerClasses += " no-footer";
+			}
+			if( !this.showOrderButton ) {
+				containerClasses += " no-order-button";
+			}
+			containerClasses += " "+this.campaignCode;
+			
+			return containerClasses;
+		},
+		"getCampaignCategory" : function(){
+			var category : dw.catalog.Category = dw.catalog.CatalogMgr.getCategory( this.campaignCode );
+			if( empty(category) ) {
+				category = dw.catalog.CatalogMgr.getCategory(getSiteLocaleDefaultCampaignCode());
+			}
+			
+			return category;
+		},
+		
+		"phone" : !empty(phone) ? phone : CCC.custom.phone,
+		"getDefaultCoreOffer" : function(){
+			var coreOffer : Product = null;
+			var offersList : ArrayList = new ArrayList();
+			var offerCodes : Array = null;
+			offerCodes = this.sasOfferCodes;
+			var aProduct : Product = null;
+			for( var i=0, ii=offerCodes.length; i<ii; i++ ) {
+				aProduct = ProductMgr.getProduct(offerCodes[i]);
+				if( !empty(aProduct) && aProduct.getAvailabilityModel().isOrderable().valueOf()  ) {
+					 coreOffer = aProduct;
+					 break;
+				}
+			}
+			return coreOffer;
+		},		
+		'cartID' : (!empty(PCC) ? PCC.custom.cartID : CCC.custom.cartID) || '1',
+		'checkoutType' : !empty(PCC) ? PCC.custom.checkoutType : CCC.custom.checkoutType,
+		'voidKeyCheck' : !empty(PCC) ? PCC.custom.voidKeyCheck : CCC.custom.voidKeyCheck,
+		'winback' : !empty(PCC) ? PCC.custom.winback : CCC.custom.winback,
+		'voidKeyType' : !empty(PCC) ? PCC.custom.voidKeyType : CCC.custom.voidKeyType,
+		'showReferAFriend' : !empty(PCC) ? PCC.custom.showReferAFriend : CCC.custom.showReferAFriend,
+		'echeckEnabled' : (null!=CCC.custom.enableECheck) ? CCC.custom.enableECheck : false,
+		'showBrands' : (null!=CCC.custom.showBrands) ? CCC.custom.showBrands : false,
+		'rtsEnabled' : (null!=CCC.custom.enableRTS) ? CCC.custom.enableRTS : false
+	};	
+}
+
+
+function getDefaultCampaign() : dw.object.CustomObject {
+	var defaultCampaignID : String = getSiteLocaleDefaultCampaignCode();
+	var configs : List = getCampaignsForCampaignCode( defaultCampaignID );
+	var outConfig : CustomObject = null;
+
+	if( !empty(configs) && configs.length > 0 ) {
+		outConfig = configs[0];	
+	}
+	
+	return outConfig;
+}
+
+function getCampaignsForCampaignCode( campaignID : String ) : List {
+	if( empty(campaignID) ) return null;
+
+	var outList : List = null;
+	var campaigns : SeekableIterator = null;
+	 
+	try {
+	  campaigns = CustomObjectMgr.queryCustomObjects("CampaignConfiguration", "custom.campaignCode = {0} AND custom.active = {1}", null, campaignID, true);
+	} catch (e) {
+	  dw.system.Logger.error("Error occurred in libUtils.ds, getCampaignsForCampaignCode for campaignid = {0}", campaignID); 	
+	}	  
+
+	if( !empty(campaigns) && campaigns.count > 0 ) {
+		outList = campaigns.asList();	
+	}
+	
+	return outList;
+}
+
+function getCampaignForCampaignCode( campaignID : String,dontCheckRenderingGroup:Boolean) : dw.object.CustomObject {
+	if(!dontCheckRenderingGroup){
+		var campaign:object = getCampaignForCampaignCode(session.custom.renderingCampaignPrefix + campaignID,true);
+		if(!empty(campaign))
+			return campaign;
+	}
+	var campaigns : List = getCampaignsForCampaignCode( campaignID );
+	var outConfig : CustomObject = null;
+
+	if( !empty(campaigns) && campaigns.length > 0 ) {
+		outConfig = campaigns[0];	
+	}
+	
+	// Handle legacy and older ucis
+//	if( !empty(outConfig.custom['parentCampaignCode']) ) {
+//		outConfig = getCampaignForCampaignCode( outConfig.custom['parentCampaignCode'] );	
+//	}
+	
+	return outConfig;
+}
+
+function getCampaignForUciCode( uciCode : String ) : dw.object.CustomObject {
+	if( empty(uciCode) ) return null;
+	
+	var configs : SeekableIterator = null;
+	
+	// For a UCI, just get the matching object (first one)
+	try {
+	  configs = CustomObjectMgr.queryCustomObjects("CampaignConfiguration", "custom.uciCode = {0} AND custom.active = {1}", null, uciCode, true);
+	} catch (e) {
+	  dw.system.Logger.error("Error occurred in libUtils.ds, getCampaignForUciCode for uci = {0}", uciCode); 	
+	}	  
+	var outConfig : CustomObject = null;
+	
+	if( !empty(configs) && configs.hasNext() ) {
+		outConfig = configs.first();	
+	}
+	
+	// Handle legacy and older ucis ... moved to secondary object fetch ... because we need uci config and parent config
+	//if( !empty(outConfig) && !empty(outConfig.custom['parentCampaignCode']) ) {
+	//	outConfig = getCampaignForCampaignCode( outConfig.custom['parentCampaignCode'] );	
+	//}
+	
+	return outConfig;
+}
+
+/* Code to choose between a chosen config and a cookied config */
+function getConfigOrCookiedConfig( outConfig : CustomObject, cookieConfig : CustomObject ) : CustomObject {
+	var theConfig : CustomObject = null;
+	
+	if( !empty(outConfig) ) {
+		if( empty(cookieConfig) || outConfig.custom['primaryUCI'].valueOf() ) {
+			// Use looked up value
+			theConfig = outConfig;
+		} else {
+			// Use cookied value
+			theConfig = cookieConfig;
+		}
+	} else {
+		theConfig = cookieConfig;	
+	}
+	return theConfig;
+}
+
+/* Code to choose between a chosen config and a uci config */
+function getConfigOrUciConfig( outConfig : CustomObject, uciConfig : CustomObject ) : CustomObject {
+	var theConfig : CustomObject = null;
+	
+	if( !empty(outConfig) ) {
+		if( empty(uciConfig) || outConfig.custom['forceUCILookup'].valueOf() ) {
+			// Use looked up value
+			theConfig = outConfig;
+		} else {
+			// Use cookied value
+			theConfig = uciConfig;
+		}
+	} else {
+		theConfig = uciConfig;	
+	}
+	return theConfig;
+}
+
+function trackCookieUCI( uci : String ) {
+	// Look in primary uci	
+	var primaryUCI : Cookie = request.httpCookies['uci'];
+	var uci1 : String = null;
+	var uci2 : String = null;
+	
+	if( empty(primaryUCI) ) {
+		primaryUCI = new Cookie('uci', uci );
+		primaryUCI.setDomain(Site.getCurrent().getCustomPreferenceValue("GRCookiesDomain"));
+		primaryUCI.setPath("/");
+		primaryUCI.setMaxAge(2592000);
+		
+		request.addHttpCookie(primaryUCI);	
+	} else {
+		uci1 = primaryUCI.value;	
+	}
+	
+	if( !empty(uci1) ) {
+	// if !empty, then
+		if( uci1 == uci ) { 
+		// if primary uci==uci
+			// then return
+			return;
+		}
+		
+		// Look in secondary
+		var secondaryUCI : Cookie = request.httpCookies['secondaryuci'];
+		if( empty(secondaryUCI) ) {
+			secondaryUCI = new Cookie('secondaryuci', uci1 );
+			secondaryUCI.setDomain(Site.getCurrent().getCustomPreferenceValue("GRCookiesDomain"));
+			secondaryUCI.setPath("/");
+			secondaryUCI.setMaxAge(2592000);
+			
+			request.addHttpCookie(secondaryUCI);
+		} else {
+			uci2 = secondaryUCI.value;	
+		}
+	
+		if( !empty(uci2) && uci2.indexOf(uci1+'|')!=0 && uci2!=uci1 ) {
+		// then if secondary doesn't begin with primary already
+			// then prepend primary->secondary
+			var uci2s : String = uci1+"|"+uci2, uci2array : Array;
+			
+			// Make sure to trim any but the last five
+			uci2array = uci2s.split('|');
+			if( uci2array.length > 5 ) {
+				uci2array = uci2array.slice(0,5);
+				uci2s = uci2array.join('|');
+			}
+			
+			secondaryUCI.setMaxAge(2592000);
+			secondaryUCI.setValue(uci2s);
+			secondaryUCI.setPath('/');
+			secondaryUCI.setDomain(Site.getCurrent().getCustomPreferenceValue("GRCookiesDomain"));
+			
+			request.addHttpCookie(secondaryUCI);
+		}
+	
+		// if !empty, then move current to start of secondary
+	}
+	
+	// Set primary uci
+	if( uci1 != uci ) {
+		primaryUCI.setMaxAge(2592000);
+		primaryUCI.setValue(uci);
+		primaryUCI.setPath('/');
+		primaryUCI.setDomain(Site.getCurrent().getCustomPreferenceValue("GRCookiesDomain"));
+
+		request.addHttpCookie(primaryUCI);
+	}
+	
+}
+
+function trackCookieCampaign( campaign : String ) {
+	// Look in primary uci
+	var cookie : Cookie = request.httpCookies['campaign'];
+	var existingValue : String = null;
+	
+	// if !empty, then move current to start of secondary
+	if( empty(cookie) ) {
+		cookie = new Cookie('campaign', campaign );
+		cookie.setDomain(Site.getCurrent().getCustomPreferenceValue("GRCookiesDomain"));
+		cookie.setMaxAge(2592000);
+		cookie.setPath("/");
+		
+		request.addHttpCookie(cookie);	
+	} else {
+		existingValue = cookie.value;	
+	}
+	
+	// Set primary uci
+	if( existingValue != campaign ) {
+		cookie.setDomain(Site.getCurrent().getCustomPreferenceValue("GRCookiesDomain"));
+		cookie.setMaxAge(2592000);
+		cookie.setPath("/");
+		cookie.setValue(campaign);
+					
+		request.addHttpCookie(cookie);	
+	}
+}
+function getPhoneNumberOverride(uciCode:String,campaignCode:String,phoneNumber:String):String{
+	/* 
+	 * Get phone number from a rendering group first  
+	 */
+	 //Get table from obj
+	 var defaultPhones:Array = empty(session.custom.renderingGroup)|empty(campaignCode)?new Array():session.custom.renderingGroup.custom.defaultPhoneNumber;
+	 var uciPhones:Array = empty(session.custom.renderingGroup)|empty(uciCode)?new Array():session.custom.renderingGroup.custom.uciPhoneNumberMapping;
+	 var filteredUCIPhones :Array; 	
+	  if(uciCode != null) {
+	  	   //Look up for uci match 
+	         filteredUCIPhones = uciPhones.filter(function(e:String,i:Number,a:Array){return e.split(":")[0] == uciCode;});	
+			 var uciCodeArray : Array =  uciCode.split("-");								 
+			 var uciReplace : String = uciCodeArray[uciCodeArray.length-1]	;			
+			 //when whole uci match not found , split the UCI
+			  if(empty(filteredUCIPhones)){
+		         for( var i=2, ii=uciCodeArray.length; i<=ii; i++ ) {	 		    
+				  	 filteredUCIPhones = uciPhones.filter(function(e:String,i:Number,a:Array){return e.split(":")[0] == uciCode.replace(uciReplace,"");});		    
+				     if	((filteredUCIPhones.length)==0 )     
+				     	  uciReplace  =uciCodeArray[uciCodeArray.length-i]+ "-" + uciReplace ;		 	 
+				 	 else {
+					 	  Logger.debug("UCI Phone Number Mapping found!");
+				 	      phoneNumber = filteredUCIPhones[0].split(":")[1].replace("-","");			 	    
+					 	  break;
+				 	 }
+				 }
+			   }
+			   else 
+			   //Whole UCI  Match found 
+			      phoneNumber = filteredUCIPhones[0].split(":")[1].replace("-","");						
+	  }	 	 
+
+	 if(empty(filteredUCIPhones))
+	 {
+	 	//Look up default for campaign
+	 	var filteredDefaultPhones = defaultPhones.filter(function(e:String,i:Number,a:Array){return e.split(":")[0] == campaignCode;});
+
+		if(!empty(filteredDefaultPhones)){
+			Logger.debug("Default Rending Phone Number Mapping found!");
+			phoneNumber = filteredDefaultPhones[0].split(":")[1].replace("-","");
+		}
+	 }
+	return phoneNumber;
+}
+function getCurrentCampaignConfig( campaignCode : String, uciCode : String, phoneNumber : String ) : CustomObject {
+    
+    var parentConfig : CustomObject = null;
+    var outConfig : CustomObject = null;
+    
+//    var cookieUciCode : String = null;
+        
+	var campaignConfig : CustomObject = null;
+	var uciConfig : CustomObject = null; 
+    var currentConfig : CustomObject = null;
+	
+	var currentCampaignCode : String = getCurrentCampaignCode();
+	var parentCampaignCode : String = null;
+	
+	var isCampaignCodeValid : Boolean = true;
+	
+	if( !empty(currentCampaignCode) ) {
+		currentConfig = CustomObjectMgr.getCustomObject("CampaignConfiguration", currentCampaignCode);
+	}
+	
+	// Separate use cases to individual handlers
+	if( empty(campaignCode) && empty(uciCode) ) {
+		// Use sessioned hash - if present
+		outConfig = currentConfig;
+	} else if( empty(uciCode) ) {
+					
+		outConfig = getCampaignForCampaignCode( campaignCode,false );
+		// replace campaign cookie
+		if( !empty(outConfig) ) {
+			trackCookieCampaign( campaignCode );
+		}
+		// set up default uci, if appl.
+		if( !empty(outConfig) && !empty(outConfig.custom['uciCode']) ) {
+			trackCookieUCI(outConfig.custom['uciCode']);
+		}
+	} else if( empty(campaignCode) ) {
+		outConfig = getCampaignForUciCode( uciCode );
+		
+		if( empty(outConfig) || empty(outConfig.custom.forceUCILookup) || !outConfig.custom.forceUCILookup.valueOf() ) {
+			// no UCI obj and lookup set to false
+			// Just track the UCI in the cookie
+			if( empty(outConfig) ) {
+				outConfig = currentConfig;
+			}
+			trackCookieUCI( uciCode );
+		} else if( !empty(outConfig.custom.forceUCILookup) && outConfig.custom.forceUCILookup.valueOf() ) {
+			// Set parent campaign, if appl.
+			if( 'parentCampaignCode' in outConfig.custom && !empty(outConfig.custom.parentCampaignCode) ) {
+				trackCookieCampaign(outConfig.custom.parentCampaignCode);
+			} else if( 'campaignCode' in outConfig.custom && !empty(outConfig.custom.campaignCode) ) {
+				trackCookieCampaign(outConfig.custom.campaignCode);
+			}
+			// set primary uci
+			trackCookieUCI( uciCode );
+		}
+	} else {
+		// has campaign & uci codes
+		campaignConfig = getCampaignForCampaignCode( campaignCode,false );
+		uciConfig = getCampaignForUciCode( uciCode );
+		
+		trackCookieUCI( uciCode );
+		
+		// invalid campaign goes to core
+		if( empty(campaignConfig)  ) {
+			outConfig = null;
+		// valid uci
+		} else {
+			if( !empty(uciConfig) && !empty(campaignConfig.custom.forceUCILookup) && campaignConfig.custom.forceUCILookup.valueOf() ) {
+				outConfig = uciConfig;
+			} else {
+				outConfig = campaignConfig;
+			}
+			
+			if( 'parentCampaignCode' in outConfig.custom && !empty(outConfig.custom.parentCampaignCode) ) {
+				trackCookieCampaign(outConfig.custom.parentCampaignCode);
+			} else if( 'campaignCode' in outConfig.custom && !empty(outConfig.custom.campaignCode) ) {
+				trackCookieCampaign(outConfig.custom.campaignCode);
+			}
+		}
+	}
+
+	// If no other use case was available ... then get the default case ... core
+	if( empty(outConfig) ) {
+		outConfig = getDefaultCampaign();
+		isCampaignCodeValid = false;	
+		if( empty(campaignCode) && empty(uciCode) ) isCampaignCodeValid = true;
+	} 
+	
+	setCurrentCampaignCode( outConfig.custom.ID );
+	setCurrentCampaignUCICode(outConfig.custom.uciCode);
+	
+	/* Set the phonenumber override */
+	Logger.debug ("getCurrentCampaignConfig setting Override PhoneNumber");
+	if(empty(phoneNumber))
+		phoneNumber = getCurrentPhoneNumber();
+	setCurrentPhoneNumber(getPhoneNumberOverride(uciCode,campaignCode,phoneNumber));
+	
+	/** Now ask for parent and return 'merged' propery object **/
+	var sharedConfig = getSharedCurrentConfig(outConfig, isCampaignCodeValid);
+	
+	Logger.debug ("getCurrentCampaignConfig setting sharedConfig PhoneNumber : " + sharedConfig.phone);
+	setCurrentPhoneNumber(sharedConfig.phone);
+
+	session.custom.campaignCode = sharedConfig.campaignCode;
+		
+	trackCookieCampaign(sharedConfig.campaignCode);
+
+	return sharedConfig;	
+}
+
+
+function getCoreOffer(CCC : Object){
+	var coreOffer : Product = null;
+	var offersList : ArrayList = new ArrayList();
+	var offerCodes : Array = null;
+	if( !empty(CCC) ) {
+		offerCodes = CCC.sasOfferCodes;
+		var aProduct : Product = null;
+		for( var i=0, ii=offerCodes.length; i<ii; i++ ) {
+			aProduct = ProductMgr.getProduct(offerCodes[i]);
+			if( !empty(aProduct) && aProduct.getAvailabilityModel().isOrderable().valueOf()  ) {
+				 coreOffer = aProduct;
+				 break;
+			}
+		}
+	}
+	return coreOffer;
+}
+
+function clearCampaign(){
+	if( 'campaignID' in session.privacy && !empty(session.privacy.campaignID) ) {
+		delete session.privacy.campaignID;
+		delete session.custom.campaignID;
+	}
+	if( 'campaignUCIID' in session.privacy && !empty(session.privacy.campaignUCIID) ) {
+		delete session.privacy.campaignUCIID;
+		delete session.custom.campaignUCIID;
+	}
+	
+	delete session.custom.ukey;
+	delete session.custom.campaignCode;
+		
+ 	var cookiesDomain : String = dw.system.Site.current.getCustomPreferenceValue("GRCookiesDomain");
+ 	var rememberMe : Cookie = request.httpCookies['rememberMe'];
+ 	if( !empty(rememberMe) ) {
+ 		rememberMe.setValue('');
+ 		rememberMe.setDomain(cookiesDomain);
+ 		rememberMe.setMaxAge(0);
+ 	}
+ 	var loggedIn : Cookie = request.httpCookies['loggedIn'];
+ 	if( !empty(loggedIn) ) {
+ 		loggedIn.setValue(0);
+ 		loggedIn.setDomain(cookiesDomain);
+ 		loggedIn.setMaxAge(0);
+ 	}
+ 	var PHPSESSID : Cookie = request.httpCookies['PHPSESSID'];
+ 	if( !empty(PHPSESSID) ) {
+ 		PHPSESSID.setValue('');
+ 		PHPSESSID.setDomain(cookiesDomain);
+ 		PHPSESSID.setMaxAge(0);
+ 	}
+ 	var cookie_uid : Cookie = request.httpCookies['cookie_uid'];
+ 	if( !empty(cookie_uid) && !empty(cookie_uid.value) ) {
+		var b62_cookie : Cookie = request.httpCookies['b62_cookie['+cookie_uid.value+']'];
+		if( !empty(b62_cookie) ) {
+ 			b62_cookie.setValue('');
+ 			b62_cookie.setDomain(cookiesDomain);
+ 			b62_cookie.setMaxAge(0);
+		}
+ 	}
+ 	if( !empty(cookie_uid) ) {
+ 		cookie_uid.setValue('');
+ 		cookie_uid.setDomain(cookiesDomain);
+ 		cookie_uid.setMaxAge(0);
+ 	}
+}
+
+var Base62 = {};
+
+Base62.encode = function($val) {
+	var $base=62, $i = 0;
+	var $chars : String ='0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    // can't handle numbers larger than 2^31-1 = 2147483647
+    var $str = '';
+    do {
+        $i = $val % $base;
+        $str = $chars.charAt($i) + $str;
+        $val = ($val - $i) / $base;
+    } while($val > 0);
+    return $str;
+}
+
+Base62.decode = function($str:String) {
+	var $base=62;
+	var $chars='0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    var $len = $str.length;
+    var $val = 0;
+    var $temp=$chars.split("");
+    $chars={};
+    for( var i=0,limit=$temp.length; i < limit; ++i)
+    {
+		$chars[ $temp[i] ]=i;
+    }
+//    $arr = array_flip(str_split($chars));
+    for(var $i = 0; $i < $len; ++$i) {
+        $val += 1*$chars[ $str.charAt($i) ] * Math.pow($base, $len-$i-1);
+    }
+    return $val;
+}
+
+function getCurrentContentInfo(parametesMap:HttpParameterMap){
+    var CurrentFolder : Folder = null;
+    var CurrentContent : Content = null;
+    
+    if( "fdid" in parametesMap && !empty(parametesMap.fdid.value) ) {
+        CurrentFolder = ContentMgr.getFolder(parametesMap.fdid.stringValue);
+    }
+    
+    if( "cid" in parametesMap && !empty(parametesMap.cid.value) ) {
+        CurrentContent = ContentMgr.getContent(parametesMap.cid.stringValue);
+    }
+    
+    if( empty(CurrentContent) && !empty(CurrentFolder) && !empty(CurrentFolder.onlineContent) ) {
+        CurrentContent = CurrentFolder.onlineContent[0];
+    }
+    if( empty(CurrentFolder) && !empty(CurrentContent) && !empty(CurrentContent.classificationFolder) ) {
+        CurrentFolder = CurrentContent.classificationFolder;
+    }
+    if( empty(CurrentFolder) && !empty(CurrentContent) && !empty(CurrentContent.folders) ) {
+        CurrentFolder = CurrentContent.folders[0];
+    }
+    
+    return {folder: CurrentFolder, content: CurrentContent};
+}
+
+function getFolderPathInfo(contentInfo){
+    var RootFolder = contentInfo.folder;
+    var CurrentFolderPath= contentInfo.content.ID;
+    
+    while( !empty(RootFolder.parent) && RootFolder.parent.ID!='primary-navigation') {
+        CurrentFolderPath += " "+RootFolder.ID;
+        RootFolder = RootFolder.parent;
+    }
+    
+    return {rootFolder: RootFolder, folderPath: CurrentFolderPath};
+}
+
+function getRetentionFolderPathInfo(contentInfo){
+    var RootFolder = contentInfo.folder;
+    var CurrentFolderPath= contentInfo.content.ID;
+
+    while( !empty(RootFolder) && !empty(RootFolder.parent) && RootFolder.parent.ID!='retention-primary-navigation') {
+        CurrentFolderPath += " "+RootFolder.ID;
+        RootFolder = RootFolder.parent;
+    }
+    
+    return {rootFolder: RootFolder, folderPath: CurrentFolderPath};
+}
+
+
+
+function getCustomerUID(request:Request):String{
+    var cookie = request.httpCookies.cookie_uid;
+    return cookie == null ? "" :cookie.value;
+}
+
+function isLoggedIn() : Boolean {
+	var loggedInCookie = request.httpCookies['loggedin'];
+	return (!empty(loggedInCookie) && loggedInCookie.value == '1');
+}
+
+function isTrue(value):Boolean{
+    return value == true || value == 'true';
+}
+
+function notNull(value){
+    return value || "";
+}
+function getPrimaryNavigation( isLoggedIn : boolean, rootFolderId : String ) {
+	var onlineSubFolders : Collection = dw.content.ContentMgr.getFolder(rootFolderId).onlineSubFolders;
+	var outFolders : ArrayList = new ArrayList();
+	var iFolders : Iterator = onlineSubFolders.iterator();
+	var aFolder : Folder = null;
+	while( iFolders.hasNext() ) {
+		aFolder = iFolders.next();
+		if(isLoggedIn && 'menuContext' in aFolder.custom && aFolder.custom.menuContext!='logged_out' && !isTrue(aFolder.custom.offlineLocales) ) {
+			outFolders.add1(aFolder);
+		} else if(!isLoggedIn && 'menuContext' in aFolder.custom && aFolder.custom.menuContext!='logged_in' && !isTrue(aFolder.custom.offlineLocales)) {
+			outFolders.add1(aFolder);
+		}
+	}
+	if( isLoggedIn ) {
+		outFolders.sort(new PropertyComparator('custom.loggedInPosition'));
+	}
+	return outFolders;
+}
+
+function getFolderContent(folder:Folder,contentMap:HashMap):HashMap{
+	//if folder is excluded for this locale exclude it
+	if(!folder.online || !isTrue(folder.custom.offlineLocales)){
+		for(var i=0;i<folder.onlineSubFolders.length;i++){
+			getFolderContent(folder.onlineSubFolders[i],contentMap);
+		}
+	}
+	if(folder.onlineSubFolders.length==0){
+			if(folder.onlineContent.length>0  ){//&& !isTrue(folder.onlineContent[0].custom.offlineLocales)
+				contentMap.put(folder.ID,folder.onlineContent[0].ID);
+			}else{
+				contentMap.put(folder.ID,folder.ID);
+			}
+	}else{
+			var contentString:String='';
+			if(folder.onlineContent.length>0  ){//&& !isTrue(folder.onlineContent[0].custom.offlineLocales)
+				contentString=folder.onlineContent[0].ID;
+			}else{
+				contentString=contentMap.get(folder.onlineSubFolders[0].ID);
+			}
+			contentMap.put(folder.ID,contentString);
+		}
+		return contentMap;	
+	}
+
+function getLastElement(contentMap:LinkedHashMap){
+	var contents : Iterator = contentMap.keySet().iterator(); 
+	return contentMap.get(contents.next());
+}
+
+
+
+function assetOnline(assetID){
+    if(empty(assetID))
+        return false;
+        
+    var asset : dw.content.Content = dw.content.ContentMgr.getContent(assetID);
+        
+    return !empty(asset) && asset.online && !isTrue(asset.custom.offlineLocales);
+}
+
+function assetBody(assetID){
+    var contentAsset = dw.content.ContentMgr.getContent(assetID);
+    return contentAsset == null ? null : contentAsset.custom.body;
+}

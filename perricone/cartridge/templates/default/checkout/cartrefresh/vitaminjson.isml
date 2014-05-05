@@ -1,0 +1,57 @@
+<!--- TEMPLATENAME: vitaminjson.isml --->
+
+<iscontent type="application/json" charset="UTF-8" compact="true">
+{
+	<isif condition=${empty(pdict.ErrorStatus)}>
+	"success": true,
+	"update": {
+	    "CartDescription" : {
+	    	"stringValue":"<isprint value="${pdict.Product.custom.cartDescription || pdict.Product.shortDescription}">"
+	    }
+	    ,
+	    "ProdId" : {
+	    	"stringValue":"<isprint value="${pdict.Product.ID}">"
+	    },
+	    "ProdName" : {
+	    	"stringValue":"<isprint value="${pdict.Product.name}">"
+	    },
+	    
+	    "SubTotal" : {
+	        "stringValue": "<isprint value="${pdict.Basket.getAdjustedMerchandizeTotalPrice(false)}">",
+	        "number": <isprint value="${pdict.Basket.getAdjustedMerchandizeTotalPrice(false).value}" formatter="###0.00">
+	    },
+	    "ShippingPrice" : {
+	        "stringValue": "<isprint value="${pdict.Basket.getAdjustedShippingTotalPrice()}">",
+	        "number": <isprint value="${pdict.Basket.getAdjustedShippingTotalPrice().value}" formatter="###0.00">
+	    },
+	    "TotalPrice" : {
+	        "stringValue": "<isprint value="${pdict.Basket.getTotalNetPrice()}">",
+	        "number": <isprint value="${pdict.Basket.getTotalNetPrice().value}" formatter="###0.00">
+	    },
+	    "ShipList" : [
+	    	<isloop items="${pdict.ShippingMethodsMap.keySet()}" var="shippingMethod" status="shippingState">
+						<isscript>
+						var shippingCost = pdict.ShippingMethodsMap.get(shippingMethod);
+						var isSelected = !empty(pdict.DefaultShipment) && (shippingMethod.ID == pdict.DefaultShipment.shippingMethodID);					
+						if (i == pdict.ShippingMethodsMap.size()) {
+							isSelected = true;
+						}
+						i++;
+						</isscript>
+						{
+						      "value":"${shippingMethod.ID}",
+						      "lable":"${shippingMethod.displayName} $<isprint value="${shippingCost.value}" style="MONEY_LONG" />",
+						      "selected":"${isSelected}"
+						 }<isif condition="${!shippingState.last}">,</isif>
+					</isloop>
+	    ]
+	}
+    <iselse/>
+		"success": false,
+		"error":"<isprint value="${pdict.ErrorCode}"/>"
+    </isif>
+} 
+
+
+
+

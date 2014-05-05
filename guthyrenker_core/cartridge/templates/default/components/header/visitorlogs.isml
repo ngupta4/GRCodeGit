@@ -1,0 +1,20 @@
+<!--- TEMPLATENAME: visitorlogs.isml --->
+<isinclude template="components/header/cookies" />
+<iscomment>Check the header.isml for the client side tracking pixel</iscomment>
+<isif condition="${dw.system.Site.getCurrent().getCustomPreferenceValue('GRMVisitorLogEnabled') == true}">
+	<isset name="visitorlog" value="${dw.system.Site.getCurrent().getCustomPreferenceValue('GRMVisitorLogEnabled')}" scope="page">
+	<script type="text/javascript">
+	//Visitor Logs AJAX call
+	//<![CDATA[
+		if(null!=${visitorlog} && ${visitorlog}==true){
+			var url = app.util.appendParamToURL("${URLUtils.url('GRMiddleware-VisitorLog')}","urlpath",window.location.href);
+			url = app.util.appendParamToURL(url, "urlquery", window.location.search);
+			url = app.util.appendParamToURL(url, "urlreferer", "${request.httpReferer}");
+			$.get(url ,function(transport) {	
+			},"text");
+		}
+	//]]>
+	</script>
+<iselseif condition="${dw.system.Site.getCurrent().getCustomPreferenceValue('GRMVisitorLogPixelEnabled') == true}">
+	<img src="${URLUtils.url('GRMiddleware-VisitorLog', 'urlpath',request.httpProtocol + '://' + request.httpHost + request.httpPath + request.httpQueryString, 'urlquery', request.httpQueryString,'urlreferer',request.httpReferer)}" width="1" height="1"/>
+</isif>

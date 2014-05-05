@@ -1,0 +1,496 @@
+/**
+*  This script is to validate the authenticity of basket before placing actual order. 
+*
+*   @input Basket : dw.order.Basket This is a sample comment.
+*   @input OrderNumber : String The OrderNo from COPlaceOrder
+*	@input billing : dw.web.Form
+*	@input singleshipping : dw.web.Form
+*   @output Status : Object
+*   @output ResponseID : Object
+*   @output ClientTransactionID : Object
+*   @output ClientOrderID : Object
+*   @output PreAuthID : Object
+*   @output ValidationID : Object
+*   @output ErrorContainer : Array
+*   @output RequestURI : Object
+*   @output ServerError : Boolean  Meant to signify 2nd-Attempt Override (TRANSITION)
+*   @output AcceptError : Boolean  Meant to signify Accept Error Override (ACCEPT)
+*   @output ShippingError : Boolean  Signifies Error on Shipping Page
+*   @output BillingError : Boolean  Signifies Error on Billing Page
+*   @output PaymentError : Boolean  Signifies Error on Payment Page
+*
+*/
+importPackage( dw.system );
+importPackage( dw.order );
+importPackage( dw.net );
+importPackage( dw.crypto );
+importPackage( dw.util );
+importPackage( dw.io );
+importPackage( dw.web );
+
+importScript('grmiddleware/libGRMiddleware.ds');
+importScript('common/libUtils.ds');
+
+var log : Log = Logger.getLogger("ValidatorAPI Client");
+var errorToFormMap = {
+//	form.billtoaddress 8200 <= error < 8250
+		"8203.0":"billingAddress.addressFields.address1",
+		"8204.0":"billingAddress.addressFields.address2",
+		"8206.0":"billingAddress.addressFields.city",
+		"8207.0":"billingAddress.addressFields.country",
+		"8201.0":"billingAddress.addressFields.firstName",
+		"8202.0":"billingAddress.addressFields.lastName",
+		"8208.0":"billingAddress.addressFields.states.stateUS",
+		"8209.0":"billingAddress.addressFields.zip",
+//	form.shipptoaddress 8250 <= error < 8300
+		"8253.0":"shippingAddress.addressFields.address1",
+		"8254.0":"shippingAddress.addressFields.address2",
+		"8256.0":"shippingAddress.addressFields.city",
+		"8257.0":"shippingAddress.addressFields.country",
+		"8251.0":"shippingAddress.addressFields.firstName",
+		"8252.0":"shippingAddress.addressFields.lastName",
+		"8258.0":"shippingAddress.addressFields.states.stateUS",
+		"8259.0":"shippingAddress.addressFields.zip",
+//	form.contact
+		"8104.0":"billingAddress.addressFields.phone",
+		"8103.0":"billingAddress.email.emailAddress",
+		"8103.1":"billingAddress.email.emailAddress",
+		"8103.2":"billingAddress.email.emailAddress",
+		"8105.0":"billingAddress.addressFields.phone",
+		"8102.0":"account",
+		"8102.1":"account.password",
+		"8102.2":"account.passwordconfirm",
+//	form.creditcard
+		"8302.0":"paymentMethods.creditCard.year",
+		"8303.0":"paymentMethods.creditCard.number",
+		"8304.0":"paymentMethods.creditCard",
+		"8009.0":"paymentMethods.creditCard.month",
+		
+//	form.eCheck		
+		"8320.0":"paymentMethods.echeck.account",
+		"8321.0":"paymentMethods.echeck.routing",
+		"8322.0":"paymentMethods.echeck.bankAccountType"
+}; 
+
+var acceptOverrideCodes = [
+	8300.0,
+	8255.0,
+	8254.0,
+	8250.0,
+	8205.0,
+	8204.0,
+	8200.0,
+	8105.0,
+	8101.0,
+	8100.0,
+	8000.0,
+	4000.9999,
+	4000.0
+];
+
+var transitionCodes = [
+	8303.0
+];
+
+if( dw.system.System.getInstanceType() == dw.system.System.PRODUCTION_SYSTEM ) {
+	acceptOverrideCodes.push(1000.0);
+}
+
+function execute( args : PipelineDictionary ) : Number
+{
+	var basket : Basket = args.Basket;
+	var orderNumber : String = args.OrderNumber;
+	var paymentMethodID : String = basket.paymentInstrument.getPaymentMethod();
+
+	if( empty(basket) ) {
+		log.debug("Basket is a required parameter for ValidateBasket.ds.");
+		return PIPELET_ERROR;
+	}
+	
+	basket.custom.customerIPAddress = request.httpRemoteAddress;
+	
+	// Build the order XML for the service to consume
+	var xmlWriter : StringWriter = new StringWriter();
+	addValidatorOrderReport(xmlWriter, basket, orderNumber);
+	
+    var basketXML : String = xmlWriter.toString();
+    //basketXML = getValidatorXMLForBasket(basket,basket.UUID);//xmlWriter.toString();//getValidatorXMLForBasket(basket);
+
+	// Figure out service URL
+	var serviceURL : String = getValidatorServiceURL(basket);
+    
+    // Build OAuth authorization header
+    var oauthHeader;
+        
+    // Call GR Service
+    var http : HTTPClient = new HTTPClient();
+    try {
+	    log.debug("Validator URL "+serviceURL);
+	    //This method is responsible for hitting the webservice
+    	http = callMWAPI(http, "POST", serviceURL, basketXML,oauthHeader);
+	    log.info("Validator basket XML =" + basketXML);
+	}
+	catch (e)
+	{
+		/* short-circuit code here was removed, to instead be handled by */	
+		/* common error code handling below                              */	
+		log.error(e);
+	}
+    
+    // Capture response
+	var response : String = http.text;
+	var errorResponse : String = http.errorText;
+	var responseXML : XML = null;
+	var errorContainer : Array = [];
+	var error = null;
+	
+	log.debug("Validator response = "+ response);
+	log.debug("Validator errorResponse = "+ errorResponse);	
+
+	/****
+	* Handle error responses
+	* Empty response (no XML) or non-empty error response
+	****/
+	
+	if( !empty(errorResponse) ) {
+		response = errorResponse;
+	}
+	
+	if( !empty(response) ) {
+		var realStart : Number = response.indexOf('<grmw');
+		responseXML = new XML(response.substring(realStart)).descendants('response');
+		
+		args.Status = responseXML.status;
+		args.ResponseID = responseXML.responseId;
+		args.ClientTransactionID = responseXML.clientTransactionId;
+		args.ClientOrderID = responseXML.clientOrderId;
+		args.PreAuthID = responseXML.preAuthId;
+		args.ValidationID = responseXML.validationId;
+		args.RequestURI = responseXML.requestUri;
+		
+		/* Capture important information if successfully validates */
+		if( args.Status == 201 ) {
+			basket.custom.validatorId = args.ValidationID;
+			basket.custom.preAuthId = args.PreAuthID;
+			basket.custom.transactionId = args.ClientTransactionID;
+		}
+	}
+	
+	var userErrors : XML = null;
+	var userError : XML = null;
+	var form : Form = args.billing;
+	
+	var hasUserErrors : boolean = false;
+	var hasPaymentProblem : boolean = false;
+	var hasClientErrors : boolean = false;
+	var hasSystemErrors : boolean = false;
+	
+	var numberCode : Number = 0;
+	var stringCode : String = 0;
+	
+	if( !empty(responseXML) ) {
+		userErrors = responseXML.errors.userErrors.userError;
+		//	userErrors = new dw.util.ArrayList([{code:8303,message:'test message',value:'test value',field:'test field'}]);
+		if( !empty(userErrors) && userErrors.length()>0 ) {
+			var echeckFailedLoopCounter : Number = 0;
+			for ( var i=0, ii=userErrors.length(); i<ii; i++ ) {
+				userError = userErrors[i];
+				numberCode = (userError.code-0).toFixed(1);
+				stringCode = ""+numberCode;
+				if((stringCode == 8320 || stringCode == 8321) && echeckFailedLoopCounter == 0){
+					setMaxAttemptBACounter();
+					echeckFailedLoopCounter = echeckFailedLoopCounter + 1;
+				}
+				if( shouldCodeTriggerError(stringCode) ) {
+					// This will force order confirmation page on 2nd attempt
+					// for case of litle down
+						hasUserErrors = true;
+						log.debug('Code '+stringCode+' triggers validation error. LOOP.');
+					var form1: String = null;
+					if((stringCode >= 8200 && stringCode < 8250) || (stringCode>=8300 && stringCode< 8311) || (stringCode==8103))
+					{
+						form1 = "pdict.CurrentForms.billing.";
+						form = args.billing;
+						args.BillingError = true;
+					}
+					else if(stringCode>=  8250 && stringCode < 8300){
+						form1 = "pdict.CurrentForms.singleshipping.";
+						form =  args.singleshipping;
+						args.ShippingError = true;
+					}else if(stringCode >= 8302 && stringCode< 8305){
+						form1 = "pdict.CurrentForms.billing.";
+						form = args.billing;
+						args.PaymentError = true;
+					}
+					
+					error = {
+						"type":"userError",
+						"field":userError.field,
+						"code":numberCode,
+						"message":userError.message,
+						"value":userError.value,
+						"formField":form1 +formFieldPathForCode(stringCode)
+					};
+					// Normalize the code (could be 8100.0 or 8100...)
+					if( !empty(form) ) {
+						invalidateFormElement( form, numberCode );
+					}
+					errorContainer.push(error);
+				} else {
+					/* Don't process this error at all */
+					log.debug('Code '+stringCode+' fails silently. ACCEPT.');
+				}
+			}
+				echeckFailedLoopCounter = 0;
+		}
+		var systemErrors : XML = responseXML.errors.systemErrors.systemError;
+		var systemError : XML = null;
+		if( !empty(systemErrors) && systemErrors.length()>0 ) {
+			for ( i=0, ii=systemErrors.length(); i<ii; i++ ) {
+				systemError = systemErrors[i];
+				numberCode = (systemError.code-0).toFixed(1);
+				stringCode = ""+(systemError.code-0).toFixed(1);
+				
+				if( shouldCodeTriggerError(stringCode) ) {
+					hasSystemErrors = true;
+					error = {
+						"type":"systemError",
+						"code":systemError.code
+					};
+					errorContainer.push(error);
+				}
+			}
+		}
+		var clientErrors : XMLList = responseXML.errors.clientErrors.clientError;
+		var clientError : XML = null;
+		if( !empty(clientErrors) && clientErrors.length()>0 ) {
+			for ( i=0, ii=clientErrors.length(); i<ii; i++ ) {
+				clientError = clientErrors[i];
+				numberCode = (clientError.code-0).toFixed(1);
+				stringCode = ""+(clientError.code-0).toFixed(1);//""+numberCode;
+				
+				if( shouldCodeTriggerError(stringCode) ) {
+					hasClientErrors = true;
+					error = {
+						"type":"clientError",
+						"code":clientError.code,
+						"message":clientError.message
+					};
+					errorContainer.push(error);
+				}
+			}
+		}
+	}
+	
+	/*
+	*	If responseXML==null or responseXML.status == 401 or responseXML.status > 499,
+	*	then send email to GR Admin and allow pass-through ACCEPT
+	*/
+	if( shouldNotifyGRAdmin(responseXML) ) {
+		log.debug('Notifying GR Administrators about interesting failure');
+		reportValidatorServiceDown(basket, errorResponse, basketXML, oauthHeader, errorContainer);
+	}
+	
+	// For further error handling ...
+	args.ErrorContainer = errorContainer;
+	
+	// Clear 2nd attempt behavior if hasUserErrors (not flagged for only 8303)
+	if( hasUserErrors ) {
+		args.ServerError = false;	
+	}
+	
+	// Return success if 'FORCE ACCEPT' triggered or actual success	
+	if( shouldAcceptResponse(responseXML) || errorContainer.length<1 ) {
+    	return PIPELET_NEXT;
+	}
+	
+	return PIPELET_ERROR;
+}
+
+function shouldNotifyGRAdmin( responseXML : XML ) : boolean {
+	return (empty(responseXML) || responseXML.status==401 || responseXML.status>499);
+}
+
+function shouldAcceptResponse( responseXML : XML ) : boolean {
+	return (empty(responseXML) || responseXML.status==201 || responseXML.status==401 || responseXML.status>499);
+}
+
+function shouldCodeTriggerTransition( code : String ) : boolean {
+	return (code==8303.0);
+}
+
+function shouldCodeTriggerError( code : String ) : boolean {
+	return (acceptOverrideCodes.indexOf(code)<0);
+}
+
+function reportValidatorServiceDown(basket : Basket, errorResponse : String, basketXML : String, oauthHeader : String, errorContainer : Array) {
+	if( errorContainer==null ) {
+		errorContainer = [];
+	}
+	
+	log.fatal("\nValidator API Error Response:\n{0}\n\nBasketXML: {1}\n\nOAuthHeader: {2}\nError Container: {3}\n",
+		errorResponse, basketXML, oauthHeader, JSON.stringify(errorContainer));
+	
+	basket.custom.validatorId = "";
+	basket.custom.preAuthId = "";
+	basket.custom.transactionId = "";	
+}
+
+function formFieldPathForCode( code : String ) : String {
+	var formFieldPath : String = errorToFormMap[code];
+	
+	return formFieldPath;
+}
+
+function invalidateFormElement( form : dw.web.Form, code : String ) {
+	var formFieldPath : String = errorToFormMap[code];
+
+	// We don't need to invalidate shipping's ZIP if "Same as Billing" is checked, so we will invalidate corresponding field of billing section
+		if(form.formId == 'billing')
+		{
+			if (form.billingAddress.sameAsShippingAddress.isChecked() && +code >= 8200 && +code <= 8249) {
+				//if (form.billingAddress.sameAsShippingAddress.isChecked() && +code >= 8250 && +code <= 8300) {
+					formFieldPath = "";
+			//}
+			}
+		}
+	
+	if( !empty(formFieldPath)) {
+		var formField : dw.web.FormElement = getFormElementForPath(form, formFieldPath);
+		if( !empty(formField) ) {
+			formField.invalidateFormElement(Resource.msg('validator.usererror.'+code,'form',null));
+		} 
+	}
+}
+
+function getFormElementForPath( form : dw.web.Form, formFieldPath : String ) : dw.web.FormElement {
+	var parts : Array = formFieldPath.split(".");
+	var temp : Object = form;
+	for( var i=0, ii=parts.length; i<ii; i++ ) {
+		temp = temp[parts[i]];
+	}
+	return temp;
+}
+
+function getValidatorXMLForBasket( basket : Basket, orderId : String ) {
+	var outString : String = null;
+	var orderXML : XML = new XML( <orderReport xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="orderFeed_1-0.xsd" reportId="bct2ciaagZ412aaacXCYsHH4RP"> 
+	<xsdVersion>v1.0</xsdVersion>
+	<clientId>Demandware</clientId>
+	<reportStartDate>2011-11-16T08:08:13Z</reportStartDate>
+	<reportEndDate>2011-11-16T08:08:13Z</reportEndDate>
+	<order orderId="{orderId}">
+		<validationId></validationId>
+		<preAuthId></preAuthId>
+		<orderDetails>
+			<orderStatus>raw</orderStatus>
+			<siteId>Proactiv</siteId>
+			<cartId>1</cartId>
+			<queryString><![CDATA[]]></queryString>
+			<orderDate>2011-11-16T08:04:47Z</orderDate>
+			<ipAddress>108.7.32.58</ipAddress>
+			<visitorId>UeXZD5</visitorId>
+			<referrerUrl><![CDATA[]]></referrerUrl>
+			<campaignCode>core</campaignCode>
+			<customerSessionId>Di6V36bAd7a6BBLgiFC6auojZQ7WxMrKHSo=</customerSessionId>
+			<customerUserId>UeXZD5</customerUserId>
+			<currency>USD</currency>
+			<totalProductAmount>29.95</totalProductAmount>
+			<totalShippingAmount>5.99</totalShippingAmount>
+			<totalTaxAmount>0.00</totalTaxAmount>
+			<totalOrderAmount>35.94</totalOrderAmount>
+		</orderDetails>
+		<accountInfo>
+			<email>pjpritch@me.com</email>
+			<passwordType>temporary</passwordType>
+			<password>nzMb5T5f</password>
+		</accountInfo>
+		<payment>
+			<creditCard>
+				<paymentType>Visa</paymentType>
+				<ccNumber>pmceImSFqnhZkQXpH4EQYBJFa2nrIAniOsSCAt7SlynRJQ7WbnMMy2rHVpjV9rXuPFqNJ2ccsIMkkYPe9icRp2ZIOExrx7a+qfEuS1rFgSDBPgLl92KMK65V6sNQbohz4iwFRQkjuKKFq5BwYRwtGI/cpTtIjgOX+s0XCQjzQ/Xoe8XWdREaEVq+brzWiIuBVhxHgzFifisV+mrUnV6kJl/jRWqNeyiwDaQApljnz9x8O8nCbMYx7VrtwiEY9Zh8dw4uFCS2u4wbxSgGhxCDTr2SWgstWAMkbf28uHs0FKphErFkmhmzpuWRbh4uihAnmmLWbJ6mcURaAtfFpPb+BQ==</ccNumber>
+				<expDate>2012-03-31</expDate>
+				<cvv2></cvv2>
+				<ccLastFour>1111</ccLastFour>
+			</creditCard>
+		</payment>
+		<product sequence="1">
+			<offerCode>AWJP6X</offerCode>
+			<quantity>1</quantity>
+			<price>29.95</price>
+			<title><![CDATA[5pc Deluxe with Mask + Trvl-Sz Green Tea]]></title>
+			<shortDescription><![CDATA[&lt;span&gt;Our basic 3-Step System, plus Daily Oil Control and Oil-Free Moisture with SPF 15.&lt;/span&gt;]]></shortDescription>
+			<longDescription><![CDATA[]]></longDescription>
+			<revisionId>2011-11-04 17:13:07</revisionId>
+			<shipAmt>0.00</shipAmt>
+			<rushAvailable></rushAvailable>
+			<addlShip>0</addlShip>
+			<numPayments>1</numPayments>
+			<productLine>PA</productLine>
+			<keyCode>0</keyCode>
+			<entryCode>AWJP</entryCode>
+			<itemCode>PA1464</itemCode>
+			<mpgmCode>335</mpgmCode>
+			<paymentInterval>0</paymentInterval>
+			<paymentDeferred>0</paymentDeferred>
+			<ffillItem></ffillItem>
+			<venueCode>53</venueCode>
+			<setupOfferHeirarchyCode>HPAQLC4</setupOfferHeirarchyCode>
+			<setupOfferCode>OPAC8ULR</setupOfferCode>
+			<setupSourceKeyCode>KPA211C36CM4</setupSourceKeyCode>
+			<setupSourceKeyCodeSuffix></setupSourceKeyCodeSuffix>
+			<setupPromoTemplateCode>PPAKJ7</setupPromoTemplateCode>
+			<parentOffer></parentOffer>
+		</product>
+		<billingAddress>
+			<title>null</title>
+			<firstName>Peter</firstName>
+			<lastName>Pritchard</lastName>
+			<suffix>null</suffix>
+			<address>25 Call Street</address>
+			<city>Billerica</city>
+			<state>MA</state>
+			<postalCode>01862</postalCode>
+			<countryCode>US</countryCode>
+			<dayPhone>978-362-1553</dayPhone>
+		</billingAddress>
+		<shipment shipmentId="me">
+			<shippingAddress>
+				<title>null</title>
+				<firstName>Peter</firstName>
+				<lastName>Pritchard</lastName>
+				<suffix>null</suffix>
+				<address>25 Call Street</address>
+				<city>Billerica</city>
+				<state>CA</state>
+				<postalCode>01862</postalCode>
+				<countryCode>US</countryCode>
+			</shippingAddress>
+			<shipMethod>Standard</shipMethod>
+			<shipSubTotal>5.99</shipSubTotal>
+			<shipAdditionalCharge>0.00</shipAdditionalCharge>
+		</shipment>
+	</order>
+</orderReport> );
+	
+	return orderXML.toXMLString();
+}
+function getValidatorServiceURL( basket : Basket) {
+      var baseURL : String = Site.current.getCustomPreferenceValue("middlewareAPIURL");
+      var brandID= Site.current.getCustomPreferenceValue("GRMProductLine");
+      return baseURL + "/validator/"+UUIDUtils.createUUID()+"/brand/"+brandID;
+}
+
+function setMaxAttemptBACounter(){
+	var echeckFailedRetCO = null;
+	var echeckMaxAttempt = dw.system.Site.getCurrent().getCustomPreferenceValue('BAMaxAttemptLimit');
+	if('echeckFailedRetCO' in session.custom && null != session.custom.echeckFailedRetCO){
+		echeckFailedRetCO = session.custom.echeckFailedRetCO;
+		if(echeckFailedRetCO < echeckMaxAttempt){
+			echeckFailedRetCO = echeckFailedRetCO + 1;
+		}
+	}else{
+		echeckFailedRetCO = 1;	
+	}
+	session.custom.echeckFailedRetCO = echeckFailedRetCO;
+}

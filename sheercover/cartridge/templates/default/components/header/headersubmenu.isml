@@ -1,0 +1,10 @@
+<iscache status="off"/>
+<isif condition="${pdict.CurrentCustomer.authenticated || pdict.CurrentRequest.httpCookies['rememberMe']}">
+  <div id="subheader">
+  		<div class="pageWrapper">
+  			<a href="${URLUtils.http('Home-Show')}" class="homeLink"><isprint value="${Resource.msg('subheader.homelink','account',null)}" encoding="off"/></a>
+  			<span class="partLine"></span>
+  			<a href="${URLUtils.https('KitCustomizer-KitShipDetail')}" class="kitLink"><isprint value="${Resource.msg('subheader.kitlink','account',null)}" encoding="off"/></a>
+  		</div>
+  </div>
+</isif>  

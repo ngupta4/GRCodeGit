@@ -1,0 +1,76 @@
+<isif condition="${(('showHeader' in this) && !!showHeader) || empty(CCC) || empty(CCC.showHeader) }">
+	<isset name="showHeader" value="${true}" scope="page" />
+<iselse/>
+	<isset name="showHeader" value="${CCC.showHeader}" scope="page" />
+</isif>
+
+<div id="header">
+	<div class="rightBanner">
+	</div>
+	<div class="headerContent">
+			
+		<isif condition="${showNav}">		  
+			<a href="${URLUtils.httpHome()}" class="logo seo-text"><h2>${Resource.msg('sitename.text','rendering',null)}</h2></a>
+		<iselse>
+			<div class="logo seo-text"><h2>${Resource.msg('sitename.text','rendering',null)}</h2></div>
+		</isif>
+		<ul>
+			<li> 
+				<span class="contactUsText">
+					${Resource.msg('contact.us','rendering',null)}
+				</span> 
+				<iscomment>REFACTOR  derive contact from data, not a resource file</iscomment>
+				<span class="contactUsPhone">
+					${Resource.msg('contact.us.phone','rendering',null)}
+				</span>
+			</li>
+			<li class="menuSpacer">|</li>
+			<li class="headerCart">
+				<a href="${URLUtils.url('COCart-Show')}">
+				    <span class="wishListBold">
+				    	${Resource.msg('cart.text','rendering',null)}
+				    </span> 
+				    <img src="${URLUtils.staticURL('/images/headerCart.png')}"/>
+				</a>				
+			</li>
+		</ul>		
+		<!--  Begin menu -->
+		 
+		<div id="menuContainer">
+			<div class="navMenu">
+			
+				<isif condition="${showNav}">
+		 			<isinclude url="${URLUtils.url('Home-IncludeHeaderMenu')}"/>
+		 		</isif>
+		 	</div>
+		</div>
+		<!-- 
+		<div id="menuContainer">
+			<div class="navMenu">
+				<div class="navHome">
+					<a href="${URLUtils.httpHome()}">${Resource.msg('nav.home','rendering',null)}</a>
+				</div>
+				<div class="navHowItWorks">
+					<a href="${URLUtils.url('HowItWorks-ShowStep1')}">${Resource.msg('nav.howitworks','rendering',null)}</a>
+				</div>
+				<div class="navProof">
+					<a href="${URLUtils.url('Proof-Show')}">${Resource.msg('nav.proof','rendering',null)}</a>
+				</div>
+				<div class="navOrder">
+					<a href="${URLUtils.url('Page-Show', 'cid', 'order')}">
+						<img src="${URLUtils.staticURL('/images/order_off.png')}"/>
+					</a>				
+				</div>
+			</div>
+		</div>
+		 -->
+		 
+		 
+		 
+		 
+		<div style="clear: both;"></div>
+	</div>
+
+</div><!-- END: header -->
+<iscomment>Cookies and Javascript enabled check</iscomment>
+<isinclude template="components/browsertoolscheck"/>

@@ -1,0 +1,324 @@
+<!--- TEMPLATENAME: selectasystem.isml --->
+<isdecorate template="search/pt_selectasystem_full">
+<isinclude template="util/modules"/>
+
+<iscomment>create reporting event</iscomment>
+<isinclude template="util/reporting/ReportSearch.isml"/>
+
+<isset name="showHeader" value="${true}" scope="page" />
+<isset name="showFooter" value="${true}" scope="page" />
+<isset name="showNav" value="${true}" scope="page" />
+<isset name="showOrderButton" value="${false}" scope="page" />
+
+<isscript>
+	importPackage(dw.util);
+	importPackage(dw.catalog);
+	
+	var CCC : Object = pdict.CurrentCampaignConfig;
+	var category : dw.catalog.Category = CCC.getCampaignCategory();
+
+	var offersList : ArrayList = new ArrayList();
+	var offerCodes : Array = null;
+	if( !empty(CCC) ) {
+		offerCodes = CCC.sasOfferCodes;
+		var aProduct : Product = null;
+		for( var i=0, ii=offerCodes.length; i<ii; i++ ) {
+			aProduct = ProductMgr.getProduct(offerCodes[i]);
+			if( !empty(aProduct) ) {
+				offersList.add1(aProduct);
+			}
+		}
+	}
+	var kitQtyClass = "";
+	var kitQty = 0;
+	if( !empty(offersList) ) {
+		kitQty = offersList.size();
+		switch(kitQty) {
+		case 1:
+			kitQtyClass="oneKit";
+			break;
+		case 2:
+			kitQtyClass="twoKits";
+			break;
+		case 3:
+			kitQtyClass="threeKits";
+			break;
+		case 4:
+			kitQtyClass="fourKits";
+			break;
+		case 5:
+			kitQtyClass="fiveKits";
+			break;
+		}
+	}
+</isscript> 
+
+<isset name="KitQtyClass" value="${kitQtyClass}" scope="page" />
+
+<div class="pageHead">
+
+	<h1><isprint value="${Resource.msg('sas.selectasystem1','locale',null)}"/></h1>
+	<p class="intro">
+		<isprint value="${Resource.msg('sas.choosethekit','locale',null)}"/><br/>
+	</p>
+	
+	<div class="c2c">
+		<div id="inqC2CImgContainer"></div>
+	</div>	
+	
+	<div class="row"><div class="selectKitText">${Resource.msg('global.selectKitText','locale',null)}</div></div>
+            
+	<div id="SaS">
+	  <div class="SaSColor">
+		<div class="selectKit rounded5" >
+			<ul class="${kitQtyClass} sasKits">
+				<isloop items="${offersList}" var="offer" status="offers_status">
+					<isscript>
+						var classes = "tab tab";
+						var imageClasses = "tab"+offers_status.count+"image tabImage";
+						classes+=offers_status.count;
+						if( offers_status.first ) {
+							classes+=" activated";
+						} else {
+							imageClasses+=" underlined";
+						}
+					</isscript>
+					<li class="${classes}" id="system_${offers_status.count}">
+						<h3 class="highlighted"><isprint value="${offer.getName()}" encoding="off"/></h3>
+						<div class="${imageClasses}">
+							<img src="${offer.getImage('tab',0).url}" />
+							<isif condition="${!empty(offer.custom.offerTabCallout)&&!empty(offer.custom.offerTabCallout.markup)}">
+								<isprint value="${offer.custom.offerTabCallout.markup}" encoding="off"/>
+							<iselse/>
+							</isif>
+						</div>
+					</li>
+				</isloop>
+			</ul>
+			<br clear="all" />
+		</div>
+		<div class="selectedKit rounded5">
+			<ul class="theKits">
+				<isloop items="${offersList}" var="offer" status="offers_status">
+					<isscript>
+						var classes = "tab tab";
+						var imageClasses = "tab"+offers_status.count+"image tabImage";
+						classes+=offers_status.count;
+						if( offers_status.first ) {
+							classes+=" activated";
+						} else {
+							imageClasses+=" underlined";
+						}
+						var titleString = offer.getName();
+						var lastIndex = titleString.lastIndexOf(" ",60);
+						if( titleString.length>43 && lastIndex>0 ) {
+							titleString = titleString.substring(0,lastIndex);
+						}
+						
+						var altSKUsString = offer.ID;
+						if( !empty(offer.custom.giftSelectSKUs) ) {
+							altSKUsString = offer.custom.giftSelectSKUs;
+						} 
+						var altSKUs = altSKUsString.split(',');
+						
+						var giftProducts : dw.util.ArrayList = new dw.util.ArrayList();
+						for( var i=0, ii=altSKUs.length; i<ii; i++ ) {
+							giftProducts.add1(dw.catalog.ProductMgr.getProduct(altSKUs[i]));
+						}						
+					</isscript>
+					<li id="offer-${offer.ID}" class="tab${offers_status.count} system_${offers_status.count} qty-${altSKUs.length.toFixed(0)}<isif condition="${offers_status.first}"> first</isif>">
+						<h4>${titleString}</h4>
+						<iscomment>
+						<div class="deluxeBadge">
+							<isif condition="${!empty(offer.custom.shippingPromoText)}">
+								<isprint value="${offer.custom.shippingPromoText}" encoding="off" />
+							</isif>
+	          			</div>
+	          			</iscomment>
+	          			<img class="kitImage" src="${offer.getImage('large',0).url}" alt="kitImage" />
+						<div class="SelectSidePanel">
+							<div class="DetailDescription">
+								<h5><isprint value="${offer.getName()}" encoding="off"/></h5>
+								<div class="specialOrangeFont"><isif condition="${!empty(offer.custom.offerTabCallout)&&!empty(offer.custom.offerTabCallout.markup)}">
+								<isprint value="${offer.custom.offerTabCallout.markup}" encoding="off"/>
+								<iselse/>
+								</isif>
+								</div>
+								<isif condition="${!empty(offer.shortDescription)&&!empty(offer.shortDescription.markup)}">
+									<div class="proactivInclude"><isprint value="${offer.shortDescription.markup}" encoding="off"/></div>
+								</isif>
+								<div class="left">
+									<isif condition="${!empty(offer.custom.tabDescription)&&!empty(offer.custom.tabDescription.markup)}">
+										<isprint value="${offer.custom.tabDescription.markup}" encoding="off"/>
+									<iselse/>
+									</isif>
+								</div>
+		                                
+								<iscomment><div class="right">
+									<isif condition="${!empty(offer.custom.tabDetails)&&!empty(offer.custom.tabDetails.markup)}">
+										<isprint value="${offer.custom.tabDetails.markup}" encoding="off"/>
+									<iselse/>
+									</isif>
+								</div></iscomment>
+								<br clear="all" />
+		                            
+							</div>
+							<isif condition="${!empty(offer.custom.giftSelectSKUs)}">
+								<div class="GiftSelector">
+									<h5><isprint value="${Resource.msg('sas.full.giftselector','locale',null)}"/></h5>									
+										<iscontentasset aid="${offer.custom.altAssetID}" />	
+								</div>
+							</isif>
+							<div class="kitPriceBox">
+								<iscomment><div class="orderValue">A <isprint value="${offer.priceModel.getPriceBookPrice('list-prices-us')}" style="MONEY_LONG" /> <isprint value="${Resource.msg('sas.full.value','locale',null)}"/></div></iscomment>
+								<div class="kitPriceCoupon">
+									<div class="kitPrice"><isprint value="${offer.priceModel.getPrice()}" style="MONEY_LONG" />
+									<div class="ValueLRG" style="font-size: 10px; margin-left: 8px;"><isif condition="${('kitPrice' in offer.custom) && !empty(offer.custom.kitPrice)}">A <isprint value="${offer.custom.kitPrice}" formatter="$#"/> Value</isif></div>
+									</div>
+								
+								<isslot id="sas-coupon" context="category" description="coupon code" context-object="${category}"/>
+								</div>
+								<isloop items="${giftProducts}" var="aProduct" status="gift_status">
+									<a href="${URLUtils.https('COCart-AddProduct','pid',aProduct.ID)}" class="orderButton<isif condition="${gift_status.first}"> selected</isif> r${gift_status.index}" id="order-${aProduct.ID}"></a>
+								</isloop>
+																
+								<iscomment><div class="freeshipping_sas" style="display: none;"><img class="freeshipping_sas" src="${URLUtils.staticURL('/images/freeshipping_sas.png')}" alt="free sas" /></div></iscomment>
+																
+							</div>
+						</div>
+																		
+						<br clear="all" />
+						
+					</li>
+					
+				</isloop>
+				
+
+	</div>
+	
+	    </div>
+	    
+	    <iscomment><isslot id="sas-bottom" context="category" description="compare table" context-object="${category}"/></iscomment>
+	    <iscomment><isinclude template="product/components/sendtofriend" /></iscomment>
+		</div>
+		<iscontentasset aid="sas-ratings-reviews" />
+<iscomment><a href="http://newreviews.proactiv.com/0570pa/011114/writereview.htm?format=embedded&amp;campaignid=BV_RATING_SUMMARY&amp;return=http%3A%2F%2Fwww.proactiv.com%2Forder%2Fselect.php%3Ftt%3D1&amp;innerreturn=http%3A%2F%2Fnewreviews.proactiv.com%2F0570pa%2F011114%2Freviews.htm%3Fformat%3Dembedded%26sort%3Drating&amp;user=__USERID__&amp;submissionparams=__BVSUBMISSIONPARAMETERS__&amp;submissionurl=http%3A%2F%2Fwww.proactiv.com%2Fclubcatalog%2Freview-submit.php" onclick="bvShowContentOnReturnPRR('0570pa', '011114', 'BVRRWidgetID');" target="BVFrame" name="BV_TrackingTag_Rating_Summary_1_WriteReview_011114" title="Write a review"><isprint value="${Resource.msg('sas.full.write.review','locale',null)}"/></a> <span class="BVRRRatingSummaryLinkWriteSuffix"></span>
+</iscomment>
+        
+        
+		<br clear="all" />
+		<isset name="acqPage" value="${true}" scope="pdict" />
+<isif condition="${dw.system.Site.getCurrent().getCustomPreferenceValue('enableBV')}">
+	<isinclude template="bv/display/rr/reviews" />
+</isif>
+	</div>
+<isset name="OmniturePage" value="Offerpage" scope="pdict" />
+
+    <iscomment> SAS Page Pixels</iscomment>
+    <isslot id="MediaPixelForSAS" context="global" description="MediaPixelForSAS" />
+
+
+
+<script type="text/javascript">
+
+<iscomment>
+// if the number tabs is equal to the number of gifts, this means only 1 gift will appear per tab
+// the following code adjusts the styles around the  button
+// it compensates for empty space when only 1 gift selection is available
+// also if only 2 gifts exist, additional style adjustments apply
+</iscomment>
+
+var adjustStylesInSAS = {
+
+	init : function(){
+
+		var localObj = this;
+
+		$(document).ready(function(){
+			
+			$('.kitPriceBox').css('position','relative');
+			
+			var equalGifts = 0;
+			if($('.tab').length == $('.giftImage').length){
+				equalGifts++;	
+			}
+			
+			// count visible free gifts
+			var countVisibleGifts = 0;
+			$('.giftOption').each(function(){			
+				if($(this).is(':visible')){
+					countVisibleGifts++;
+				}
+			});
+			if(countVisibleGifts == 2){
+				$('.SelectSidePanel').css('width','409px');
+				$('.overnightpromo_fs').css('marginLeft','-30px');
+				$('.GiftSelector').css('float','left').css('marginLeft','10px').css('width','95%');
+				$('.DetailDescription').css('width','95%');
+			}
+	
+			if(equalGifts == 1){
+		
+				$('.SelectSidePanel').css('width','412px');
+				$('.GiftSelector').css('float','none').css('marginLeft','10px');
+
+				$('a[id^=-]').css('marginTop','0px');
+					
+				$('.giftOption').css('position','relative');
+				
+				$('.giftLink1').css('top','86px');
+				
+				$('.SelectSidePanel .DetailDescription')
+					.css('float','')
+					.css('display','inline');
+					
+				$('.SelectSidePanel .GiftSelector')
+					.css('float','')
+					.css('width','90%');
+				$('.GiftSelector').css('float','left').css('height','124');
+				$('.SelectSidePanel .GiftSelector h5').remove();
+
+				var h5str = '<h5>${Resource.msg('sas.full.giftselector2','locale',null)}</h5>';
+				
+				$('.DetailDescription')
+					.append(h5str)
+					.css('float','left')
+					.css('width','95%');	
+					
+				$('.freeshipping_sas')
+					.css('position','absolute')
+					.css('top','30px')
+					.css('right','10px');	
+				
+
+			} else {
+				$('a[id^=-]').css('marginTop','-10px');
+
+				$('.freeshipping_sas')
+					.css('position','absolute')
+					.css('top','17px')
+					.css('right','10px');			
+				
+			}
+			
+			$('.tab').click(function(){ 
+				if(countVisibleGifts == 0){
+					$('.kitPriceBox').css('width','290px');
+				}
+			});			
+
+			if(countVisibleGifts == 0){
+				$('.kitPriceBox').css('width','290px');
+			}
+			
+		});
+	}
+};
+
+adjustStylesInSAS.init();
+
+</script>
+
+
+	
+</isdecorate>

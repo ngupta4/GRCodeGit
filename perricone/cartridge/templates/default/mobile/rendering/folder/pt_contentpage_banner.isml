@@ -1,0 +1,49 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<isinclude template="util/modules"/>
+<isscript>
+importScript('guthyrenker_core:common/libUtils.ds');
+var CCC : Object = pdict.CurrentCampaignConfig;
+</isscript>
+<iscomment>This page must be cachable. It inherits the caching attributes by the decorated template.</iscomment>
+<head>
+<isinclude template="components/header/htmlhead"/>
+<iscomment>
+Add page specific header information here.
+</iscomment>
+</head>
+<body>
+<isinclude template="common/mboxglobal"/>
+<iscomment>Cookies and Javascript enabled check</iscomment>
+<isinclude template="components/browsertoolscheck"/>
+<isif condition="${CCC.showHeader}">
+  <isinclude template="components/header/header"/>
+</isif>
+<div id="container" class="pt_content_page ${CCC.getContainerClasses()}">
+  <div id="idMainWide" class="mainWide">
+    <isinclude template="search/components/contentStaticNavigation"/>
+    <div style="clear:both;"><!-- FLOAT CLEAR --></div><div style="clear:both;"><!-- FLOAT CLEAR --></div>
+    <isreplace/>
+  </div>
+  <!-- END: main -->
+  <a href="${pdict.CurrentRequest.httpHost}${pdict.CurrentRequest.httpPath}" id="currentURL"></a>
+  <div class="footer-breadcrumb">
+	  	<div class="footer">
+		    <div class="footer_nav">
+		     <isinclude template="components/contentbreadcrumbs"/> 	 
+		    </div>
+	  </div>
+	</div>
+  <isif condition="${CCC.showFooter}">
+    <isinclude template="components/footer/footer"/>
+  <iselse>
+	<iscomment>REFACTOR:  We need to refactor the footer to have this logic to include omniture/pixels regardless if it is shown</iscomment>
+	<!---  Omniture tracking  --->
+	<isinclude template="analytics/omniture/omniture"/>
+  </isif>
+  <isinclude template="components/footer/pixels"/>
+  <isinclude template="common/google_analytics" />
+</div>
+<!-- END: container -->
+</body>
+</html>

@@ -1,0 +1,25 @@
+<isdecorate template="content/pt_sitemap">
+<isinclude template="util/modules"/>
+
+<isscript>
+	importPackage(dw.web);
+	importPackage(dw.util);
+		
+	function getContentAssetMap(rootFolderId:String):HashMap{
+		var retentionRootFolder:Folder=dw.content.ContentMgr.getFolder(rootFolderId);
+		var contentMap:HashMap = getFolderContent(retentionRootFolder,new HashMap());
+	  	return contentMap;
+	}
+</isscript>
+
+<div class="sitemap">
+	<h1>wen.com Sitemap</h1>
+  	<p class="intro">This site map provides an organizational overview of all the pages on wen.com.</p>
+	<isif condition="${pdict.CurrentCustomer.authenticated && pdict.CurrentCustomer.registered || (pdict.CurrentRequest.httpCookies['rememberMe']!=null)}">
+		<isinclude template="sitemap/smcontentloggedin"/>
+	<iselse>
+		<isinclude template="sitemap/smcontentnotloggedin"/>
+	</isif>
+	
+</div><!-- END: sitemap -->
+</isdecorate>

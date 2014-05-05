@@ -1,0 +1,213 @@
+<isscript>
+var primaryUCI     : dw.web.Cookie = pdict.CurrentRequest.httpCookies['uci'];
+var omnCampaignUCI : String = !empty(primaryUCI)?primaryUCI.value: !empty(pdict.CurrentSession.privacy.campaignUCIID) ? pdict.CurrentSession.privacy.campaignUCIID : '';
+</isscript>
+<isif condition="${pdict.acquisitionstep == 'landingpage'}">
+
+<iscomment>Mobile Homepage:</iscomment>
+<!---Atlas--->
+<script>
+document.write('<s'+'cript language="JavaScript" src="http://view.atdmt.com/jaction/grkczd_ChazDeanUnsecureRTGMobile_1"></s'+'cript>')</script>
+<noscript><iframe src="http://view.atdmt.com/jaction/grkczd_ChazDeanUnsecureRTGMobile_1" width="1" height="1" frameborder="0" scrolling="No" marginheight="0" marginwidth="0" topmargin="0" leftmargin="0"></iframe></noscript>
+<!---MediaGeeks--->
+<script language="javascript" src="http://delivery.mgplatform.com/gr/m302landing.js"></script>
+<!-- MS tags -->
+<script type="text/javascript"> if (!window.mstag) mstag = {loadTag : function(){},time : (new Date()).getTime()};</script> <script id="mstag_tops" type="text/javascript" src="//flex.atdmt.com/mstag/site/94ac1d8e-b8c6-45b4-84b9-52ecaeea1f53/mstag.js"></script> <script type="text/javascript"> mstag.loadTag("analytics", {dedup:"1",domainId:"294226",type:"1",actionid:"39918"})</script> <noscript> <iframe src="//flex.atdmt.com/mstag/tag/94ac1d8e-b8c6-45b4-84b9-52ecaeea1f53/analytics.html?dedup=1&domainId=294226&type=1&actionid=39918" frameborder="0" scrolling="no" width="1" height="1" style="visibility:hidden;display:none"> </iframe> </noscript>
+
+<!-- Tapad Retargetting Pixel -->
+<img width="1" height="1" src="http://pixel.tapad.com/tap/pxl.png?ta_property_id=947&ta_action_id=WEN_Retargeting" />
+</isif>
+
+<isif condition="${pdict.acquisitionstep == 'inlineshoppingcart'}">
+<iscomment>InlineShoppingCart:</iscomment>
+<!---Atlas--->
+<script>document.write('<s'+'cript language="JavaScript" src="https://view.atdmt.com/jaction/grkczd_ChazDeanShoppingCartMobile_8"></s'+'cript>')</script>
+<noscript><iframe src="https://view.atdmt.com/jaction/grkczd_ChazDeanShoppingCartMobile_8" width="1" height="1" frameborder="0" scrolling="No" marginheight="0" marginwidth="0" topmargin="0" leftmargin="0"></iframe></noscript>
+<!---MediaGeeks--->
+<script language="javascript" src="https://s2.mgplatform.com/gr/mwen_sr.js"></script>
+<!-- Tapad Retargetting Pixel -->
+<img width="1" height="1" src="https://pixel.tapad.com/tap/pxl.png?ta_property_id=947&ta_action_id=WEN_Retargeting" />
+
+<!-- Facebook Cart Pixel  -->
+<script type="text/javascript">
+var fb_param = {};
+fb_param.pixel_id = '6011392278077';
+fb_param.value = subTotal;
+fb_param.currency = 'USD';
+(function(){
+  var fpw = document.createElement('script');
+  fpw.async = true;
+  fpw.src = '//connect.facebook.net/en_US/fp.js';
+  var ref = document.getElementsByTagName('script')[0];
+  ref.parentNode.insertBefore(fpw, ref);
+})();
+</script>
+<noscript><img height="1" width="1" alt="" style="display:none" src="https://www.facebook.com/offsite_event.php?id=6011392278077&amp;value=0&amp;currency=USD" /></noscript>
+
+</isif>
+
+<isif condition="${pdict.acquisitionstep == 'confirmation'}">
+<iscomment>Mobile Confirmation</iscomment>
+<!---Atlas--->
+<script>document.write('<s'+'cript language="JavaScript" src="https://view.atdmt.com/jaction/grkczd_ChazDeanConfirmationMobile_7/v3/ato.${pdict.Order.orderNo}/[atm1.${pdict.Order.totalGrossPrice.value}/atc1.CD/atc2.${pdict.Order.getAllProductLineItems()[0].productID}/atc3.${omnCampaignUCI}]"></s'+'cript>')</script>
+<noscript><iframe src="https://view.atdmt.com/iaction/grkczd_ChazDeanConfirmationMobile_7/v3/ato.${pdict.Order.orderNo}/[atm1.${pdict.Order.totalGrossPrice.value}/atc1.CD/atc2.${pdict.Order.getAllProductLineItems()[0].productID}/atc3.${omnCampaignUCI}]" width="1" height="1" frameborder="0" scrolling="No" marginheight="0" marginwidth="0" topmargin="0" leftmargin="0"></iframe></noscript>
+<!---MediaGeeks--->
+<script id="script302m" src="https://s2.mgplatform.com/gr/mconfirm-wen.js?orderid=${pdict.Order.orderNo}"></script>
+
+
+<!--- Kenshoo pixel --->
+
+<script type=text/javascript>
+   var hostProtocol = (("https:" == document.location.protocol) ? "https" : "http");
+   document.write('<scr'+'ipt src="', hostProtocol+ '://506.xg4ken.com/media/getpx.php?cid=00309dc8-265f-440b-91f2-d16c1d16b845','" type="text/JavaScript"><\/scr'+'ipt>');
+</script>
+<script type=text/javascript>
+   var params = new Array();
+   params[0]='id=00309dc8-265f-440b-91f2-d16c1d16b845';
+   params[1]='type=conv';
+   params[2]='val=${pdict.Order.totalGrossPrice.value}';
+   params[3]='orderId=${pdict.Order.orderNo}';
+   params[4]='promoCode=';
+   params[5]='valueCurrency=USD';
+   params[6]='GCID='; //For Live Tracking only
+   params[7]='kw='; //For Live Tracking only
+   params[8]='product='; //For Live Tracking only
+   k_trackevent(params,'506');
+</script>
+
+<noscript>
+   <img src="https://506.xg4ken.com/media/redir.php?track=1&token=00309dc8-265f-440b-91f2-d16c1d16b845&type=conv&val=${pdict.Order.totalGrossPrice.value}&orderId=${pdict.Order.orderNo}&promoCode=&valueCurrency=USD&GCID=&kw=&product=" width="1" height="1">
+</noscript>
+
+
+<!--- End Kenshoo pixel --->
+
+<!-- Google Code for Order Conversion Page -->
+<script type="text/javascript">
+/* <![CDATA[ */
+var google_conversion_id = 1054070214;
+var google_conversion_language = "ar";
+var google_conversion_format = "2";
+var google_conversion_color = "ffffff";
+var google_conversion_label = "CY4iCKD4-wEQxqvP9gM";
+var google_conversion_value = "${pdict.Order.getTotalNetPrice()}";
+/* ]]> */
+</script>
+<script type="text/javascript" src="https://www.googleadservices.com/pagead/conversion.js">
+</script>
+<noscript>
+<div style="display:inline;">
+<img height="1" width="1" style="border-style:none;" alt="" src="https://www.googleadservices.com/pagead/conversion/1054070214/?value=0&amp;label=CY4iCKD4-wEQxqvP9gM&amp;guid=ON&amp;script=0"/>
+</div>
+</noscript>
+
+<isscript>
+  var orderId = pdict.Order.orderNo;
+  var brand   = 'wenhaicare';
+
+  var qty1  = qty2  = 0;
+  var kit1  = kit2  = '';
+  var prod1 = prod2 = '';
+  var rev1  = rev2  = 0;
+
+  var iter = pdict.Order.getAllProductLineItems().iterator();
+  var loopc = 0;
+
+  while (iter.hasNext()) {
+    var pli = iter.next();
+
+      if (loopc == 0) {
+        qty1  = pli.quantityValue;
+        kit1  = pli.product.ID;
+        prod1 = pli.product.name;
+      } else {
+        qty2  = pli.quantityValue;
+        kit2  = pli.product.ID;
+        prod2 = pli.product.name;
+      }
+
+      brand = pli.product.brand;
+      loopc = loopc + 1;
+  }
+  var revenue = 0;
+  revenue = pdict.Order.getAdjustedMerchandizeTotalPrice(true).value + pdict.Order.giftCertificateTotalPrice.value;
+
+  if (prod1.indexOf("Vitamins") != -1) {  
+    rev1 = 0;
+    rev2 = revenue;
+  } else {
+    rev1 = revenue;
+    rev2 = 0;
+  }  
+
+</isscript>
+<isset name="primaryUCI" value="${pdict.CurrentRequest.httpCookies['uci'].value}" scope="page"/>
+<!--Begin LinkShare Tagging-->
+	<isif condition="${primaryUCI=='ous108' || primaryUCI=='US-CD-O-AF-GR-21874' || primaryUCI=='US-CD-O-AF-GR-21875'|| primaryUCI=='US-CD-O-AF-GR-21876' || primaryUCI=='US-CD-O-AF-GR-21877'|| primaryUCI=='US-CD-O-AF-GR-21878'}">
+	<script type="text/javascript">
+	var brnd_pfix = "CD";
+	var brnd_name = "Chaz Dean:";
+	var LSmsg = "";
+	var LSord = "ord=" + brnd_pfix + "${pdict.Order.orderNo}";
+	var LSsku = "skulist=";
+	var LSqty = "qlist=";
+	var LSamt = "amtlist=";
+	var LSname = "namelist=";
+	
+	function addLSitem(ls1,ls2,ls3,ls4) {
+	  LSsku = LSsku + brnd_pfix + escape(ls1) + "|";
+	  LSqty = LSqty + ls2 + "|";
+	  ls3 = ls3 * ls2 * 100;
+	  ls3 = ls3.toFixed(0);
+	  LSamt = LSamt + ls3 + "|";
+	  LSname = LSname + escape(brnd_name) + escape(ls4) + "|";
+	}
+	
+	// Call AddLSitem(SKU Number, Qty Purchased, Item Unit Price, Item Name) for each item purchased.
+	addLSitem(
+	        "${kit1}",
+	        "${qty1}",
+	        "${rev1}",
+	        "${prod1}"
+	);
+	
+	
+	LSmsg = "mid=2637&cur=USD&" + LSord + "&" + LSsku + "&" + LSqty + "&" + LSamt + "&" + LSname;
+	document.write('<img src="https://track.linksynergy.com/ep?' + LSmsg + '" border="0" width="1px" height="1px" alt="">');
+	</script>
+	</isif>
+<!--End LinkShare Tagging-->
+
+<!-- Tapad Retargetting Pixel -->
+<img width="1" height="1" src="https://pixel.tapad.com/tap/pxl.png?ta_property_id=947&ta_action_id=WEN_Conversion" />
+
+<!-- Medialets Conversion Tag:-->
+
+<script type="text/javascript">
+(function(a,b,d){var c="https://s-cdn-tag.medialytics.com/cp";window.medialetsCP=new function(a,b){this.spid=a;this.params=b}(b,d);"complete"===a.readyState?(b=a.createElement("script"),b.type="text/javascript",b.src=c,(a.getElementsByTagName("head")[0]||a.getElementsByTagName("body")[0]).appendChild(b)):a.write('<script type="text/javascript" src="'+c+'"><\/script>')})(
+document, "370ae3b5bede4bd2a153742002cd05bd", {
+action:"Checkout",
+value: '<isprint value="${pdict.Order.getTotalNetPrice()}" formatter="###0.00">',
+conversionID:"${pdict.Order.orderNo}"
+  }
+);
+</script>
+
+<!-- Facebook Conversion Pixel-->
+<script type="text/javascript">
+var fb_param = {};
+fb_param.pixel_id = '6011392289277';
+fb_param.value = subTotal;
+fb_param.currency = 'USD';
+(function(){
+  var fpw = document.createElement('script');
+  fpw.async = true;
+  fpw.src = '//connect.facebook.net/en_US/fp.js';
+  var ref = document.getElementsByTagName('script')[0];
+  ref.parentNode.insertBefore(fpw, ref);
+})();
+</script>
+<noscript><img height="1" width="1" alt="" style="display:none" src="https://www.facebook.com/offsite_event.php?id=6011392289277&amp;value=${pdict.Order.totalGrossPrice.value}&amp;currency=USD" /></noscript>
+
+
+</isif>

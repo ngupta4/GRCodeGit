@@ -1,0 +1,50 @@
+<!--- TEMPLATENAME: contactinformation.isml --->
+<div class="checkout_box contact_info">
+	<h4>${Resource.msg('personinformation_refresh.contactinformation.label','rendering',null)}</h4>
+	<div class="checkout_box_inner">
+	
+		<isif condition="${!empty(pdict.CurrentForms.personinf.contact.error)}">
+			<div class="errorform">
+				<isprint value="${pdict.CurrentForms.personinf.contact.error}" encoding="off" />
+			</div>
+		</isif>
+
+		<div class="contact_fieldset">
+			<div class="formfield email">
+	    		<isinputfield id="email" formfield="${pdict.CurrentForms.personinf.contact.email}" type="input" attribute1="requiredmesage" value1="${Resource.msg('forms.contactinf.email.parse-error','forms',null)}" attribute2="tabindex" value2="4" attribute3="autocomplete" value3="off" attribute4="placeholder" value4="Enter Valid Email Address">
+				<span class="success"></span>
+	    	    <isinputfield id="emailConfirm" formfield="${pdict.CurrentForms.personinf.contact.emailconfirm}" type="hidden"/>
+	    		<isif condition="${!empty(pdict.EmailValidationError)}">
+					<span class="errorclient" htmlfor="${pdict.CurrentForms.personinf.contact.email.htmlName}">
+						<isprint value="${Resource.msgf('checkout.error.useractive','rendering',null, dw.system.Site.current.getCustomPreferenceValue('GRAccountLoginHost')+'/login')}" encoding="off" />
+					</span> 
+				</isif>
+	    	</div>
+	    	<iscomment>
+		    	<div class="formfield email_confirm">
+		    		<isinputfield formfield="${pdict.CurrentForms.personinf.contact.emailconfirm}" type="input" attribute1="requiredmesage" value1="${Resource.msg('forms.contactinf.email.parse-error','forms',null)}" attribute3="equalTo" value3="${'#'+pdict.CurrentForms.personinf.contact.email.htmlName}">	   
+		    	</div>
+	    	</iscomment>
+		</div>		
+		<div class="contact_fieldset">
+			<div class="formfield phone daytime">
+	    		<div class="label">${Resource.msg('day.phone','account',null)}&nbsp;<span class="requiredindicator">*</span></div>
+	    		
+		        <input type="text" id="phone1" placeholder="xxx" class="small textinput required" maxlength="3" size="3" tabindex="5" />
+		        <input type="text" id="phone2" placeholder="xxx" class="small textinput required" maxlength="3" size="3" tabindex="6" />		        
+		        <input type="text" id="phone3" placeholder="xxxx" class="numberbox textinput required" maxlength="4" size="6" tabindex="7" />
+		        <isinputfield id="daytimePhone" formfield="${pdict.CurrentForms.personinf.contact.daytimephone}" type="hidden" class="phone"/>
+				<isif condition="${pdict.CurrentForms.personinf.contact.daytimephone.valid!=true}">
+		    		<div class="errormessage">${Resource.msg('profile.dayphoneno.parseerror','forms',null)}</div>
+		    	</isif>
+	    	</div>
+	    	
+	    </div>		
+		<div class="clearfix"></div>
+    </div>
+</div>
+
+
+<script type="text/javascript"><!--
+	app.URLs.submitDialogURL = '${URLUtils.httpContinue()}';
+//--></script>

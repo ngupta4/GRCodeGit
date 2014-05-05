@@ -1,0 +1,52 @@
+<div id="subProduct${pdict.ProductCount}" class="subProduct${pdict.ProductCount}">
+
+ 	<input type="hidden" id="pid" class="pid" name="pid" value="${pdict.Product.getID()}"/>
+	<input type="hidden" id="masterPid" class="masterPid" name="masterPid" value="${pdict.Product.getID()}"/>
+					
+	<div>
+		<div>
+			<h1><!-- Product Name Display -->
+				<a href="${URLUtils.url('mProduct-Show','pid', pdict.Product.ID)}" ><isprint value="${pdict.Product.name}"/></a>
+			</h1>
+			<div>${Resource.msg('product.item','product',null)} <isprint value="${ pdict.Product.ID }"/></div><!-- END: productID -->
+			
+			<isinclude template="mobile/product/productdetailimage"/>
+			
+			<isif condition="${!pdict.Product.bundled}">
+				<isinclude template="mobile/product/components/pricing"/>
+			</isif>
+				<iscomment><isinclude template="mobile/product/components/promotions"/></iscomment>
+			<isif condition="${pdict.Product.bundled}">
+				<div><span >${Resource.msg('global.quantity','locale',null)}: </span><span>1</span></div>
+			</isif>
+			<isinclude template="mobile/product/components/variations"/>
+			<div><!-- Displays Product Main Attributes -->
+				<isset name="pam" value="${pdict.Product.getAttributeModel()}" scope="pdict"/>
+				<isset name="group" value="${pdict.pam.getAttributeGroup('mainAttributes')}" scope="pdict"/>
+				<isinclude template="mobile/product/components/group"/>
+				<div><!-- W3C Clearing --></div>			
+			</div><!-- END: mainattributes -->
+			<isif condition="${!pdict.Product.bundled}">
+				<isinclude template="mobile/product/components/options"/>
+			</isif>
+			<div class="availability">
+				<span class="label">${Resource.msg('global.availability','locale',null)}: </span><span class="value"><!-- Product Availability Message --></span>
+			</div><!-- END: availability -->
+			<isif condition="${!pdict.Product.bundled}">
+				<div id="pdpATCDivsubProduct${pdict.ProductCount}Div" >
+					<div>
+						<div>
+							<span>${Resource.msg('global.qty','locale',null)}:</span>
+							<input class="quantityinput" type="text" id="Quantity" name="Quantity" size="2" value="${Number(empty(pdict.CurrentHttpParameterMap.Quantity.stringValue) ? 1 : pdict.CurrentHttpParameterMap.Quantity.stringValue).toFixed()}" />
+						</div><!-- END: quanity -->
+						<button class="addtocartbutton" type="submit" value="${Resource.msg('global.addtocart','locale',null)}" ><span>${Resource.msg('global.addtocart','locale',null)}</span></button>
+					</div><!-- END: addtocart -->
+					<isinclude template="mobile/product/components/pricing"/>
+				</div><!-- END: addtocartbar -->
+			</isif>
+		<div><!-- FLOAT CLEAR -->	</div>	
+		</div><!-- END: productdetailcolumn -->
+		
+		<div><!-- FLOAT CLEAR --></div>		
+	</div><!-- END: productdetail -->
+</div><!-- END: productdetail container -->

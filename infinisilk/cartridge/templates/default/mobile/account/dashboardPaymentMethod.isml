@@ -1,0 +1,37 @@
+          <div class="innerTitle">
+            <h2>
+              <isprint value="${Resource.msg('account.paymentmethods','account',null)}"/>
+           </h2>
+	      </div>
+	      <div class="innerBox">
+          <isif condition="${pdict.PaymentInstruments.size() > 0 && !empty(pdict.CurrentCustomer.profile.custom.defaultCreditCardID)}">
+            <isloop items="${pdict.CurrentForms.paymentinstruments.creditcards.storedcards}" var="creditcard" status="loopstate">
+              <isif condition="${creditcard.object.custom.CustomerPaymentMethod.value==2}">
+	   			<div class="top-label">											
+					<span>${Resource.msg('change.note','account',null)}</span>
+						${Resource.msg('paymentinstrumentlist.paylater.label1','account',null)} ${Resource.msg('paymentinstrumentlist.paylater.label2','account',null)}
+				</div>
+              <iselseif condition="${creditcard.object.custom.CustomerPaymentMethod.value==1}">
+              		<div class="top-heading border-bot">											
+						<img src="${URLUtils.staticURL('/images/paypal-logo.jpg')}" border="0" alt="PayPal-Standard-Logo" width="120">
+					</div>
+             	 	<isbreak/>
+			  <iselse>
+                  <isif condition="${creditcard.object.custom.isDefaultCreditCard}">
+                     <div class="creditcard">
+                       <isminicreditcard p_card="${creditcard.object}" p_show_expiration="${true}"/>
+                     </div>
+                     <isbreak/>
+                     <!-- END: creditcard --> 
+                  </isif>
+              </isif>
+				
+            </isloop>
+            <iselse>
+             <isprint value="${Resource.msg('account.no.payment.method','account',null)}"/>
+          </isif>
+          <a href="${URLUtils.https('PaymentInstruments-List')}" title="" class="grayButton editlink aButton">
+	         <span><isprint value="${Resource.msg('account.edit','account',null)}"/></span>
+			 
+	      </a>
+	      </div>

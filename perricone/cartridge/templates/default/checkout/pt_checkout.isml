@@ -1,0 +1,93 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<iscomment>This includes global utilities into the pages</iscomment>
+<isinclude template="util/modules"/>
+
+<iscomment>This page must be cachable. It inherits the caching attributes by the decorated template.</iscomment>
+
+<head>
+	<iscomment>
+		Include all important information globally , e.g. meta-data, link information, and
+		javascript.
+	</iscomment>
+	<isinclude template="components/header/htmlhead"/>
+	
+	<iscomment>Page specific js file</iscomment>
+	<script src="${URLUtils.staticURL('/js/checkout.js')}" type="text/javascript"></script>
+	
+	<iscomment>Add page specific header information here.</iscomment>
+<link href="${URLUtils.staticURL('/css/checkout.css')}" media="screen" rel="stylesheet" type="text/css" />
+</head>
+
+<body>
+<isinclude template="common/mboxglobal"/>
+<div id="container" class="pt_checkout">
+	<isinclude template="components/header/header"/>
+	<div class="mainWide" id="idMainWide">
+	<div id="main" class="pt_checkout">
+		<div id="content">
+			<iscomment><isbreadcrumbs bcurl1="${URLUtils.url('Cart-Show')}" bctext1="${Resource.msg('pt_checkout.breadcrumb','checkout',null)}"/></iscomment>
+			<isreplace/>
+		</div><!-- END: content -->
+		<div class="right-wraper-new"> 
+		<div id="rightcolumn">
+			<isinclude template="checkout/minisummary"/>
+		
+		</div><!-- END: rightcolumn -->
+		<div class="right_column">
+			<iscontentasset aid="cart-additional-links"/>
+			</div></div>
+		<div class="clear"><!-- FLOAT CLEAR --></div>
+	</div> <!-- END: main -->
+	</div>
+	<isinclude template="components/footer/footer"/>
+</div><!-- END: container -->
+<div class="shippingDetailsContent" id="ship-delivery" style="display:none;overflow:auto;">
+    <iscontentasset aid="shiping-cost"/>
+  </div>
+  <div class="policyContent" id="security" style="display:none;overflow:auto;">
+    <iscontentasset aid="security-policy"/>
+  </div>
+<script type="text/javascript">
+jQuery(document).ready(function() {
+
+	$("#eve_phone_1,#eve_phone_2,#eve_phone_3,#day_phone_1,#day_phone_2,#day_phone_3").keyup(function () {
+	    var maxLength = $(this).attr('maxlength');
+		if($(this).val().length == maxLength) {
+	        $(this).next().focus();
+	    }
+	});
+jQuery('#ship-delivery').dialog({
+		bgiframe: true,
+	autoOpen: false,
+	modal: true,
+	top:0,
+	width:600,
+	resizable: false
+});
+jQuery('.ui-widget-content').parent().removeClass('ui-corner-all');  
+jQuery('.ui-dialog-titlebar').parent().wrapInner('<div class="wapper-dialog ui-corner-all">');
+jQuery('.ui-dialog-titlebar').css('height','18px');
+jQuery('#cost').click( function() {
+jQuery('#ship-delivery').show();
+jQuery('#ship-delivery').dialog('open');
+});
+jQuery('#security').dialog({
+	bgiframe: true,
+autoOpen: false,
+modal: true,
+top:0,
+	width: 895,
+resizable: false
+});
+jQuery('.ui-widget-content').parent().removeClass('ui-corner-all');  
+jQuery('.ui-dialog-titlebar').parent().wrapInner('<div class="wapper-dialog ui-corner-all">');
+jQuery('#privacy').click( function() {
+jQuery('#security').show();
+jQuery('#security').dialog('open');
+})
+});
+</script>
+</body>
+</html>

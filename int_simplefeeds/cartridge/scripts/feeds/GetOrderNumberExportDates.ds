@@ -1,0 +1,24 @@
+/**
+* GetOrderNumberExportDates.ds
+*
+*   @input StartDate : String
+*   @output BeginningDate : Date
+*
+*/
+importPackage( dw.system );
+importPackage( dw.util );
+
+function execute( args : PipelineDictionary ) : Number {
+	
+	// get date from job config
+	var startDate : String = !empty( args.StartDate ) ? args.StartDate.toString() : '01/01/2014';
+	
+	// get now timestamp
+	var dateStartOfYear : Date = new Date( startDate );
+	
+	// set output vars
+	// example range: 12-9-2013 00:00:00 through 12-10-2013 00:00:00
+	args.BeginningDate = dateStartOfYear;
+
+    return PIPELET_NEXT;
+}

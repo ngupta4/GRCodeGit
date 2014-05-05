@@ -1,0 +1,68 @@
+<!--- TEMPLATENAME: offer.isml --->
+<isif condition="${pdict.Product != null}">
+	<isobject object="${pdict.Product}" view="detail">
+		<div id="offer-${pdict.Product.ID}" class="offerContainer">
+			<iscomment>set the product for local reuse</iscomment>
+			<isset name="Product" value="${pdict.Product}" scope="page"/>
+			<div class="name">
+				<h2><isprint value="${Product.name}" encoding="off"/></h2>
+			</div><!-- END: name -->
+			
+			<div class="productimage"><!-- Product Image -->
+				<isif condition="${Product.master && pdict.CurrentVariationModel && CurrentVariationModel.variants.size() > 0}">
+					<isset name="imageProduct" value="${CurrentVariationModel.variants[0]}" scope="page"/>
+				<iselse/>
+					<isset name="imageProduct" value="${Product}" scope="page"/>
+				</isif>
+			
+				<isif condition="${!empty(imageProduct.getImage('large',0))}">
+					<isset name="imageUrl" value="${imageProduct.getImage('large',0).url}" scope="page"/>
+					<isset name="imageAlt" value="${imageProduct.getImage('large',0).alt}" scope="page"/>
+					<isset name="imageTitle" value="${imageProduct.getImage('large',0).title}" scope="page"/>
+				<iselse/>
+					<isset name="imageUrl" value="${URLUtils.staticURL('/images/noimagelarge.png')}" scope="page"/>
+					<isset name="imageAlt" value="${Product.name}" scope="page"/>
+					<isset name="imageTitle" value="${Product.name}" scope="page"/>
+				</isif>
+				<img src="${imageUrl}" alt="${imageAlt}" title="${imageTitle}"/>
+			</div>
+			<div class="sas_product_bg_img"></div>
+
+			<div class="sasTabDescription">
+			  <isprint value="${Product.custom.tabDescription}" encoding="off"/>
+            </div>
+            
+			<div class="OrderNowButton">
+					<a href="${URLUtils.https('COCart-AddProduct','pid',Product.ID)}"><isprint value="${Product.custom.orderButtonCallout}" encoding="off"/></a>
+					<div class="burst-free-shipping"></div>
+			</div>
+			
+			<div class="shortDescription">
+				<isprint value="${Product.shortDescription}" encoding="off"/>
+			</div><!-- END: shortDescription -->
+			
+			
+			<div class="longDescription">		
+				<isprint value="${Product.longDescription}" encoding="off"/>
+			</div><!-- END: longDescription -->	
+			
+			<div class="promo"><isprint value="${Product.custom.shippingPromoText}" encoding="off"/></div>
+			<div class="pricing"><isprint value="${Product.custom.upgradeOfferCallout}" encoding="off"/></div>
+			<div class="price-order">
+				<div class="price">
+				  <div class="terms_only">
+				    ${Resource.msg('product.onlyvalue','product',null)}
+				    <span class="amount">$${Product.priceModel.price.value}</span>
+				  </div>
+				  <iscomment><div class="sas_permonth">${Resource.msg('product.permonth','product',null)}</iscomment>  
+				</div>
+				<div class="OrderNowButton height">
+						<a href="${URLUtils.https('COCart-AddProduct','pid',Product.ID)}"><isprint value="${Product.custom.orderButtonCallout}" encoding="off"/></a>
+						<div class="burst-free-shipping"></div>
+				</div>
+			</div>
+		</div>
+	</isobject>
+<iselse/>
+	
+</isif>

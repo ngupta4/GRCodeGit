@@ -1,0 +1,326 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<?demandware-pipeline version="2.0"?>
+
+<pipeline group="Application">
+  <branch basename="_ANONYMOUS_BRANCH_1">
+    <segment>
+      <node>
+        <text-node>
+          <description>The OnSession pipeline is called for every new session in site. The pipeline can be used, e.g. to prepare promotion or pricebooks based on source codes or affiliate information in the initial URL. For performance reasons the pipeline should be kept short.</description>
+        </text-node>
+        <node-display width="2" x="1" y="0"/>
+      </node>
+    </segment>
+  </branch>
+  <branch basename="Do">
+    <segment>
+      <node>
+        <start-node call-mode="private" name="Do" secure="false"/>
+        <node-display x="1" y="1"/>
+      </node>
+      <simple-transition/>
+      <node>
+        <decision-node condition-key="httpheader['x-is-host'] != &quot;production.proactiv.com&quot;" condition-operator="expr"/>
+        <node-display x="0" y="1"/>
+        <branch basename="b2" source-connector="yes">
+          <transition target-connector="in1" target-path="./+1"/>
+        </branch>
+      </node>
+      <simple-transition/>
+      <node>
+        <call-node start-name-ref="OnSession-DoBusinesslogic"/>
+        <node-display x="1" y="0"/>
+      </node>
+      <transition target-connector="in3" target-path="./+1"/>
+    </segment>
+    <segment>
+      <node>
+        <join-node/>
+        <node-display x="-1" y="1"/>
+      </node>
+      <simple-transition/>
+      <node>
+        <end-node/>
+        <node-display x="0" y="1"/>
+      </node>
+    </segment>
+  </branch>
+  <branch basename="_ANONYMOUS_BRANCH_3">
+    <segment>
+      <node>
+        <text-node>
+          <description>The OnSession pipeline is called for every new session in site. The pipeline can be used, e.g. to prepare promotion or pricebooks based on source codes or affiliate information in the initial URL. For performance reasons the pipeline should be kept short.</description>
+        </text-node>
+        <node-display width="2" x="4" y="1"/>
+      </node>
+    </segment>
+  </branch>
+  <branch basename="DoBusinesslogic">
+    <segment>
+      <node>
+        <start-node call-mode="private" name="DoBusinesslogic" secure="false"/>
+        <node-display x="4" y="2"/>
+      </node>
+      <simple-transition/>
+      <node>
+        <call-node start-name-ref="OnSession-CaptureUrlInfo"/>
+        <node-display x="0" y="1"/>
+      </node>
+      <simple-transition/>
+      <node>
+        <call-node start-name-ref="OnSession-SetDefaultPriceBook"/>
+        <node-display x="0" y="1"/>
+      </node>
+      <simple-transition/>
+      <node>
+        <end-node/>
+        <node-display x="0" y="1"/>
+      </node>
+    </segment>
+  </branch>
+  <branch basename="CaptureUrlInfo">
+    <segment>
+      <node>
+        <start-node call-mode="private" name="CaptureUrlInfo" secure="false"/>
+        <node-display x="7" y="2"/>
+      </node>
+      <simple-transition/>
+      <node>
+        <decision-node condition-key="empty(CurrentSession.privacy['capturedOriginalUrlInfo']) || !CurrentSession.privacy['capturedOriginalUrlInfo']" condition-operator="expr"/>
+        <node-display x="0" y="1"/>
+        <branch basename="b2" source-connector="yes">
+          <transition target-connector="in"/>
+          <segment>
+            <node>
+              <pipelet-node pipelet-name="Script" pipelet-set-identifier="bc_api">
+                <config-property key="Transactional" value="false"/>
+                <config-property key="OnError" value="PIPELET_ERROR"/>
+                <config-property key="ScriptFile" value="guthyrenker_businesslogic:preventMaxStringLengthQV.ds"/>
+                <key-binding alias="Logger" key="ScriptLog"/>
+                <key-binding alias="CurrentRequest.httpQueryString" key="OriginalQueryString"/>
+                <key-binding alias="CurrentRequest.httpReferer" key="OriginalReferer"/>
+                <key-binding alias="SafeQueryString" key="SafeQueryString"/>
+                <key-binding alias="SafeReferer" key="SafeReferer"/>
+              </pipelet-node>
+              <node-display x="0" y="1"/>
+              <branch basename="b2" source-connector="error">
+                <transition target-connector="in1" target-path="../+1"/>
+              </branch>
+            </node>
+            <simple-transition/>
+            <node>
+              <pipelet-node pipelet-name="Assign" pipelet-set-identifier="bc_api">
+                <config-property key="Transactional" value="false"/>
+                <key-binding alias="(SafeQueryString==null?'':SafeQueryString).split('?')" key="From_0"/>
+                <key-binding alias="SafeReferer==null?'':SafeReferer" key="From_1"/>
+                <key-binding alias="CurrentSession.privacy['originalReferer']" key="To_1"/>
+                <key-binding alias="true" key="From_2"/>
+                <key-binding alias="CurrentSession.privacy['capturedOriginalUrlInfo']" key="To_2"/>
+                <key-binding alias="null" key="From_4"/>
+                <key-binding alias="null" key="To_4"/>
+                <key-binding alias="null" key="From_5"/>
+                <key-binding alias="null" key="To_5"/>
+                <key-binding alias="null" key="From_6"/>
+                <key-binding alias="null" key="To_6"/>
+                <key-binding alias="null" key="From_7"/>
+                <key-binding alias="null" key="To_7"/>
+                <key-binding alias="null" key="From_8"/>
+                <key-binding alias="null" key="To_8"/>
+                <key-binding alias="null" key="From_9"/>
+                <key-binding alias="null" key="To_9"/>
+                <key-binding alias="QueryStringArr" key="To_0"/>
+              </pipelet-node>
+              <node-display x="0" y="1"/>
+            </node>
+            <simple-transition/>
+            <node>
+              <pipelet-node pipelet-name="Assign" pipelet-set-identifier="bc_api">
+                <config-property key="Transactional" value="false"/>
+                <key-binding alias="('originalReferer' in CurrentSession.privacy &amp;&amp; !empty(CurrentSession.privacy['originalReferer'])? CurrentSession.privacy['originalReferer']:'').split('?')" key="From_0"/>
+                <key-binding alias="ReferrerUrlArr" key="To_0"/>
+                <key-binding alias="!empty(ReferrerUrlArr) &amp;&amp; ReferrerUrlArr.length &gt; 0 ? ReferrerUrlArr[0]:''" key="From_1"/>
+                <key-binding alias="CurrentSession.privacy['originalReferer']" key="To_1"/>
+                <key-binding alias="null" key="From_5"/>
+                <key-binding alias="null" key="To_5"/>
+                <key-binding alias="null" key="From_6"/>
+                <key-binding alias="null" key="To_6"/>
+                <key-binding alias="null" key="From_7"/>
+                <key-binding alias="null" key="To_7"/>
+                <key-binding alias="null" key="From_8"/>
+                <key-binding alias="null" key="To_8"/>
+                <key-binding alias="null" key="From_9"/>
+                <key-binding alias="null" key="To_9"/>
+                <key-binding alias="!empty(QueryStringArr) &amp;&amp; QueryStringArr.length &gt; 0 ? QueryStringArr[QueryStringArr.length - 1]:''" key="From_2"/>
+                <key-binding alias="CurrentSession.privacy['originalQueryString']" key="To_2"/>
+              </pipelet-node>
+              <node-display x="0" y="1"/>
+            </node>
+            <transition target-connector="in1" target-path="../+2"/>
+          </segment>
+        </branch>
+      </node>
+      <transition target-connector="in1" target-path="./+1">
+        <transition-display>
+          <bend-point relative-to="source" x="2" y="0"/>
+        </transition-display>
+      </transition>
+    </segment>
+    <segment>
+      <node>
+        <join-node/>
+        <node-display x="1" y="1"/>
+      </node>
+      <transition target-connector="in2" target-path="./+1">
+        <transition-display>
+          <bend-point relative-to="target" x="2" y="0"/>
+        </transition-display>
+      </transition>
+    </segment>
+    <segment>
+      <node>
+        <join-node/>
+        <node-display x="-1" y="3"/>
+      </node>
+      <simple-transition>
+        <transition-display>
+          <bend-point relative-to="source" x="0" y="1"/>
+        </transition-display>
+      </simple-transition>
+      <node>
+        <end-node/>
+        <node-display x="0" y="1"/>
+      </node>
+    </segment>
+  </branch>
+  <branch basename="_ANONYMOUS_BRANCH_6">
+    <segment>
+      <node>
+        <text-node>
+          <description>This data needs to be captured once during the session</description>
+        </text-node>
+        <node-display x="6" y="3"/>
+      </node>
+    </segment>
+  </branch>
+  <branch basename="SetDefaultPriceBook">
+    <segment>
+      <node>
+        <start-node call-mode="private" name="SetDefaultPriceBook" secure="false"/>
+        <node-display x="10" y="2"/>
+      </node>
+      <simple-transition/>
+      <node>
+        <decision-node condition-key="CurrentCustomer.authenticated || !empty(CurrentRequest.httpCookies['rememberMe'])" condition-operator="expr"/>
+        <node-display x="0" y="1"/>
+        <branch basename="b2" source-connector="yes">
+          <transition target-connector="in">
+            <transition-display>
+              <bend-point relative-to="source" x="0" y="2"/>
+            </transition-display>
+          </transition>
+          <segment>
+            <node>
+              <pipelet-node pipelet-name="Assign" pipelet-set-identifier="bc_api">
+                <config-property key="Transactional" value="false"/>
+                <key-binding alias="dw.system.Site.current.preferences.custom.memberPriceBook" key="From_0"/>
+                <key-binding alias="priceBook" key="To_0"/>
+                <key-binding alias="dw.system.Site.current.preferences.custom.memberPriceBookKeyCode" key="From_1"/>
+                <key-binding alias="CurrentSession.custom.keyCode" key="To_1"/>
+                <key-binding alias="null" key="From_2"/>
+                <key-binding alias="null" key="To_2"/>
+                <key-binding alias="null" key="From_3"/>
+                <key-binding alias="null" key="To_3"/>
+                <key-binding alias="null" key="From_4"/>
+                <key-binding alias="null" key="To_4"/>
+                <key-binding alias="null" key="From_5"/>
+                <key-binding alias="null" key="To_5"/>
+                <key-binding alias="null" key="From_6"/>
+                <key-binding alias="null" key="To_6"/>
+                <key-binding alias="null" key="From_7"/>
+                <key-binding alias="null" key="To_7"/>
+                <key-binding alias="null" key="From_8"/>
+                <key-binding alias="null" key="To_8"/>
+                <key-binding alias="null" key="From_9"/>
+                <key-binding alias="null" key="To_9"/>
+              </pipelet-node>
+              <node-display x="0" y="2"/>
+            </node>
+            <transition target-connector="in1" target-path="../+2"/>
+          </segment>
+        </branch>
+      </node>
+      <transition target-connector="in2" target-path="./+1">
+        <transition-display>
+          <bend-point relative-to="source" x="2" y="0"/>
+        </transition-display>
+      </transition>
+    </segment>
+    <segment>
+      <node>
+        <join-node/>
+        <node-display x="1" y="1"/>
+      </node>
+      <simple-transition/>
+      <node>
+        <pipelet-node pipelet-name="Assign" pipelet-set-identifier="bc_api">
+          <config-property key="Transactional" value="false"/>
+          <key-binding alias="dw.system.Site.current.preferences.custom.nonMemberPriceBook" key="From_0"/>
+          <key-binding alias="priceBook" key="To_0"/>
+          <key-binding alias="dw.system.Site.current.preferences.custom.nonMemberPriceBookKeyCode" key="From_1"/>
+          <key-binding alias="CurrentSession.custom.keyCode" key="To_1"/>
+          <key-binding alias="null" key="From_2"/>
+          <key-binding alias="null" key="To_2"/>
+          <key-binding alias="null" key="From_3"/>
+          <key-binding alias="null" key="To_3"/>
+          <key-binding alias="null" key="From_4"/>
+          <key-binding alias="null" key="To_4"/>
+          <key-binding alias="null" key="From_5"/>
+          <key-binding alias="null" key="To_5"/>
+          <key-binding alias="null" key="From_6"/>
+          <key-binding alias="null" key="To_6"/>
+          <key-binding alias="null" key="From_7"/>
+          <key-binding alias="null" key="To_7"/>
+          <key-binding alias="null" key="From_8"/>
+          <key-binding alias="null" key="To_8"/>
+          <key-binding alias="null" key="From_9"/>
+          <key-binding alias="null" key="To_9"/>
+        </pipelet-node>
+        <node-display x="0" y="1"/>
+      </node>
+      <transition target-connector="in3" target-path="./+1">
+        <transition-display>
+          <bend-point relative-to="source" x="0" y="2"/>
+        </transition-display>
+      </transition>
+    </segment>
+    <segment>
+      <node>
+        <join-node/>
+        <node-display x="-1" y="1"/>
+      </node>
+      <simple-transition/>
+      <node>
+        <pipelet-node pipelet-name="SetApplicablePriceBooks" pipelet-set-identifier="bc_api">
+          <key-binding alias="priceBook" key="PriceBook1ID"/>
+          <key-binding alias="null" key="PriceBook3ID"/>
+          <key-binding alias="null" key="PriceBook4ID"/>
+          <key-binding alias="null" key="PriceBook5ID"/>
+          <key-binding alias="null" key="PriceBook6ID"/>
+          <key-binding alias="null" key="PriceBook7ID"/>
+          <key-binding alias="null" key="PriceBook8ID"/>
+          <key-binding alias="null" key="PriceBook9ID"/>
+        </pipelet-node>
+        <node-display x="0" y="1"/>
+      </node>
+      <simple-transition>
+        <transition-display>
+          <bend-point relative-to="source" x="0" y="1"/>
+        </transition-display>
+      </simple-transition>
+      <node>
+        <end-node/>
+        <node-display x="0" y="1"/>
+      </node>
+    </segment>
+  </branch>
+</pipeline>

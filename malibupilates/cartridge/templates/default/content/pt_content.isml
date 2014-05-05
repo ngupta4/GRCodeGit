@@ -1,0 +1,92 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<isinclude template="util/modules"/>
+
+<isscript>
+	importPackage(dw.content);
+	importPackage(dw.util);
+	importPackage(dw.catalog);
+	
+	importScript('guthyrenker_core:common/libUtils.ds');
+	
+	var CurrentFolder : Folder = null;
+	var CurrentContent : Content = null;
+	
+	if( "fdid" in pdict.CurrentHttpParameterMap && !empty(pdict.CurrentHttpParameterMap.fdid.value) ) {
+		CurrentFolder = ContentMgr.getFolder(pdict.CurrentHttpParameterMap.fdid.stringValue);
+	}
+	
+	if( "cid" in pdict.CurrentHttpParameterMap && !empty(pdict.CurrentHttpParameterMap.cid.value) ) {
+		CurrentContent = ContentMgr.getContent(pdict.CurrentHttpParameterMap.cid.stringValue);
+	}
+	
+	if( empty(CurrentContent) && !empty(CurrentFolder) && !empty(CurrentFolder.onlineContent) ) {
+		CurrentContent = CurrentFolder.onlineContent[0];
+	}
+	if( empty(CurrentFolder) && !empty(CurrentContent) && !empty(CurrentContent.classificationFolder) ) {
+		CurrentFolder = CurrentContent.classificationFolder;
+	}
+	if( empty(CurrentFolder) && !empty(CurrentContent) && !empty(CurrentContent.folders) ) {
+		CurrentFolder = CurrentContent.folders[0];
+	}
+	
+	var CurrentFolderPath : String = CurrentContent.ID;
+	var RootFolder = CurrentFolder;
+	while( !empty(RootFolder.parent) && RootFolder.parent.ID!='primary-navigation') {
+		CurrentFolderPath += " "+RootFolder.ID;
+		RootFolder = RootFolder.parent;
+	}
+	CurrentFolderPath += " body_"+RootFolder.ID+" "+RootFolder.ID;
+	
+	var PageID : String = "page_";
+	
+	if( empty(CurrentContent) ) {
+		PageID += CurrentFolder.ID;
+	} else {
+		PageID += CurrentContent.ID;
+	}
+	
+	var headerContent : Content = dw.content.ContentMgr.getContent(CurrentContent.ID+"-header");
+</isscript>
+
+<iscomment>This page must be cachable. It inherits the caching attributes by the decorated template.</iscomment>
+
+<head>
+	<iscomment>Include all important information globally , e.g. meta-data, link information, and javascript.</iscomment>
+	<isinclude template="components/header/htmlhead"/>
+
+	<iscomment>Add page specific header information here.</iscomment>
+	
+    <iscomment>Insert meta tag for the "Google-Verification" feature to verify that you are the owner of this site.</iscomment>
+    <isif condition="${'GoogleVerificationTag' in dw.system.Site.current.preferences.custom && dw.system.Site.current.preferences.custom.GoogleVerificationTag!=''}">
+        <meta name="google-site-verification" content="<isprint value="${dw.system.Site.current.preferences.custom.GoogleVerificationTag}"/>" />
+    </isif>
+</head>
+<body id="${PageID}" class="${CurrentFolderPath}">
+
+<iscomment>Cookies and Javascript enabled check</iscomment>
+<isinclude template="components/browsertoolscheck"/>
+
+<div id="container" class="pt_content">
+    <isinclude template="components/header/header"/>		
+    <div id="main">
+        <div id="content" class="contentPage">
+        	<div class="${CurrentContent.ID}">
+	        	<isslot id="mp-rightSideBar" context="global" description="Offer Sidebar Right Content Slot"/>
+	        	<div class="contentBody">
+	        		<isreplace/>
+	        	</div>
+	            
+	            <div class="clear"><!-- FLOAT CLEAR --></div>
+	        </div>
+        </div><!-- END: content -->	
+        <div id="rightcolumn">
+        	<isslot id="home-right" description="Product Scroller on right side of homepage" context="global" />
+        	<div class="clear"><!-- FLOAT CLEAR --></div>
+        </div><!-- END: rightcolumn -->
+        <div class="clear"><!-- FLOAT CLEAR --></div>
+    </div><!-- END: main -->
+    <isinclude template="components/footer/footer"/>
+</div><!-- END: container -->
+</body>
+</html>

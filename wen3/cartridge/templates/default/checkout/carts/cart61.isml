@@ -1,0 +1,156 @@
+<isscript>
+		importPackage(dw.object);
+		importPackage(dw.catalog);
+		importScript('guthyrenker_core:common/libUtils.ds');
+		
+		var CCC : Object = pdict.CurrentCampaignConfig;
+		var campaignCode : String = CCC.campaignCode;
+		var showHeader : boolean = CCC.showHeader;
+		var showFooter : boolean = CCC.showFooter;
+		var showNav : boolean = CCC.showNav;
+		var showOrderButton : boolean = CCC.showOrderButton;
+		
+		var category : dw.catalog.Category = CCC.getCampaignCategory();
+		
+		var decoratorTemplate = (empty(pdict.CheckoutStep) || 'cartinformation' == pdict.CheckoutStep) ? 'content/checkout/pt_checkoutsingle' : 'content/checkout/pt_checkout';
+</isscript>
+<isdecorate template="${decoratorTemplate}">
+	<!--- TEMPLATENAME: cart1.isml --->
+
+
+
+	<isset name="multiCheckout" value="${false}" scope="pdict" />
+    <script type="text/javascript">
+        app.proactiv.resources.set("GRMSubmissionStatus", "PREPAYMENT")
+    </script>
+    
+	<isif condition="${empty(pdict.CheckoutStep) || 'cartinformation' == pdict.CheckoutStep}">
+		<iscomment>Disable checkout button for cart. We don't need it at this step</iscomment>
+		<isset name="EnableCheckout" value="${false}" scope="pdict" />
+
+		<div class="checkout_header">
+			<iscontentasset aid="cart-header-text-billing-details" />
+		</div>
+		
+		<ischeckoutbreadcrumbs type="simple" />
+		
+		<isinclude template="checkout/components/errors" />
+		
+		<isinclude template="checkout/steps/cartinformation" />
+		<isset name="OmniturePage" value="SimpleCheckout" scope="pdict">
+		
+	<iselseif condition="${'review' == pdict.CheckoutStep}">
+		<ischeckoutbreadcrumbs type="simple" step="review" paypal="${true}" />
+		
+		<isinclude template="checkout/steps/review" />
+		<isset name="OmniturePage" value="CheckoutInformation" scope="pdict">
+		
+	<iselseif condition="${'confirmation' == pdict.CheckoutStep}">
+		<isscript>
+		  var rememberMeObj = {
+		   "firstName" : pdict.Order.billingAddress.firstName,
+		   "lastName"  : pdict.Order.billingAddress.lastName,
+		   "email"     : pdict.Order.customerEmail
+		  }
+		  
+		  var rememberMeAge:Number = 604800;
+		  var sharedsessionAge:Number = 604800;
+		  
+		  importPackage (dw.web);
+		  importPackage( dw.system );
+		  
+		  var cookiesNames:Array = Site.current.getCustomPreferenceValue("GRTransferCookiesList");
+		  if (!empty(cookiesNames)) {
+		  	for(var i = 0; i < cookiesNames.length; i++){
+	        	var cookieDesc:String  = cookiesNames[i];
+	        	var cokiesArr:Array = cookieDesc.split(":");
+	        
+	        	var cookieName:String = cokiesArr[0];
+	        	var maxAge:Number = cokiesArr.length == 2? cokiesArr[1] * 86400: 604800;
+	        	
+	        	if(cookieName == 'rememberMe'){
+	        		rememberMeAge = maxAge;
+	        	}
+	        	if(cookieName == 'sharedsession'){
+	        		sharedsessionAge = maxAge;
+	        	}
+	        }
+		  }
+	 
+		  var cookie : Cookie = new Cookie("rememberMe",encodeURIComponent(rememberMeObj['firstName']+' '+rememberMeObj['lastName']+':'+rememberMeObj['email']));
+		  cookie.setMaxAge(rememberMeAge);
+		  cookie.path = "/";
+		  request.addHttpCookie(cookie);
+		  
+		  var cookie2 : Cookie = new Cookie("sharedsession",encodeURIComponent(JSON.stringify(rememberMeObj)));
+		  cookie2.setMaxAge(sharedsessionAge);
+		  cookie2.path = "/";
+		  request.addHttpCookie(cookie2);
+		 
+		</isscript>
+		<div class="checkout_header">
+			<h1><isprint value="${Resource.msg('confirmation.header','checkout',null)}"/></h1>
+		</div>
+		
+		<ischeckoutbreadcrumbs type="simple" step="confirm" paypal="${pdict.IsPaypalPayment}" />
+		
+		<isinclude template="checkout/components/errors" />
+		
+		<isinclude template="checkout/steps/confirmation" />
+		<isset name="OmniturePage" value="COConfirmation" scope="pdict">
+	
+	<iselseif condition="${'cartempty' == pdict.CheckoutStep}">
+		<div class="checkout_header">
+			<iscontentasset aid="cart-header-text-billing-details" />
+		</div>
+		
+		<ischeckoutbreadcrumbs type="simple" step="" paypal="${pdict.IsPaypalPayment}" />
+		
+		<isinclude template="checkout/components/errors" />
+		
+		<isinclude template="checkout/steps/cartempty" />
+		<isset name="OmniturePage" value="SimpleCheckout" scope="pdict">
+	</isif>
+	
+</isdecorate>
+
+<iscomment> Checkout Page Pixels  </iscomment>
+<isinclude template="common/mediaPixelsInit.isml"/>
+
+<isif condition="${empty(pdict.CheckoutStep) || 'cartinformation' == pdict.CheckoutStep}">
+
+  <iscomment>In checkout page</iscomment>
+  <iscontentasset aid="checkout-mediapixel"/>
+  
+
+<iselseif condition="${'review' == pdict.CheckoutStep}">
+
+  <iscomment>In Preview Page</iscomment>
+  <iscontentasset aid="checkout-mediapixel"/>
+
+<iselseif condition="${'confirmation' == pdict.CheckoutStep}">
+  
+  <iscomment>In confirmation page</iscomment>
+  <iscontentasset aid="confirm-mediapixel"/>
+<isscript>
+	campaignCode = pdict.Order.custom.campaignCode.toString();
+	CCC = getSharedCurrentConfig(getCampaignForCampaignCode(campaignCode),true,null);
+</isscript>
+  <isif condition="${CCC.enableSlpSas}">
+  	<iscontentasset aid="confirm-slp-sas-mediapixel"/>
+  </isif>
+</isif>
+
+<isif condition="${empty(pdict.CheckoutStep) || 'cartinformation' == pdict.CheckoutStep}">
+  
+  <div class="mboxDefault"></div>
+  <script type="text/javascript">mboxCreate("cd3_dw_cart_tracker");</script>
+
+<iselseif condition="${'review' == pdict.CheckoutStep}">
+
+  <iscomment>In Preview Page</iscomment>
+
+<iselseif condition="${'confirmation' == pdict.CheckoutStep}">
+	<div class="mboxDefault"></div>
+  <script type="text/javascript">mboxCreate('cd3_dw_orderconfirm_tracker','productPurchasedId=' + offerArray.join(), 'orderTotal=' + subTotal, 'orderId=' + orderID);</script>
+</isif>

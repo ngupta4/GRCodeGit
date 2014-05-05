@@ -1,0 +1,41 @@
+<iscomment>Rendering template for Articles Tab</iscomment>
+<div class="article-wraper">
+<div class="contenthits">
+	<isif condition="${!pdict.ContentPagingModel.empty}">
+		<isloop items="${pdict.ContentPagingModel.pageElements}" var="asset" status="loopstate">
+			<isif condition="${asset.classificationFolder !=null && null!=asset.classificationFolder.parent.ID && !empty(asset.classificationFolder.parent.ID) && asset.classificationFolder.parent.ID=='knowledgebase'}">		
+				<iscomment>FAQ Article | Redirect User to FAQ Landing Page |Append the search parameters to the article URL</iscomment>			
+				<isset name="articleURL" value="${pdict.ContentSearchResult.url( URLUtils.url('Page-Show','cid', asset.ID) )}" scope="page"/>
+			<iselse>
+				<iscomment>append the search parameters to the article URL</iscomment>			
+				<isset name="articleURL" value="${URLUtils.url('Page-Show','cid', asset.ID)}" scope="page"/>		
+			</isif>	
+			<div class="article">
+				<div class="articlename">
+						<isprint value="${asset.name}"/>
+				</div>
+				<div class="articletitle">
+					<a class="resultsClickTracking" href="${articleURL}">
+					<isif  condition="${null!=asset.pageTitle && !empty(asset.pageTitle)}">
+						<isprint value="${asset.pageTitle}"/>
+					<iselse>		
+				       <isprint value="${asset.name}"/>
+					</isif>	
+					</a>
+				</div>
+				<div class="description">
+					<isprint value="${asset.description}"/>
+				</div>
+			</div>
+		</isloop>		
+	</isif>
+</div>
+<div class="r-panel">
+<isslot id="article-search" description="article search page" context="global" />
+ <isif condition="${pdict.CurrentCustomer.authenticated || pdict.CurrentCustomer.registered || pdict.CurrentSession.custom.cRememberMe}">			          	  
+	<isinclude template="drwalkthrough/triggerDrWalkthrough"/>             		
+</isif>
+</div>
+<div class="clear"><!-- FLOAT CLEAR --></div>
+
+</div>

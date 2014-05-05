@@ -1,0 +1,183 @@
+<isdecorate template="mobile/pt_mobile">
+<isinclude template="mobile/util/modules"/>
+
+<iscomment>
+	This template visualizes the last step of the checkout, the order summary
+	page prior to the actual order placing.
+	It displays the complete content of the cart including product line items,
+	bonus products, redeemed coupons and gift certificate line items.
+</iscomment>
+
+<iscomment>
+<isset name="checkoutstep" value="${5}" scope="pdict"/>
+<isset name="checkoutname" value="${'OrderSummary'}" scope="pdict"/>
+<isinclude template="mobile/util/reporting/ReportCheckout.isml"/>
+</iscomment>
+
+<isscript>
+	var basket = pdict.Basket;
+</isscript>
+
+<div id="summary" class="mobilecontent">
+
+	<iscomment>
+	<isif condition="${!pdict.CurrentForms.multishipping.entered.value}">
+    	<ischeckoutprogressindicator step="3" multishipping="false" rendershipping="${pdict.Basket.productLineItems.size() == 0 ? 'false' : 'true'}">
+	<iselse/>
+		<ischeckoutprogressindicator step="4" multishipping="true" rendershipping="${pdict.Basket.productLineItems.size() == 0 ? 'false' : 'true'}">
+	</isif>
+	</iscomment>
+	
+	<h3>${Resource.msg('summary.order','checkout',null)}</h3>
+	
+	<isif condition="${pdict.PlaceOrderError != null}">
+		<div class="errorMsg mobilecontent" style="color: red;background-color:pink;">
+		${Resource.msg(pdict.PlaceOrderError.code,'checkout',null)}
+		</div>
+	</isif>
+	
+	<div>
+	
+		<isloop iterator="${basket.shipments}" alias="shipment" status="shipmentloopstate">
+			<isif condition="${shipment.productLineItems.size() > 0 || shipment.giftCertificateLineItems.size() > 0}">
+			
+			<h4>${Resource.msg('summary.shipment','checkout',null)} ${'#' + shipmentloopstate.count}</h4>
+			
+			<isloop iterator="${shipment.productLineItems}" alias="productLineItem" status="pliloopstate">
+				
+				<div style="border-bottom: solid 1px #ccc;margin:10px 0px 5px 0px;padding:3px;">
+				${productLineItem.getProduct().getName()}<br>
+				${Resource.msg('global.qty','locale',null)}: <isprint value="${productLineItem.quantity}" /><br>
+				${Resource.msg('summary.itemprice','checkout',null)} <isprint value="${productLineItem.basePrice}" /><br>
+				${Resource.msg('summary.itemtotal','checkout',null)} <isprint value="${productLineItem.adjustedPrice}" /><br>
+				
+					<iscomment>
+					<div style="font-size:9pt;">
+					<isdisplayproductavailability p_productli="${productLineItem}">
+					</div>
+					</iscomment>
+				</div>
+			</isloop>
+			
+			<isif condition="${shipment.shippingAddress != null}">
+				<isset name="address" value="${shipment.shippingAddress}" scope="page"/>
+			
+				<div id="shippingAddress" class="mobilecontent">
+				<div style="background-color: #ddd;font-size:1.1em;">${Resource.msg('summary.shippingaddress','checkout',null)}</div>
+					<isprint value="${address.fullName}"/><br>
+					<isprint value="${address.address1}"/><br>
+					<isif condition="${!empty(address.address2)}">
+						<isprint value="${address.address2}"/><br>
+					</isif>
+					<isprint value="${address.city}"/>,&nbsp;<isprint value="${address.stateCode}"/>&nbsp;&nbsp;<isprint value="${address.postalCode}"/><br>
+					<isprint value="${address.phone}"/><br>
+				</div>
+			</isif>
+			
+			<isloop items="${shipment.giftCertificateLineItems}" var="giftCertificateLineItem" status="gcliloopstate">
+					
+				<isprint value="${giftCertificateLineItem.lineItemText}"/>
+				<span >${Resource.msg('global.to','locale',null)}:</span>
+					<span ><isprint value="${giftCertificateLineItem.recipientName}"/> (<isprint value="${giftCertificateLineItem.recipientEmail}"/>)</span>
+				</div>
+				<div>
+					<span >${Resource.msg('global.from','locale',null)}:</span>
+					<span ><isprint value="${giftCertificateLineItem.senderName}"/></span>
+				</div>
+			
+				<isprint value="${giftCertificateLineItem.price}"/>
+					
+				</isloop>	
+			</isif>
+		</isloop>
+		
+		<iscomment>RENDER COUPON/ORDER DISCOUNTS</iscomment>
+		<isloop items="${basket.couponLineItems}" var="couponLineItem" status="cliloopstate">
+			<isif condition="${couponLineItem.valid}">
+				<span >${Resource.msg('summary.coupon','checkout',null)}</span><br>
+					<div>
+					<span >${Resource.msg('summary.couponnumber','checkout',null)}</span>
+					<span ><isprint value="${couponLineItem.couponCode}"/></span>
+					</div>
+					
+					<isloop items="${couponLineItem.priceAdjustments}" var="Promo">
+						<span ><isprint value="${Promo.lineItemText}"></span><br>										
+					</isloop>
+						
+				    
+						<isif condition="${couponLineItem.applied}">
+							<span >${Resource.msg('summary.applied','checkout',null)}</span>
+						<iselse/>
+							<span >${Resource.msg('summary.notapplied','checkout',null)}</span>
+						</isif>
+					
+			</isif>
+		</isloop>
+		<isloop items="${basket.priceAdjustments}" var="priceAdjustment" status="cliloopstate">
+			<span >${Resource.msg('summary.orderdiscount','checkout',null)}</span>
+			<span ><isprint value="${priceAdjustment.lineItemText}"/></span>
+		</isloop>
+						
+		<div>
+			<div>
+				<isordertotals p_lineitemctnr="${pdict.Basket}" p_showshipmentinfo="${false}" p_shipmenteditable="${false}" p_totallabel="${Resource.msg('summary.ordertotal','checkout',null)}">
+			</div>
+			<div><!-- FLOAT CLEAR --></div>
+		</div>
+		
+		<isscript>
+			var billingAddress = basket.getBillingAddress();
+		</isscript>
+		
+		<div id="billingaddress" class="mobilecontent">
+		<div style="background-color: #ddd;font-size:1.1em;">${Resource.msg('summary.billingaddress','checkout',null)}</div>
+			${billingAddress.fullName}<br>
+			${billingAddress.address1}<br>
+			<isif condition="${!empty(billingAddress.address2)}">
+				${billingAddress.address2}<br>
+			</isif>
+			${billingAddress.city},&nbsp;${billingAddress.stateCode}&nbsp;&nbsp;${billingAddress.postalCode}<br>
+			<isif condition="${!empty(billingAddress.phone)}">
+				${billingAddress.phone}<br>
+			</isif>
+		</div>
+		
+		<div id="paymentdetails" class="mobilecontent">
+		
+		<isscript>
+			var paymentInstr = basket.paymentInstrument;
+			var cardHolder = paymentInstr.getCreditCardHolder();
+			var maskedNumber = paymentInstr.getMaskedCreditCardNumber();
+			var cardType : String = paymentInstr.getCreditCardType();
+			
+			var expiration = StringUtils.formatNumber(paymentInstr.getCreditCardExpirationMonth(),"00");
+			expiration = expiration + "/" + paymentInstr.getCreditCardExpirationYear();
+		</isscript>
+		
+		<div style="background-color: #ddd;font-size:1.1em;">Payment Information</div>
+			${Resource.msg('billing.cardtype','checkout',null)} ${cardType}<br>
+			${Resource.msg('billing.cardholder','checkout',null)} ${cardHolder}<br>
+			${Resource.msg('billing.cardnumber','checkout',null)} ${maskedNumber}<br>
+			${Resource.msg('billing.cardexpiration','checkout',null)} ${expiration}<br>
+		</div>
+		
+		<div>
+			<table cellpadding="0" cellspacing="0" width="100%" border="0">
+			<tr>
+			<td>
+				<form action="${URLUtils.https('mCOBilling-BillingMethodDetails')}" method="post">
+					<button type="submit" value="back" name="action">${Resource.msg('global.back','locale',null)}</button>
+				</form>
+			</td>
+			<td align="right">
+				<form action="${URLUtils.https('mCOSummary-Submit')}" method="post">
+					<button  type="submit" name="submit" value="${Resource.msg('global.submitorder','locale',null)}"><span>${Resource.msg('global.submitorder','locale',null)}</span></button>
+				</form>
+			</td>
+			</tr>
+			</table>			    
+		</div>
+		
+   	</div>
+</div><!-- END: checkout -->
+</isdecorate>

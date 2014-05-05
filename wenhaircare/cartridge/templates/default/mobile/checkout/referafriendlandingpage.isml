@@ -1,0 +1,48 @@
+<!-- this isml should be included in header of landing page, which referred friend will visit 1st time -->
+<script type="text/javascript">
+function getQueryVariable(variable)
+{
+       var query = window.location.search.substring(1);
+       var vars = query.split("&");
+       for (var i=0;i<vars.length;i++) {
+               var pair = vars[i].split("=");
+               if(pair[0] == variable){return pair[1];}
+       }
+       return(null);
+}
+var session = getQueryVariable("mboxSession");
+var order_date = getQueryVariable("date");
+var friend_uci = getQueryVariable("uci");
+var order_id = getQueryVariable("orderID");
+var referrer_uci = getQueryVariable("referrer_uci");
+var referrer_acct = getQueryVariable("referrer_acct");
+var friend_email = input[name=dwfrm_personinf_contact_email];
+var friend_fname = input[name=dwfrm_billing_billingAddress_addressFields_firstName];
+var friend_lname = input[name=dwfrm_billing_billingAddress_addressFields_lastName];
+
+
+var _xtq = [];
+_xtq.push(['log_host', 'wenhaircare.extole.com']);
+var _xtq_options = {};
+_xtq_options['status'] = 1;
+_xtq_options['client_id'] = 1020609577;
+// Optional parameters
+// _xtq_options['product.type'] = 1;
+_xtq_options['order_date'] = 'order_date';
+_xtq_options['session'] = 'session'; //friend session
+_xtq_options['order.id'] = 'order_id';
+_xtq_options['friend_email'] = 'friend_email';
+_xtq_options['friend_fname'] = 'friend_fname';
+_xtq_options['friend_lname'] = 'friend_lname';
+_xtq_options['friend_uci'] = 'friend_uci';
+_xtq_options['friend_uid'] = 'friend_uid';
+_xtq_options['referrer_uci'] = 'referrer_uci';
+_xtq_options['referrer_acct'] = 'referrer_acct';
+
+_xtq.push(['log_conversion', _xtq_options]);
+(function() {
+var x = document.createElement("script"); x.type = "text/javascript"; x.async = true;
+x.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + "//media.extole.com/track/traction.min.js";
+var s = document.getElementsByTagName("script")[0]; s.parentNode.insertBefore(x, s);
+})();
+</script>

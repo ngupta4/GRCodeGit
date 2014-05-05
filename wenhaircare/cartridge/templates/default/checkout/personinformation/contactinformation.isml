@@ -1,0 +1,35 @@
+<!--- TEMPLATENAME: contactinformation.isml --->
+<div class="contactinfo">
+	<h4>${Resource.msg('personinformation.contactinformation.label','rendering',null)}</h4>
+	
+	
+		<isif condition="${!empty(pdict.CurrentForms.personinf.contact.error)}">
+			<div class="errorform">
+				${pdict.CurrentForms.personinf.contact.error}
+			</div>
+		</isif>
+
+		<div class="row">
+			<div class="formfield email">
+	    		<isinputfield formfield="${pdict.CurrentForms.personinf.contact.email}" type="input" attribute1="requiredmesage" value1="${Resource.msg('forms.contactinf.email.parse-error','forms',null)}" attribute2="tabindex" value2="1">
+	    		<isif condition="${!empty(pdict.EmailValidationError)}">
+					<span class="errorclient" htmlfor="${pdict.CurrentForms.personinf.contact.email.htmlName}">
+						<strong><isprint value="${Resource.msgf('checkout.error.useractive','rendering',null, URLUtils.url('Account-Show'))}" encoding="off" /><strong>
+					</span> 
+				</isif>
+	    	</div>
+	    	<div class="formfield phone daytime">
+	    		<isinputfield id="daytimePhone" formfield="${pdict.CurrentForms.personinf.contact.daytimephone}" type="input" attribute1="requiredmesage" value1="${Resource.msg('forms.contactinf.daytimephone.parse-error','forms',null)}" attribute2="tabindex" value2="3">	    		
+	    	</div>
+		</div>		
+		<div class="row">
+			<div class="formfield emailConfirm">
+	    		<isinputfield formfield="${pdict.CurrentForms.personinf.contact.emailconfirm}" type="input" attribute1="requiredmesage" value1="${Resource.msg('forms.contactinf.email.parse-error','forms',null)}" attribute2="tabindex" value2="2" attribute3="equalTo" value3="${'#'+pdict.CurrentForms.personinf.contact.email.htmlName}">	   
+	    	</div>									
+			<div class="formfield phone evening">
+				 <isinputfield id="eveningPhone" formfield="${pdict.CurrentForms.personinf.contact.eveningphone}" type="input" attribute1="tabindex" value1="4">
+			</div>
+		</div>
+		
+	
+</div>

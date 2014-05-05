@@ -1,0 +1,18 @@
+
+
+<isif condition="${empty(pdict.CurrentHttpParameterMap.q.value)}">
+<isset name="cgid" value="${pdict.CurrentHttpParameterMap.cgid.value}" scope="page"/>
+<isset name="subCategories" value="${dw.catalog.CatalogMgr.getCategory(cgid).onlineSubCategories}" scope="page"/>
+<isif condition="${!empty(subCategories)}">
+ <div class="secondarynavtap categorypage">
+	<ul>
+		<isloop items="${subCategories.iterator()}" var="subCat">
+			<li  <isif  condition="${pdict.ProductSearchResult.category.getID()==subCat.getID()}"> class="active" </isif> >
+			<a href="${URLUtils.http('Search-Show', 'cgid', cgid,'subcgid',subCat.getID())}"><div><span><isprint value="${subCat.getDisplayName()}"/></span></div></a>
+		</li>
+		</isloop>
+	</ul>
+	
+</div>
+</isif>
+</isif>

@@ -1,0 +1,30 @@
+<isdecorate template="community/successstories/pt_celebritylisting">
+<isinclude template="util/modules"/>
+<div class="mainWide celebrity-spotlight">
+	<div class="main">
+		<div id="content">
+			<div class="category"> 
+				<div class="celebrity-spotlight">
+					<div class="celebrity-carousel" id="celebrity-carousel">
+							<isinclude url="${URLUtils.url('Community-CelebritySpotLight','cid',pdict.CurrentHttpParameterMap.cid.stringValue)}"/>
+							<a class="carousel-nav nav-left" href="#" id="celebrity-carousel-left"></a> <a class="carousel-nav nav-right" href="#" id="celebrity-carousel-right"></a> 
+					</div>
+					<isinclude template="content/content/htmlcontentasset" />					
+				</div>
+			</div>
+		</div>
+	</div>
+	
+<div id="VideoViewDialog"></div>
+<script type="text/javascript">
+
+
+</script>		
+	
+</div>
+
+
+ 		
+		
+</isdecorate>
+ 

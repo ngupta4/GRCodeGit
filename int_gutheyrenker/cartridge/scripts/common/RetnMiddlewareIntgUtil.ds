@@ -1,0 +1,284 @@
+importPackage(dw.util)
+importPackage(dw.system)
+importPackage(dw.net)
+
+function formatISODateNoMills(date:Date):String{
+	return date == null ? "" : formateDate(date, "yyyy-MM-dd'T'HH:mm:ss'Z'");
+}
+
+function formatISODate(date:Date):String{
+    return date == null ? "" : date.toISOString();
+}
+
+function formateDate(date:Date, format:String):String{
+    return StringUtils.formatCalendar(new Calendar(date), format);
+}
+
+function formateDate(date:Date, format:String):String{
+    return StringUtils.formatCalendar(new Calendar(date), format);
+}
+
+function normalizeURL(url:String){
+	if(url == null){
+		return null;
+	}
+	
+	return url.charAt(url.length - 1) == '/' ? url.substr(0, url.length - 1) : url;
+}
+
+function notNull(value){
+    return value || "";
+}
+
+function pref(name, defaultValue){
+    var value = dw.system.Site.getCurrent().getCustomPreferenceValue(name);
+    return value == null ? (defaultValue || "") : value;
+}
+
+function setValue(logObject:CustomObject, prop:String, value:Object){
+    
+    try{
+        logObject.custom[prop] = value;
+    }catch(e){
+        Logger.error("Can't set property '" + prop + "' for cart log entry. [" + e + "]");
+    }
+}
+
+function credentialsFromUrl(url:String):Object{
+    var match = url.match(/^(https?:\/\/)(.+):(.+)@(.*)$/);
+    if(match != null && match.length == 5){
+        return {url: match[1] + match[4], user:match[2], password: match[3]};
+    }
+    else
+    {
+        return null;
+    }
+}
+
+
+function openUrl(method:String, url:String):HTTPClient
+{
+	var client:HTTPClient = new HTTPClient();
+	
+    var credentials = credentialsFromUrl(url);
+    if(credentials != null){
+        client.open(method, credentials.url, credentials.user, credentials.password);
+    }
+    else
+    {
+        client.open(method, url);
+    }
+    
+    return client;
+}
+
+function getCampaignCode(request:Request):String{
+    var cookie = request.httpCookies.campaign;
+    return cookie == null ? "" :cookie.value;
+}
+
+function getPrimaryUCI(request:Request):String{
+    var cookie = request.httpCookies.uci;
+    return cookie == null ? "" :cookie.value;
+}
+
+function getSecondaryUCI(request:Request):String{
+    var cookie = request.httpCookies.secondaryuci;
+    return cookie == null ? "" :cookie.value;
+}
+
+function getCustomerUID(request:Request):String{
+    var cookie = request.httpCookies.cookie_uid;
+    return cookie == null ? "" :cookie.value;
+}
+
+function getSessionStartDate(session:Session){
+    var sessionStartDate = session.custom.sessionStartDate;
+    if(empty(sessionStartDate)){
+        sessionStartDate = new Date();
+        session.custom.sessionStartDate = sessionStartDate;
+    }
+    
+    return sessionStartDate;
+}
+
+function merge(dest, src){
+	var  o : Object = {};
+	for(let item in dest){
+		o[item] = dest[item];	
+	}
+	if(!empty(src)){
+		for(let item in src){
+			if(src.hasOwnProperty(item)){
+				o[item] = src[item];
+			}
+		}
+	}
+	return o;
+}
+
+var _mwAPI;
+function getAPI() : Object {
+
+	importClass(dw.net.HTTPClient);
+	
+	importScript('int_gutheyrenker:common/libUtils.ds');
+	importScript('int_gutheyrenker:common/libOAuth.ds');
+	
+	var domain : String = pref('middlewareAPIURL','https://grws.grdev.com');
+	
+	var callDefaults = {contentType: 'text/xml', action: 'GET'};	
+	
+	//validation url regexp 
+	function validateURL(url){
+		return /^https?:\/\/.+$/.test(url);	
+	}
+	
+	//common work for API calls
+	function callAPI(url : String, options : Object, cb : Function){
+		options = merge(callDefaults, options);
+		if( !empty(url) && validateURL(url)){
+			Logger.getRootLogger().debug('[MW CallApi] for url: '+url);
+			var http : HTTPClient = new HTTPClient();
+			http.setRequestHeader('Content-Type',options.contentType);
+			http.setRequestHeader('Authorization',getOAuthHeader(url, options.action));
+			Logger.getRootLogger().debug(" URL = "+url);
+			http.open(options.action, url);
+			try{
+				http.send();
+				var response = cb(http.getText(), http.getErrorText(), http.statusCode );
+				Logger.getRootLogger().debug("[MW CallApi] Response = "+response);
+				return response;
+			}catch(e){
+				Logger.getRootLogger().fatal('[MW CallApi] Failed to get MW xml file url: '+url+',exception: '+e.toString());
+			}
+		}
+		Logger.getRootLogger().debug('[MW CallApi] if failed due invalid url: '+url);
+		return null;
+	}
+	
+	return _mwAPI || (_mwAPI = {
+		getCustomerInfo : function (acct : String, inactive : Boolean) : XML {
+			//var domain = normalizeURL(pref('middlewareAPIURL'))
+			var url : String = domain+'/customer/API/view/customerNumber/'+acct+'/brand_id/'+Site.current.getCustomPreferenceValue("GRMProductLine")+(inactive?'/Inactive/true':'');
+			
+		    return callAPI(url, {}, function(resp : String, errResp: String, statusCode: Number){
+				var responseXML : XML = null;
+				
+				if( !empty(resp) && empty(errResp) ) {
+					responseXML = new XML(resp);		
+				}else{
+					Logger.getRootLogger().debug('[MW CallApi] Error in <GetCustomerInfo> response, errorResponse='+errResp);
+					return null;
+				}			
+				return responseXML;
+			});
+		},
+		getEmailVerificationInfo : function(email : String, productLine : String, request : dw.system.Request) : XML {
+			var uid:String = getCustomerUID(request);
+			var transactionID = getTransactionID();
+			//default productLine = PA : https://grws.grdev.com/customer/email-verify/email/<email>/ brand/<brandId>/uid/<uid>/trans/<transactionId>
+			var url : String = domain+'/email-verify/'+encodeURIComponent(email)+'/brand/'+(productLine?productLine:Site.current.getCustomPreferenceValue("GRMProductLine"))+'/uid/'+uid+'/trans/'+transactionID;;
+
+
+			return callAPI(url, {}, function(resp : String, errResp: String, statusCode: Number){
+				var responseXML : XML = null;
+					
+				if( !empty(resp) || !empty(errResp)){
+					if(statusCode >= 400) {
+						responseXML = new XML(errResp);
+					}else{
+						responseXML = new XML(resp);
+					}
+					
+					if('accountStatus' in responseXML){
+						return responseXML;
+					}
+				}
+				Logger.getRootLogger().debug('[MW CallApi] responseCode:'+statusCode+', no accountStatus in response was found.');
+				return null;
+			});
+		},
+		// ============= customer registration =================
+		getCustomerOnlineRegistrationInfo : function(email : String, accountNumber : String, brandId : String, uid: String, transactionID: String) : XML {
+		//var url : String = domain+'/email-verify/'+encodeURIComponent(email)+(productLine?'/productLine/'+productLine:'');
+		var url : String = domain+'/customer/online-registration/email/'+encodeURIComponent(email)+'/account/'+accountNumber+'/brand/'+brandId+'/uid/'+uid+'/trans/'+transactionID;
+		// var url : String = domain+'/customer/online-registration/email/nsahu@sapient.com/account/202265898/brand/PA/uid/202265898/trans/202265898;
+			return callAPI(url, {}, function(resp : String, errResp: String, statusCode: Number){
+				var responseXML : XML = null;
+					
+				if( !empty(resp) || !empty(errResp)){
+					if(statusCode >= 400) {
+						responseXML = new XML(generateErrorString(statusCode));
+						//TODO: Naresh: To add the status code if required
+						//responseXML = new XML(errResp);
+						/*throw {
+							"message": "Error calling web service",
+							"url": url,
+							"httpClient-statusCode": httpClient.statusCode,
+							"httpClient-statusMessage": httpClient.statusMessage,
+							"httpClient-errorText": httpClient.errorText
+						};
+						*/
+					}else{
+						responseXML = new XML(resp);
+					}
+				}
+				Logger.getRootLogger().debug('[MW CallApi for Customer Registratiion ] responseCode:'+statusCode+', no accountStatus in response was found.');
+				return responseXML;
+			});
+		},
+		 //=================== end of customer registration block ===========
+
+		// ============= update billing address of the customer =================
+		updateCustomerBillingAddress : function(accountNumber : String, brandId : String, uid: String, transactionID: String) : XML {
+		var url : String = domain+'/customer/billing-address/account/'+accountNumber+'/brand/'+brandId+'/uid/'+uid+'/trans/'+transactionID;
+		// var url : String = domain+'/customer/billing-address/account/202265898/brand/PA/uid/202265898/trans/202265898;
+			return callAPI(url, {}, function(resp : String, errResp: String, statusCode: Number){
+				var responseXML : XML = null;
+					
+				if( !empty(resp) || !empty(errResp)){
+					if(statusCode >= 400) {
+						responseXML = new XML(generateErrorString(statusCode));
+						//TODO: Naresh: To add the status code if required
+					}else{
+						responseXML = new XML(resp);
+					}
+				}
+				Logger.getRootLogger().debug('[MW CallApi for Customer Registratiion ] responseCode:'+statusCode+', no accountStatus in response was found.');
+				return responseXML;
+			});
+		}, 
+		// End of updateCustomerBillingAddress method
+		// Method customerPaymentUpdate transmits payments made by the customer 
+		customerPaymentUpdate : function(accountNumber : String, brandId : String, uid: String, transactionID: String) : XML {
+		var url : String = domain+'/customer/payment/account/'+accountNumber+'/brand/'+brandId+'/uid/'+uid+'/trans/'+transactionID;
+		// var url : String = domain+'/customer/billing-address/account/202265898/brand/PA/uid/202265898/trans/202265898;
+			return callAPI(url, {}, function(resp : String, errResp: String, statusCode: Number){
+				var responseXML : XML = null;
+					
+				if( !empty(resp) || !empty(errResp)){
+					if(statusCode >= 400) {
+						responseXML = new XML(generateErrorString(statusCode));
+						//TODO: Naresh: To add the status code if required
+					}else{
+						responseXML = new XML(resp);
+					}
+				}
+				Logger.getRootLogger().debug('[MW CallApi for Customer Registratiion ] responseCode:'+statusCode+', no accountStatus in response was found.');
+				return responseXML;
+			});
+		} // End of the customerPaymentUpdate method
+		
+	})
+
+}
+
+	// generateErrorString(statusCode) function creates a string with XML tags as used by GR
+
+	function generateErrorString(statusCode){
+		return '<customerResponse><status>'+statusCode+'</status><requestData>example</requestData></customerResponse>';
+	}// end of the function
+
+
+

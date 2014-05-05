@@ -1,0 +1,29 @@
+<iscache status="off"/>
+
+<isdecorate template="search/pt_browsefoldercontents">
+	<isscript>
+		importPackage(dw.object);
+		importPackage(dw.catalog);
+		
+		var CCC : Object = pdict.CurrentCampaignConfig;
+	
+		var landingTemplate : String = CCC.landingTemplate;
+		var campaignCode : String = CCC.campaignCode;
+		
+		var showHeader : boolean = CCC.showHeader;
+		var showFooter : boolean = CCC.showFooter;
+		var showNav : boolean = CCC.showNav;
+		var showOrderButton : boolean = CCC.showOrderButton;
+		
+		var containerClasses : String = CCC.getContainerClasses();
+		
+		var category : dw.catalog.Category = CCC.getCampaignCategory();
+	</isscript>
+	<isinclude template="util/modules"/>
+	
+	<iscomment>create reporting event</iscomment>
+	<isinclude template="util/reporting/ReportSearch.isml"/>
+
+	<isinclude template="content/content/htmlcontentasset" />
+	<isset name="OmniturePage" value="StaticContent" scope="pdict">
+</isdecorate>

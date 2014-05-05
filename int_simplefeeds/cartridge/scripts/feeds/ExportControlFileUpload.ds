@@ -1,0 +1,195 @@
+/**
+* Demandware Script File
+* Export an XML file for order place count in a day
+*
+*/
+importPackage( dw.system );
+importPackage( dw.util );
+importPackage( dw.io );
+importPackage( dw.order );
+importPackage( dw.net );
+importPackage( dw.web);
+
+
+function uploadFileSFTP_controlFile( file : File, remoteFolderURL : String, remoteFile : String, remoteLogin : String, remotePassword : String ) : boolean
+{
+    // for SFTP remoteLogin and remotePassword are required
+    if ( empty( remoteLogin ) )
+    {
+    	Logger.getLogger("simplefeeds").error( "UploadFeed: Parameter RemoteLogin empty (required for SFTP)" );
+    	return false;
+    }
+
+    if ( empty( remotePassword ) )
+    {
+    	Logger.getLogger("simplefeeds").error( "UploadFeed: Parameter RemotePassword empty (required for SFTP)" );
+    	return false;
+    }
+
+    // parse URL, e.g. "sftp://sftp.myserver.com:22/folder/"
+	var params : Array = /^sftp:\/\/([^\/:]+)(?::(\d+))?(\/(?:.*\/)?)$/.exec( remoteFolderURL );
+
+	if ( params == null || params.length != 4 )
+	{
+    	Logger.getLogger("simplefeeds").error( "UploadFeed: Parameter RemoteFolderURL not recognized, RemoteFolderURL: " + remoteFolderURL );
+    	return null;
+	}
+
+	var host : String = params[1];
+	var port : Number = null;
+	// params[2] is undefined if there was no port provided
+	if ( params[2] != undefined )
+	{
+		port = new Number( params[2] );
+	}
+	var path : String = params[3];
+	
+	// connect
+	var sftpClient : SFTPClient = new SFTPClient();
+	var result : boolean;
+	
+	try
+	{
+		if ( port != null )
+		{
+			result = sftpClient.connect( host, port, remoteLogin, remotePassword );
+		}
+		else
+		{
+			// use default port
+			result = sftpClient.connect( host, remoteLogin, remotePassword );
+		}
+	}
+	catch ( ex )
+	{
+		Logger.getLogger("simplefeeds").error( "UploadFeed: Error while connecting to " +
+			host + ( ( port != null ) ? ( ":" + port ) : "" ) + ": " + ex );		
+		return false;
+	}
+
+	if ( !result )
+	{
+		Logger.getLogger("simplefeeds").error( "UploadFeed: Error while connecting to " +
+			host + ( ( port != null ) ? ( ":" + port ) : "" ) + ": " + sftpClient.errorMessage );		
+		return false;
+	}
+
+	// upload
+	try
+	{
+		result = sftpClient.putBinary( path + remoteFile, file );
+	}
+	catch ( ex )
+	{
+		Logger.getLogger("simplefeeds").error( "UploadFeed: Error while uploading " + 
+			path + remoteFile + ": " + ex );		
+		return false;
+	}
+
+	if ( !result )
+	{
+		Logger.getLogger("simplefeeds").error( "UploadFeed: Error while uploading " + 
+			path + remoteFile + ": " + sftpClient.errorMessage );		
+		return false;
+	}
+	
+	// disconnect
+	sftpClient.disconnect();
+	
+    return true;
+}
+
+
+function execute( args : PipelineDictionary ) : Number
+{
+	
+	var brand_siteID : String = dw.system.Site.getCurrent().ID;	
+	var brandCode = false;
+	var brandCodes = new Array(); // to search brand code from site id
+	brandCodes['Proactiv'] = 'PA';
+	brandCodes['NaturalAdvantage'] = 'ND';
+	brandCodes['SheerCover'] = 'YB';
+	brandCodes['xout'] = 'DT';
+	brandCodes['skinnyswitch'] = 'RN';
+	brandCodes['MalibuPilates'] = 'MP';
+	brandCodes['WenHairCare'] = 'CD';
+	brandCodes['NewWen'] = 'CD';
+	brandCodes['Perricone'] = 'CP';
+	brandCodes['MeaningfulBeauty'] = 'MT';
+	brandCodes['ProactivPlus'] = 'PA'; // temp request- re-verify upon control file updates
+	brandCodes['McKenna'] = 'PM';
+	brandCodes['CellCeuticals'] = 'CC';
+	brandCodes['ReclaimBotanical'] = 'VB';
+	brandCodes['GetDepend'] = 'DP';
+	//brandCodes['MaxMySpeed'] = 'PA';
+	//brandCodes['MyCleanPC'] = 'PA';
+	//brandCodes['UsTechSupport'] = 'PA';
+	for (var key in brandCodes) {
+		if(dw.system.Site.getCurrent().ID == key){
+			brandCode = brandCodes[key];
+		}
+	}
+	
+
+	var exportFileDir = new File( File.IMPEX + File.SEPARATOR + "src" );
+	var outputFiles = new Array();
+	for each ( var file in exportFileDir.listFiles() ){	
+		if(file.name.substring(0, 16) == 'tmp_controlFile_'){
+
+			var breakFilename = file.name.split('_');
+			var fileDate = breakFilename[3];
+			var currentTmpFile : FileReader = new FileReader( file );
+			var tmpString = currentTmpFile.getString();
+
+			if(!outputFiles[fileDate]){
+				outputFiles[fileDate] = '';
+			}
+
+			outputFiles[fileDate] += tmpString+"___";
+			
+			// remove tmp file
+			var ftmpFilePath : String = File.IMPEX + File.SEPARATOR +"src"+ File.SEPARATOR + file.name;
+			var ftmpFile : File = new File(ftmpFilePath);
+			ftmpFile.remove();
+		}
+	}
+
+
+	var foundDates = new Array();	
+	for each( var f in outputFiles ){
+
+		var cfiledate = f.substring(12,16)+'-'+f.substring(6,8)+'-'+f.substring(9,11);
+		var cfiledate_remote = f.substring(6,8)+f.substring(9,11)+f.substring(12,16);
+		var calToday : Calendar = new Calendar( new Date() );	
+		calToday.setTimeZone('PST');
+		var uniqueStr = StringUtils.formatCalendar( calToday, "yyyyMMddhhmmss" );
+		var filename = 'controlFile_'+cfiledate+'_u'+uniqueStr+'.txt';
+		var filename_remote = 'CFDW_'+cfiledate_remote+'_u'+uniqueStr+'.txt';
+		var exportFilePath : String = File.IMPEX + File.SEPARATOR +"src"+ File.SEPARATOR + filename;		
+		var tmpFile : File = new File(exportFilePath);
+		var tmpFileWriter : FileWriter = new FileWriter(tmpFile);
+		
+		var txtLines = f.split('___');
+		for each( var txtLine in txtLines ){
+			// trim is used here to remove extra line breaks that are written otherwise
+			txtLine = dw.util.StringUtils.trim(txtLine);
+			tmpFileWriter.writeLine(txtLine);
+		}
+		tmpFileWriter.flush();
+		tmpFileWriter.close();		
+		
+		var orgPrefs : OrganizationPreferences = dw.system.System.getPreferences();
+		var controlFileFtp_host : String = orgPrefs.getCustom()["controlFileFtp_host"];
+		var controlFileFtp_user : String = orgPrefs.getCustom()["controlFileFtp_user"];
+		var controlFileFtp_pass : String = orgPrefs.getCustom()["controlFileFtp_pass"];
+		result = uploadFileSFTP_controlFile( tmpFile, controlFileFtp_host, filename_remote, controlFileFtp_user, controlFileFtp_pass );	
+		
+		// remove tmp files	
+		if(result) tmpFile.remove();	
+
+		
+	}
+
+		
+	return PIPELET_NEXT;
+}

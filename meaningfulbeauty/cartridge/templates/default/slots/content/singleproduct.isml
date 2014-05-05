@@ -1,0 +1,53 @@
+<!--- TEMPLATENAME: singleproduct.isml --->
+<isinclude template="util/modules" />
+
+<isscript>
+var Product = slotcontent.content.iterator().next();//pdict.Product;
+var productRecommendations;
+var Upsell;
+
+if (!empty(Product)) {
+	productRecommendations = Product.getRecommendations(6);
+	
+	if (productRecommendations.length > 0) {
+		Upsell = productRecommendations.iterator().next().recommendedItem;
+	}
+}
+</isscript>
+
+<div id="product-${Product.ID}">
+	<div id="contentheader"></div>
+	
+	<isobject object="${pdict.Product}" view="singleproduct">
+		<div id="content">
+			<div id="productdesc">
+				<iscomment>Slot content asset</iscomment>
+				<iscontentasset aid="${'single-product-' + Product.ID}" />
+			</div>
+			
+			<iscomment>Order section</iscomment>
+			<div id="order">
+				<div id="productname">${Product.name}</div>
+				<div class="line4"></div>
+				<div id="productprice">${Resource.msg('singleproduct.price.label', 'rendering', null)} <isprint value="${Product.priceModel.price}" encoding="off" style="MONEY_LONG" /></div>
+				<div id="ordernow">
+					<a class="imgbtn" href="https://store.proactiv.com/proactiv-microsite/?siteid=PADMScart&new=MS801969&pactvid=${Product.ID}"><span>${Resource.msg('singleproduct.ordernow.label', 'rendering', null)}</span></a>
+				</div>
+				<div id="productupsellinfo"><isprint value="${Resource.msgf('singleproduct.member.label', 'rendering', null, Upsell && Upsell.name, Product && Product.name)}" encoding="off" /></div>
+				<div id="orderupsell">
+					<a class="imgbtn" href="${URLUtils.https('COCart-AddProduct', 'pid', Product.ID)}"><span>${Resource.msg('singleproduct.getitfree.label', 'rendering', null)}</span></a>
+				</div>
+			</div>
+		</div>
+	</isobject>
+</div>
+
+<div id="footer">
+	<div id="links">
+		<a href="${URLUtils.url('Page-Show', 'cid', 'customer-care')}">${Resource.msg('footer.menu.customerservice.label', 'rendering', null)}</a>
+		&nbsp;|&nbsp; <a href="http://www.guthy-renker.com/afp/">${Resource.msg('footer.menu.affilate.label', 'rendering', null)}</a>
+		&nbsp;|&nbsp; <a href="${URLUtils.url('Page-Show', 'cid', 'privacy-policy')}">${Resource.msg('footer.menu.privacypolicy.label', 'rendering', null)}</a>
+		&nbsp;|&nbsp; <a href="${URLUtils.url('Page-Show', 'cid', 'terms')}">${Resource.msg('footer.menu.termsandconditions.label', 'rendering', null)}</a>
+	</div>
+	<div id="copyright"><img src="${URLUtils.staticURL('images/singleproductlandingpage/gr_logo.gif')}" alt="Guthy-Renker" title="Guthy-Renker" /> <isprint value="${Resource.msg('footer.copyright', 'rendering', null)}" encoding="off" /></div>
+</div>

@@ -1,0 +1,73 @@
+<isdecorate template="search/pt_faqcontentsearchresult">
+	<isinclude template="util/modules"/>
+	<isif condition="${pdict.CurrentRequest.locale != 'default' || pdict.CurrentCustomer.authenticated || pdict.CurrentCustomer.registered || pdict.CurrentSession.custom.cRememberMe || pdict.CurrentRequest.httpCookies['rememberMe']}">
+ <isinclude template="KitCustomizer/kitinclude"/>
+</isif>
+	<iscomment>create reporting event</iscomment>
+	<isinclude template="util/reporting/ReportSearch.isml"/>
+
+		<iscomment>link back to product search result</iscomment>
+			<isif condition="${!empty(pdict.ProductSearchResult) && !empty(pdict.ProductSearchResult.searchPhrase)}" />
+				<isif condition="${pdict.ProductSearchResult.count > 0}">
+					<a href="${pdict.ProductSearchResult.url('Search-Show')}">${Resource.msg('foldercontenthits.backtoproducts','rendering',null)}</a>
+				<iselse>
+					<p>${Resource.msgf('foldercontenthits.noproducts','rendering',null,pdict.ProductSearchResult.searchPhrase)}</p>
+				</isif>
+			</isif>
+	
+		<isif condition="${!pdict.ContentPagingModel.empty}">
+
+			<iscomment>sorting and hits info</iscomment>
+			<ispaginginformation pagingmodel="${pdict.ContentPagingModel}"/>
+			
+			<iscomment>pagination</iscomment>
+			<ispagingbar pageurl="${pdict.ContentSearchResult.url('FAQSearch-ShowContent')}"  pagingmodel="${pdict.ContentPagingModel}"/>
+
+				
+			<iscomment>calculated correct index position to separate the result columns</iscomment>
+			<isscript>
+				var count = pdict.ContentPagingModel.end + 1;
+				var cutIndex = Math.ceil( count / 2 ) - 1;
+				var endIndex = cutIndex + (cutIndex + 1);
+			</isscript>
+			
+			<iscomment>render the results as two column layout</iscomment>
+			<ul class="folder-content-list">
+			<isloop items="${pdict.ContentPagingModel.pageElements}" var="asset" status="loopstate" end="${endIndex}">
+				
+				<isset name="articleURL" value="${pdict.ContentSearchResult.url( URLUtils.url('Page-Show','cid', asset.ID) )}" scope="page"/>
+				
+				<isif condition="${!empty(articleURL)}">
+				<li>
+					<iscomment>append the search parameters to the article URL</iscomment>
+					
+					<a href="${articleURL}" class="resultsClickTracking">
+						<isprint value="${asset.name}"/>
+					</a>
+					<isscript>
+						var descLastThree = asset.description.slice(-3);
+						var descLast = asset.description.slice(-1);
+					</isscript>
+					<p>
+						<isprint value="${asset.description}"/>
+						<iscomment>If asset (the FAQ)'s description is too long or doesn't exist, show 'readmore' link.</iscomment>
+						<isif condition="${	(asset.description.length >= 171 && descLast != '.') || (descLastThree == '...' || descLast == ':')	}">
+							<a href="${articleURL}" class="asset${asset.ID} readmore">
+								${Resource.msg('faqfoldercontenthits.readmore','rendering',null)}
+							</a>
+						<iselseif condition="${empty(asset.description)}">
+							<a href="${articleURL}" class="asset${asset.ID} readmore">
+								${Resource.msg('faqfoldercontenthits.readmore','rendering',null)}
+							</a>					
+						</isif>
+					</p>
+				</li>
+				</isif>
+				
+			</isloop>
+			</ul>
+			
+
+		</isif>
+<isset name="OmniturePage" value="searchFAQ" scope="pdict"/>
+</isdecorate>

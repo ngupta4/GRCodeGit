@@ -1,0 +1,38 @@
+<!--- TEMPLATENAME: selectasystemsingle.isml --->
+<iscache status="off"/>
+
+<isdecorate template="content/home/pt_storefront">
+	<isscript>
+		importPackage(dw.util);
+		importPackage(dw.catalog);
+		
+		var CCC : Object = pdict.CurrentCampaignConfig;
+		var category : dw.catalog.Category = CatalogMgr.getCategory(CCC.campaignCode);
+	</isscript>
+	<isset name="showNav" value="${false}" scope="page" />
+	
+	<isinclude template="components/emailParent.isml">
+
+	<div class="sasContent">
+		<isslot id="sas-content" context="category" description="SAS Content" context-object="${category}"/>
+		<isslot id="sas-products" context="category" description="SAS Products" context-object="${category}"/>
+		<div style="clear: both;"></div>
+	</div>	
+	<iscomment><isslot id="pdp-header" context="category" description="PDP Header" context-object="${category}"/></iscomment>
+	<div class="sasFooter">
+		<isslot id="pdp-footer" context="category" description="PDP Footer" context-object="${category}"/>
+	</div>
+	
+	<isset name="OmniturePage" value="Offerpage" scope="pdict">	
+	
+	<!--  Media Geeks -->
+	<script language="javascript" src="http://delivery.mgplatform.com/gr/307landing.js"></script>
+	<!--  End Media Geeks -->
+	<isscript>
+		var primaryUCI : Cookie = request.httpCookies['uci'];
+	</isscript>
+	<!--  Atlas -->
+	<script language="JavaScript" src="http://view.atdmt.com/jaction/grkout_XOUTUnsecureRTG_1"></script>
+	<noscript><iframe src="http://view.atdmt.com/iaction/grkout_XOUTUnsecureRTG_1" width="1" height="1" frameborder="0" scrolling="No" marginheight="0" marginwidth="0" topmargin="0" leftmargin="0"></iframe></noscript>
+	<!--  End Atlas -->
+</isdecorate>

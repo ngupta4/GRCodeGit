@@ -1,0 +1,138 @@
+<!--- TEMPLATENAME: selectasystem.isml --->
+<isdecorate template="search/pt_selectasystem_full">
+<isinclude template="util/modules"/>
+
+<iscomment>create reporting event</iscomment>
+<isinclude template="util/reporting/ReportSearch.isml"/>
+
+<isset name="showHeader" value="${true}" scope="page" />
+<isset name="showFooter" value="${true}" scope="page" />
+<isset name="showNav" value="${true}" scope="page" />
+<isset name="showOrderButton" value="${false}" scope="page" />
+
+<isscript>
+	importPackage(dw.util);
+	importPackage(dw.catalog);
+	
+	var CCC : Object = pdict.CurrentCampaignConfig;
+
+	var offersList : ArrayList = new ArrayList();
+	var offerCodes : Array = null;
+	if( !empty(CCC) ) {
+		offerCodes = CCC.sasOfferCodes;
+		var aProduct : Product = null;
+		for( var i=0, ii=offerCodes.length; i<ii; i++ ) {
+			aProduct = ProductMgr.getProduct(offerCodes[i]);
+			if( !empty(aProduct) ) {
+				offersList.add1(aProduct);
+			}
+		}
+	}
+	var kitQtyClass = "";
+	var kitQty = 0;
+	if( !empty(offersList) ) {
+		kitQty = offersList.size();
+		switch(kitQty) {
+		case 1:
+			kitQtyClass="oneKit";
+			break;
+		case 2:
+			kitQtyClass="twoKits";
+			break;
+		case 3:
+			kitQtyClass="threeKits";
+			break;
+		case 4:
+			kitQtyClass="fourKits";
+			break;
+		case 5:
+			kitQtyClass="fiveKits";
+			break;
+		}
+	}
+	var category : dw.catalog.Category = CCC.getCampaignCategory();
+</isscript> 
+
+<isset name="KitQtyClass" value="${kitQtyClass}" scope="page" />
+
+<div class="pageHead orderModuleContainerB">
+	<h1 class="panelBtitlebar"><p style="font-size:25%">&nbsp;</p>${Resource.msg('sas.pagetitleB','checkout',null)}<iscomment>to show bv rating in the header.<isinclude template="bv/display/rr/reviewsummary" /></iscomment></h1>
+	<p class="guaranteeBadgeB">${Resource.msg('sas.mbguarantee','checkout',null)}</p>
+	
+  <div class="orderModule clearFix">
+	
+	
+		<isslot id="sas_body" description="Sas body" context="category" context-object="${category}" />
+
+       
+		<br clear="all" />
+		<isset name="acqPage" value="${true}" scope="pdict" />
+		<div class="bazaarVoice">
+			<iscomment><a href="#" class="writeReviewLink">${Resource.msg('sas.writereviewlink','checkout',null)}</a><br /></iscomment>			
+			<isinclude template="bv/display/rr/reviews" />			
+			<isif condition="${null!=dw.system.Site.current.preferences.custom.Printable_reviews_url}">
+				<a href="${dw.system.Site.current.preferences.custom.Printable_reviews_url}" class="printReviewLink">${Resource.msg('sas.printreviewlink','checkout',null)}</a>
+			<iselse>
+			   <a href="http://reviews.meaningfulbeauty.com/0570mb/AAM83U/reviews.htm" class="printReviewLink">${Resource.msg('sas.printreviewlink','checkout',null)}</a>
+			</isif>
+		</div>
+	</div>
+</div>
+
+
+
+<isset name="OmniturePage" value="Offerpage" scope="pdict" />
+
+  
+  <iscomment> SAS Page Pixels    </iscomment>
+     <iscontentasset aid="Atlas-Container-media-SAS_MB"/>
+     <iscontentasset aid="MediaGeeks-SAS_MB"/>
+
+
+
+
+<script type="text/javascript">
+
+<iscomment>
+// if the number tabs is equal to the number of gifts, this means only 1 gift will appear per tab
+// the following code adjusts the styles around the order button
+// it compensates for empty space when only 1 gift selection is available
+// also if only 2 gifts exist, additional style adjustments apply
+</iscomment>
+
+
+
+jQuery(".sys30Day_radio .kitselectionul input").each(function() {
+	  jQuery(this).click(function() 
+	  {  	 
+	      var kitId= jQuery(this).attr("id");
+	      var kitUrl= '${URLUtils.https("COCart-AddProduct","pid","")}';
+	      jQuery(".sys30Day_radio a").attr("href",kitUrl+kitId);
+	
+		  var priceVal=jQuery(this).parent().parent().find('strong').html();
+		  $(this).parents('.sascolumn').find('.displayPrice').html(priceVal); //dynamically insert price in 2 places
+	
+		 });
+   });
+
+jQuery(".sys90Day_radio .kitselectionul2 input").each(function() {
+	  jQuery(this).click(function() 
+	  {  	 
+	      var kitId= jQuery(this).attr("id");
+	      var kitUrl= '${URLUtils.https("COCart-AddProduct","pid","")}';
+	      jQuery(".sys90Day_radio a").attr("href",kitUrl+kitId);
+	    // console.log(kitId);
+	    
+	      var priceVal=jQuery(this).parent().parent().find('strong').html();
+		  $(this).parents('.sascolumn').find('.displayPrice').html(priceVal); //dynamically insert price in 2 places
+	 
+		 });
+ });
+ 
+ jQuery(document).ready(function(){
+	jQuery(".sascolumn").each(function(index){
+		jQuery(this).find("input:first").trigger("click");
+	});
+});
+</script>
+</isdecorate>

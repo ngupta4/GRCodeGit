@@ -1,0 +1,50 @@
+<!--- TEMPLATENAME: minicreditcard.isml --->
+<iscomment>
+	Creates a mini credit card display.
+	If p_card is given the second parameter is ignored.
+
+	Parameter:
+	p_card	       : the PaymentInstrument object to display
+	p_cc_formfield : a credit card formfield element
+	p_show_expiration : triggers show expiration date or other data except expiration
+</iscomment>
+<isscript>
+	var ccType   : String;
+	var ccNumber : String;
+	var ccMonth  : Integer;
+	var ccYear   : Integer;
+	var ccOwner  : String;
+
+	if( pdict.p_card != null )
+	{
+		ccType   = pdict.p_card.creditCardType;
+		ccNumber = pdict.p_card.maskedCreditCardNumber;
+		ccMonth  = pdict.p_card.creditCardExpirationMonth;
+		ccYear   = pdict.p_card.creditCardExpirationYear;
+		ccOwner  = pdict.p_card.creditCardHolder;
+	}
+	else
+	{
+		ccType   = pdict.p_cc_formfield.type.htmlValue;
+		ccNumber = pdict.p_cc_formfield.number.htmlValue;
+		ccMonth  = pdict.p_cc_formfield.month.value;
+		ccYear   = pdict.p_cc_formfield.year.value;
+		ccOwner  = pdict.p_cc_formfield.owner.htmlValue;
+	}
+</isscript>
+
+<isif condition="${empty(pdict.p_show_expiration)}">
+	<isset name="show_expiration" value="false" scope="page"/>
+<iselse>
+    <isset name="show_expiration" value="${pdict.p_show_expiration}" scope="page"/>
+</isif>
+
+<div class="minicreditcard">
+	<isif condition="${show_expiration == false}">
+		<div class="owner"><isprint value="${ccOwner}"/></div>
+		<div class="type"><isprint value="${ccType}"/></div>
+		<div class="number"><isprint value="${ccNumber}"/></div>
+	<iselse>
+		<div class="expirationdate"><span class="label"></span><isprint value="${ccMonth}" formatter="00"/>.<isprint value="${ccYear}" formatter="0000"/></div>
+	</isif>
+</div>

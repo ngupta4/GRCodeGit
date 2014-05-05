@@ -1,0 +1,40 @@
+/**
+* Demandware Script File
+* 
+*This script moves shipping address to order address.
+
+*
+*   @input ShippingAddress : dw.customer.CustomerAddress
+*	@input Shipment : dw.order.Shipment
+*   @Output OrderAddress : dw.order.OrderAddress
+*
+*/
+importPackage( dw.system );
+importPackage( dw.order );
+importPackage( dw.web );
+function execute( args : PipelineDictionary ) : Number
+{
+	Logger.info("ShippingAddressToOrderAddress.ds starts here");
+	var orderaddress : OrderAddress = args.Shipment.createShippingAddress();
+	orderaddress.setAddress1(args.ShippingAddress.address1);
+	orderaddress.setAddress2(args.ShippingAddress.address2);
+	orderaddress.setCity(args.ShippingAddress.city);
+	orderaddress.setCompanyName(args.ShippingAddress.companyName);
+	orderaddress.setCountryCode(args.ShippingAddress.countryCode);
+	orderaddress.setFirstName(args.ShippingAddress.firstName);
+	//-orderaddress.setJobTitle(args.ShippingAddress.jobTitle);
+	orderaddress.setLastName(args.ShippingAddress.lastName);
+	orderaddress.setPhone(args.ShippingAddress.phone);
+	orderaddress.custom.eveningPhone = args.ShippingAddress.custom.eveningPhone;
+	orderaddress.setPostalCode(args.ShippingAddress.postalCode);
+	orderaddress.setPostBox(args.ShippingAddress.postBox);
+	orderaddress.setSalutation(args.ShippingAddress.salutation);
+	orderaddress.setStateCode(args.ShippingAddress.stateCode);
+	//orderaddress.custom.selectedAddressID = args.ShippingAddress.ID;
+	/*-orderaddress.setSuffix(args.ShippingAddress.suffix);
+	-orderaddress.setSuite(args.ShippingAddress.suite);
+	-orderaddress.setTitle(args.ShippingAddress.title);*/
+	Logger.debug(orderaddress.toString());
+   Logger.info("ShippingAddressToOrderAddress.ds ends here");
+   return PIPELET_NEXT;
+}

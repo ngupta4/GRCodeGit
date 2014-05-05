@@ -1,0 +1,67 @@
+importPackage( dw.system );
+importPackage( dw.object );
+importPackage( dw.catalog );
+importPackage( dw.util );
+importPackage( dw.order);
+importPackage( dw.customer);
+
+
+function rankingSort(a,b){
+	
+	if((empty(a.custom.ranking) && !empty(b.custom.ranking)))
+		return 1;
+	else if((!empty(a.custom.ranking) && empty(b.custom.ranking)))
+		return -1;
+	else if(empty(a.custom.ranking) && empty(b.custom.ranking))
+		return 0;
+	else
+		return a.custom.ranking - b.custom.ranking;
+}
+
+function getRenderingGroup() : CustomerGroup{
+	var array_list = new ArrayList(session.customer.customerGroups);
+	array_list.sort(rankingSort);
+	Logger.debug("Sorted List!");
+	for(var i=0;i<array_list.length;i++){
+		Logger.debug("group: " + i + array_list[i].ID);
+	}
+	return  array_list[0];//group_list.pop();
+}
+
+function setRenderingGroup(){
+		
+}
+
+function getRenderTemplateBasePath(deviceCategory:String):String{
+	var path:String = "";
+	
+	//TODO: Base off site pref instead of hard coded
+	//get site preference...
+	//parse site prefernce as a map and pull values from there
+	switch(deviceCategory.toLowerCase()){
+		case "mobile":
+			path = "mobile/";
+			break;
+		//fall through for now since these aren;t implemented
+		case "tablet":
+			path = "tablet/";
+			break;
+		case "feature":
+			path = "feature/";
+			break;
+		case "tv":
+		default:
+			path = "";
+			break;
+	}
+	return path;
+}
+function getDeviceContent(content){
+	//append the device to the 
+	var  newid:String = content.id + "-" + session.custom.renderingCategory;
+	var deviceContent = ContentMgr.getContent(newid);
+	if(deviceContent) 
+		return deviceContent;
+	else //return standard (desktop)
+		return content;
+}

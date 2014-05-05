@@ -1,0 +1,40 @@
+/**
+*
+*/
+importPackage( dw.system );
+importPackage( dw.object );
+importPackage( dw.util );
+
+importScript( "grmiddleware/libGRMiddleware.ds" );
+importScript( "common/libContactUs.ds" );
+
+function execute( args : PipelineDictionary ) : Number
+{
+    var iterator:Iterator = CustomObjectMgr.getAllCustomObjects("ContactUs");
+    
+    var toberemoved:Array = [];
+    
+    try{
+    	var failed:Boolean = false;
+        while(iterator.hasNext()){
+            var co:CustomObject = iterator.next();
+            if(!doContatUs(co.custom.ID, co.custom)){
+                failed = true;
+            }else{
+                toberemoved.push(co);
+            }
+        }
+        
+        if(failed){
+            Logger.error("Some of contact us entries was not uploded successfully");
+            return PIPELET_ERROR;
+        }
+        
+    }finally{
+        for(var i = 0; i < toberemoved.length; i++){
+            CustomObjectMgr.remove(toberemoved[i]);
+        }
+    }
+    
+    return PIPELET_NEXT;
+}

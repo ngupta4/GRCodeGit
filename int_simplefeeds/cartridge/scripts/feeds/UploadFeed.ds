@@ -1,0 +1,99 @@
+/**
+ * Upload a local file to a WebDAV or SFTP folder.
+ *
+ * @input File : String  mandatory, name of the local file to upload, relative to the Impex share, src folder
+ * @input RemoteFolderURL : String  mandatory, URL to WebDAV or SFTP folder, e.g. "https://www.myserver.com/folder/", "sftp://sftp.myserver.com:22/folder/"
+ * @input RemoteFile : String  mandatory, File inside RemoteFolderURL, e.g. "feed.xml"
+ * @input RemoteLogin : String  optional, login for Basic Authentication or Digest Autentication
+ * @input RemotePassword : String  optional, password for Basic Authentication or Digest Autentication
+ * @input SearchResultCount : Number
+ * @input ExportRuntime : Number
+ * @input ExportStartTime : Number
+ */
+
+importPackage( dw.io );
+importPackage( dw.net );
+importPackage( dw.system );
+
+importScript('int_simplefeeds:feeds/UploadFunctions.ds');
+
+function execute( args : PipelineDictionary ) : Number
+{
+	// read parameters
+	var fileString : String = args.File;
+	var remoteFolderURL : String = args.RemoteFolderURL;
+	var remoteFile : String = args.RemoteFile;
+ 	var remoteLogin : String = args.RemoteLogin;
+ 	var remotePassword : String = args.RemotePassword;
+
+	var SearchResultCount : Number = args.SearchResultCount;
+	var ExportRuntime : Number = args.ExportRuntime;
+	var deliveryStart : Date;
+	var deliveryEnd : Date;	
+	var ExportStartTime : Number = args.ExportStartTime;
+	deliveryStart = new Date();
+	
+    // check parameters
+    if ( empty( fileString ) )
+    {
+    	Logger.getLogger("simplefeeds").error( "UploadFeed: Parameter File empty" );
+    	return PIPELET_ERROR;
+    }
+
+    if ( empty( remoteFolderURL ) )
+    {
+    	Logger.getLogger("simplefeeds").error( "UploadFeed: Parameter RemoteFolderURL empty" );
+    	return PIPELET_ERROR;
+    }
+
+    if ( empty( remoteFile ) )
+    {
+    	Logger.getLogger("simplefeeds").error( "UploadFeed: Parameter RemoteFile empty" );
+    	return PIPELET_ERROR;
+    }
+
+    Logger.getLogger("simplefeeds").debug( "UploadFeed: " +
+    	"File: " + fileString + ", " +
+    	"RemoteFolderURL: " + remoteFolderURL + ", " +
+    	"RemoteFile: " + remoteFile + ", " +
+    	"RemoteLogin: " + ( !empty( remoteLogin ) ? remoteLogin : "(empty)" ) + ", " +
+    	"RemotePassword: " + ( !empty( remotePassword ) ? "(provided)" : "(empty)" ) );
+
+	// locate file
+	var file : File = new File( File.IMPEX + File.SEPARATOR + "src" + File.SEPARATOR + fileString );
+
+	if ( !file.exists() )
+	{
+    	Logger.getLogger("simplefeeds").error( "UploadFeed: File " + file.fullPath + " does not exist.");
+    	return PIPELET_ERROR;
+	}
+
+	var result : boolean;
+
+	if ( remoteFolderURL.indexOf( "sftp://" ) == 0 )
+	{
+		result = uploadFileSFTP( file, remoteFolderURL, remoteFile, remoteLogin, remotePassword );
+	}
+	else
+	{
+		result = uploadFileWebDAV( file, remoteFolderURL, remoteFile, remoteLogin, remotePassword );
+	}
+	
+	if ( !result )
+	{
+		return PIPELET_ERROR;
+	}
+	
+	
+	deliveryEnd = new Date();
+	
+	Logger.getLogger("exportorderjobs").info( "UploadFeed: " +
+    	" File: " + remoteFile + ", " +
+    	" Count: " + SearchResultCount +
+    	" Creation: " + (ExportRuntime/1000) +
+    	" Delivery: " + (deliveryEnd.getTime() - deliveryStart.getTime())/1000 +
+    	" Total: " + (deliveryEnd - ExportStartTime)/1000
+     );	
+     	
+	return PIPELET_NEXT;
+}

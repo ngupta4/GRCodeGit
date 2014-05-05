@@ -1,0 +1,15 @@
+<!--- TEMPLATENAME: reviewsummary.isml --->
+<isscript>
+     importScript('int_bazaarvoice:libBazaarvoice.ds');
+     
+     // Determine if we are rendering on a product or category page.
+     var bvSubject : Object = getBazaarVoiceHelper().getExternalSubjectForPage(pdict);
+     
+     var bvUrl = getBazaarVoiceHelper().getBvUrl(false, "reviews");
+</isscript>
+
+<iscomment>
+	Check whether page is for acquisition or retention. If acquisition then use BM Configured product id 
+</iscomment>
+
+<div id="BVCustomerRatings"></div>

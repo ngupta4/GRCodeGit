@@ -1,0 +1,78 @@
+<iscache type="relative" hour="24"/>
+<isdecorate template="mobile/proof/pt_proof">
+
+<a href="${URLUtils.http('mHowItWorks-Show')}" id="btnHIW">
+	<img src="${URLUtils.staticURL('/themes/xout_mobile/images/button/btn_HIW.png')}"/>
+</a>
+
+<a href="${URLUtils.http('mProof-Show')}" id="btnProof">
+	<img src="${URLUtils.staticURL('/themes/xout_mobile/images/button/btn_Proof.png')}"/>
+</a>
+
+<script type="text/javascript">
+	jQuery(document).ready(function() {
+		jQuery('#leftarrow').bind('click', function() {
+			var teenlist = jQuery('.beforeAfter');
+			jQuery.each(teenlist, function(i) {
+				if(jQuery(this).is(":visible")) { // found the rendered on
+					var index = teenlist.index(this);
+					if(index == 0) {
+						index = (teenlist.length - 1);
+					} else {
+						index = (index - 1);
+					}
+					jQuery(this).hide();
+					jQuery(jQuery('.beforeAfter').get(index)).fadeIn();
+					return false;
+				}
+			});
+		});
+
+		jQuery('#rightarrow').bind('click', function() {
+			var teenlist = jQuery('.beforeAfter');
+			jQuery.each(teenlist, function(i) {
+				if(jQuery(this).is(":visible")) { // found the rendered on
+					var index = teenlist.index(this);
+					if(index == (teenlist.length - 1)) {
+						index = 0;
+					} else {
+						index = (index + 1);
+					}
+					jQuery(this).hide();
+					jQuery(jQuery('.beforeAfter').get(index)).fadeIn();
+					return false;
+				}
+			});
+		});
+		jQuery(jQuery('.beforeAfter').get(0)).fadeIn();
+	});
+</script>
+<isscript>
+  var teens : dw.util.SeekableIterator = dw.object.CustomObjectMgr.getAllCustomObjects("teen");		  
+</isscript>
+
+<div id="proofWidget">
+	<img src="${URLUtils.staticURL('/themes/xout_mobile/images/proof/arrow_Left.png')}" id="leftarrow"/>
+	<isloop items="${teens}" var="teen">
+		<div class="beforeAfter">
+			<img src="${teen.custom.mobileProofImage.httpURL}"/>
+			<div class="textcontainer">
+				<span><isprint value="${teen.custom.mobileProofDescription}" encoding="off"/></span>
+			</div>
+		</div>
+	</isloop>
+	<img src="${URLUtils.staticURL('/themes/xout_mobile/images/proof/arrow_Right.png')}" id="rightarrow"/>
+</div>
+<isscript>
+	var encodedStr : String = encodeURI("You hate zits. I hate zits. I suspect that’s why we’re friends. Have you heard about this new stuff called X Out™? It's from the same people who make Proactiv®, and apparently, it kills zits without all those annoying steps. I guess it actually works because there’s a bunch of videos here of kids who already used it and seem to have liked it.  Here are the videos: http://XOut.com/proof?rdir=sharemob.  Here's how much it is: http://XOut.com/order?rdir=sharemob");
+</isscript>
+<a href="mailto:?body=${encodedStr}" id="btnShare">
+	<img src="${URLUtils.staticURL('/themes/xout_mobile/images/button/btn_Share.png')}"/>
+</a>
+
+<isset name="OmniturePage" value="Proofpage" scope="pdict"/>
+<isscript>
+var primaryUCI : Cookie = request.httpCookies['uci'];
+</isscript>
+
+</isdecorate>

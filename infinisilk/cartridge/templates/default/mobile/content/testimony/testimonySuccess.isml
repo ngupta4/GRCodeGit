@@ -1,0 +1,12 @@
+<isdecorate template="search/pt_customertestimonial.isml">
+	<isinclude template="util/modules"/>
+	<div class="testimonialSuccess">
+		<iscomment><isprint value="${Resource.msg('testimony.success.message','rendering',null)}" encoding="off"/></iscomment>
+		<iscontentasset aid="testimonial-success"/>
+		
+		<isif condition="${pdict.CurrentCustomer.authenticated && pdict.CurrentCustomer.registered || (pdict.CurrentRequest.httpCookies['rememberMe']!=null)}">			
+		<iselse>
+			<isslot id="right-bottom-orderCta" context="global" description="Right Bottom Order Module"/>
+		</isif>
+	</div>
+</isdecorate>

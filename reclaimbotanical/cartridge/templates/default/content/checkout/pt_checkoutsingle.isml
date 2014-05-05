@@ -1,0 +1,230 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="X-UA-Compatible" content="IE=9" />
+<isinclude template="util/modules"/>
+<isset name="bodyclass" value="${''}" scope="page" />
+
+	<isif condition="${'pagetitle' in pdict}">
+		<isset name="pagetitle" value="${pdict.pagetitle}" scope="pdict">
+	</isif>
+
+<isscript>
+	importScript('guthyrenker_core:common/libUtils.ds');
+
+	importPackage(dw.object);
+	importPackage(dw.catalog);
+	
+	var CCC : Object = pdict.CurrentCampaignConfig;
+	var campaignCode : String = CCC.campaignCode;
+	
+	var showHeader : boolean = CCC.showHeader;
+	var showFooter : boolean = CCC.showFooter;
+	var showNav : boolean = CCC.showNav;
+	var showOrderButton : boolean = CCC.showOrderButton;
+	
+	var category : dw.catalog.Category = CCC.getCampaignCategory();
+</isscript> 
+
+<iscomment>including see why js & setting up initial variables</iscomment>
+<isinclude template="checkout/steps/initseewhy" />
+<isset name="showHeader" value="${true}" scope="page" />
+<isset name="showFooter" value="${true}" scope="page" />
+<iscomment><isset name="showNav" value="${true}" scope="page" /></iscomment>
+<isset name="showOrderButton" value="${false}" scope="pdict" />
+
+<iscomment>This page must be cachable. It inherits the caching attributes by the decorated template.</iscomment>
+	<isset name="noBackground" value="true" scope="page"/>
+	<iscomment>Include all important information globally , e.g. meta-data, link information, and javascript.</iscomment>
+	<isinclude template="components/header/htmlhead"/>
+    <iscomment>Insert meta tag for the "Google-Verification" feature to verify that you are the owner of this site.</iscomment>
+    <isif condition="${'GoogleVerificationTag' in dw.system.Site.current.preferences.custom && dw.system.Site.current.preferences.custom.GoogleVerificationTag!=''}">
+        <meta name="google-site-verification" content="<isprint value="${dw.system.Site.current.preferences.custom.GoogleVerificationTag}"/>" />
+    </isif>
+    <isif condition="${empty(pdict.CheckoutStep)}">
+	    <meta name="keywords" content="${Resource.msg('cart.meta.keyword','checkout',null)}"/>
+	    <meta name="description" content="${Resource.msg('cart.meta.description','checkout',null)}"/>
+     </isif>
+    <script type="text/javascript" src="${URLUtils.staticURL('js/proactiv.js')}"></script>
+    <meta name="ROBOTS" content="NOINDEX,NOFOLLOW" />
+</head>
+<body class="shoppingcartpage ${bodyclass}">
+
+<isanalyticsoff>
+<isinclude template="components/header/header"/>
+<isinclude template="common/mediaPixelsInit" />
+<iscomment>Cookies and Javascript enabled check</iscomment>
+<isinclude template="components/browsertoolscheck"/>
+<div class="pageHead">
+			<div class="pageWrapper">
+
+			<iscontentasset aid="cart-header-text-billing-details" />
+		</div>
+		</div>
+ <div class="pageBody">
+	<div class="pageWrapper">		
+	<iscomment>		  
+<div class="breadcrumb">
+    <div class="pageWrapper">		
+        <a title="Home" class="home" href="${URLUtils.http('Home-Show')}">${Resource.msg('sas.breadcrumb.home','locale',null)}</a>
+        <span class="divider">&nbsp;</span>
+         <a title="Order Now" href="${URLUtils.http('Page-Show','cid','order')}$">${Resource.msg('sas.breadcrumb.ordernow','locale',null)}</a>
+        <span class="divider">&nbsp;</span>
+        ${Resource.msg('sas.breadcrumb.cart','locale',null)}
+    </div>
+</div>
+</iscomment>
+<div id="ptChekoutsingle" class="contentCheckout wrapperMain">
+	<!-- CCC.getContainerClasses() -->
+		
+		<div class="checkout-top-slot">
+			<isslot id="singlepage-cart-banner" description="Single-page checkout cart banner" context="category" context-object="${category}" />
+		</div>
+		<div class="offerSidebarLeft">
+			<iscomment>Displays the "Upsells" section</iscomment>
+			<isif condition="${pdict.ShowUpsells}">
+				<!-- Displays the "Upsells" section -->
+				<isif condition="${!empty(pdict.IsShowSuggest) && (pdict.IsShowSuggest == true)}">
+					<isinclude url="${URLUtils.url('COCart-ShowRecommendation', 'IsShowSuggest', 'true')}"/>
+				<iselse>
+					<isinclude url="${URLUtils.url('COCart-ShowRecommendation')}"/>
+				</isif>
+			</isif>
+			
+			
+			<iscomment>Display the "60-day Guarantee" section</iscomment>
+			<isif condition="${pdict.ShowGuarantee !== false}">
+				<!-- Display the "60-day Guarantee" section -->
+				<div class="offerImage">
+				<iscomment>
+				    <iscontentasset aid="actress-celebrities-left" />
+				</iscomment>
+					<iscontentasset aid="moneyback-guarantee-left" />
+				</div>
+			</isif>
+			<iscomment>Display the "Cart Phone" section</iscomment>
+			<isif condition="${pdict.ShowCartPhone !== false}">
+				<!-- Display the "Cart Phone" section -->
+				<div class="block nav">
+					<div class="blockTop"><div class="blockTopRight"></div></div>
+					<div class="blockContent">
+						<isslot id="order-by-phone" context="category" description="Cart Phone Number Content Slot" context-object="${category}" />
+					</div>
+					<div class="blockBottom"><div class="blockBottomRight"></div></div>
+				</div>
+			</isif>
+			
+			<iscomment>Display the "Cart Questions" section</iscomment>
+			<isif condition="${pdict.ShowCartQuestions}">
+				<!-- Display the "Cart Questions" section -->
+				<div class="block nav" id="cartquestionssection">
+					<div class="blockTop"><div class="blockTopRight"></div></div>
+					<iscomment>
+					<div class="blockContent">
+						<iscontentasset aid="cart-questions" />
+					</div>
+					</iscomment>
+					
+					<div class="blockBottom"><div class="blockBottomRight"></div></div>
+				</div>
+			</isif>
+			
+			<iscomment>Displays the "Browsing Order Your System" section</iscomment>
+			<isif condition="${pdict.ShowBrowsingOrderYourSystem == true}">
+				<!-- Displays the "Browsing Order Your System" section -->
+				<div class="block nav">
+					<div class="blockTop"><div class="blockTopRight"></div></div>
+					<div class="blockContent">
+						<ul>
+							<li><a href="${URLUtils.url('Page-Show', 'cid', 'order')}"><span>${Resource.msg('', 'rendering', 'Select Your System')}</span></a></li>
+							<li class="selected"><a href="${URLUtils.https('COCart-Show')}"><span>${Resource.msg('', 'rendering', 'Shopping Cart')}</span></a></li>
+						</ul>
+					</div>
+					<div class="blockBottom"><div class="blockBottomRight"></div></div>
+				</div>
+			</isif>
+			
+			<iscomment>Displays the "Other Ways to Purchase" section</iscomment>
+			<isif condition="${pdict.ShowOtherWaysToPurchase == true}">
+				<!-- Displays the "Other Ways to Purchase" section -->
+				<div class="block nav">
+					<div class="blockTop"><div class="blockTopRight"></div></div>
+					<div class="blockContent">
+						<iscontentasset aid="other-ways-to-purchase" />
+					</div>
+					<div class="blockBottom"><div class="blockBottomRight"></div></div>
+				</div>
+			</isif>
+			<iscomment>"Related links" section</iscomment>
+			<isif condition="${pdict.ShowRelatedLinks == true}">
+				<!-- "Related links" section -->
+				<div class="block nav">
+					<div class="blockTop"><div class="blockTopRight"></div></div>
+					<div class="blockContent">
+						<isinclude template="checkout/components/relatedlinks" />
+					</div>
+					<div class="blockBottom"><div class="blockBottomRight"></div></div>
+				</div>
+			</isif>
+			
+			<iscomment>Cart vacant slot</iscomment>
+			<isslot id="cart-vacant-slot" context="global" description="Cart vacant slot" />
+		</div>
+		
+		<div class="checkoutRight ${checkoutClass}">
+			<div class="singlepageRight">
+				<isslot id="singlepage-cart-right-top" description="Single-page checkout right top slot" context="category" context-object="${category}" />
+				<isslot id="singlepage-cart-right-middle" description="Single-page checkout right middle slot" context="category" context-object="${category}" />
+				<isslot id="singlepage-cart-right-bottom" description="Single-page checkout right bottom slot" context="global" />
+			</div>
+			
+			<div class="checkout-maincontent">
+	  			<isreplace/>
+	  		</div>
+		</div><!-- END: checkoutRight -->
+</div>
+</div>
+</div><!-- END: container -->
+<div class="checkout-bottom-slot">
+	  		<isslot id="singlepage-cart-footer" description="Single-page checkout footer slot" context="global" />
+	  	</div>
+	
+	<isinclude template="components/footer/pixels"/>
+	<isinclude template="common/google_analytics" />
+<isif condition="${(CCC && CCC.showFooter) || showFooter}">
+		<isinclude template="components/footer/footer"/>
+	<iselse>
+		<iscomment>REFACTOR:  We need to refactor the footer to have this logic to include omniture/pixels regardless if it is shown</iscomment>
+		<!---  Omniture tracking  --->
+		<isinclude template="analytics/omniture/omniture"/>
+	</isif>
+<div id="popupBG">&nbsp;</div>
+<isif condition="${shouldShowDebugInfo()}">
+	<iscomment>this is the template rendering the checkout pages
+	<pre><!-- +1.888.553.9216 --><!--This phone is a requirement to support existing Gomez monitor of SiteGenesis. Demadware customers can remove this.-->
+		
+	LandingTemplate: ${CCC.landingTemplate}
+	Campaign Code:${CCC.campaignCode}
+	Campaign ID:${getCurrentCampaignCode()}
+	ShowHeader?:${CCC.showHeader}
+	ShowFooter?:${CCC.showFooter}
+	ShowNav?:${CCC.showNav}
+	ShowOrderButton?:${CCC.showOrderButton}
+	Phone:${CCC.phone}
+	
+	</pre></iscomment>
+</isif>
+<script type="text/javascript">
+jQuery(document).ready(function () {
+	jQuery("a.details").bind("click", function(event){
+		event.preventDefault();
+		//jQuery("button.details").click();
+		return false;
+	});
+
+	// Initialize the Checkout API
+	app.proactiv.checkout.init();
+});
+</script>
+</body>
+</html>

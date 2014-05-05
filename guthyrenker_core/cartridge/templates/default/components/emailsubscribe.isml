@@ -1,0 +1,72 @@
+<!--- TEMPLATENAME: emailsubscribe.isml --->
+<isinclude template="util/modules"/>
+
+<div class="signup-container">
+	<form action="${URLUtils.url('EmailSubscription-DoOptIn')}" method="post" name="${pdict.CurrentForms.emailsubscribe.optin.htmlName}" id="subscribeform">
+    <div id="promoEmail">
+   		<label for="email">${Resource.msg('forms.emailsubscribe.label','forms',null)}</label>
+   		<isinputfield xhtmlclass="promoEmail" formfield="${pdict.CurrentForms.emailsubscribe.optin.email}" type="input" label="false" attribute1="requiredmesage" value1="${Resource.msg('forms.contactinf.email.parse-error','forms',null)}">
+			<button class="input-button emailsubscribe" type="submit" value="" name="${pdict.CurrentForms.emailsubscribe.optin.subscribe.htmlName}"><iscomment>${Resource.msg('forms.emailsubscribe.submit','forms',null)}</iscomment></button>
+       <span htmlfor="${pdict.CurrentForms.emailsubscribe.optin.email.htmlName}" generated="true" class="errorclient" style="display: none;"></span>
+   		<span class="successmessage" style="display: none;">${Resource.msg('forms.emailsubscribe.optin.successmessage','forms',null)}</span>
+			<h5 class="error-message"<isif condition="${'ErrorCode' in pdict && !empty(pdict.ErrorCode)}"> style="display:none"</isif>><isif condition="${'ErrorCode' in pdict && !empty(pdict.ErrorCode)}">${Resource.msg('error.messages.'+pdict.ErrorCode,'locale',null)}</isif></h5>
+		</div>
+	</form>
+</div>
+<h5 class="error-message"<isif condition="${'ErrorCode' in pdict && !empty(pdict.ErrorCode)}"> style="display:none"</isif>><isif condition="${'ErrorCode' in pdict && !empty(pdict.ErrorCode)}">${Resource.msg('error.messages.'+pdict.ErrorCode,'locale',null)}</isif></h5>
+
+<script type="text/javascript">
+jQuery(document).ready(function(){
+	jQuery("form[name='${pdict.CurrentForms.emailsubscribe.optin.htmlName}']").submit(function(event){
+		var form = jQuery(this);
+		var url = jQuery(this).attr("action");
+		event.preventDefault();
+		
+		var email = jQuery('${"#"}promoEmail input').val();
+		jQuery('${"#"}promoEmail').find(".error-message, .successmessage").hide();
+		if(form.validate().element(jQuery("input[name='${pdict.CurrentForms.emailsubscribe.optin.email.htmlName}']"))){
+			var options = {
+					type: "POST",
+					url :  url,
+					data : form.serialize(),
+					cache : false,
+					callback : function (data){
+
+						if(!data || !data.success) {
+							form.find(":text").val("");
+							form.find(".error-message",this).text(data["error"]).css('display','block');
+						}else {
+							form.find(":text").val("");
+							form.find(".successmessage",this).css('display','block');
+
+							var currentURL = jQuery('${"#"}currentURL').attr('href');
+							var dreamUrl = 'http://email.proactiv.com/p/Proactiv/Inquiry?EMAIL_ADDR='+email+'&VER=0&REF='+currentURL+'&INQ_UCI=&URL='+currentURL;
+							
+						    //jQuery(document).ready(function(){
+						        showIframeInPopup('overlay', 'emailModal', dreamUrl);               
+						    //})
+						}
+					}
+				};
+			app.ajax.getJson(options);
+		}
+		return false;
+	});
+	
+	jQuery("input[name='${pdict.CurrentForms.emailsubscribe.optin.email.htmlName}']").focus( function() {
+		if(jQuery(this).val()=='${Resource.msg('forms.emailsubscribe.enteryouremailaddress','forms',null)}'){$(this).val('');}
+		jQuery(this).parents("form").find(".successmessage").hide();
+	});
+	jQuery("input[name='${pdict.CurrentForms.emailsubscribe.optin.email.htmlName}']").blur( function() {
+		if(jQuery(this).val()==''){
+			jQuery(this).val('${Resource.msg('forms.emailsubscribe.enteryouremailaddress','forms',null)}');
+			jQuery(this).removeClass("errorclient");
+			jQuery(this).parents("form").find(".errormessage, .successmessage, .errorclient").hide();
+		}
+		
+	});
+
+	jQuery("input[name='${pdict.CurrentForms.emailsubscribe.optin.email.htmlName}']").val('${Resource.msg('forms.emailsubscribe.enteryouremailaddress','forms',null)}');
+	
+});
+</script>

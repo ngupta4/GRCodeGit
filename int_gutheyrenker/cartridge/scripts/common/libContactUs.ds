@@ -1,0 +1,111 @@
+/**
+*
+*   @input RequestID : String request id.
+*   @input Request   : Object contact us object. 
+*
+*/
+importPackage( dw.system );
+importPackage( dw.net );
+
+importScript( "grmiddleware/libGRMiddleware.ds" );
+importScript( "common/libOAuth.ds" );
+importScript('common/libUtils.ds');
+
+function doContatUs(id, request ) : Boolean
+{
+    var url = normalizeURL(pref("GRMContactUsURL", "https://staging.grdev.com/contact-us")) +  "/" + id;
+    var client : HTTPClient = openOAuthUrl("POST", url);
+    
+    var message:XML =
+    <?xml version="1.0"?>
+    <ContactUsForm>
+      <firstName>{notNull(request.firstName)}</firstName>
+      <lastName>{notNull(request.lastName)}</lastName>
+      <email>{notNull(request.email)}</email>
+      <address1>{notNull(request.address1)}</address1>
+      <address2>{notNull(request.address2)}</address2>
+      <city>{notNull(request.city)}</city>
+      <state>{notNull(request.stateCode)}</state>
+      <zip>{notNull(request.zip)}</zip>
+      <phone>{notNull(request.phoneHome)}</phone>
+      <age/>
+      <type>{notNull(request.myquestion)}</type>
+      <productLine>{dw.system.Site.getCurrent().getCustomPreferenceValue("GRMProductLine")}</productLine>
+      <orderNumber>{notNull(request.ordernumber)}</orderNumber>
+      <accountNumber>{notNull(request.accountnumber)}</accountNumber>
+      <message>{notNull(request.comment)}</message>
+    </ContactUsForm>;
+    
+    client.send(message.toString());
+    
+    Logger.debug("Contact US : " + message.toString());
+    Logger.debug("Contact US responsed with " + client.statusCode + "; " + client.statusMessage + ", url is '"  + url + "'");
+    
+    if(client.statusCode != 200){
+        Logger.error("Request snapshot: " + message.toString());
+        Logger.error("Contact US responsed with " + client.statusCode + "; " + client.statusMessage + ", url is '"  + url + "'");
+        return false;
+    }
+    
+    return true;
+}
+
+function doContatUs(id, request, userRequest) : Boolean
+{
+	var uid = getCustomerUID(userRequest);
+	var trans = getTransactionID();
+	var brand = dw.system.Site.getCurrent().getCustomPreferenceValue("GRMProductLine");
+	
+	//https://grws.grdev.com/customer/contact-us/brand/<brand>/uid/<uid>/trans/<transactionId>	
+	var url = normalizeURL(pref("GRMContactUsURL", "https://staging.grdev.com/contact-us")) +"/brand/"+brand+  "/uid/"+uid+"/trans/" + trans;
+    //var url = "https://mw-web-dev3.grdev.com/customer/contact-us/brand/"+brand+ "/uid/"+uid+"/trans/" + trans;
+    var client : HTTPClient = openOAuthUrl("POST", url);
+    
+    var message:XML =
+	<?xml version="1.0" encoding="UTF-8"?>
+	<customerRequest xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="customerContactUsRequest_0-1.xsd">
+		<clientId>Demandware</clientId>
+		<sessionData>
+			<sessionId>{notNull(userRequest.session.sessionID)}</sessionId>
+			<ipAddress>{notNull(userRequest.httpRemoteAddress)}</ipAddress>
+		</sessionData>
+		<contactUs>
+			<firstName>{notNull(request.firstName)}</firstName>
+			<lastName>{notNull(request.lastName)}</lastName>
+			<address>{notNull(request.address1)}</address>
+			<address>{(request.address2)}</address>
+			<city>{notNull(request.city)}</city>
+			<state>{notNull(request.stateCode)}</state>
+			<postalCode>{notNull(request.zip)}</postalCode>
+			<countryCode>US</countryCode>
+			<phones>
+				<dayPhone>{notNull(request.phoneHome)}</dayPhone>
+			</phones>
+			<email>{notNull(request.email)}</email>
+			<age/>
+			<type>{notNull(request.myquestion)}</type>
+			<productLine>{notNull(brand)}</productLine>
+			<orderNumber>{notNull(request.ordernumber)}</orderNumber>
+			<accountNumber>{notNull(request.accountnumber)}</accountNumber>
+			<message>{notNull(request.comment)}</message>
+		</contactUs>
+	</customerRequest>;
+	
+	if (notNull(request.jscriptEnabled)) {
+		message.contactUs.jscriptEnabled = request.jscriptEnabled;
+	}
+    message.contactUs.browserUserAgent = notNull(userRequest.httpUserAgent);
+    
+    client.send(message.toString());
+    
+    Logger.debug("Contact US : " + message.toString());
+    Logger.debug("Contact US responsed with " + client.statusCode + "; " + client.statusMessage + ", url is '"  + url + "'");
+    
+    if(client.statusCode != 200){
+        Logger.error("Request snapshot: " + message.toString());
+        Logger.error("Contact US responsed with " + client.statusCode + "; " + client.statusMessage + ", url is '"  + url + "'");
+        return false;
+    }
+    
+    return true;
+}

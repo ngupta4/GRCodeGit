@@ -1,0 +1,7 @@
+<!--- TEMPLATENAME: setuciredirect.isml --->
+<iscomment>this isml sets the cookie for the uci and redirects it to the next page, which will be the content download pipeline.</iscomment>
+<isinclude template="components/header/cookies" />
+
+<isset name="uciRedirect" value="${URLUtils.url('ContentLoad-DirectDownload') +'?'+ pdict.CurrentRequest.getHttpQueryString()}" scope="page"/>
+
+<isredirect location="${uciRedirect}" permanent ="true" />

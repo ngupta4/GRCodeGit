@@ -1,0 +1,22 @@
+<div id="header">
+	<iscomment>LOGO: Logo set with CSS as background image edit within CSS</iscomment>
+    <div id="headermid">
+    <h1 class="logo"><a href="${URLUtils.httpHome()}" title="${Resource.msg('global.storename','locale',null)}">${Resource.msg('global.storename','locale',null)}</a></h1>
+    
+    <isif condition="${showHeader}">
+    </isif>
+    <isinclude template="components/header/offer" />
+    </div>
+    <iscomment>INCLUDE: Customer login information, login, etc. (contains personal information, do not cache)
+	<isinclude url="${URLUtils.url('Home-IncludeHeaderCustomerInfo')}"/>
+	</iscomment>
+
+	<isif condition="${String(dw.web.URLUtils.continueURL()).indexOf('Home-Show') != -1}">
+	<isinclude url="${URLUtils.url('Home-IncludeHeaderMenu','cid','home')}"/>
+	<iselse/>
+	<isinclude url="${URLUtils.url('Home-IncludeHeaderMenu','cid',pdict.CurrentHttpParameterMap.cid.stringValue)}"/>
+	</isif>
+	<div class="freeShippingHead"><center>FREE SHIPPING!</center></div>
+    <div class="clear"><!-- FLOAT CLEAR --></div>
+</div><!-- END: header -->
+

@@ -1,0 +1,106 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<isinclude template="util/modules"/>
+
+<iscomment>This page must be cachable. It inherits the caching attributes by the decorated template.</iscomment>
+
+<isscript>
+	importPackage(dw.content);
+	importPackage(dw.util);
+	importPackage(dw.catalog);
+	
+	importScript('guthyrenker_core:common/libUtils.ds');
+	
+	var contentInfo    = getCurrentContentInfo(pdict.CurrentHttpParameterMap);
+	var folderPathInfo = getFolderPathInfo(contentInfo);
+	
+	var CurrentFolder  : Folder = contentInfo.folder;
+	var CurrentContent : Content = contentInfo.content;
+	
+	var CurrentFolderPath : String = folderPathInfo.folderPath;
+	var RootFolder        : Folder = folderPathInfo.rootFolder;
+	
+	CurrentFolderPath += " body_"+RootFolder.ID+" "+RootFolder.ID;
+	
+	var PageID : String = "page_";
+	
+	if( empty(CurrentContent) ) {
+		PageID += CurrentFolder.ID;
+	} else {
+		PageID += CurrentContent.ID;
+	}
+	
+	//var currentCampaignCode : String = pdict.CurrentSession.privacy['campaignID'];
+	var CCC : Object = pdict.CurrentCampaignConfig;
+</isscript>
+
+<isset name="showHeader" value="${true}" scope="page" />
+<isset name="showFooter" value="${true}" scope="page" />
+<isset name="showNav" value="${true}" scope="page" />
+<isset name="showOrderButton" value="${true}" scope="page" />
+
+<head>
+	<iscomment>
+		Include all important information globally , e.g. meta-data, link information, and
+		javascript.
+	</iscomment>
+	<isinclude template="components/header/htmlhead"/>
+
+	<isif condition="${!empty(RootFolder)}">
+		<link href="${URLUtils.staticURL('/css/main_'+RootFolder.ID+'.css')}" type="text/css" rel="stylesheet" />
+	</isif>
+	<isif condition="${!empty(CurrentFolder) && RootFolder.ID != CurrentFolder.ID}">
+		<link href="${URLUtils.staticURL('/css/main_'+CurrentFolder.ID+'.css')}" type="text/css" rel="stylesheet" />
+	</isif>
+
+	<iscomment>Add page specific header information here.</iscomment>
+
+	<iscomment>search specific javascript
+	<script src="${URLUtils.staticURL('/js/searchresults.js')}" type="text/javascript"></script>
+	</iscomment>
+</head>
+<body id="${PageID}" class="${CurrentFolderPath}">
+<isinclude template="components/header/header"/>
+	<div id="idMainWide" class="mainWide">
+		<div id="main" class="mainWrapper main_success clearfix">	
+			<!--start page content-->	
+
+			<div id="secondaryContent">
+				<div class="successNavWrapper ${CurrentFolder.ID}">
+					<isinclude template="search/components/browsesuccesssidebar"/>
+				</div>
+			</div><!-- END: leftcolumn -->
+			<div id="primaryContent" class="${CurrentFolder.ID}">
+				<isreplace/>
+				
+				<iscomment>
+				Bottom slots for each spotlight page
+				Must use <if> statement because isslot don't accept variable as ID
+				</iscomment>
+				<isif condition="${CurrentContent.ID == 'avril-lavigne'}">
+					<isslot id="avril-lavigne-spotlight-slot" description="Avril Lavigne Spotlight Slot" context="global" />
+				<iselseif condition="${CurrentContent.ID == 'jenna-fischer'}">
+					<isslot id="jenna-fischer-spotlight-slot" description="Jenna Fischer Spotlight Slot" context="global" />
+				<iselseif condition="${CurrentContent.ID == 'caroline-wozniacki'}">
+					<isslot id="caroline-wozniacki-spotlight-slot" description="Caroline Wozniacki Spotlight Slot" context="global" />
+				<iselseif condition="${CurrentContent.ID == 'chrishell-stause'}">
+					<isslot id="chrishell-stause-spotlight-slot" description="Chrishell Stause Spotlight Slot" context="global" />
+				<iselseif condition="${CurrentContent.ID == 'jennifer-berry'}">
+					<isslot id="jennifer-berry-spotlight-slot" description="Jennifer Berry Spotlight Slot" context="global" />
+				<iselseif condition="${CurrentContent.ID == 'julianne-hough'}">
+					<isslot id="julianne-hough-spotlight-slot" description="Julianne Hough Spotlight Slot" context="global" />
+				<iselseif condition="${CurrentContent.ID == 'justin-bieber'}">
+					<isslot id="justin-bieber-spotlight-slot" description="Justin Bieber Spotlight Slot" context="global" />
+				<iselseif condition="${CurrentContent.ID == 'mandy-moore'}">
+					<isslot id="mandy-moore-spotlight-slot" description="Mandy Moore Spotlight Slot" context="global" />
+				</isif>
+			</div>
+		</div>
+	</div>
+	
+	
+	<isinclude template="components/footer/footer"/>
+	<isinclude template="components/footer/pixels"/>
+	<isinclude template="common/google_analytics" />
+</body>
+</html>

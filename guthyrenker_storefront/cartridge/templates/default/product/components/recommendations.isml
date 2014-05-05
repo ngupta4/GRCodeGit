@@ -1,0 +1,33 @@
+<iscomment>Renders and displays the recommended products</iscomment>
+<isinclude template="util/modules"/>
+<isset name="recProducts" value="${pdict.ExplicitRecommendations}" scope="page"/>
+<isif condition="${recProducts.size() > 0}">
+<h2>
+	<div class="jcarousesearch">${pdict.RecommendationName}</div>
+</h2>
+	<isproducttilegrid producthits="${recProducts}" productrows="${2}" productstoskip="${0}" productsperrow="${pdict.ProductsPerRow}" pagingmodel="${pdict.ProductPagingModel}" scope="search"/>
+</isif>
+<script type="text/javascript">
+
+	//Add To Bag for Variant Products
+	 jQuery(".white-bg .addtobag").each(function() {		
+		  jQuery(this).click(function() 
+		  {
+			  var parentObj = jQuery(this).siblings('.swatches');
+			  var productid=  parentObj.find('.addtocartvariation li.selected a').attr('id');
+			  var upsell =  parentObj.find('.addtocartvariation li.selected a').attr('upsell');
+			  app.minicart.addFromCLP(productid, '${Product.available}',upsell);
+		 });
+	 });
+	 
+ 	 jQuery(".white-bg .addtokitvar").each(function() {		
+		  jQuery(this).click(function() 
+		  {
+			  var parentObj = jQuery(this).parent().siblings('.swatches');
+			  var productid=  parentObj.find('.addtocartvariation li.selected a').attr('id');
+			  var isKitAdditionAllowedVal =  parentObj.find('.addtocartvariation li.selected input').val();
+			  addProduct(productid,isKitAdditionAllowedVal);
+		 });
+	 });
+	 
+ </script>

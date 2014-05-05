@@ -1,0 +1,449 @@
+/* items below are defined twice.  only some pages include the id "main"  so this applies the same styles for both */
+
+
+#main .successNavWrapper, .successNavWrapper {
+	position: relative;
+	padding-top: 20px;
+	margin-left: 20px;
+	width: 195px;
+}
+#main #secondaryContent .successNavWrapper, #secondaryContent .successNavWrapper {
+	padding-top: 0;
+	margin-left: -5px;
+}
+#main .stories_top .relatedLinksWrapper, .stories_top .relatedLinksWrapper, #main .testimonials_top .relatedLinksWrapper, .testimonials_top .relatedLinksWrapper {
+	position: relative;
+	width: 185px;
+	margin-left: 20px;
+	background: url('../images/success/grey.jpg') repeat;
+	padding-left: 5px;
+	padding-bottom: 5px;
+	padding-right: 5px;
+}
+
+
+#main .successNav, .successNav  {
+	position: relative;
+	width: 195px;
+	background: #E5EDED url('../images/success/nav_greyBg.gif') repeat-y;
+}
+
+#main .successNav  a, .successNav a {
+	color: #FFFFFF;
+	text-decoration: none;
+}
+#page_katy-perry #main .successNav  a.katy_perry_link,
+#page_justin-bieber #main .successNav  a.justin_bieber_link,
+#page_avril-lavigne #main .successNav  a.avril_lavigne_link,
+#page_julianne-hough #main .successNav  a.julianne_hough_link,
+#page_caroline-wozniacki #main .successNav  a.caroline_wozniacki_link,
+#page_jenna-fischer #main .successNav  a.jenna_fischer_link,
+#page_mandy-moore #main .successNav  a.mandy_moore_link,
+#page_melissa-claire-egan #main .successNav  a.mc_egan_link,
+#page_katy-perry #main .successNav  a.katy_perry_link,
+#page_chrishell-stause #main .successNav  a.chrishell_stause_link,
+#page_jennifer-berry #main .successNav  a.jennifer_berry_link,
+
+#page_success_stories_greaterselfconfidence .successNav  a.self-confidence_link,
+#page_success_stories_yourwenroutine .successNav  a.wen_routine_link,
+#page_success_stories_stickingwithit .successNav  a.stick_link,
+#page_success_stories_gettingcompliments .successNav  a.compliments_link,
+#page_success_stories_clearskinsuccess .successNav  a.skin_success_link,
+#page_success_stories_proofitworks .successNav  a.proof_link,
+#page_bvSubmitStory .successNav  a.tell_story_link,
+
+#page_success_testimonials_emily .successNav  a.emily_link,
+#page_success_testimonials_allegra .successNav  a.allegra_link,
+.body_customer #main .successNav  a.testimonials_link,
+#page_tellus .successNav  a.submit_testimonial_link,
+
+#idMainWide .successNav a.selected,
+
+#main .successNav  a:hover, .successNav  a:hover{
+	color: #A18D53;
+	text-decoration: none;
+}
+
+#main .successNav .navItem, .successNav .navItem {
+	margin: 0px;
+}
+
+#main .successNav .navItemBottom, .successNav .navItemBottom {
+	width: 195px;
+	height: 11px;
+	background: #F5F5F5 url('../images/success/nav_bottom.gif') no-repeat;
+	margin: 0;
+	_margin-top: -3px; /* fixes older IE styles */
+}
+
+
+.successNav .navItem .navItemContent {
+	margin: 0px;
+	color: #FFFFFF;
+	padding: 10px 10px 10px 15px;
+	display: none;
+}
+
+body.celebrity-spotlight #content_celebrity-spotlight {
+	display: block;
+}
+body.testimonials #content_testimonials {
+	display: block;
+}
+body.real-stories #content_real-stories {
+	display: block;
+}
+
+#main .successNav .navItemHead, .successNav .navItemHead {
+	cursor: pointer;
+}
+
+.successNav h3.navItemHead {
+	text-indent: -9999px;
+	width: 195px;
+}
+.successNav .celebrity-spotlight h3.navItemHead {
+	height: 37px;
+	background-image: url(../images/success/nav_celebritySpotlight.gif);
+}
+.successNav .real-stories h3.navItemHead {
+	height: 27px;
+	background-image: url(../images/success/nav_realStories.gif);
+}
+.successNav .testimonials h3.navItemHead {
+	height: 28px;
+	background-image: url(../images/success/nav_featuredTestimonials.gif);
+}
+
+/* community adjustments */
+
+#page_community .successNav {
+	margin-left: -4px;
+	padding: 0px;
+}
+#page_community .successNav .navItem {
+	margin-left: -1px;
+	background-color: #EEEEEE;
+}
+#page_community .successNav .navItem .navItemContent {
+	background-color: #4e4d4b;
+	margin-left: 5px;
+	margin-right: 6px;
+}
+#page_community .successNav .navItemBottom {
+	margin-left: -1px;
+	background-color: #FFFFFF;
+}
+#page_community .successNav .navItemHead {
+	background-color: #FFFFFF;
+	border-top: 1px solid #CCCCCC;
+	border-right: 1px solid #d6d6d6;
+	border-left: 1px solid #d6d6d6;
+	color: #494D4B;
+	padding: 2px 0px 2px 8px;
+	margin-left: 5px;
+	margin-right: 6px;
+}
+#page_community .successNav .navItemHead {
+	color: #4E4D4B;
+	font-size: 11px;
+	font-weight: bold;
+}
+#page_community .successNav .browseMenu {
+	margin: 0px 0px -12px 20px; 
+	font-size: 11px;
+}
+#page_community .successNav .browseMenu span {
+	margin-left: -20px;
+}
+#page_community .successNav .navItemBottom, .successNav .navItemBottom {
+	background: #F5F5F5 url('../images/success/nav_bottom2.gif') no-repeat;
+}
+.nav_myAccount  a {
+	text-decoration: none;
+	color: #4E4D4B;
+}
+.nav_myAccount  a:hover{
+	color: #A18D53;
+}
+
+.mainWrapper {
+	width: 925px;
+	min-height: 100px;
+	padding: 0px;
+	position: relative;
+	display: block;
+	/* background-color: #4E4D4B; */
+	font-size: 12px;
+	margin: 0px auto;
+}
+#page_success .main_success {
+	height: 849px;
+	background: url('../images/success/julianne.jpg') no-repeat;
+}
+.main_testimonials {
+	height: auto;
+}
+.main_stories {
+	height: auto;
+}
+
+.mainWrapper  img {
+	margin: 0px;
+	border: 0px;
+}
+
+
+
+.mainWrapper .julianneIntro {
+	position: absolute;
+	top: 200px;
+	left: 250px;
+}
+.mainWrapper .julianneIntro a {
+	text-decoration: none;
+}
+.mainWrapper .julianneIntro .name {
+	display: block;
+	color: #003863;
+	font-size: 30px;
+	font-weight: bold;
+	padding-top: 10px;
+}
+.mainWrapper .julianneIntro .occup {
+	display: block;
+	color: #4E4D4B;
+	font-size: 16px;
+	font-weight: bold;
+	margin-top: 10px;
+}
+.mainWrapper .julianneIntro .julianneButton {
+	display: block;
+	color: #FFFFFF;
+	font-size: 12px;
+	background-color: #00AFF0;
+	padding: 2px 2px 2px 7px;
+	margin-top: 5px;
+	width: 133px;
+}
+
+
+
+
+.main_testimonials .testimonials_top {
+	position: relative;
+	height: 426px;
+	background: url('../images/success/testimonials_top_bg.jpg') repeat-x;
+}
+.main_testimonials .testimonials_bottom {
+	background: url('/images/success/testimonials_bottom_bg.jpg') repeat-y;
+	min-height: 300px;
+	padding: 0px;
+	margin: 0px;
+	padding-bottom: 125px;
+}
+
+.main_testimonials .testimonials_top .testimonialsHeadTitle {
+	position: absolute;
+	top: 35px;
+	left: 235px;
+	color: #174E67;
+	font-size: 36px;
+	padding-top: 7px;
+	padding-bottom: 2px;
+}
+.main_testimonials .testimonials_top .testimonialsSubTitle {
+	color: #174E67;
+	font-size: 30px;
+	position: absolute;
+	top: 100px;
+	left: 650px;
+	width: 250px;
+	line-height: 30px;
+}
+.main_testimonials .testimonials_top .summary {
+	color: #5F5F5F;
+	position: absolute;
+	top: 170px;
+	left: 650px;
+	width: 250px;
+	font-size: 14px;
+	line-height: 19px;
+}
+.main_testimonials .testimonials_top .flashVideo {
+	color: #5F5F5F;
+	position: absolute;
+	top: 88px;
+	left: 235px;
+	width: 385px;
+}
+
+.main_testimonials .testimonials_bottom  .slideshow {
+	color: #174E67;
+	margin-left: 235px;
+	font-size	14px;
+}
+.main_testimonials .testimonials_bottom  .slideshow .slides {
+	position: relative;
+	margin-top: 10px;
+}
+.main_testimonials .testimonials_bottom  .slideshow .oneSlide {
+	position: absolute;
+	width: 115px;
+}
+.main_testimonials .testimonials_bottom .slideshow .bigTxt {
+	padding-top: 20px;
+	margin-bottom: 10px;
+	font-size: 28px;
+}
+.main_testimonials .testimonials_bottom .slideshow .slides .smallTxt {
+	position: absolute;
+	top: 125px;
+	left: 0px;
+	font-size: 10px;
+}
+
+
+
+
+.main_stories .stories_top {
+	position: relative;
+	height: 375px;
+	background: url('../images/success/stories_top_bg.jpg') repeat-x;
+}
+.main_stories .stories_bottom {
+	background: url('../images/success/stories_bottom_bg.jpg') repeat-y;
+	min-height: 500px;
+	margin-bottom: 125px;
+}
+
+.main_stories .stories_top .storiesHead {
+	position: absolute;
+	top: 35px;
+	left: 235px;
+}
+.main_stories .stories_top .storiesHead .storyDisclaimer {
+	position: absolute;
+	top: 320px;
+	right: 0px;
+	font-size: 10px;
+	font-style: italic;
+}
+
+
+.main_stories .stories_top .success_365logo, .main_testimonials .testimonials_top .success_365logo {
+	position: absolute;
+	top: 0px;
+	right: 0px;
+}
+
+.main_stories .stories_top .storiesHeadTitle {
+	color: #174E67;
+	font-size: 36px;
+	margin-bottom: 15px;
+	padding-top: 7px;
+	padding-bottom: 22px;
+}
+.main_stories .stories_top .storiesSubTitle {
+	color: #174E67;
+	font-size: 30px;
+	line-height: 30px;
+	margin-top: 10px;
+}
+.main_stories .stories_top .summary {
+	color: #5F5F5F;
+	position: absolute;
+	top: 310px;
+	left: 235px;
+	width: 655px;
+	margin-top: 10px;
+	font-size: 14px;
+}
+
+
+.mainWrapper .getItNow {
+	width: 479px;
+	height: 128px;
+	background: url('../images/success/getItNow_bg.png') no-repeat;
+	position: absolute;
+	bottom: 0px;
+	left: 230px;
+}
+.mainWrapper .getItNow .getItNow_innerWrapper {
+	position: relative;
+	width: 100%;
+	height: 100%;
+}
+.mainWrapper .getItNow .getItNowButton {
+	position: absolute;
+	top: 40px;
+	right: 20px;
+}
+.mainWrapper .getItNow .getItNow_text {
+	position: absolute;
+	top: 50px;
+	left: 120px;
+	color: #174E67;
+	font-size: 16px;
+	font-weight: bold;
+}
+.mainWrapper .getItNow .getItNow_text  .orangeText{
+	color: #EE8800;
+}
+
+
+.mainWrapper .success_bvWrapper {
+	display: block;
+	margin-left: 250px;
+}
+
+.mainWrapper .btLinks {
+	position: absolute;
+	top: 600px;
+	left: 161px;
+	width: 573px;
+}
+.mainWrapper .BVSYGridStoryPhoto .BVSYStoriesImageLink {
+	overflow: visible;
+	height: auto;
+}
+
+/* Celebrity Spotlight landing */
+.toggler{}
+.toggler .textshort{}
+.toggler .textfull{display: none;}
+.toggler .link{margin-bottom: 10px;}
+
+.successNav{z-index: 5;}
+
+/* Order by Phone for sidebar */
+#orderbyphonesidebar{margin: 0 5px; padding-bottom: 5px;}
+#orderbyphonesidebar .phonevalue{padding-left: 10px;}
+
+#wen365sidebar{margin: 0 5px;}
+
+#page-stories-katy-perry{background-image: url(../images/stories/katyperry-bg.jpg); background-position: left top; background-repeat: no-repeat; min-height: 1075px;}
+#page-stories-katy-perry #primaryContent{background: none;}
+
+#page-stories-katy-perry #csl-content{width: 220px; color: white; float: left; margin-right: 30px; padding-bottom: 0; position: relative;}
+#page-stories-katy-perry #csl-header{}
+#csl-headerdescription{font: italic 12px Arial,Helvetica,sans-serif; margin-bottom: 10px;}
+#page-stories-katy-perry #csl-name{text-transform: uppercase;}
+#page-stories-katy-perry #csl-headername1{font: 58px Arial, Helvetica, sans-serif; font-weight: bold;}
+#page-stories-katy-perry #csl-headername2{font: 59px Arial, Helvetica, sans-serif; margin-top: -10px;}
+#page-stories-katy-perry .toggler .textshort .body{font-size: large;}
+#page-stories-katy-perry .toggler .textfull{}
+#page-stories-katy-perry .toggler .link a{border-bottom: 0 none; color: #CD0000; text-decoration: underline;}
+
+#page-stories-katy-perry #csl-fbinclude iframe{background-color: #FFFFFF; border-radius: 5px; height: 30px; overflow: hidden; padding: 5px 5px 0; text-align: center; width: 100%;}
+#page-stories-katy-perry #bvOrderNow{margin: 0 auto; padding-bottom: 0; padding-top: 910px;}
+
+.sidebarTitle{padding: 5px 0 5px 10px !important;}
+	
+.sectionSubFolders{text-align: center; margin-top: 20px;}
+.sectionSubFoldersInner{margin: 0 auto; width: 580px; background-color: #f5f5f5; padding: 5px;}
+.sectionSubFolders ul{}
+.sectionSubFolders li{width: 192px; max-width: 192px; height: 128px; max-height: 128px; float: left;}
+.sectionSubFolders li a{display: block; height: 100%; color: #23465a !important; font-weight: bold; padding: 5px; text-transform: uppercase;}
+.sectionSubFolders li a img{}
+.sectionSubFolders li a span{display: block;}

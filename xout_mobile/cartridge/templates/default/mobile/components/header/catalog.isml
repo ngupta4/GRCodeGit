@@ -1,0 +1,61 @@
+<iscache type="relative" hour="24"/>
+<isdecorate template="mobile/pt_mobile">
+<iscache type="relative" minute="30" varyby="price_promotion"/>
+<isinclude template="mobile/util/modules"/>
+	
+<iscomment>
+	This template displays a 3-level category tree as top navigation.
+	Only categories marked with showInMenu are shown.
+</iscomment>
+
+<isscript>
+	// get root category of current site's navigation catalog
+	var siteCatalog = dw.catalog.CatalogMgr.getSiteCatalog();
+	var root = null;
+	if(siteCatalog!=null) {root = siteCatalog.getRoot();}
+
+	// get the "sale" category
+	var saleCategory = dw.catalog.CatalogMgr.getCategory('sale');
+</isscript>
+<isif condition="${root != null}">
+<div id="catalogtree">
+	
+		<isloop items="${root.getOnlineSubCategories()}" var="topCat">
+			<isif condition="${('showInMenu' in topCat.custom) && topCat.custom.showInMenu.valueOf()}">
+			
+				<div class="listing">
+				<a href="${URLUtils.http('mSearch-Show', 'cgid', topCat.getID())}"><isprint value="${topCat.getDisplayName()}"/></a>
+				</div>
+						
+				<isloop items="${topCat.getOnlineSubCategories()}" var="subCat">
+					<isif condition="${('showInMenu' in subCat.custom) && subCat.custom.showInMenu.valueOf()}">
+						
+						<div class="listing">
+						<a href="${URLUtils.http('mSearch-Show', 'cgid', subCat.getID())}"><span style="margin-left:30px;"><isprint value="${subCat.getDisplayName()}"/></span></a>
+						</div>
+			
+						<isloop items="${subCat.getOnlineSubCategories()}" var="subCatsub">
+							<isif condition="${('showInMenu' in subCatsub.custom) && subCatsub.custom.showInMenu.valueOf()}">
+								<div class="listing">
+								<a href="${URLUtils.http('mSearch-Show', 'cgid', subCatsub.getID())}"><span style="margin-left:60px;"><isprint value="${subCatsub.getDisplayName()}"/></span></a>
+								</div>
+								
+							</isif>
+						</isloop>
+	                    
+	                </isif>
+				</isloop>
+                     
+	    	</isif>
+		</isloop>
+		
+	<isif condition="${saleCategory != null && saleCategory.online}">
+		<li>
+			<a  href="${URLUtils.http('mSearch-Show','cgid',saleCategory.ID)}" ><isprint value="${saleCategory.displayName}"/></a>
+		</li>
+	</isif>
+	
+    
+</div><!-- END: categorymenu -->
+</isif>
+</isdecorate>

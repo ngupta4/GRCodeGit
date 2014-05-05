@@ -1,0 +1,60 @@
+<iscontent type="text/html"/>
+<subject>${Resource.msg('testimony.mail.subject','rendering',null)}</subject>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+</head>
+<body>
+<div>
+<isscript>
+	function prepare(arg){
+		if(!arg){
+			return '';
+		}
+		return arg;
+	}
+	
+</isscript>
+<h3>${Resource.msg('testimony.mail.h3','rendering',null)}</h3>
+<pre>
+${Resource.msg('testimony.mail.name','rendering',null)}: ${prepare(pdict.Testimony.custom.firstName)+' '+prepare(pdict.Testimony.custom.lastName)} 
+${Resource.msg('testimony.mail.email','rendering',null)}: ${prepare(pdict.Testimony.custom.email)}
+${Resource.msg('testimony.mail.address1','rendering',null)}: ${prepare(pdict.Testimony.custom.address1)}
+${Resource.msg('testimony.mail.address2','rendering',null)}: ${prepare(pdict.Testimony.custom.address2)}
+${Resource.msg('testimony.mail.city','rendering',null)}: ${prepare(pdict.Testimony.custom.city)}
+${Resource.msg('testimony.mail.state','rendering',null)}: ${prepare(pdict.Testimony.custom.stateCode)}
+${Resource.msg('testimony.mail.zip','rendering',null)}: ${prepare(pdict.Testimony.custom.zip)}
+${Resource.msg('testimony.mail.age','rendering',null)}: ${prepare(pdict.Testimony.custom.age)}
+${Resource.msg('testimony.mail.gender','rendering',null)}: ${prepare(pdict.Testimony.custom.gender)}
+${Resource.msg('testimony.mail.phone','rendering',null)}: ${prepare(pdict.Testimony.custom.phone)}
+${Resource.msg('testimony.mail.story','rendering',null)}: ${prepare(pdict.Testimony.custom.story)}
+</pre>
+
+</div>
+<div>
+<span>${Resource.msg('testimony.mail.imagestitle','rendering',null)}</span>
+<ul>
+<isscript>
+	var TestimonyImagesDirPath = (dw.io.File.LIBRARIES+'/'+dw.system.Site.getCurrent().name+'/default/images/testimonials/'+pdict.Testimony.custom['ID']+'/').replace(/\//g, dw.io.File.SEPARATOR);
+	var properties = ['before1','after1','before2','after2','before3','after3'];
+	var o = {};
+	
+	function hasImage(property){
+		return !empty(pdict.Testimony.custom[property]) && (dw.io.File(TestimonyImagesDirPath + pdict.Testimony.custom[property])).exists();			
+	}
+		
+</isscript>
+
+	<isloop iterator="${properties}" var="prop">
+	<isif condition="${hasImage(prop)}">
+	<li><a href="${URLUtils.http('Testimony-ShowImage','tid',pdict.Testimony.custom['ID'],'img',pdict.Testimony.custom[prop])}"/>${prop}</a></li>
+	</isif>
+	</isloop>
+
+</ul>
+</div>
+<div>
+${Resource.msg('testimony.mail.footer','rendering',null)}
+</div>
+</body>
+</html>

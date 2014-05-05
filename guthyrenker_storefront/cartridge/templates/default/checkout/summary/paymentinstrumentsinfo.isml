@@ -1,0 +1,63 @@
+<iscomment>
+	This template renders the billing address and a list of all payment
+	methods (more precessively payment instruments) used for the payment
+	of the basket. It is displayed in the order summary at the right hand
+	side in the checkout process.
+</iscomment>
+<isif condition="${pdict.Order}">
+<isset name="paymentInstruments" value="${pdict.Order.paymentInstruments}" scope="page"/>
+<iselse/>
+<isset name="paymentInstruments" value="${pdict.Basket.paymentInstruments}" scope="page"/>
+</isif>
+<isif condition="${!empty(paymentInstruments)}">
+	<iscomment>render a box per payment instrument</iscomment>
+	<isloop items="${paymentInstruments}" var="paymentInstr" status="loopstate">
+		<div class="minipaymentinstrument innerTitle">
+			<div class="header">
+				<isif condition="${pdict.Order==null}">
+					<a href="${URLUtils.https('COBilling-Start')}" class="changeLink">${Resource.msg('global.change','locale',null)}</a>
+				</isif>
+				<isif condition="${loopstate.first}"><h2>${Resource.msg('minibillinginfo.paymentmethod','checkout',null)}</h2></isif>
+			</div>
+			
+			<div class="details innerBox">
+				<iscomment>
+					render the detail section depending on the type of the payment instrument
+				</iscomment>
+				<isif condition="${dw.order.PaymentInstrument.METHOD_CREDIT_CARD.equals(paymentInstr.paymentMethod)}">
+					<iscomment>a credit card</iscomment>
+					<iscomment><div><isprint value="${paymentInstr.creditCardHolder}"/></div></iscomment>
+					<div class="row">${Resource.msg('minibillinginfo.paymentmethod','checkout',null)}: <isprint value="${Resource.msg('minibillinginfo.creditcard', 'checkout', null)}"/></div>
+					<div class="row">${Resource.msg('minibillinginfo.cardtype','checkout',null)} <isprint value="${paymentInstr.creditCardType}"/></div>
+					<div class="row">${Resource.msg('minibillinginfo.cardnumber','checkout',null)} <isprint value="${paymentInstr.maskedCreditCardNumber}"/></div>
+					<div class="row">${Resource.msg('minibillinginfo.expiration','checkout',null)} <isprint value="${paymentInstr.creditCardExpirationMonth}" formatter="00"/>/<isprint value="${paymentInstr.creditCardExpirationYear}" formatter="0000"/></div>
+					<iscomment><div class="row">${Resource.msg('minibillinginfo.amount','checkout',null)}: <isprint value="${paymentInstr.paymentTransaction.amount}"/></div></iscomment>
+				<iselseif condition="${dw.order.PaymentInstrument.METHOD_BML.equals(paymentInstr.paymentMethod)}"/>
+					<iscomment>bill me later</iscomment>
+					${Resource.msg('minibillinginfo.bml','checkout',null)}
+					<div class="row">${Resource.msg('minibillinginfo.amount','checkout',null)}: <isprint value="${paymentInstr.paymentTransaction.amount}"/></div>
+				<iselseif condition="${dw.order.PaymentInstrument.METHOD_GIFT_CERTIFICATE.equals(paymentInstr.paymentMethod)}"/>
+					<iscomment>gift certificate</iscomment>
+					<div class="row">${Resource.msg('minibillinginfo.giftcertificate','checkout',null)}: <isprint value="${paymentInstr.maskedGiftCertificateCode}"/></div>
+					<div class="row">${Resource.msg('minibillinginfo.amount','checkout',null)}: <isprint value="${paymentInstr.paymentTransaction.amount}"/></div>
+				
+					<iselseif condition="${dw.web.Resource.msg('payMethods.echeck.ID','configuration',null).equals(paymentInstr.paymentMethod)}"/>
+					<iscomment>eCheck</iscomment>
+					<div class="row">${Resource.msg('minibillinginfo.paymentmethod','checkout',null)}: <isprint value="${Resource.msg('payMethods.echeck.name', 'configuration', null)}"/></div>
+					<iscomment><div class="row">${Resource.msg('minibillinginfo.bankaccounttype','checkout',null)} <isprint value="${paymentInstr.bankAccountHolder}"/></div>
+					<div class="row">${Resource.msg('minibillinginfo.routingnumber','checkout',null)} <isprint value="${paymentInstr.bankRoutingNumber}"/></div></iscomment>
+					<div class="row">${Resource.msg('minibillinginfo.accountnumber.label','checkout',null)} <isprint value="${paymentInstr.maskedBankAccountNumber}"/></div>
+					<iscomment><div>${Resource.msg('minibillinginfo.amount','checkout',null)}: <isprint value="${paymentInstr.paymentTransaction.amount}"/></div></iscomment>
+				
+				<iselseif condition="${'PayPal'.equals(paymentInstr.paymentMethod)}"/>
+                <iscomment>pay pal</iscomment>
+                	<div>${Resource.msg('minibillinginfo.paymentmethod','checkout',null)}: ${Resource.msg('minibillinginfo.paypal','checkout',null)}</div>
+                    <iscomment><div>${Resource.msg('minibillinginfo.amount','checkout',null)}: <isprint value="${paymentInstr.paymentTransaction.amount}"/></div></iscomment>
+               <iselse/>
+					<iscomment>n/a</iscomment>
+					Unknown payment method
+				</isif>
+			</div>
+		</div>
+	</isloop>
+</isif>

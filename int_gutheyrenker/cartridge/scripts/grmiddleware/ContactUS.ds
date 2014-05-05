@@ -1,0 +1,21 @@
+/**
+*
+*   @input RequestID : String request id.
+*   @input Request   : Object contacy us object.
+*   @input currRequest : dw.system.Request
+*
+*/
+importPackage( dw.system );
+importPackage( dw.net );
+
+importScript( "grmiddleware/libGRMiddleware.ds" );
+importScript( "common/libContactUs.ds" );
+
+function execute( args : PipelineDictionary ) : Number
+{
+    if(!doContatUs(args.RequestID, args.Request, args.currRequest)){
+        return PIPELET_ERROR;
+    }
+    
+    return PIPELET_NEXT;
+}

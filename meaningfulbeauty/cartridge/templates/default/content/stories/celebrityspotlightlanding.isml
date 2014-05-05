@@ -1,0 +1,19 @@
+<!--- TEMPLATENAME: celebrityspotlight.isml --->
+<isinclude template="util/modules" />
+
+<isdecorate template="content/stories/pt_stories">
+	<iscomment>Include the landing page content asset for this section</iscomment>
+	<iscontentasset aid="celebrity-spotlight-landing" />
+	
+	<script type="text/javascript">
+	jQuery(function() {
+		jQuery('.toggler .textfull').hide();
+		
+		jQuery('.toggler .link').click(function() {
+			jQuery('.textshort, .textfull').toggle();
+
+			return false;
+		});
+	});
+	</script>
+</isdecorate>

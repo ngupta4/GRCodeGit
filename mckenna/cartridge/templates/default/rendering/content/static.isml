@@ -1,0 +1,77 @@
+<!--- TEMPLATENAME: static.isml --->
+<iscache status="off"/>
+
+<iscomment>
+	This template is created before the 'wrapper' template, so we can set
+	up the template configuration for the 'pt_storefront' template right here.
+</iscomment>
+<isif condition="${pdict.CurrentHttpParameterMap.ajax.value == "true"}">
+	<isset name="DecoratorTemplate" value="util/pt_empty" scope="page"/>
+<iselse/>
+	<isset name="DecoratorTemplate" value="content/pt_customerservice" scope="page"/>
+</isif>
+
+<isdecorate template="${DecoratorTemplate}">
+	<isinclude template="util/modules"/>
+	<isscript>
+		importPackage(dw.content);
+		importPackage(dw.util);
+		importPackage(dw.object);
+		importPackage(dw.catalog);
+		
+		importScript('guthyrenker_core:common/libUtils.ds');
+	
+		var CurrentFolder : Folder = null;
+		var CurrentContent : Content = null;
+		
+		if( "fdid" in pdict.CurrentHttpParameterMap && !empty(pdict.CurrentHttpParameterMap.fdid.value) ) {
+			CurrentFolder = ContentMgr.getFolder(pdict.CurrentHttpParameterMap.fdid.stringValue);
+		}
+		
+		if( "cid" in pdict.CurrentHttpParameterMap && !empty(pdict.CurrentHttpParameterMap.cid.value) ) {
+			CurrentContent = ContentMgr.getContent(pdict.CurrentHttpParameterMap.cid.stringValue);
+		}
+		
+		if( empty(CurrentContent) && !empty(CurrentFolder) && !empty(CurrentFolder.onlineContent) ) {
+			CurrentContent = CurrentFolder.onlineContent[0];
+		}
+
+		
+		var CCC : Object = pdict.CurrentCampaignConfig;
+	
+		var campaignCode : String = CCC.campaignCode;
+		
+		var showHeader : boolean = CCC.showHeader;
+		var showFooter : boolean = CCC.showFooter;
+		var showNav : boolean = CCC.showNav;
+		var showOrderButton : boolean = CCC.showOrderButton;
+		
+		var category : dw.catalog.Category = CCC.getCampaignCategory();
+		
+	</isscript>
+	
+	<isif condition="${pdict.CurrentHttpParameterMap.ajax.value != "true"}">		
+		<div class="content-page">
+			<isslot id="hp-top" context="category" description="Home Page Top" context-object="${category}"/>
+		</div>
+	</isif>
+	
+	<div class="<isprint value="${CurrentContent.ID}"/> asset-page">
+		<div id="leftcolumn">
+			<div class="asset-leftcol"><iscontentasset aid="asset-leftcol"/></div>
+			<div class="clear"></div>
+		</div>
+		<div id="content">	
+			<isif condition="${CurrentContent.custom.customCSSFile != null}">
+				<link href="${CurrentContent.custom.customCSSFile.httpURL}" type="text/css" rel="stylesheet" />
+			</isif>
+			<div id="primary-content">
+				<iscontentasset aid="${CurrentContent.ID}" />		
+			</div>
+			<div class="clear"></div>
+		</div>
+	</div>
+	
+	<iscontentasset aid="social-network-bar" />
+	
+</isdecorate>

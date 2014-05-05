@@ -1,0 +1,52 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<isinclude template="util/modules"/>
+
+<isscript>
+    importScript('guthyrenker_core:common/libUtils.ds');
+
+    importPackage(dw.object);
+    importPackage(dw.catalog);
+    
+    var CCC : Object = pdict.CurrentCampaignConfig;
+    var campaignCode : String = CCC.campaignCode;
+    
+    var showHeader : boolean = CCC.showHeader;
+    var showFooter : boolean = CCC.showFooter;
+    var showNav : boolean = CCC.showNav;
+    var showOrderButton : boolean = CCC.showOrderButton;
+    
+    var category : dw.catalog.Category = CCC.getCampaignCategory();
+</isscript>
+
+<isset name="RootFolder" value="${dw.content.ContentMgr.getFolder('customercare')}" scope="page"/>
+
+<head>
+    <iscomment>Include all important information globally , e.g. meta-data, link information, and javascript.</iscomment>
+    <isinclude template="components/header/htmlhead"/>
+    <link href="${URLUtils.staticURL('/css/account.css')}" type="text/css" rel="stylesheet" />
+</head>
+<body>
+<isinclude template="common/mboxglobal"/>
+<isinclude template="components/header/header"/>
+<div id="container" class="pt_customerservice">
+<div id="idMainWide" class="mainWide">
+      <div class="clearfix" id="main">
+            <div class="clearfix sitemap-main">
+                <isreplace/>
+              </div><!-- END: content -->
+            <iscomment>Let's stop null pointer exceptions</iscomment>
+            <isscript>
+            	if (typeof(CurrentFolder) == 'undefined') var CurrentFolder={'ID':''};
+            	if (typeof(CurrentContent) == 'undefined') var CurrentContent={'ID':''};
+            </isscript>
+
+        </div> <!-- END: main -->
+    </div>
+    
+    
+    <isinclude template="components/footer/footer"/>
+    <isinclude template="components/footer/pixels"/>
+    <isinclude template="common/google_analytics" />
+</body>
+</html>

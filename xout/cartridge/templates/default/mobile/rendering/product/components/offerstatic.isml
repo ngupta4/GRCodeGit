@@ -1,0 +1,28 @@
+<!--- TEMPLATENAME: offerstatic.isml --->
+<link href="${URLUtils.staticURL('/css/product.css')}" type="text/css" rel="stylesheet" />
+
+<isif condition="${pdict.Product != null}">
+	<isobject object="${pdict.Product}" view="detail">
+		<iscomment>set the product for local reuse</iscomment>
+		<isset name="Product" value="${pdict.Product}" scope="page"/>
+		<isset name="Offer" value="${pdict.CurrentHttpParameterMap.offer}" scope="page"/>
+		<div id="offer-${Product.ID}" class="offerContainer" style="position:relative;">
+			<isif condition="${Offer == 'B'}">
+				<img src="${Product.getImage('large',1).url}"
+					alt="${Product.getImage('large',1).alt}" 
+					title="${Product.getImage('large',1).title}"/>
+				<isif condition="${Product.ID == 'AYXR37'}">
+					<isinclude template="rendering/product/components/offer_b_left.isml"/>
+				<iselse>
+					<isinclude template="rendering/product/components/offer_b_left.isml"/>
+				</isif>
+			<iselse>
+				<img src="${Product.getImage('large',0).url}"
+					alt="${Product.getImage('large',0).alt}" 
+					title="${Product.getImage('large',0).title}"/>
+				<isinclude template="${Product.template}"/>
+			</isif>
+		</div>
+	</isobject>
+</isif>
+

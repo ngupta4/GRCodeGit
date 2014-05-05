@@ -1,0 +1,13 @@
+<iscomment>
+this include requires an object of type dw.system.Status named status
+</iscomment>
+
+<isif condition="${status != null}">
+<isif condition="${status.getItems().size()>0}">
+<div class="errorMsg mobilecontent" style="color: red;">
+	<isloop iterator="${status.getItems()}" alias="status_item">
+		- ${status_item.getMessage()}<br>
+	</isloop>
+</div>
+</isif>
+</isif>

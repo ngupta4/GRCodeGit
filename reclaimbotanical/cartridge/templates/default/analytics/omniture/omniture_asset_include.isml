@@ -1,0 +1,1112 @@
+<!--- TEMPLATENAME: omniture_asset_include.isml --->
+<!-- Tracking for Guhty-Renker  -->
+<!-- Start: pagecomponents/omniture_asset_include-->
+<!-- SiteCatalyst code version: H.19.3.
+Copyright 1997-2009 Omniture, Inc. More info available
+http://www.omniture.com -->
+
+<div class="omnitureasset">     		
+<script type="text/javascript">
+	<isif condition="${dw.system.Site.getCurrent().getCustomPreferenceValue("omnitureAccountId")!=null}">
+		var s_account="${dw.system.Site.getCurrent().getCustomPreferenceValue("omnitureAccountId")}";			
+	<iselse>
+		var s_account="grenkerreclaim_dw" //default value if site preference is not defined for any reason..
+	</isif>
+</script>
+
+<script type="text/javascript" src="${dw.web.URLUtils.staticURL('js/omniture/s_code.js')}"></script>
+<isscript>
+ 	importPackage( dw.object );
+ 	importPackage( dw.customer );
+	importPackage( dw.util );
+	importScript( "guthyrenker_core:analytics/omniture/libOmniture.ds" );
+ 	var omnitureHelper = getOmnitureHelper();	
+    importPackage(dw.content);
+    importScript('guthyrenker_core:common/libUtils.ds');
+	
+ 	//*******************************************************************************/
+	//Initialize Omniture Variable
+	//These value set to these variable will be used to set the omniture tags.
+	//The omniture tags are defined in the custom objects. 	
+	//*******************************************************************************/
+	var omnAsset : Content = null;
+	var omnVariables = new HashMap();
+	var omnTitle = "";
+	var omnAssetID = "";
+ 	var trackingUrl = omnitureHelper.getOmnitureTrackingUrl();
+	var omnPageName = "";
+	var omnSlotName = "";
+	var omnStorefrontName = "VB";  
+	var omnServer : String = dw.system.Site.getCurrent().getCustomPreferenceValue("omnitureDomainStoreName");
+	var omnChannel = "";
+	var omnSubscriberStatus = "non-sub";
+	var omnCountry = "USA";
+	var omnState = "";
+	var omnZip = "";
+	var omnVisitorLocation="";
+    var omnCampaignCode="";
+    var omnCartID="";
+    var omnFormName="";
+    var omnContentType="";
+    var omnSearchQuery : String = pdict.CurrentHttpParameterMap.q.stringValue;
+	if(!empty(pdict.CurrentCampaignConfig)){
+		omnCampaignCode  = pdict.CurrentCampaignConfig.campaignCode;
+	}
+	
+	if(pdict.CurrentCustomer.profile != null && pdict.CurrentCustomer.profile.addressBook.preferredAddress !=null){
+        omnZip = pdict.CurrentCustomer.profile.addressBook.preferredAddress.postalCode;
+        omnState = pdict.CurrentCustomer.profile.addressBook.preferredAddress.stateCode;
+        omnCity = pdict.CurrentCustomer.profile.addressBook.preferredAddress.city;
+        omnVisitorLocation = omnCountry+'|'+omnState+'|'+omnCity+'|'+omnZip;
+        
+    }
+	var session = pdict.CurrentSession;
+	if(session != null && ('subscriberStatus' in session.custom) && session.custom.subscriberStatus){
+		var omnSubscriberStatus = "sub";
+	}
+	
+	
+	var omnCampaignID : String = pdict.CurrentSession.privacy.campaignID;
+	var primaryUCI : dw.web.Cookie = pdict.CurrentHttpParameterMap.uci;
+	if(empty(primaryUCI)|| null == primaryUCI || primaryUCI =="" ){
+		primaryUCI = pdict.CurrentRequest.httpCookies['uci'];
+	}
+	var secondaryUCI : dw.web.Cookie = pdict.CurrentRequest.httpCookies['secondaryuci'];
+	var omnCampaignUCI : String = !empty(primaryUCI)?primaryUCI.value: !empty(pdict.CurrentSession.privacy.campaignUCIID) ? pdict.CurrentSession.privacy.campaignUCIID : '';
+	var omnCampaignAndPage : String = "";
+	var omnHour = dw.system.System.getCalendar().get(dw.util.Calendar.HOUR_OF_DAY);
+	var omnDay = "";
+	var omnWeekday = "WeekDay";
+	var omnRemoteIP = pdict.CurrentRequest.httpRemoteAddress;
+    var omnAccount = "";
+	var omnEmail = "";
+	var omnVisitNumber = "";
+	var omnDaysSinceLastVisit = "";
+	var omnRedirect = pdict.CurrentHttpParameterMap.rdir.stringValue;
+	var omnVendorBanner = pdict.CurrentHttpParameterMap.vendorbnr.stringValue;
+	var omnChatRefId = "";
+	var omnSubId = pdict.CurrentHttpParameterMap.subid.stringValue;
+	var omnBannerId = pdict.CurrentHttpParameterMap.grbnr.stringValue;
+	var omnGrcid = pdict.CurrentHttpParameterMap.grcid.stringValue;;	
+	var omnExtbnr = pdict.CurrentHttpParameterMap.extbnr.stringValue; 
+	//Query parameter "extbnr", for example ?extbnr=cc999
+	var omnGRCUID = dw.util.UUIDUtils.createUUID();
+	var omnESID = pdict.CurrentHttpParameterMap.esid.stringValue;
+	var omnReferrerURL = pdict.CurrentRequest.httpHost + pdict.CurrentRequest.httpPath;
+	var httpQuery = empty(pdict.CurrentRequest.httpQueryString) ? "" : ("?"+pdict.CurrentRequest.httpQueryString);
+	var omnPageURL = omnReferrerURL + httpQuery; 
+	var omnProducts = "";
+	var omnLocale = "";
+	var omnPayPal = "";
+	var omnCustomer = "Guest";
+	var omnCustomerID = "";
+	var omnAddSource = "";
+	var domain = pdict.CurrentRequest.httpHost;
+	var omnCurrency = dw.system.Site.current.currencyCode;
+	var allProducts = ';';
+	var omnOrderId = "";
+	var omnPrimaryUci = "";
+	var omnSecondaryUci ="";
+	var VisitorID = "RBVisitorId";
+	if(primaryUCI!=null){
+       omnPrimaryUci = dw.util.StringUtils.stringToHtml(primaryUCI.value);
+    }
+    if(secondaryUCI!=null)  
+      omnSecondaryUci = secondaryUCI.value;
+    if (secondaryUCI!=null && secondaryUCI.value!=null && secondaryUCI.value.indexOf('"')>-1) {
+      omnSecondaryUci = "";
+	}
+	
+	// Remove XSS vulnerability
+    if (!empty(omnReferrerURL)) {
+	  omnReferrerURL = dw.util.StringUtils.stringToHtml(omnReferrerURL);
+    }
+    if (!empty(omnPageURL)) {
+	  omnPageURL     = dw.util.StringUtils.stringToHtml(omnPageURL);
+	}  
+    if (!empty(omnGrcid)) {
+	  omnGrcid       = dw.util.StringUtils.stringToHtml(omnGrcid);
+    }
+    if (!empty(omnCampaignUCI)) {
+	  omnCampaignUCI = dw.util.StringUtils.stringToHtml(omnCampaignUCI);
+    }
+    
+    
+	//*******************************************************************************/
+	// Get the page from pdict
+	//*******************************************************************************/
+	omnPage = pdict.OmniturePage;
+	if(empty(omnPage)) { 
+		omnPage = "";
+	}
+	if(typeof(currentTemplate) != 'undefined' && !empty(currentTemplate) && currentTemplate == 'redirecterror'){ 
+		omnPage = "GeneralError"; 
+	}
+
+	//*******************************************************************************/
+    //Common Variables - Variables for all pages on Guthy-Renker
+	//*******************************************************************************/
+	var omnMeta = pdict.CurrentPageMetaData;
+	if(omnMeta != null && omnMeta.title != null) {
+		omnTitle = omnMeta.title;
+	}
+	
+	var currRequest : Request = pdict.CurrentRequest;
+	omnVariables.put("PageTitlePrefix",getPageTitlePrefix());
+	omnVariables.put("Locale",currRequest.getHttpLocale());
+	omnVariables.put("Server", (omnServer == null)?null : omnServer);
+	omnVariables.put("Campaign",omnCampaignUCI);
+	omnVariables.put("Channel",omnChannel);
+	omnVariables.put("SubscriberStatus",omnSubscriberStatus);
+	omnVariables.put("Country",omnCountry);
+	omnVariables.put("Hour",omnHour);
+	omnVariables.put("VisitorLocation",omnVisitorLocation);
+	
+	if(pdict.CurrentCustomer.authenticated || pdict.CurrentCustomer.registered || pdict.CurrentSession.custom.cRememberMe || pdict.CurrentRequest.httpCookies['rememberMe']){
+		omnVariables.put("SubscriberStatus","sub");
+		if(omnCampaignCode == null || empty(omnCampaignCode)){
+			omnCampaignCode = 'core';
+		}
+	}
+	
+	if(pdict.CurrentCustomer.authenticated){
+		omnCustomerID=pdict.CurrentCustomer.ID;
+		omnAccount=pdict.CurrentCustomer.profile.custom.accountNumber;
+		omnEmail = pdict.CurrentCustomer.profile.email;
+	}
+	
+	if (dw.system.System.getCalendar().get(dw.util.Calendar.DAY_OF_WEEK) == dw.util.Calendar.MONDAY ) {
+		omnDay = "Mon";
+	
+	} else if (dw.system.System.getCalendar().get(dw.util.Calendar.DAY_OF_WEEK) == dw.util.Calendar.TUESDAY ) {
+		omnDay = "Tue";
+	
+	} else if (dw.system.System.getCalendar().get(dw.util.Calendar.DAY_OF_WEEK) == dw.util.Calendar.WEDNESDAY ) {
+		omnDay = "Wed";
+	
+	} else if (dw.system.System.getCalendar().get(dw.util.Calendar.DAY_OF_WEEK) == dw.util.Calendar.THURSDAY ) {
+		omnDay = "Thu";
+	
+	} else if (dw.system.System.getCalendar().get(dw.util.Calendar.DAY_OF_WEEK) == dw.util.Calendar.FRIDAY ) {
+		omnDay = "Fri";
+
+	} else if (dw.system.System.getCalendar().get(dw.util.Calendar.DAY_OF_WEEK) == dw.util.Calendar.SATURDAY ) {
+		omnDay = "Sat";
+		omnWeekday = "WeekEnd";
+
+	} else {
+		omnDay = "Sun";
+		omnWeekday = "WeekEnd";
+	}
+	omnVariables.put("Day",omnDay);
+	omnVariables.put("Weekday",omnWeekday);
+	omnVariables.put("RemoteIP",omnRemoteIP);
+	omnVariables.put("Account",omnAccount);
+	omnVariables.put("Email",omnEmail);
+	omnVariables.put("Country",omnCountry);
+	omnVariables.put("Redirect",omnRedirect);
+	omnVariables.put("VendorBanner",omnVendorBanner);
+	omnVariables.put("ChatRefId",omnChatRefId);
+	omnVariables.put("SubId",omnSubId);
+	omnVariables.put("BannerId",omnBannerId);
+	omnVariables.put("ESID",omnESID);
+	omnVariables.put("ReferrerURL",omnReferrerURL);
+	omnVariables.put("PageURL",omnPageURL);
+	omnVariables.put("CampaignAndPage",omnCampaignAndPage);
+	omnVariables.put("StorefrontName",omnStorefrontName);
+	omnVariables.put("Currency",omnCurrency);
+	omnVariables.put("Extbnr",omnExtbnr);
+	omnVariables.put("Grcid",omnGrcid);
+	omnVariables.put("GRCUID",omnCustomerID);
+	omnVariables.put("PrimaryUci",omnPrimaryUci);
+	omnVariables.put("SecondaryUci",omnSecondaryUci);
+	omnVariables.put("SearchQuery",omnSearchQuery);
+		 
+	//*******************************************************************************/
+    //HomePage/Landing page - Set AssetId for Home page specific tags
+	//*******************************************************************************/
+	
+	 if(omnPage == "Homepage"){
+		if(omnCampaignCode == "core"){
+			omnPageName = omnStorefrontName + ":acq:Home";
+			omnChannel="acq:content";
+			omnVariables.put("Events","event9");
+		}
+		else{
+			omnPageName = omnStorefrontName + ":acq:"+omnCampaignCode;
+			omnChannel="acq:landing page";
+			omnVariables.put("Events","event9");
+		}
+		
+		omnAssetID = "OMNITURE_HOMEPAGE";
+	}
+	
+	
+	//*******************************************************************************/
+    //Offerpage/Landing page - Set AssetId for Home page specific tags
+	//*******************************************************************************/
+	else if(omnPage == "sas1"){
+		omnPageName = omnStorefrontName + ":acq:SAS"
+		omnVariables.put("PageName",omnPageName);
+		omnChannel="acq:checkout";
+		omnContentType="products";
+		if (pdict.CurrentHttpParameterMap.OmnCartRemove.stringValue!=null){
+			omnVariables.put("Events","event10,scRemove");
+			omnVariables.put("Products",";" + pdict.CurrentHttpParameterMap.OmnCartRemove.stringValue);
+		}else{
+			omnVariables.put("Events","event10,prodView");
+		}
+	}
+	
+	
+	
+	
+	
+	//*******************************************************************************/
+    //Static pages - Set AssetId for Static Content specific tags
+	//*******************************************************************************/
+	else if(omnPage == "StaticContent"){
+		omnPageName = omnStorefrontName + ":static";
+		if(pdict.Content != null) {
+			omnChannel ="general content" ;
+			var folderPath : String  = getFolderPath(pdict.Content.classificationFolder);
+			omnPageName = omnStorefrontName + ":"+pdict.Content.name;
+			omnVariables.put("Channel",domain+folderPath);
+			omnContentType="content";
+			if(pdict.shadePage == "SelectAShade"){
+				omnVariables.put("Events","event6");
+				omnChannel ="acq:checkout" ;
+			}
+						
+		}
+		
+		omnAssetID = "OMNITURE_STATIC_CONTENT";
+	}
+	
+	//*******************************************************************************/
+    //ContactUs - Set AssetId for Static Content specific tags
+	//*******************************************************************************/
+	else if(omnPage == "Contactus"){
+		omnPageName = omnStorefrontName + ":contactus";
+		omnChannel ="general content";	
+		omnFormName="contactus";
+		omnContentType="content";
+		omnVariables.put("Events",'event4');
+		omnAssetID = "OMNITURE_STATIC_CONTENT";
+	}
+	
+	
+	else if(omnPage == "ContactUsSuccess"){
+		omnPageName = omnStorefrontName + ":contactussuccess";
+		omnChannel ="general content";	
+		omnContentType="content";
+		omnAssetID = "OMNITURE_STATIC_CONTENT";
+	}
+	//*******************************************************************************/
+    //Testimony Page
+	//*******************************************************************************/
+	else if(omnPage == "testimony"){
+		omnPageName = omnStorefrontName + ":testimony";
+		omnChannel ="general content";	
+		omnFormName="testimony";
+		omnContentType="content";
+		omnVariables.put("Events",'event4');
+		omnAssetID = "OMNITURE_STATIC_CONTENT";
+	}
+	//*******************************************************************************/
+    //Testimony Success Page
+	//*******************************************************************************/
+	else if(omnPage == "testimonySuccess"){
+		omnPageName = omnStorefrontName + ":testimonysuccess";
+		omnChannel ="general content";	
+		omnContentType="content";
+		omnAssetID = "OMNITURE_STATIC_CONTENT";
+	}
+	
+	//*******************************************************************************/
+    //Login - Set AssetId for Login page specific tags
+	//*******************************************************************************/
+	else if(omnPage == "Loginpage"){
+		omnPageName = omnStorefrontName + ":cat:account-signin";
+		omnChannel="cmm:myaccount";
+		omnFormName="signin";
+		omnVariables.put("Events",'event4');
+		if(omnCampaignCode == null || empty(omnCampaignCode)){
+			omnCampaignCode = 'core';
+		}
+		omnAssetID = "OMNITURE_LOGINPAGE";
+	}
+	
+
+	 //*******************************************************************************/
+    //Forgot Password Page
+	//*******************************************************************************/
+	  else if(omnPage == "forgotpassword"){
+		omnPageName = omnStorefrontName +":cat:account-passwordreset";
+		omnChannel="cmm:myaccount";
+		omnFormName="forgotpassword";
+		omnVariables.put("Events","event4");
+		omnCampaignCode = 'core';
+	}	
+	
+	 else if(omnPage == "passwordreset"){
+		omnPageName = omnStorefrontName +":cat:account-changepassword";
+		omnChannel="cmm:myaccount";	
+		omnFormName="resetpassword";
+		omnVariables.put("Events","event4");
+	}
+	
+	else if(omnPage == "passwordsent"){
+		omnPageName = omnStorefrontName +":cat:Account-passwordsent";
+		omnChannel="cmm:myaccount";	
+	}
+	
+
+	//*******************************************************************************/
+	//MyAccount Overview 
+	//*******************************************************************************/			 
+	else if(omnPage == "MyAccountLandingPage"){
+		omnPageName = omnStorefrontName +":cat:account:overview";
+		omnVariables.put("SubscriberStatus","sub");
+		omnChannel="cmm:my account";
+	}
+	
+		
+	//*******************************************************************************/
+	//MyAccount Shipping page 
+	//*******************************************************************************/			 
+	else if(omnPage == "MyAccountShipping"){
+		omnPageName = omnStorefrontName +":cat:account:addressbook-changeshipping";
+		omnVariables.put("SubscriberStatus","sub");
+		omnChannel="cmm:my account";
+		omnFormName="addressbook-changeshippingaddress";
+		omnVariables.put("Events","event4,event26");
+		omnAssetID = "OMNITURE_MYACCOUNT_SHIPPING";
+	}
+	
+	//*******************************************************************************/
+	//MyAccount Billing page 
+	//*******************************************************************************/			 
+	else if(omnPage == "MyAccountBilling"){
+		omnPageName = omnStorefrontName +":cat:account:addressbook-changebilling";
+		omnVariables.put("SubscriberStatus","sub");
+		omnChannel="cmm:my account";
+		omnFormName="addressbook-changebillingaddress";
+		omnVariables.put("Events","event4,event26");
+		omnAssetID = "OMNITURE_MYACCOUNT_BILLING";
+	}
+	
+	//*******************************************************************************/
+	//MyAccount Payment page 
+	//*******************************************************************************/			 
+	else if(omnPage == "MyAccountPaymentInfo"){
+		omnPageName = omnStorefrontName +":cat:account:paymentmethod";
+		omnVariables.put("SubscriberStatus","sub");
+		omnChannel="cmm:my account";
+		omnVariables.put("Events","event26");
+		omnAssetID = "OMNITURE_MYACCOUNT_PAYMENT";
+	}
+	
+	//*******************************************************************************/
+	//MyAccount Change Payment Method page 
+	//*******************************************************************************/			 
+	else if(omnPage == "MyAccountPaymentInfoChange"){
+		omnPageName = omnStorefrontName +":cat:account:paymentmethod-change";
+		omnVariables.put("SubscriberStatus","sub");
+		omnChannel="cmm:my account";
+		omnFormName="paymentbook-changepaymentmethod";
+		omnVariables.put("Events","event4,event26");
+		omnAssetID = "OMNITURE_MYACCOUNT_PAYMENT";
+	}
+	
+	//*******************************************************************************/
+	//MyAccount Change Saved Payment Method page 
+	//*******************************************************************************/			 
+	else if(omnPage == "MyAccountPaymentInfoChangeSavedMethod"){
+		omnPageName = omnStorefrontName +":cat:account:paymentmethod-changesavedmethod";
+		omnVariables.put("SubscriberStatus","sub");
+		omnChannel="cmm:my account";
+		omnFormName="paymentbook-editsavedpaymentmethod";
+		omnVariables.put("Events","event4,event26");
+		omnAssetID = "OMNITURE_MYACCOUNT_PAYMENT";
+	}
+	
+	//*******************************************************************************/
+	//MyAccount Change Payment Method page 
+	//*******************************************************************************/			 
+	else if(omnPage == "MyAccountPaymentInfoAdd"){
+		omnPageName = omnStorefrontName +":cat:account:paymentmethod-add";
+		omnVariables.put("SubscriberStatus","sub");
+		omnChannel="cmm:my account";
+		omnFormName="paymentbook-addpaymentmethod";
+		omnVariables.put("Events","event4,event26");
+		omnAssetID = "OMNITURE_MYACCOUNT_PAYMENT";
+	}
+	
+	//*******************************************************************************/
+	//Registration page 
+	//*******************************************************************************/			 
+	else if(omnPage == "RegistrationPage"){
+		omnPageName = omnStorefrontName +":cat:account-register";
+		omnChannel="cmm:my account";
+		omnFormName="registerpage";
+		omnVariables.put("Events","event1,event4");
+		if(omnCampaignCode == null || empty(omnCampaignCode)){
+			omnCampaignCode = 'core';
+		}
+		omnAssetID = "OMNITURE_REGISTRATION";
+	}	
+	
+	//*******************************************************************************/
+	//Order History page 
+	//*******************************************************************************/			 
+	else if(omnPage == "OrderHistoryReorder"){
+		omnPageName =  omnStorefrontName +":cat:account:orderhistory";
+		omnVariables.put("SubscriberStatus","sub");
+		omnChannel="cmm:checkout";
+		omnAssetID = "OMNITURE_ORDER_STATUS";
+	}	
+	//*******************************************************************************/
+	//Address Book page 
+	//*******************************************************************************/			 
+	else if(omnPage == "MyAccountAddressbook"){
+		omnPageName = omnStorefrontName + ":cat:account:addressbook";
+		omnChannel="cmm:my account";
+	}
+	
+	else if(omnPage == "MyAccountAddressbookAdd"){
+		omnPageName = omnStorefrontName + ":cat:account:addressbook-add";
+		omnFormName = "addressbook-newaddress";
+		omnVariables.put("Events","event4");
+		omnChannel="cmm:my account";
+	}
+	
+	//*******************************************************************************/
+	//Edit Address
+	//*******************************************************************************/			 
+	else if(omnPage == "EditAddress"){
+		omnPageName = omnStorefrontName + ":cat:account:addressbook-editAddress";
+		omnChannel="cmm:my account";
+		omnVariables.put("Events","event4");
+		omnFormName = "addressbook-editaddress";
+	}
+	 
+	//*******************************************************************************/
+	//About You page 
+	//*******************************************************************************/			 
+	else if(omnPage == "aboutyou"){
+		omnPageName = omnStorefrontName + ":cat:account:aboutyou";
+		omnFormName = "aboutyou";
+		omnVariables.put("Events","event4");
+		omnChannel="cmm:my account";
+	}
+	//*******************************************************************************/
+	//Checkout Review 
+	//*******************************************************************************/			 
+	else if(omnPage == "OrderReview"){
+		omnPageName =  omnStorefrontName +":cat:cart:checkout";
+		omnChannel="cmm:checkout";
+		if (pdict.CurrentUser.anonymous) {
+			omnPageName = "Checkout (Guest) : Review";
+		}
+		
+		omnVariables.put("Events",'event12');
+		// Form successful submission event
+		if(pdict.omni_checkoutbillingaddress_success == "true"){
+			omnVariables.put("Events","event12,event3");
+		}
+		for each (var pli : dw.order.ProductLineItem in pdict.Basket.allProductLineItems) {
+					allProducts = allProducts + pli.productID + ';';
+				}
+		omnVariables.put("Products",allProducts.substring(0,allProducts.length-1));
+		omnVariables.put("SubscriberStatus","sub");	
+		omnAssetID = "OMNITURE_CHECKOUT_REVIEW";
+	}
+	
+	//*******************************************************************************/
+	//My Account UserDetails and About you
+	//*******************************************************************************/			 
+	else if(omnPage == "MyAccountUserDetailsUpdate"){
+		omnPageName = omnStorefrontName +":cat:account:editprofile";
+		omnChannel="cmm:my account";
+		omnFormName="editaccountinformation";
+		omnVariables.put("Events",'event4');
+		omnAssetID = "OMNITURE_MYACCOUNT_USERDETAILS";
+	}
+	//*******************************************************************************/
+	//Email Unsubscribe
+	//*******************************************************************************/			 
+	else if(omnPage == "emailUnsubscribe"){
+		omnPageName = omnStorefrontName +":emailUnsubscribe";
+		omnChannel="general content";
+		omnContentType="content";
+		omnFormName="emailUnsubscribe";
+		omnVariables.put("Events",'event4');
+	}
+	
+	//*******************************************************************************/
+	//Email Unsubscribe Confirmation
+	//*******************************************************************************/			 
+	else if(omnPage == "emailUnsubscribeConfirmation"){
+		omnPageName = omnStorefrontName +":emailUnsubscribeConfirmation";
+		omnChannel="general content";
+		omnContentType="content";
+	}
+	
+	//*******************************************************************************/
+	//My Account Kit
+	//*******************************************************************************/			 
+	else if(omnPage == "KitShipping"){
+		omnPageName = omnStorefrontName +":cat:kitcustomizer-adjust";
+		omnFormName="shippingfrequency";
+		omnVariables.put("Events","event4");
+		omnChannel="cmm:my account";
+	}
+	else if(omnPage == "KitConfirmation"){
+		omnPageName = omnStorefrontName +":cat:kitcustomizer-confirm";
+		omnChannel="cmm:my account";
+		// Form successful submission event
+		if(('omni_form_status' in pdict.CurrentSession.custom) && pdict.CurrentSession.custom.omni_form_status == "true")
+		{
+			omnVariables.put("Events","event3");
+			pdict.CurrentSession.custom.omni_form_status = "null";
+		}
+	}
+	
+	//*******************************************************************************/
+	//Cart Page//Acquistion
+	//*******************************************************************************/			
+	 else if(omnPage == "SimpleCheckout"){
+		omnPageName = omnStorefrontName + ":acq:Cart:Checkout";
+		omnPageNameID = "cartCheckout";
+		var folderPath = (omnPage == "SimpleCheckout") ? ":scp:checkout" : ":cart:basket";
+		omnVariables.put("PageName",omnPageName);
+		omnChannel="acq:checkout";
+		omnFormName="cart";				
+		if (pdict.TriggeredAction != null && pdict.TriggeredAction.formId == 'deleteProduct'){			 
+			omnVariables.put("Events","event32,scRemove,scView");
+			omnVariables.put("Products",";" + pdict.TriggeredAction.object.productID);
+		}else if (pdict.TriggeredAction != null && pdict.TriggeredAction.formId == 'addtobasket'){
+			omnVariables.put("Events","scAdd,scView");
+			omnVariables.put("Products",";" + pdict.TriggeredAction.object.ID);			
+		}else if (pdict.TriggeredAction != null && pdict.TriggeredAction.formId == 'addtocart'){			
+			omnVariables.put("Events","event32,scAdd,scView");
+			omnVariables.put("Products",";" + pdict.TriggeredAction.object.ID);			
+		}else if (!empty(pdict.ownScOpen) ){
+			omnVariables.put("Events","event32,event4,scAdd,scOpen,scView");
+			omnVariables.put("Products",";" + pdict.ownScOpen);
+		}else{
+			omnVariables.put("Events","event32,event4,scView");
+			if(pdict.Basket != null && pdict.Basket.allProductLineItems!=null){
+				for each (var pli : dw.order.ProductLineItem in pdict.Basket.allProductLineItems) {
+					allProducts = allProducts + pli.productID + ';';
+				}
+				omnVariables.put("Products",allProducts.substring(0,allProducts.length-1));
+			}
+		}
+		omnAssetID = "OMNITURE_SIMPLE_CHECKOUT";
+	}
+	
+	else if(omnPage == "SinglePageCheckout"){
+		
+		omnPageName = omnStorefrontName + ":acq:scp:"+omnCampaignCode +":cart:checkout";
+		
+		var folderPath = ":scp:checkout";
+		omnVariables.put("PageName",omnPageName);
+		omnChannel="acq:checkout";
+		omnFormName="slpcart";
+		if (pdict.TriggeredAction != null && pdict.TriggeredAction.formId == 'deleteProduct'){
+			omnVariables.put("Events","event32,scRemove,scView");
+			omnVariables.put("Products",";" + pdict.TriggeredAction.object.productID);
+		}else if (pdict.TriggeredAction != null && pdict.TriggeredAction.formId == 'addtobasket'){
+			omnVariables.put("Events","event32,scAdd,scView");
+			omnVariables.put("Products",";" + pdict.TriggeredAction.object.ID);
+		}else if (pdict.TriggeredAction != null && pdict.TriggeredAction.formId == 'addtocart'){
+			omnVariables.put("Events","event32,scAdd,scView");
+			omnVariables.put("Products",";" + pdict.TriggeredAction.object.ID);
+		}else if (!empty(pdict.ownScOpen) ){
+			omnVariables.put("Events","event32,event4,scAdd,scOpen");
+			omnVariables.put("Products",";" + pdict.ownScOpen);
+		}else{
+			omnVariables.put("Events","event32,event4,scView");
+			if(pdict.Basket != null && pdict.Basket.allProductLineItems!=null){
+				for each (var pli : dw.order.ProductLineItem in pdict.Basket.allProductLineItems) {
+					allProducts = allProducts + pli.productID + ';';
+				}
+				omnVariables.put("Products",allProducts.substring(0,allProducts.length-1));
+			}
+		}
+		omnAssetID = "OMNITURE_SIMPLE_CHECKOUT";
+	}
+
+
+
+	//*******************************************************************************/
+	//Order Confirmation 
+	//*******************************************************************************/			 
+	else if(omnPage == "COConfirmationAcq"){
+		omnPageName = omnStorefrontName+":acq:cart:confirm";
+		omnCampaignCode = pdict.originalCampaignCode;
+		omnVariables.put("SubscriberStatus","non-sub");
+		omnChannel="acq:checkout";
+		omnPurchaseID = pdict.Order.orderNo;
+		omnCartID = pdict.Order.custom.cartID; 
+		omnVariables.put("CartID",omnCartID);
+		omnVariables.put("Events","event33,purchase");
+		omnVariables.put("PurchaseID",omnPurchaseID);
+		var allProducts = ';';
+		for each (var pli : dw.order.ProductLineItem in pdict.Order.productLineItems) {
+		allProducts = allProducts + pli.productID + ';' + pli.quantity.value + ';' + pli.adjustedPrice.value + ',;';
+		}
+		
+		omnVariables.put("Products",allProducts.substring(0,allProducts.length-1));	
+		if (pdict.CurrentCustomer.registered) {
+			omnCustomer = "Registered";
+		}
+		omnVariables.put("State",pdict.Order.billingAddress.stateCode);	
+		omnVariables.put("Zip",pdict.Order.billingAddress.postalCode);	
+		omnVariables.put("SiteID",dw.system.Site.getCurrent().ID);
+		omnVariables.put("PayPal",omnPayPal);
+		omnVariables.put("Customer",omnCustomer);
+		omnAssetID = "OMNITURE_CHECKOUT_CONFIRMATION";
+	}
+	
+	
+	
+	else if(omnPage == "YourOrderDetails"){
+		omnPageName = omnStorefrontName + ":YourOrderDetails";
+		omnChannel="cmm:checkout";
+		if(omnCampaignCode == null || empty(omnCampaignCode)){
+			omnCampaignCode = 'core';
+		}
+		omnAssetID = "OMNITURE_ORDER_DETAILS";
+	}
+		
+ 	 else if (omnPage == "GeneralError") { 
+ 		
+		omnAssetID = "OMNITURE_GENERAL_ERROR"; 
+ 	}
+ 	
+ 	//*******************************************************************************/
+	//Mobile Homepage
+	//*******************************************************************************/			 
+	else if(omnPage == "mobileHomepage"){
+		omnPageName="mobileVB:acq:Home";
+		omnChannel="mobile:Home";
+	}
+	
+	//*********************FORM TRACKING********************************************/
+	 //variable "custom.omni_form_status" is used for form tracking events. Its value is set in the pipeline and put in session scope. Value equal to "true" means that 
+     //form got submitted successfully and we can fire event3. Value equal to "false" means that there was some error in submitting the form and we can fire event5.
+	 //After checking its value and firing the event, we are setting it to null.
+	 //Its possible values are: true, false, null and registration_true (specifically for firing event2 for successful registration)
+ 	 //*******************************************************************************/
+	//*******************************************************************************/
+	//FORM EVENTS  
+	//*******************************************************************************/	
+		if('omni_form_status' in pdict.CurrentSession.custom){
+			if(pdict.CurrentSession.custom.omni_form_status == "false"){
+				if(omnVariables.get("Events") != null){
+					omnVariables.put("Events",omnVariables.get("Events")+',event5');
+					}
+				else{
+					omnVariables.put("Events",'event5');
+					}
+				}
+			else if(pdict.CurrentSession.custom.omni_form_status == "true"){
+				if(omnVariables.get("Events") != null){
+					omnVariables.put("Events",omnVariables.get("Events")+',event3');
+					}
+				else{
+					omnVariables.put("Events",'event3');
+					}
+				}
+			else if(pdict.CurrentSession.custom.omni_form_status == "registration_true"){
+				if(omnVariables.get("Events") != null){
+				omnVariables.put("Events",omnVariables.get("Events")+',event2,event3');
+					}
+				else{
+					omnVariables.put("Events",'event2,event3');
+					}
+				}
+			pdict.CurrentSession.custom.omni_form_status = "null";
+		}
+	//*******************************************************************************/
+	//List of Error pages
+	//*******************************************************************************/
+	
+ 	else if (omnPage == "ProductNotFound") { 
+ 		omnAssetID = "OMNITURE_GENERAL_ERROR"; 
+		omnPageName = "Error Page: 404";
+		if (!empty(pdict.CurrentHttpParameterMap.pid.value))
+			omnPageName = omnPageName + " : " + pdict.CurrentHttpParameterMap.pid.value;
+ 	}
+ 	else if (omnPage == "CheckoutError") { 
+ 		omnAssetID = "OMNITURE_CHECKOUT_ERROR"; 
+		omnPageName = "Checkout : " + " Step : " + "Error Message";
+ 	}
+ 	else if (omnPage == "OrderStatusError") { 
+ 		omnAssetID = "OMNITURE_GENERAL_ERROR"; 
+		omnPageName = "Order Status : ";
+ 	}
+ 	omnCampaignAndPage = omnCampaignCode + ":" + omnPageName;	
+ 	if(pdict.CurrentCustomer.authenticated || pdict.CurrentCustomer.registered || pdict.CurrentSession.custom.cRememberMe || pdict.CurrentRequest.httpCookies['rememberMe']){
+ 	omnCampaignAndPage = omnPageName;	
+ 	}
+ 	else if(omnPage == "mobileHomepage"){
+ 		omnCampaignAndPage = omnPageName;	
+ 	}
+	omnVariables.put("CampaignAndPage",omnCampaignAndPage);
+	omnVariables.put("Channel",omnChannel);
+	omnVariables.put("PageName",omnPageName);
+	omnVariables.put("FormName",omnFormName);
+	omnVariables.put("ContentType",omnContentType);
+	//[RegionEnd PageSpecificLogic]
+
+//[Region Functions]
+
+
+function getSearchSource()  : String {
+
+   var searchSource = pdict.SearchSource;
+   if(searchSource == null){
+       searchSource = "";
+   }
+   return searchSource;
+}
+
+
+function getSearchPhrase()  : String {
+
+   var searchModel = pdict.ProductSearchResult;
+   var searchPhrase = "";
+   if(searchModel != null){
+		searchPhrase = searchModel.getSearchPhrase();
+   }
+   return searchPhrase;
+}
+
+function getFolderPath(folder : dw.content.Folder)  : String {
+   var folderPath : String = "";
+   if(folder!=null && !folder.root){
+		var folderId : String = folder.ID;
+		var folderPath : String = getFolderPath(folder.parent)+":"+folderId;
+   }
+   return folderPath;	
+}
+
+//*******************************************************************************/
+	//Visitor Id 
+//*******************************************************************************/			 
+	
+var visitorCookie:dw.web.Cookie = null;
+var existing : dw.web.Cookie = pdict.CurrentRequest.httpCookies['vCookie'];
+	
+	
+	 if(existing==null || existing=="" || existing=="undefined" || empty(existing))
+      {
+        var date=new Date();
+        omnGRCUID = VisitorID+date.getFullYear()+(date.getMonth()+1)+date.getDate()+date.getHours()+date.getMinutes()+date.getSeconds()+date.getMilliseconds();
+        visitorCookie = new dw.web.Cookie("vCookie",omnGRCUID);
+        var domain:String = dw.system.Site.current.getCustomPreferenceValue("GRCookiesDomain");
+        visitorCookie.setDomain(domain);
+        visitorCookie.setPath("/");
+        pdict.CurrentRequest.addHttpCookie(visitorCookie);
+      }
+      else
+      {
+        omnGRCUID=existing.value;
+      }
+      omnCustomerID=omnGRCUID;
+     omnVariables.put("GRCUID",omnCustomerID);
+
+
+</isscript>
+<script type="text/javascript">
+<!--
+//Eliminates problems with undefined variables;
+	var omnGrcid;
+	var omnExtbnr;
+	var omnEvents;
+	var omnProducts;
+	var omnPageType;
+	var omnState;
+	var omnZip;
+	var omnFormName;
+-->
+</script>
+
+
+	<isif condition="${omnVariables != null}">
+	   <script language="javascript" type="text/javascript">
+	   <!--
+	   
+			<isloop items="${omnVariables.keySet()}" var="key">
+				var omn<isprint value="${key}" encoding="off"> = "<isprint value="${omnVariables.get(key)}" encoding="off">";
+			</isloop>
+	  
+	    var omnAssetID  = "<isprint value="${omnAssetID}" encoding="off">";
+	    var clickStream = "";
+	    // -->
+		</script> 	   
+	</isif>
+	
+	
+<iscomment>Wen Global mBox
+
+/******************
+	passing UCI to mbox - dsweeney 2/22/12
+*/
+
+/******************
+	moving PA_Global to omniture_asset_include so that
+	we can read omnPageName variable - dsweeney 2/28/12
+*/
+
+</iscomment>
+
+<iscomment>
+<isscript>
+
+//*******************************************************************************/
+//Home page retention
+//*******************************************************************************/	
+if(pdict.CurrentCustomer.authenticated || pdict.CurrentCustomer.registered || pdict.CurrentSession.custom.cRememberMe || pdict.CurrentRequest.httpCookies['rememberMe'])
+		{
+			omnPageName = omnStorefrontName+":cat:home";
+			omnVariables.put("SubscriberStatus","sub");
+			omnChannel="cmm:product category";
+			omnVariables.put("Events","event41");
+		}
+
+//look for UCI in the following order : 1. cookie 2. querystring 3. current CampaignConfig object
+var the_UCI_cookie : dw.web.Cookie = pdict.CurrentRequest.httpCookies['uci'];
+var dwUCI : String = !empty(the_UCI_cookie) ? 
+					     the_UCI_cookie.value   
+			    	 : ( ("uci" in pdict.CurrentHttpParameterMap && !empty(pdict.CurrentHttpParameterMap.uci.value)) ? 
+			    	     pdict.CurrentHttpParameterMap.uci.value 
+			    	 : ( (!empty(pdict.CurrentCampaignConfig.uciCode) && pdict.CurrentCampaignConfig.uciCode != null) ?
+			    	     pdict.CurrentCampaignConfig.uciCode 
+			    	 : 
+			    	     "none" )); //default to none
+			    	     
+			    	     
+			    	   
+//*******************************************************************************/
+	//Category Landing page 
+	//*******************************************************************************/			 
+	 else if(omnPage == "CategoryLandingPage"){
+	 	if(pdict.CurrentHttpParameterMap.subcgid.value=='G-SYS'){
+	 		omnPageName = omnStorefrontName + ":cat:Reclaim Botanical® System:gtl";
+	 	}else if(pdict.CurrentHttpParameterMap.subcgid.value=='X-SYS'){
+	 		omnPageName = omnStorefrontName + ":cat:Reclaim Botanical®  System:ext";
+	 	}else if(pdict.CurrentHttpParameterMap.subcgid.value=='R-SYS' || pdict.CurrentHttpParameterMap.cgid.value=='SYS'){
+	 		omnPageName = omnStorefrontName + ":cat:Reclaim Botanical®  System:reg";
+	 	}else if(dw.catalog.CatalogMgr.getCategory(pdict.CurrentHttpParameterMap.cgid.value).parent.ID=='SolutionFinder'){
+	 		omnPageName = omnStorefrontName + ":cat:sol find:"+ dw.catalog.CatalogMgr.getCategory(pdict.CurrentHttpParameterMap.cgid.value).displayName;
+	 	}
+	 	else{
+			omnPageName = omnStorefrontName + ":cat:"+ dw.catalog.CatalogMgr.getCategory(pdict.CurrentHttpParameterMap.cgid.value).displayName;
+		}
+		omnVariables.put("SubscriberStatus","non-sub");
+		omnChannel = "reclaimBotanical.com:abt";
+		omnVariables.put("Events","event9");
+		omnAssetID = "OMNITURE_MYACCOUNT_LANDING";
+	}
+	
+	
+	
+	
+	 else if(omnPage == "CheckoutInformation"){
+		omnPageName = omnStorefrontName + ":scp:checkout";
+		omnChannel="acq:checkout";
+		omnVariables.put("Events","scCheckout");
+		omnAssetID = "OMNITURE_MULTI_CHECKOUT_INFORMATION";
+		if(pdict.Basket != null && pdict.Basket.allProductLineItems!=null){
+			for each (var pli : dw.order.ProductLineItem in pdict.Basket.allProductLineItems) {
+				allProducts = allProducts + pli.productID + ';';
+			}
+			omnVariables.put("Products",allProducts.substring(0,allProducts.length-1));
+		}
+	}
+	
+	
+	 else if(omnPage == "CheckoutInterstitial"){
+		omnPageName = omnStorefrontName + ":cart:interstitial";
+		omnVariables.put("Events", "prodView");
+		omnChannel="acq:checkout";
+		if (!empty(pdict.Suggestions) && (pdict.Suggestions.size() > 0)) {
+			var productSuggest : dw.catalog.Product = pdict.Suggestions[0];
+			if(!empty(productSuggest)){
+				omnVariables.put("Products",";" + productSuggest.ID);
+			}
+		}else{
+			if(pdict.Basket != null && pdict.Basket.allProductLineItems!=null){
+				for each (var pli : dw.order.ProductLineItem in pdict.Basket.allProductLineItems) {
+					allProducts = allProducts + pli.productID + ';';
+				}
+				omnVariables.put("Products",allProducts.substring(0,allProducts.length-1));
+			}
+		}
+		omnAssetID = "OMNITURE_CHECKOUT_INTERESTIAL";
+	}
+	
+	//*******************************************************************************/
+    //Product Detail Page - Set AssetId for Product Detail Page specific tags
+	//*******************************************************************************/
+	 else if(omnPage == "ProductDetailspage"){
+		omnPageName = omnStorefrontName + ":productdetail";
+		omnChannel="cmm:product category:products";
+		omnVariables.put("Events","prodView");
+		omnVariables.put("Products",";"+pdict.Product.ID);
+		omnAssetID = "OMNITURE_PRODUCTDETAILPAGE";
+	}
+	
+//*******************************************************************************/
+    //Shopping cart Page - Set AssetId for Shopping cart Page specific tags
+	//*******************************************************************************/
+	 else if(omnPage == "Cartpage"){
+		omnPageName = omnStorefrontName +":cat:cart:view";
+		if (pdict.TriggeredAction != null && pdict.TriggeredAction.formId == 'deleteProduct'){
+			omnVariables.put("Events","event42,scRemove,scView");
+			omnVariables.put("Products",";" + pdict.TriggeredAction.object.productID);
+		}else if (pdict.TriggeredAction != null && pdict.TriggeredAction.formId == 'addtocart'){
+			omnVariables.put("Events","scAdd,scOpen");
+			omnVariables.put("Products",";" + pdict.TriggeredAction.object.ID);
+		}else if (!empty(pdict.ownScOpen) ){
+			omnVariables.put("Events","scAdd,scOpen");
+			omnVariables.put("Products",";" + pdict.ownScOpen);
+		}else{
+			omnVariables.put("Events","event42,scOpen,scView");
+			if(pdict.Basket != null && pdict.Basket.allProductLineItems!=null){
+				for each (var pli : dw.order.ProductLineItem in pdict.Basket.allProductLineItems) {
+					allProducts = allProducts + pli.productID + ';';
+				}
+				omnVariables.put("Products",allProducts.substring(0,allProducts.length-1));
+			}
+		}
+		omnVariables.put("SubscriberStatus","sub");
+		omnChannel="cmm:checkout";
+		omnAssetID = "OMNITURE_CARTPAGE";
+	}
+	
+	
+	//*******************************************************************************/
+	//Checkout Shipping, Billing and Summary 
+	//*******************************************************************************/			 
+	else if(omnPage == "COShipping"){
+		omnPageName = omnStorefrontName +":cat:cart:shipping";
+		omnChannel="cmm:checkout";
+		omnFormName="checkout-changeshippingaddress";
+		omnVariables.put("Events",'event4,event43');
+		var allProducts = ';';
+		for each (var pli : dw.order.ProductLineItem in pdict.Basket.allProductLineItems) {
+			allProducts = allProducts + pli.productID + ';';
+		}
+		if (pdict.Basket.paymentInstrument != null && pdict.Basket.paymentInstrument.paymentMethod.equals("PayPal")) {
+			omnPayPal = "Paypal Express";
+		}
+		omnCustomer = "Guest";
+		if (pdict.CurrentCustomer.registered) {
+			omnCustomer = "Registered";
+		}
+		omnVariables.put("PayPal",omnPayPal);
+		omnVariables.put("Customer",omnCustomer);
+		omnVariables.put("Products",allProducts.substring(0,allProducts.length-1));		
+		omnAssetID = "OMNITURE_CHECKOUT_SHIPPING_AND_BILLING";
+		omnVariables.put("SubscriberStatus","sub");
+	}
+
+	else if(omnPage == "COBilling"){
+		omnPageName = omnStorefrontName +":cat:cart:billing";
+		omnChannel="cmm:checkout";
+		omnFormName="checkout-changebillingaddress";
+		omnVariables.put("Events",'event4,event44');
+		if(pdict.omni_checkoutbillingaddress_failure == "false")
+		{
+		omnVariables.put("Events",'event4,event5,event44');
+		}
+		var allProducts = ';';
+		for each (var pli : dw.order.ProductLineItem in pdict.Basket.allProductLineItems) {
+			allProducts = allProducts + pli.productID + ';';
+		}
+		if (pdict.CurrentCustomer.registered) {
+			omnCustomer = "Registered";
+		}
+		omnVariables.put("Products",allProducts.substring(0,allProducts.length-1));		
+		omnVariables.put("PayPal",omnPayPal);
+		omnVariables.put("Customer",omnCustomer);
+		omnVariables.put("SubscriberStatus","sub");
+		omnAssetID = "OMNITURE_CHECKOUT_SHIPPING_AND_BILLING";
+	}
+	
+	 else if(omnPage == "COConfirmation"){
+		omnPageName = omnStorefrontName+":cart:confirm";
+		omnChannel="cmm:checkout";
+		omnPurchaseID = pdict.Order.orderNo;
+		omnCartID = pdict.Order.custom.cartID; 
+		omnVariables.put("CartID",omnCartID);
+		omnVariables.put("Events","event45,purchase");
+		omnVariables.put("PurchaseID",omnPurchaseID);
+		var allProducts = ';';
+		for each (var pli : dw.order.ProductLineItem in pdict.Order.productLineItems) {
+		allProducts = allProducts + pli.productID + ';' + pli.quantity.value + ';' + pli.adjustedPrice.value + ',;';
+		}
+		
+		omnVariables.put("Products",allProducts.substring(0,allProducts.length-1));	
+		omnVariables.put("SubscriberStatus","sub");
+		if (pdict.CurrentCustomer.registered) {
+			omnCustomer = "Registered";
+		}
+		omnVariables.put("State",pdict.Order.billingAddress.stateCode);	
+		omnVariables.put("Zip",pdict.Order.billingAddress.postalCode);	
+		omnVariables.put("SiteID",dw.system.Site.getCurrent().ID);
+		omnVariables.put("PayPal",omnPayPal);
+		omnVariables.put("Customer",omnCustomer);
+		omnAssetID = "OMNITURE_CHECKOUT_CONFIRMATION";
+	}
+</isscript>
+<div class="mboxDefault"></div>
+<script type="text/javascript">
+var g_mboxUCIcode = "${dwUCI}";
+mboxCreate('vb_dw_global','pageName=' + "${omnCampaignAndPage}",'pageUCI=' + g_mboxUCIcode);
+</script>	
+</iscomment>
+	
+    <!-- Omniture Custom Object ID :  OMNITURE_COMMON-->
+		<isscript>
+			var omnitureContent : dw.object.CustomObject = CustomObjectMgr.getCustomObject( "OmnitureScriptConfiguration", "OMNITURE_COMMON" );
+		</isscript>
+   		<isif condition="${!empty(omnitureContent)}">
+	   		<isprint value="${omnitureContent.custom.scriptBody}" encoding="off"> 
+	   	</isif>
+	   
+	   	
+   		<!-- Omniture Custom Object ID :  <isprint value="${omnAssetID}">-->
+
+		<isscript>
+			//*******************************************************************************/
+			//Set default custom object asset id
+			//*******************************************************************************/			 
+			if (omnAssetID == null || empty(omnAssetID)) { omnAssetID = "OMNITURE_DEFAULT"; }
+			
+			var omnitureContent : dw.object.CustomObject = CustomObjectMgr.getCustomObject( "OmnitureScriptConfiguration", omnAssetID );
+			
+			if(empty(omnitureContent)){
+				omnAssetID = "OMNITURE_DEFAULT";
+				var omnitureContent : dw.object.CustomObject = CustomObjectMgr.getCustomObject( "OmnitureScriptConfiguration", omnAssetID );
+			}
+			
+		</isscript>
+   		<isif condition="${!empty(omnitureContent)}">
+	   		<isprint value="${omnitureContent.custom.scriptBody}" encoding="off"> 
+	   	</isif>
+
+<script type="text/javascript"><!--
+if(navigator.appVersion.indexOf('MSIE')>=0)document.write(unescape('%3C')+'\!-'+'-')
+//--></script><noscript><a href="http://www.omniture.com" title="Web Analytics"><img
+src="${trackingUrl}" height="1" width="1" border="0" alt="" /></a></noscript><!--/DO NOT REMOVE/-->
+
+</div>
+<!-- End SiteCatalyst code version: H.19.3. -->
+<!-- End: pagecomponents/omniture_asset_include -->		

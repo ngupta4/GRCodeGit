@@ -1,0 +1,39 @@
+<?xml version="1.0"?>
+<form xmlns="http://www.demandware.com/xml/form/2008-04-19">
+	
+	<field formid="firstname" label="forms.contactus.firstname.label" type="string" mandatory="true" binding="firstName" max-length="50" missing-error="forms.address.firstname.missing" range-error="forms.address.field.invalid"
+			regexp="^[a-zA-Z ]+$" parse-error="forms.address.field.invalid"/>
+	<field formid="lastname"  label="forms.contactus.lastname.label"  type="string" mandatory="true" binding="lastName" max-length="50" missing-error="forms.address.lastname.missing" range-error="forms.address.field.invalid"
+			regexp="^[a-zA-Z ]+$" parse-error="forms.address.field.invalid"/>
+	<field formid="email" label="forms.contactus.email.label" type="string" mandatory="true" regexp="^[\w-\.]{1,}\@([\da-zA-Z-]{1,}\.){1,}[\da-zA-Z-]{2,3}$"     missing-error="forms.contactus.email.missing"   parse-error="forms.contactus.email.parse-error" binding="email" max-length="50"/>	
+	<field formid="reemail" label="forms.contactus.reemail.label" type="string" mandatory="true" regexp="^[\w-\.]{1,}\@([\da-zA-Z-]{1,}\.){1,}[\da-zA-Z-]{2,3}$" missing-error="forms.contactus.reemail.missing" parse-error="forms.contactus.email.parse-error" max-length="50"/>
+			
+ 	<field formid="ordernumber" label="forms.contactus.ordernumber.label" type="string" mandatory="false" binding="ordernumber" missing-error="forms.ordertrack.orderNumber.missing-error"/>
+ 	<field formid="accountnumber" label="forms.contactus.accountnumber.label" type="string" mandatory="false" binding="accountnumber"/>
+ 	
+ 	<field formid="address1" label="forms.contactus.address1.label" type="string" mandatory="true" binding="address1" max-length="50" missing-error="forms.addresserror" range-error="forms.address.field.invalid"/>
+ 	<field formid="address2" label="forms.contactus.address2.label" type="string" mandatory="false" binding="address2" max-length="50"/>
+ 	
+ 	<field formid="city" label="forms.contactus.city.label" type="string" mandatory="true" binding="city" missing-error="forms.address.city.missing"/>
+    <include formid="states" name="states"/>
+ 	
+ 	<field formid="zip"   label="forms.contactus.zip.label"   type="string" mandatory="true" binding="zip"   min-length="5" max-length="10" 
+			regexp="^(\d{5})(-\d{4})?$" missing-error="forms.errorzip" range-error="forms.address.field.invalid" parse-error="forms.address.field.invalid"/>
+ 	<field formid="phone" label="forms.contactus.phone.label" type="string" mandatory="true" binding="phoneHome" max-length="20" missing-error="forms.address.phone.missing" range-error="forms.address.field.invalid" regexp="^(\d{10})?$" parse-error="forms.address.field.invalid"/>
+
+	<field formid="myquestion" label="forms.contactus.myquestion.label" type="string" mandatory="true" binding="myquestion" missing-error="forms.contactus.required">
+		<options optionid-binding="value" value-binding="value" label-binding="displayValue">
+			<option optionid="Order Status"           value="Order_Status"           label="forms.contactus.orderstatus"/>
+			<option optionid="Product Question"       value="Product_Question"       label="forms.contactus.product_question"/>
+			<option optionid="Usage Question"         value="Usage_Question"         label="forms.contactus.usage_question"/>
+			<option optionid="Account Question"       value="Account_Question"       label="forms.contactus.account_question"/>
+			<option optionid="Technical Difficulties" value="Technical_Difficulties" label="forms.contactus.technical_difficulties"/>
+			<option optionid="Product Feedback"       value="Product_Feedback"       label="forms.contactus.product_feedback"/>
+			<option optionid="Other"                  value="Other"                  label="forms.contactus.other"/>
+		</options>
+	</field>
+	
+	<field formid="comment" label="forms.contactus.comment" type="string" mandatory="true" binding="comment" max-length="50" missing-error="forms.contactus.required"/>
+
+	<action formid="send" valid-form="true"/>
+</form>

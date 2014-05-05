@@ -1,0 +1,32 @@
+<iscomment>Rendering template for Articles Tab</iscomment>
+<div class="article-wraper">
+<div class="contenthits">
+	<isif condition="${!pdict.ContentPagingModel.empty}">
+		<isloop items="${pdict.ContentPagingModel.pageElements}" var="asset" status="loopstate">
+			<iscomment>append the search parameters to the article URL</iscomment>
+			<isset name="articleURL" value="${pdict.ContentSearchResult.url( URLUtils.url('Search-ShowContent','cid', asset.ID) )}" scope="page"/>
+			<div class="article">
+				<div class="articlename">
+						<isprint value="${asset.name}"/>
+				</div>
+				<div class="articletitle">
+					<a href="${articleURL}">
+						<isprint value="${asset.pageTitle}"/>
+					</a>
+				</div>
+				<div class="description">
+					<isprint value="${asset.description}"/>
+				</div>
+			</div>
+		</isloop>		
+	</isif>
+</div>
+<div class="r-panel">
+<isslot id="article-search" description="article search page" context="global" />
+ <isif condition="${pdict.CurrentCustomer.authenticated || pdict.CurrentCustomer.registered || pdict.CurrentSession.custom.cRememberMe}">
+			<isinclude url="${URLUtils.url('DrWalkthrough-TileLaunch')}"/>
+</isif>
+</div>
+<div class="clear"><!-- FLOAT CLEAR --></div>
+
+</div>

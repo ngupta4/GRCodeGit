@@ -1,0 +1,5 @@
+<iscache type="relative" hour="24"/>
+<isif condition="${dw.system.Site.getCurrent().getCustomPreferenceValue('GRMVisitorLogEnabled') == true}">
+	<isinclude url="${URLUtils.url('GRMiddleware-VisitorLog', 'urlpath', request.httpPath, 'urlquery', request.httpQueryString,'urlreferer',request.httpReferer)}"/>
+</isif>
+<isinclude url="${pdict.location}"/>

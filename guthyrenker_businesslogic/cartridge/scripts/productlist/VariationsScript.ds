@@ -1,0 +1,64 @@
+/**
+* Demandware Script File
+* To Get size chart ID and Select a default variant color if none selected.
+*
+* For example:
+*
+*-   @input ExampleIn : String This is a sample comment.
+*-   @output ExampleOut : Number
+*
+*/
+importPackage( dw.system );
+importScript('int_gutheyrenker:common/libUtils.ds'); 
+
+/*
+* To get the default variant color
+*/
+function getDefaultVariantColor(product : PipelineDictionary, VAVALS : PipelineDictionary, PVM : PipelineDictionary, 
+						cleanPVM : PipelineDictionary, VA : PipelineDictionary, variationName: PipelineDictionary) : dw.catalog.ProductVariationAttributeValue
+{
+		logInfo("Entering VariationsScript-getDefaultVariantColor method");
+		var variantColor = null;
+		var product: dw.catalog.Product = product;
+		var VAVALS: dw.util.Collection = VAVALS;  
+		var PVM: dw.catalog.ProductVariationModel = PVM;
+		var cleanPVM: dw.catalog.ProductVariationModel = cleanPVM;
+		var VA = VA;
+		var colorSelected = false;
+		var variationName : String = variationName;
+
+		if( null != VAVALS && null != PVM && null != cleanPVM)
+		{ 						
+			// first determine if there is a selected color
+			for each( var varValue in VAVALS ) { 
+				if (cleanPVM.hasOrderableVariants(VA, varValue) && PVM.isSelectedAttributeValue(VA, varValue)) { 
+					colorSelected = true;
+					break;
+				}
+			}
+			logDebug("VariationsScript-getDefaultVariantColor : colorSelected "+colorSelected);
+			// if no color is selected, then select color
+			if (!colorSelected) {
+				if (PVM.getSelectedVariant() == null) {
+					var variant = null;
+					 if(product.master) {
+					 	if(!empty(PVM.defaultVariant)) {
+					 		variant = PVM.defaultVariant;
+					  	} else if(PVM.variants.length > 0) {
+					  		variant = PVM.variants[0];
+					  	}
+					 }
+					 if (variant != null) {
+					 	var productVariationAttribute : ProductVariationAttribute = PVM.getProductVariationAttribute( variationName);
+					 	if (productVariationAttribute != null && PVM.getVariationValue(variant, productVariationAttribute) != null) {
+					 		variantColor = PVM.getVariationValue(variant, productVariationAttribute).value;
+			 			}
+					 }
+				}
+			}	
+		}	
+		
+		logDebug("VariationsScript-getDefaultVariantColor :variant "+variantColor);
+		logInfo("Entering VariationsScript-getDefaultVariantColor method");
+		return variantColor;	
+}

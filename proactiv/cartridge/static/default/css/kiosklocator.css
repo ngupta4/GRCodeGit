@@ -1,0 +1,96 @@
+/* This is the width/height of the map that is displayed on the results page.  This can also be used to hide the map.*/
+.kiosk_map {height:400px;border: 1px solid gray;}
+.map_balloon_body {font-size:12px;}
+/* Google tool tip marker, this is for the tooltip that shows when you hover over an icon on the map. */
+.markerToolTip  {text-align: center;white-space: nowrap;margin: 0;padding: 2px 0.5ex;border: 1px solid #555;font-weight: bold;background: #fff;opacity: .80;-moz-opacity: .80;filter: alpha(opacity=80);}
+/***** This is critical to layout design to line things up, dont change it.  ******/
+.clearboth {clear:both;}
+
+-----------------------------------------------------*/
+
+
+#primaryContent .blockContent {
+	padding: 0 5px 5px 5px;
+}
+
+#primaryContent .blockContent h3 {
+	background-color: #b0cdb3;
+	padding: 6px 10px !important;
+	color: #fff !important;
+	margin: 0  0 17px 0;
+	border:0 !important;
+	position: relative;
+}
+
+.kioskSearchForm {padding: 15px;}
+
+.kioskSearchForm > div {
+	float: left;
+	margin: 0 20px 0 0;
+}
+
+.kioskSearchForm div label {
+	display: block;
+}
+
+.kioskSearchForm div label,
+.distanceGroup span {
+	font-size: 0.95em;	
+}
+
+.zipGroup input {
+	width: 100px;
+}
+
+.distanceGroup select {
+	margin: 0 3px 0 0;
+	height: 18px;
+}
+
+.distanceGroup select,
+.distanceGroup select option {
+	color: #4e6780 !important;
+	font-size: 0.95em;
+}
+
+span.errorclient{color: red;position: absolute; top: 20px;left: 0}
+.zipGroup .value {position: relative; padding: 0 0 60px}
+
+.btnKioskLocator {
+	border: 0;
+	background: url(../images/interface/btn-w-0.4.png) 0 0 no-repeat;
+	height: 21px;
+	width: 74px;
+	margin-top: 18px;
+}
+
+.btnKioskLocator:hover {background-position: -300px 0;}
+
+
+/*Results*/
+
+#kiosk_map {
+	margin: 6px;
+}
+
+.kiosk_results {
+	border-collapse: collapse;
+	width: 647px;
+	margin: 6px 6px 10px 6px;
+}
+
+.kiosk_results tr th {
+	font-weight: bold;
+	color: #6c9973;
+}
+
+.kiosk_results tr th,
+.kiosk_results tr td {
+	border-bottom: 1px solid #ccc;
+	font-size: 0.95em;
+	padding: 2px 10px;
+}
+
+.kiosk_results td a {
+	background: url(../images/interface/link-dottedline.gif) left bottom repeat-x;
+}

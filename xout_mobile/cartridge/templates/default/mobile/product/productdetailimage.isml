@@ -1,0 +1,34 @@
+<isset name="imageProduct" value="${pdict.Product}" scope="page"/>
+
+<isif condition="${!empty(imageProduct.getImage('medium',0))}">
+	<isset name="imageUrl" value="${imageProduct.getImage('medium',0).url}" scope="page"/>
+	<isset name="imageAlt" value="${imageProduct.getImage('medium',0).alt}" scope="page"/>
+	<isset name="imageTitle" value="${imageProduct.getImage('medium',0).title}" scope="page"/>
+<iselse/>
+	<isset name="imageUrl" value="${URLUtils.staticURL('/images/noimagemedium.png')}" scope="page"/>
+	<isset name="imageAlt" value="${pdict.Product.name}" scope="page"/>
+	<isset name="imageTitle" value="${pdict.Product.name}" scope="page"/>
+</isif>
+
+<div class="productdetailcolumn productimages">
+	<div class="productimage"><!-- Product Image -->
+		<img src="${imageUrl}" alt="${imageAlt}" title="${imageTitle}"/>
+	</div>
+	<isset name="largeImagesSize" value="${pdict.Product.getImages('large').size()}" scope="page"/>
+	<isset name="mediumImagesSize" value="${pdict.Product.getImages('medium').size()}" scope="page"/>
+	<isset name="noOfImages" value="${largeImagesSize > mediumImagesSize ? mediumImagesSize : largeImagesSize}" scope="page"/>			
+	<div class="productthumbnails"><!-- Product Thumbnails -->
+		<iscomment>show thumbnails if more than one</iscomment>
+		<isif condition="${mediumImagesSize > 1}">
+			<isloop items="${pdict.Product.getImages('medium')}" var="img" status="imgStatus">
+				<iscomment>we only show the smallest of large or small images, there is 1-1 correspondence</iscomment>
+				<isif condition="${imgStatus.count > noOfImages - 1}">
+					<isbreak/>
+				</isif>
+				<img src="${img.url}" alt="${img.alt}" title="${img.title}"/>						
+			</isloop>
+		</isif>
+	</div>			
+	<div class="clear"><!-- FLOAT CLEAR --></div>
+</div><!-- END: productdetailcolumn -->
+<div class="clear"><!-- FLOAT CLEAR --></div>

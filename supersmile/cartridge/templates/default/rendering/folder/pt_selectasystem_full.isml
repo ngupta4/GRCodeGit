@@ -1,0 +1,127 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<isinclude template="util/modules"/>
+
+<iscomment>This page must be cachable. It inherits the caching attributes by the decorated template.</iscomment>
+
+<isscript>
+	importPackage(dw.content);
+	importScript('guthyrenker_core:common/libUtils.ds');
+	
+	var CurrentFolder : Folder = null;
+	var CurrentContent : Content = null;
+	
+	if( "fdid" in pdict.CurrentHttpParameterMap && !empty(pdict.CurrentHttpParameterMap.fdid.value) ) {
+		CurrentFolder = ContentMgr.getFolder(pdict.CurrentHttpParameterMap.fdid.stringValue);
+	}
+	
+	if( "cid" in pdict.CurrentHttpParameterMap && !empty(pdict.CurrentHttpParameterMap.cid.value) ) {
+		CurrentContent = ContentMgr.getContent(pdict.CurrentHttpParameterMap.cid.stringValue);
+	}
+	
+	if( empty(CurrentContent) && !empty(CurrentFolder) && !empty(CurrentFolder.onlineContent) ) {
+		CurrentContent = CurrentFolder.onlineContent[0];
+	}
+	if( empty(CurrentFolder) && !empty(CurrentContent) && !empty(CurrentContent.classificationFolder) ) {
+		CurrentFolder = CurrentContent.classificationFolder;
+	}
+	if( empty(CurrentFolder) && !empty(CurrentContent) && !empty(CurrentContent.folders) ) {
+		CurrentFolder = CurrentContent.folders[0];
+	}
+	
+	var CurrentFolderPath : String = CurrentContent.ID;
+	var RootFolder = CurrentFolder;
+	while( !empty(RootFolder.parent) && RootFolder.parent.ID!='primary-navigation') {
+		CurrentFolderPath += " "+RootFolder.ID;
+		RootFolder = RootFolder.parent;
+	}
+	CurrentFolderPath += " body_"+RootFolder.ID+" "+RootFolder.ID;
+	
+	/* TODO: This will have to be customized, based on the campaign (I think) */
+	CurrentFolderPath += " select3g";
+	CurrentFolderPath += " "+KitQtyClass;
+	
+	var PageID : String = "page_";
+	
+	if( empty(CurrentContent) ) {
+		PageID += CurrentFolder.ID;
+	} else {
+		PageID += CurrentContent.ID;
+	}
+	
+	/* TODO: This will have to be customized, based on the campaign (I think) */
+	PageID += "_select3g";
+</isscript>
+
+
+<head>
+	<iscomment>
+		Include all important information globally , e.g. meta-data, link information, and
+		javascript.
+	</iscomment>
+	 <link rel="canonical" href="${Resource.msg('global.saspage.canonical','locale',null)}"  />
+	<isinclude template="components/header/htmlhead"/>
+
+	
+	
+	
+</head>
+<body id="${saspageid}" class="${CurrentFolderPath}">
+<isset name="showOrderButton" value="${false}" scope="pdict" />
+<isinclude template="common/mboxglobal"/>	
+<isset name="CCC" value="${pdict.CurrentCampaignConfig}" scope="page" />
+<isscript>
+		importPackage(dw.object);
+		importPackage(dw.catalog);
+		
+		importScript('int_gutheyrenker:common/libEncoding.ds');
+		
+		if(pdict.CurrentCampaignConfig!=null) {
+			var CCC : Object = pdict.CurrentCampaignConfig;
+			if(CCC !=null ){
+				var category : dw.catalog.Category = CCC.getCampaignCategory();
+			}
+		}
+</isscript>
+
+<div id="pageContext" style="display:none;">
+{
+	"pageTitle"	:	"Customer Service",
+	"pageType"	:	"CustomerService"		
+}
+</div>
+<isscript>
+//look for UCI in the following order : 1. cookie 2. querystring 3. current CampaignConfig object
+var the_UCI_cookie : dw.web.Cookie = pdict.CurrentRequest.httpCookies['uci'];
+var mboxUCI : String = !empty(the_UCI_cookie) ? the_UCI_cookie.value   
+			    	 : ( ("uci" in pdict.CurrentHttpParameterMap && !empty(pdict.CurrentHttpParameterMap.uci.value)) ? 
+			    	     pdict.CurrentHttpParameterMap.uci.value 
+			    	 : ( (!empty(pdict.CurrentCampaignConfig.uciCode) && pdict.CurrentCampaignConfig.uciCode != null) ?
+			    	     pdict.CurrentCampaignConfig.uciCode 
+			    	 : "none" )); //default to none
+			    	 
+var mboxCampaignID : String = pdict.CurrentSession.privacy.campaignID;
+var mboxStorefrontName = "vb_dw"; 	 
+
+var mboxState="acq";
+if(pdict.CurrentCustomer.authenticated || pdict.CurrentCustomer.registered || pdict.CurrentSession.custom.cRememberMe || pdict.CurrentRequest.httpCookies['rememberMe']){
+mboxState="cat";
+}
+var mboxPageName = mboxCampaignID + ":" +mboxStorefrontName+ ":" + mboxState + ":" + pdict.OmniturePage;				    	 
+</isscript>
+<div class="mboxDefault"></div>
+<script type="text/javascript">mboxCreate("SU_dw_sas_tracker",'pageName='+"${mboxPageName}",'pageUCI='+ "${mboxUCI}");</script>
+	<div id="container" class="mainWrapper">		
+		
+		
+		
+				<isreplace/>
+		
+	</div>
+
+		<isinclude template="components/footer/pixels"/>
+	
+	<isinclude template="analytics/omniture/omniture"/>
+	<isinclude template="common/google_analytics" />
+</body>
+</html>

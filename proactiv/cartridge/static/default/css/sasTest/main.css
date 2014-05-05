@@ -1,0 +1,229 @@
+@charset "utf-8";
+/* CSS Document */
+
+#overlay_modal, .dialog {
+  height: auto;
+  position: relative;
+  width: auto;
+  z-index: 14;
+}
+#sasModalContainer {
+	margin: 0 auto;
+	width: auto;
+	text-align: center;
+}
+	#sasModalContainer h2 {
+		color: #3887a4;
+		margin: 0;
+		padding: 0 0 5px 0;
+		font-weight: normal;
+		font-size: 18px;
+		border-bottom: 1px dotted #000;
+	}
+	#sasModalContainer h2 sup {
+		font-size: 10px;
+	}
+	#sasModalContainer h2 a.closeBack {
+		float: right;
+		display: none;
+		background: white url(../../images/sas/sas_modal_back.jpg) no-repeat 0 0;
+		text-decoration: none;
+		width: 75px;
+		height: 27px;
+		margin-top: -1px;
+		margin-right: 10px;
+	}
+	#sasModalContainer > div {
+		display: block;
+		text-align: left;
+		background: #fff;
+		margin: 20px;
+		border-radius: 5px;
+		padding: 15px;
+		border: 4px solid #FFF;
+	}
+	#sasModalContainer .closeBottom {
+		clear: both;
+		text-align: center;
+		padding: 10px;
+	}
+	#sasModalContainer .closeBottom a {
+		text-decoration: none;
+		color: #3887a4;
+		font-size: 11px;
+	}
+	#sasModalContainer .closeBottom a:hover {
+		text-decoration: underline;
+	}
+	#sasModalContainer dl {
+		margin: 0;
+	}
+	#sasModalContainer dt {
+		font-weight: bold;
+	}
+	#sasModalContainer dt.orangeHeader {
+		color: #e8572d;
+	}
+	#sasModalContainer .leftPanel dd {
+		margin: 0 0 10px 0;
+	}
+	#sasModalContainer .rightPanel dd {
+		margin: 0 0 20px 0;
+	}
+	#sasModalContainer dd a {
+		display: block;
+		font-size: 10px;
+		color: #999;
+		text-decoration: none;
+	}
+	#sasModalContainer dd a:hover {
+		text-decoration: underline;
+	}
+	#sasModalContainer .leftPanel {
+		float: left;
+		font-size: 11px;
+	}
+	#sasModalContainer .rightPanel {
+		float: right;
+		font-size: 13px;
+	}
+	#sasModalContainer .productImg {
+		background-image: url(../../images/sas/sas_modal_product_sprite.jpg);
+		background-repeat: no-repeat;
+		height: 300px;
+	}
+#sasModalContainer .gifts {
+	width: 660px;
+	height:auto;
+}
+#modalRenewingCleanser .gifts {
+	width: 660px;
+	height:590px;
+}	
+#sasModalContainer .gifts .closeBottom {
+	visibility: hidden;
+	margin: 0;
+	padding: 0;
+	height: 0;
+}
+#sasModalContainer .gifts .leftPanel {
+	width: 221px;
+}
+#sasModalContainer .gifts .rightPanel {
+	width: 439px;
+	font-size: 16px;
+	line-height: 1.4;
+	color: #333333;
+	padding-top:10px;
+}
+#sasModalContainer .gifts .rightPanel dl {
+	font-size: 12px;
+}
+#sasModalContainer .gifts .productImg {
+	background-image: url(../../images/sas/giftmodal.jpg);
+	background-repeat: no-repeat;
+	background-position-y: 0;
+	width: 221px;
+	height: 376px;
+}
+#modalRenewingCleanser .productImg {
+	background-position: -224px 0px;
+}
+#modalRevitalizingToner .productImg {
+	background-position: -444px 0px;
+}
+#modalRepairingTreatment .productImg {
+	background-position: -664px 0px;
+}
+#modalOilFreeMoisturizer .productImg {
+	background-position: -884px 0px;
+}
+#modalDoctorsSecret .productImg {
+	background-position: -1780px 0;
+}
+#modalDailyOilControl .productImg {
+	background-position: -1106px;
+}
+#modalDoctorsSecret .productImg {
+	background-position: -1780px 0;
+}
+#modalGreenTeaMoisturizer .productImg {
+	background-position: -1340px 0;
+}
+#modalAdvancedBlemishTreatment .productImg {
+	background-position: -1540px 0;
+}
+#modalRefiningMask .productImg {
+	background-position: -2210px 0;
+}
+#modalDarkSpotCorrector .productImg {
+	background-position: -2000px 0;
+}
+#modalActivMember.gifts .rightPanel {
+	width: 100%;
+	float:none;
+}
+#modalActivMember.gifts .rightPanel p {
+	padding:5px 0px;
+	font-size: 14px;
+}
+#sasModalContainer .gifts .productKitImg {
+	background-image: url(../../images/sas/kitmodal.jpg);
+	background-repeat: no-repeat;
+	background-position-y: 0;
+	width: 221px;
+	height: 376px;
+}
+#modalCore .productKitImg {
+	background-position: 0px 0px;
+}
+#modalDeluxe .productKitImg {
+	background-position: -270px 0px;
+}
+#modalTeen .productKitImg {
+	background-position: -630px 0px;
+}
+#modalCore {
+	width:625px;
+	height:550px;
+}
+	#modalCore .leftPanel {
+		width:220px;
+	}
+	#modalCore .rightPanel {
+		width:390px;
+	}
+	#modalCore .productImg {
+		background-position: -2px 0px;
+		width: 211px;
+	}
+#modalDeluxe {
+	width:735px;
+	height:685px;
+}
+	#modalDeluxe .leftPanel {
+		width:315px;
+	}
+	#modalDeluxe .rightPanel {
+		width:395px;
+	}
+	#modalDeluxe .productImg {
+		background-position: 0px 0px;
+		height: 249px;
+		width: 315px;
+	}
+#modalTeen {
+	width:690px;
+	height:680px;
+}
+	#modalTeen .leftPanel {
+		width:290px;
+	}
+	#modalTeen .rightPanel {
+		width:380px;
+	}
+	#modalTeen .productImg {
+		background-position: -2px -588px;
+		width: 281px;
+		height: 305px;
+	}

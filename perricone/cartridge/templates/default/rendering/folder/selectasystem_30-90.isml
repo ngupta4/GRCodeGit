@@ -1,0 +1,128 @@
+<!--- TEMPLATENAME: selectasystemsingle.isml --->
+<iscache status="off"/>
+
+
+<iscomment>
+	This template is created before the 'wrapper' template, so we can set
+	up the template configuration for the 'pt_selectasystem' template right here.
+</iscomment>
+
+
+<isdecorate template="rendering/folder/pt_selectasystem">
+	<style>
+		.price-order {
+			height:300px !important;
+		}
+		.price-order .terms_only {
+			float:left;
+		}
+		.price-order  .terms_only label div{
+			position: relative;
+			bottom: 30px;
+			left: 20px;
+			font-size: 20px;
+			color:#fff;
+		}
+		.OrderNowButton.height,
+		.sas .pdp_offers .price-order .height {
+			margin: 50px 0 0 -60px !important;
+			text-align:center;
+		}
+		.footnote{background: #ebebeb;padding-top: 10px;}
+	</style>
+
+	<isinclude template="util/modules"/>
+	<isscript>
+		importPackage(dw.util);
+		importPackage(dw.object);
+		importPackage(dw.catalog);
+		
+		var CCC : Object = pdict.CurrentCampaignConfig;
+		var campaignCode : String = CCC.campaignCode;
+		var showHeader : boolean = CCC.showHeader;
+		var showFooter : boolean = CCC.showFooter;
+		var showNav : boolean = CCC.showNav;
+		var showOrderButton : boolean = CCC.showOrderButton;
+		var containerClasses : String = CCC.getContainerClasses();
+		var category : dw.catalog.Category = CCC.getCampaignCategory();
+		var primaryOffer : Product = null;
+		var secondaryOffer : Product = null;
+		var tertiaryOffer : Product = null;
+		var offersList : ArrayList = new ArrayList();
+		var offerCodes : Array = null;
+		if( !empty(CCC) ) {
+			offerCodes = CCC.sasOfferCodes;
+			var aProduct : Product = null;
+			for( var i=0, ii=offerCodes.length; i<ii; i++ ) {
+				aProduct = ProductMgr.getProduct(offerCodes[i]);
+				if( !empty(aProduct) ) {
+				offersList.add1(aProduct);
+			}
+				
+			}
+		}
+ 
+	importPackage(dw.util);
+	importPackage(dw.catalog);
+	var appendAUTH = "";
+	if(pdict.CurrentHttpParameterMap.auth.value != null && !empty(pdict.CurrentHttpParameterMap.auth) && pdict.CurrentHttpParameterMap.auth.value != "" ){
+			appendAUTH = pdict.CurrentHttpParameterMap.auth.value;
+	}
+	
+	var primaryUCI : dw.web.Cookie = pdict.CurrentRequest.httpCookies['uci'];
+	var appendUCI = "";
+	if(primaryUCI != null && !empty(primaryUCI) && primaryUCI.value != "" ){
+			appendUCI = primaryUCI.value; 
+	}
+</isscript> 		
+	
+	<div class="content_box_outer_pdp">
+		<div class="content_box_inner_pdp">
+		
+			<div class="pdp_offers">
+				<table>
+					<tr>
+						<td class="cell-control-offer">
+							<div id="control-offer" class="pdp_offer_left">
+								<iscomment>Hard-coding in panel B SAS.  If it wins, this should be done properly...probably in rendering/product/components/offer.isml</iscomment>
+								<isinclude template="rendering/folder/offer90left" />
+							</div>
+						</td>
+						<td>
+							<div id="alternate-offer" class="pdp_offer_right">
+								<isinclude template="rendering/folder/offer90right" />
+							</div>
+						</td>
+					</tr>
+					
+				</table>
+			</div>
+		</div>			
+	</div>
+	
+	
+<iscomment>
+	<div class="moneyback_gurantee_image">
+	  <img src="${URLUtils.staticURL('../images/60-day-moneyback.png')}" />
+	  <span class="moneyback_gurantee_text">${Resource.msg('product.moneyback_text','product',encoding="off")}</span>
+	</div>
+</iscomment>	
+	
+	<isinclude template="components/pixels/gr-sas" />
+	<isset name="OmniturePage" value="Offerpage" scope="pdict">	
+	<isset name="pixel_content_asset" value="pixels_order_now" scope="request">
+	<iscomment>
+	custom function to retreive kit group based on user's selection, and apply selected offer code to link href.
+	</iscomment>
+	<script type="text/javascript">
+	$(function(){
+		$('label div, label input').click(function(){
+			var selectedProd = $(this).parents().children('input').attr('id');
+			// used in determining which side's button to update
+			var kitName = $(this).parents().children('input').attr('name');
+		    var kitUrl= "${URLUtils.https("COCart-AddProduct","pid")}";
+			$("."+kitName+" a").attr('href',kitUrl+selectedProd);
+		});
+	});
+</script>
+</isdecorate>

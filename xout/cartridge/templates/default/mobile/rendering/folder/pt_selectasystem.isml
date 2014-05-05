@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<isinclude template="util/modules"/>
+<isscript>
+	importScript('guthyrenker_core:common/libUtils.ds');
+</isscript>
+<iscomment>This page must be cachable. It inherits the caching attributes by the decorated template.</iscomment>
+<html>
+	<head>
+		<iscomment>Include all important information globally , e.g. meta-data, link information, and javascript.</iscomment>
+		<isinclude template="components/header/htmlhead"/>
+	
+		
+	    <iscomment>Insert meta tag for the "Google-Verification" feature to verify that you are the owner of this site.</iscomment>
+	    <isif condition="${'GoogleVerificationTag' in dw.system.Site.current.preferences.custom && dw.system.Site.current.preferences.custom.GoogleVerificationTag!=''}">
+	        <meta name="google-site-verification" content="<isprint value="${dw.system.Site.current.preferences.custom.GoogleVerificationTag}"/>" />
+	    </isif>
+	    <isif condition="${'MSValidateTag' in dw.system.Site.current.preferences.custom && dw.system.Site.current.preferences.custom.MSValidateTag!=''}">
+	    	<meta name="msvalidate.01" content="${dw.system.Site.current.preferences.custom.MSValidateTag}" />
+	    </isif>
+	    
+		<isif condition="${!empty(CCC) && !empty(CCC.cssStyle)}">
+			<link rel="stylesheet" type="text/css" href="${URLUtils.staticURL(URLUtils.CONTEXT_LIBRARY,null,CCC.cssStyle)}" />
+		</isif>
+		
+		<iscomment>Include content asset css</iscomment>
+		
+	</head>
+	<body class="${bodyclass}">
+		<isinclude template="components/mbox"/>
+		<div class="mboxDefault"></div>
+		<script type="text/javascript">mboxCreate("DT_SAS_Tracker");</script>
+
+		<iscomment>Cookies and Javascript enabled check</iscomment>
+		<isinclude template="components/browsertoolscheck"/>
+		<isinclude template="components/header/headernocategories"/>
+
+		<div id="container" class="pt_storefront <isif condition="${'Content' in pdict && !empty(pdict.Content)}"> ${pdict.Content.ID}</isif>${CCC.getContainerClasses()}">	
+			<div id="main">		
+  				<isreplace/>
+			</div><!-- END: main -->
+		</div><!-- END: container -->
+
+<isif condition="${CCC.showFooter}">
+	<isinclude template="components/footer/footer"/>
+<iselse>
+	<!---  Omniture tracking  --->
+<iscomponent pipeline ="Tealium-FooterInclude"
+pid=${pdict.CurrentHttpParameterMap.pid.stringValue}
+searchterm=${pdict.CurrentHttpParameterMap.q.stringValue}
+searchresultscount=${!empty(pdict.ProductSearchResult)?pdict.ProductSearchResult.count+'':''}
+orderno=${pdict.OrderNo}
+contentsearchresultscount=${!empty(pdict.ContentSearchResult)?pdict.ContentSearchResult.count+'':''}
+pagecgid=${pdict.CurrentHttpParameterMap.cgid.stringValue} />
+</isif>
+<isinclude template="common/google_analytics" />
+<div id="popupBG">&nbsp;</div>
+</body>
+</html>

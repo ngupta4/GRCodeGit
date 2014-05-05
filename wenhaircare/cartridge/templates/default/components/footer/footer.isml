@@ -1,0 +1,120 @@
+<isscript>
+  importPackage( dw.object );
+  importScript('guthyrenker_core:common/libCalendar.ds');
+
+  var paaffURL = pdict.CurrentHttpParameterMap.paaff.stringValue;
+  var showLiveChat : CustomObject = CustomObjectMgr.getCustomObject("CampaignConfiguration", getCurrentCampaignCode()).custom.showLiveChat;
+</isscript>
+
+<isif condition="${!empty(session.custom.deviceCategory) && session.custom.deviceCategory == 'tablet'}">  
+  <isset name="chat_disable" value="true" scope="session">
+</isif>
+
+<isinclude template="util/modules"/>
+
+
+  <isif condition="${pdict.CurrentCustomer.authenticated || pdict.CurrentRequest.httpCookies['rememberMe']!=null}">		
+    <isif condition="${dw.system.Site.getCurrent().getCustomPreferenceValue('isForeseeIncluded') == true}">
+      <script type="text/javascript" src="${dw.web.URLUtils.staticURL('foresee/foresee-trigger.js')}"></script>
+	
+      <isif condition="${pdict.CurrentCustomer.authenticated}">
+        <isif condition="${!empty(pdict.CurrentCustomer.profile.custom.firstOrderDate) && pdict.CurrentCustomer.profile.custom.firstOrderDate != null}">
+          <isscript>
+            var curDate = new Date();
+            var numDays : Number = calcNumDaysBetween2Dates(pdict.CurrentCustomer.profile.custom.firstOrderDate, curDate);
+          </isscript>
+
+          <script type="text/javascript">
+            FSR.CPPS.set('memberSinceDate',<isprint value="${numDays}" formatter="###0">);
+          </script>
+        </isif>
+      </isif>
+    </isif>
+
+	<iscontentasset aid="footer-global-login"/>
+  <iselse/>	
+		<isslot id="footer-global" description="Footer global" context="global" />
+  </isif>
+
+
+<iscomment>
+	Code Included For Merge or Persistant Cart. If user is authenticated and cookie is not set.
+</iscomment>
+<isinclude template="common/persistantcartdialog.isml"/>
+
+
+<iscomment>
+	Customer registration can happen everywhere in the page flow. As special tag in the pdict
+	is indicating it. So we have to check on every page, if we have to report this event for
+	the reporting engine.
+</iscomment>
+<isinclude template="util/reporting/ReportUserRegistration.isml"/>
+
+<isif condition="${dw.system.Site.getCurrent().getCustomPreferenceValue('enableLiveChat') == true}">
+  <!-- LIVE CHAT INCLUDE SCRIPT -->
+  <!--  Allow chat if chat_disable is not defined or 0 in session variable -->
+  <isif condition="${session.custom.chat_disable == null || session.custom.chat_disable == 0}">
+    <isif condition="${showLiveChat == true}">
+      <isif condition="${!empty(pdict.CheckoutStep) && 'confirmation' == pdict.CheckoutStep}">
+        <iscomment>Confirmation page, Add inq chat confirmation information, rm9084</iscomment>
+        <script type="text/javascript"> 
+          var inqSalesProducts = mainOfferCode;
+          var inqSalesQuantities = mainItemQty;
+          var inqSalesPrices = subTotal;
+          var inqClientOrderNum = orderID;
+          var inqCustomerName = <isprint value="${pdict.CurrentForms.personinf.billtoaddress.firstName.value}" encoding="off"> + " " + <isprint value="${pdict.CurrentForms.personinf.billtoaddress.lastName.value}" encoding="off">;
+          var inqOtherInfo = "TYP:Proactiv~CNF:" + <isprint value="${pdict.CurrentForms.personinf.billtoaddress.firstName.value}" encoding="off"> + "~CNL:" + <isprint value="${pdict.CurrentForms.personinf.billtoaddress.lastName.value}" encoding="off"> + "~CST:New~CMP:" + uci + "~OVO:" + orderTotal;
+        </script>
+      </isif>
+
+      <script type='text/javascript' src="${dw.system.Site.getCurrent().getCustomPreferenceValue('liveChatJSUrl')}"></script>
+    </isif>
+   </isif>
+</isif>
+
+<isinclude template="common/google_analytics" />
+<!---  Omniture tracking  --->
+<isinclude template="analytics/omniture/omniture"/>
+<script type="text/javascript">
+
+jQuery('.facebook').click( function(e) {
+	s.linkTrackVars='prop33,eVar33';
+	s.prop33="us:wen:facebook";
+    s.eVar33= "us:wen:facebook";
+  //  s.tl(this,'o',"facebook");
+ 
+});
+jQuery('.youTube').click( function(e) {
+	s.linkTrackVars='prop33,eVar33';
+	s.prop33="us:wen:youtube";
+    s.eVar33= "us:wen:youtube";
+ //   s.tl(this,'o',"youtube");
+ 
+});
+jQuery('.google').click( function(e) {
+	s.linkTrackVars='prop33,eVar33';
+	s.prop33="us:wen:googleplus";
+    s.eVar33= "us:wen:googleplus";
+ //   s.tl(this,'o',"googleplus");
+ 
+});
+
+jQuery('.twitter').click( function(e) {
+	s.linkTrackVars='prop33,eVar33';
+	s.prop33="us:wen:twitter";
+    s.eVar33= "us:wen:twitter";
+ //   s.tl(this,'o',"twitter");
+ 
+});
+
+jQuery('.pinUs').click( function(e) {
+	s.linkTrackVars='prop33,eVar33';
+	s.prop33="us:wen:pinterest";
+    s.eVar33= "us:wen:pinterest";
+    s.tl(this,'o',"pinterest");
+ 
+});
+
+</script>
+
+<isinclude template="/tealium/include_tealium_pixel.isml">

@@ -1,0 +1,37 @@
+<iscomment>
+    Log event indicating checkout
+
+    Logs the step depending on the dictionary content.
+    step and name as parameter in pdict expected
+
+    Make sure, that step can be ordered alphabetically because the reporting
+    funnel display will use the step value to order the steps ascending.
+    The name improves the display.
+
+	DO NOT CHANGE THE LOCALE HERE. It just serves the purpose of logging the information
+	to the analytics log file. The customer will never see it and the analytics module expects en_US.
+</iscomment>
+<isscript>
+		var locale = 'en_US';
+</isscript>
+
+<!-- Check for empty name of checkout step -->
+<isif condition="${empty(pdict.checkoutstep)}">
+    <isset name="checkoutname" value="${'N/A'}" scope="pdict"/>
+</isif>
+
+<isif condition="${empty(pdict.checkoutstep)}">
+	<isinclude url="${URLUtils.url('mReportingEvent-Start',
+	                     'ID',			'Checkout',
+	                     'BasketID',	pdict.Basket.UUID,
+	                     'Step', 		StringUtils.formatNumber(1, '#,##0', locale),
+                         'Name',        pdict.checkoutname
+	                     )}"/>
+<iselse/>
+	<isinclude url="${URLUtils.url('mReportingEvent-Start',
+	                     'ID',			'Checkout',
+	                     'BasketID',	pdict.Basket.UUID,
+	                     'Step', 		StringUtils.formatNumber(pdict.checkoutstep, '#,##0', locale),
+                         'Name',        pdict.checkoutname
+	                     )}"/>
+</isif>

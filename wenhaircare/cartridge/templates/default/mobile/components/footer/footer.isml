@@ -1,0 +1,72 @@
+<isscript>
+  importPackage( dw.object );
+  importScript('guthyrenker_core:common/libCalendar.ds');
+
+  var paaffURL = pdict.CurrentHttpParameterMap.paaff.stringValue;
+  var showLiveChat : CustomObject = CustomObjectMgr.getCustomObject("CampaignConfiguration", getCurrentCampaignCode()).custom.showLiveChat;
+</isscript>
+
+<isinclude template="util/modules"/>
+
+
+  
+<iscomment>
+	Code Included For Merge or Persistant Cart. If user is authenticated and cookie is not set.
+</iscomment>
+<isinclude template="common/persistantcartdialog.isml"/>
+
+
+<iscomment>
+	Customer registration can happen everywhere in the page flow. As special tag in the pdict
+	is indicating it. So we have to check on every page, if we have to report this event for
+	the reporting engine.
+</iscomment>
+<isinclude template="util/reporting/ReportUserRegistration.isml"/>
+
+
+<isinclude template="common/google_analytics" />
+<!---  Omniture tracking  --->
+<isinclude template="analytics/omniture/omniture"/>
+<script type="text/javascript">
+
+jQuery('.facebook').click( function(e) {
+	s.linkTrackVars='prop33,eVar33';
+	s.prop33="us:wen:facebook";
+    s.eVar33= "us:wen:facebook";
+  //  s.tl(this,'o',"facebook");
+ 
+});
+jQuery('.youTube').click( function(e) {
+	s.linkTrackVars='prop33,eVar33';
+	s.prop33="us:wen:youtube";
+    s.eVar33= "us:wen:youtube";
+ //   s.tl(this,'o',"youtube");
+ 
+});
+jQuery('.google').click( function(e) {
+	s.linkTrackVars='prop33,eVar33';
+	s.prop33="us:wen:googleplus";
+    s.eVar33= "us:wen:googleplus";
+ //   s.tl(this,'o',"googleplus");
+ 
+});
+
+jQuery('.twitter').click( function(e) {
+	s.linkTrackVars='prop33,eVar33';
+	s.prop33="us:wen:twitter";
+    s.eVar33= "us:wen:twitter";
+ //   s.tl(this,'o',"twitter");
+ 
+});
+
+jQuery('.pinUs').click( function(e) {
+	s.linkTrackVars='prop33,eVar33';
+	s.prop33="us:wen:pinterest";
+    s.eVar33= "us:wen:pinterest";
+    s.tl(this,'o',"pinterest");
+ 
+});
+
+</script>
+<isinclude template="mobile/components/pixels/mediaPixels"/>
+<isinclude template="/tealium/include_tealium_pixel.isml">

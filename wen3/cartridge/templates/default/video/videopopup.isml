@@ -1,0 +1,68 @@
+<!--- TEMPLATENAME: videopopup.isml --->
+<isinclude template="util/modules"/>
+<isinclude template="components/header/htmlhead"/>
+<isset name="cId" value="${pdict.CurrentHttpParameterMap.cId.stringValue}" scope="page"/>
+<isset name="videoObj" value="${dw.content.ContentMgr.getContent(cId)}" scope="page"/>
+
+	 		  
+
+</br></br>
+<iscomment>Video Name : </iscomment>
+<isif condition="${videoObj!=null}"> 
+	NAME : <isprint value="${videoObj.name}" /></br>
+	<iscomment>don't remove or rename DIV and Marker, necessary for mark and editing, no css attributes defined</iscomment>
+	<div class="contentasset">
+		<isprint value="${videoObj.custom.body}" encoding="off"/>
+	</div> <!-- End contentasset -->
+	
+	<isif condition="${!empty(videoObj.custom.videoSrc) && videoObj.custom.videoSrc=='YouTube'}">
+	  <iframe id="ytplayer" type="text/html" width="640" height="390"
+	  src="http://www.youtube.com/embed/${videoObj.custom.videoAssetId}?autoplay=1&origin=http://example.com"
+	  frameborder="0"></iframe>
+	</isif>
+	 
+	<isif condition="${!empty(videoObj.custom.videoSrc) && videoObj.custom.videoSrc=='Scene7'}">
+		<isscript>
+			var videoname: String = videoObj.custom.videoAssetId.replace("_","%5F");
+			var flag :Boolean = true;
+			while(flag){
+				if(videoname == videoname.replace("_","%5F")){ flag = false;}
+				videoname = videoname.replace("_","%5F");
+			}
+		</isscript>
+		
+		<iframe scrolling="no" frameborder="0" style="width:640px;height:367px;" 
+		onload="tb_showIframe()" name="TB_iframeContent199" id="TB_iframeContent" 
+		src="//guthyrenker.scene7.com/s7/viewer.jsp?company=GuthyRenker&config=Scene7SharedAssets/Video%5FeCat&locale=en&asset=GuthyRenker/Proactiv/Videos/html5/${videoname}.mp4" 
+		hspace="0"> </iframe>
+		
+	</isif>
+	
+	</br> 
+	DESC :<iscomment>Video Description : </iscomment>
+	<isprint value="${videoObj.description }" /> </br> </br> </br> 
+	--------------------------------------------------------------------------------------------------------------------------------------------------
+	<h2>Products Featured In This Video</h2>
+	
+	
+	<isif condition="${'featuredProducts' in videoObj.custom && !empty(videoObj.custom)}">
+		<isloop items="${videoObj.custom.featuredProducts}" var="prod">
+			<isset name="prodObj" value="${dw.catalog.ProductMgr.getProduct(prod)}" scope="page"/>
+		
+	    	<isset name="productImage" value="${prodObj.thumbnail.url}" scope="page" />
+					
+			<isif condition="${!empty(productImage)}">
+				<img src="${productImage.url}" alt="${productImage.alt}" title="${productImage.title}"/>
+			<iselse>
+				<img width="113px" src="${URLUtils.staticURL('/images/noimagesmall.png')}" alt="${prod.title}" title="${prod.title}"/>
+			</isif>
+						
+		
+			<br>
+			<iscomment>Product Name : </iscomment>
+			<isprint value=" ${prodObj.name}" /><br></br>	
+			-------------------------<br/>
+		</isloop>
+	</isif>  
+</isif>
+

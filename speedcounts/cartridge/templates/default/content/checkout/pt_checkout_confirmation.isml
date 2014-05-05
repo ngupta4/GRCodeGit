@@ -1,0 +1,42 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<!--- TEMPLATENAME: pt_checkoutshippingovernight.isml --->
+<html xmlns="http://www.w3.org/1999/xhtml">
+	<isinclude template="util/modules"/>
+	
+
+	
+	<head>
+		<isinclude template="components/header/htmlhead"/>
+		<link href="${URLUtils.staticURL('/css/checkout.css')}" type="text/css" rel="stylesheet" />
+		<link href="${URLUtils.staticURL('/css/checkoutshipmentovernight.css')}" type="text/css" rel="stylesheet" />
+
+		<isif condition="${!empty(CCC) && !empty(CCC.cssStyle)}">
+			<link rel="stylesheet" type="text/css" href="${URLUtils.staticURL(URLUtils.CONTEXT_LIBRARY,null,CCC.cssStyle)}" />
+		</isif>
+	</head>
+	
+	<body id="page_checkout">
+	<div class="mboxDefault"></div>
+	<isinclude template="common/mboxglobal"/>
+	
+		<div id="idMainWide" class="mainWide">
+			<isslot id="singlepage-confirm-header" description="singlepage cart header" context="category" context-object="${category}" />
+			<div id="main" class="clearfix">
+				<div id="wrapper">
+					<div id="cartcontent">
+						<isreplace/>
+						<div class="clearfix"></div>
+					</div>
+				</div>
+				<div id="mainfooter">
+					<div id="footerbar">
+						<div id="footermenu"> 
+						</div>
+					</div>
+					<isslot id="singlepage-confirm-footer" description="singlepage confirm footer" context="category" context-object="${category}" />
+				</div>
+			</div>
+		</div>
+		<isinclude template="analytics/omniture/omniture"/>
+	</body>
+</html>

@@ -1,0 +1,439 @@
+<iscomment>
+	This template will be rendered to show product as a tile. This template just need Product and 
+	all detailed corresponding to this will be shown. it will be used for showing tile in recommendation.
+</iscomment>
+<isif condition="${!empty(Product)}">
+	<iscomment>Set the product of the product search hit locally for reuse</iscomment>
+	<isset name="Product" value="${Product}" scope="page"/>
+	<isset name="ProductTile" value="${Product}" scope="page"/>
+	<iscomment>
+		Get the colors and size selectable from the current product master or variant range if we
+		need to determine them based on a search result.
+	</iscomment>
+	<isscript>
+		var variantList : dw.util.ArrayList = new dw.util.ArrayList();
+		importScript("guthyrenker_businesslogic:productlist/ProductTileScript.ds" );
+		variantList = getVariantListForProduct(Product);
+		importScript("guthyrenker_businesslogic:productlist/VariationsScript.ds");
+	</isscript>
+	
+  	<isset name="selectableColors" value="${variantList[0]}" scope="page"/>
+    <isset name="varAttrColor" value="${variantList[1]}" scope="page"/>
+    <isset name="selectableSizes" value="${variantList[2]}" scope="page"/>
+    <isset name="varAttrSize" value="${variantList[3]}" scope="page"/>
+	
+    <iscomment>
+		Generate link to product detail page: by default it's just the product of the product search hit.
+		If a color variation is available, the first color is used as link URL.
+	</iscomment>
+	<isset name="productUrl" value="${URLUtils.url('Product-Show', 'pid', Product.ID)}" scope="page"/>
+	
+	<isif condition="${!empty(selectableColors) && selectableColors.size() > 0 && !empty(varAttrColor)}">
+		<isset name="productUrl" value="${Product.variationModel.url('Product-Show', varAttrColor, selectableColors.get(0))}" scope="page"/>
+	</isif>
+    
+    <iscomment>append the paging parameters to the product URL
+	<isset name="productUrl" value="${productUrl.append('start', starting)}" scope="page"/></iscomment>
+	
+	<iscomment>append the search query parameters to the product URL
+	<isif condition="${!empty(pdict.ProductSearchResult)}">
+		<isset name="productUrl" value="${pdict.ProductSearchResult.url( productUrl )}" scope="page"/>
+	</isif></iscomment>
+	
+	<div class="product producttile">
+	           <isset name="imageProduct" value="${Product}" scope="page"/>
+	            <isif condition = "${'bestSeller' in imageProduct.custom && imageProduct.custom.bestSeller}">
+								<div class="overlay"><img src="${URLUtils.staticURL('/images/OverlayImages/best_seller.png')}"/></div>
+							<iselseif condition = "${'topRatedFlag' in imageProduct.custom && imageProduct.custom.topRatedFlag}">
+								<div class="overlay"><img src="${URLUtils.staticURL('/images/OverlayImages/top_rated.png')}"/></div>
+							<iselseif condition = "${'isNew' in imageProduct.custom && imageProduct.custom.isNew}">
+								<div class="overlay"><img src="${URLUtils.staticURL('/images/OverlayImages/new.png')}"/></div>
+							<iselseif condition = "${'mustHaveFlag' in imageProduct.custom && imageProduct.custom.mustHaveFlag}">
+								<div class="overlay"><img src="${URLUtils.staticURL('/images/OverlayImages/must_have.png')}"/></div>
+				</isif>
+				<div class="productName">
+					<isif condition = "${'catalogDisplayNameTwo' in Product.custom}">	
+						<a href="${productUrl}" title='<isprint value="${Product.custom.catalogDisplayNameTwo}" encoding="off"/>'>
+							<isprint value="${Product.custom.catalogDisplayNameTwo}" encoding="off"/>
+						</a>
+					</isif>
+				</div><!-- END: name -->
+				
+				<div class="productImage">			
+					<iscomment>Render the thumbnail</iscomment>
+					  <iscomment>Determine the correct image, either first displayed color variation or default product thumbnail</iscomment>
+						<isset name="Scene7assetID" value="" scope="page"/>
+						<isif condition = "${'sceneSevenAssetId' in imageProduct.custom}">
+							<isset name="Scene7assetID" value="${imageProduct.custom.sceneSevenAssetId}" scope="page"/>
+						</isif>
+						<isif condition="${!empty(Scene7assetID)}">
+							<isset name="scene7_1" value="${Resource.msg('image.scene7url','common',null)}" scope="page">
+							<isset name="scene7_2" value="${Resource.msg('image.scene7.preset.matthumb','common',null)}" scope="page">								
+							<isset name="thumbnailUrl" value="${scene7_1+Scene7assetID+scene7_2}" scope="page"/>						
+						<iselse/>
+							<isset name="thumbnailUrl" value="${URLUtils.staticURL('/images/noimagemedium.png')}" scope="page"/>
+						</isif>
+						<isif condition = "${'catalogDisplayNameTwo' in imageProduct.custom}">
+							<isset name="thumbnailAlt" value="${imageProduct.custom.catalogDisplayNameTwo}" scope="page"/>
+							<isset name="thumbnailTitle" value="${imageProduct.custom.catalogDisplayNameTwo}" scope="page"/>
+						</isif>	
+						<a href="${productUrl}" title='<isprint value="${thumbnailTitle}" encoding="off"/>' class="thumbNail"><img src="${thumbnailUrl}" alt='<isprint value="${thumbnailAlt}" encoding="off"/>' title='<isprint value="${thumbnailTitle}" encoding="off"/>' /></a>
+						<!-- IE Hack to Collaspe DIV with display:none -->
+					
+				
+					<div class="quickviewbutton" onclick="window.location='${productUrl}';">
+					<a href="${productUrl}" onclick="Inq.reinitChat(29205531);" <isif condition = "${'catalogDisplayNameTwo' in Product.custom}">title='<isprint value="${Product.custom.catalogDisplayNameTwo}" encoding="off"/>'</isif> ><!-- QUICKVIEW BUTTON --></a>
+				</div><!-- END: quickviewbutton -->
+				
+				</div><!-- END: image -->
+				<isif condition="${!empty(dw.web.Resource.msg('bazaarvoice.isenabled','bazaarvoice',null)) 
+							&& dw.web.Resource.msg('bazaarvoice.isenabled','bazaarvoice',null) == 'true'}">
+					<isinclude template="bv/display/rr/catinlineratings"/>			
+				</isif>
+					
+				<div class="swatches">
+					<iscomment>
+						Render the color swatch secion for a product search hit. The swatches depend on the products the search hit actually represents.
+						Doesn't necessarily equal all variants of a product master, since only a sub set of variants could be represented by the search
+						hit (a variant group). We show color swatches only for variant groups represented by a product search hit.
+					</iscomment>
+					<isset name="PVM" value="${Product.variationModel}" scope="page"/>
+					<isset name="cleanPVM" value="${(Product.variant ? Product.masterProduct.variationModel : Product.variationModel)}" scope="page"/>
+					
+					<isset name="sizeCustom" value="" scope="page"/>
+					<isif condition="${!empty(selectableColors) && !empty(varAttrColor)}">
+						<isif condition="${selectableColors.size() > 1}">
+							<isset name="variationname" value="${Resource.msg('global.selectshade','locale',null)}" scope="page"/>
+						<iselseif condition="${selectableColors.size() == 1}"/>
+							<isset name="variationname" value="${Resource.msg('global.shade','locale',null)}" scope="page"/>
+						</isif>
+					</isif>	
+					<isif condition="${!empty(pdict.CurrentSession.sourceCodeInfo)}">
+						<isset name="salePriceBookId" value="${dw.object.CustomObjectMgr.getCustomObject('SourceCodeGroup_Pricebook_Mapping',pdict.CurrentSession.sourceCodeInfo.group.ID).custom.PriceBookID}" scope="page" />
+					<iselse/>
+						<isset name="salePriceBookId" value="" scope="page" />
+					</isif>	
+					<isif condition="${!empty(selectableColors) && selectableColors.size() >= 1 && !empty(varAttrColor)}">
+					
+						<isif condition="${'size' in ProductTile.custom}"><isset name="sizeCustom" value="${ProductTile.custom.size}" scope="page"/></isif>
+						
+						<iscomment>render a link to the palette and hide the actual palette if there are more than five colors contained</iscomment>
+						<isif condition="${selectableColors.size() > 3}">
+							
+							<a class="productswatchesall gridcolor">${Resource.msg('productresultarea.viewallcolors','search',null)} (<isprint value="${selectableColors.size()}"/>)</a>
+						
+						</isif>
+						<iscomment>render the palette, the first swatch is always preselected</iscomment>
+						<div class="palette<isif condition="${selectableColors.size() > 3}"> invisible</isif>">
+							<label class="colorlabel">${variationname}</label>
+							<div class="innerpalette">
+								<div class="addtocartvariation">
+									<isscript>
+								  		var variantColor = getDefaultVariantColor(Product, selectableColors,PVM,cleanPVM, varAttrColor, varAttrColor.getAttributeID());
+								  	</isscript>	
+									<ul>
+										<isloop items="${selectableColors}" var="colorValue" status="varloop">
+											<isscript>
+											    var varProd = getProductForVariantID(Product, colorValue.ID, varAttrColor);
+											</isscript>
+											<iscomment>Determine the swatch and the thumbnail for this color</iscomment>
+											<isset name="scene7Url" value="${Resource.msg('image.scene7url','common',null)}" scope="page"/>
+											<isset name="scene7Preset" value="${Resource.msg('image.scene7.preset.translucent','common',null)}" scope="page" />
+											<isset name="scene7ImgName" value="${Resource.msg('image.scene7.swatch.small','common',null)+'_'+varProd.UPC+'_'+colorValue.ID}" scope="page" />
+											<isif condition="${!empty(colorValue.ID)}">
+												<isset name="swatchUrl" value="${scene7Url +scene7ImgName + scene7Preset}" scope="page"/>
+												<isset name="thumbnailUrl" value="${scene7Url +scene7ImgName + scene7Preset}" scope="page"/>											
+											</isif>
+											
+											<isset name="swatchAlt" value="${colorValue.displayValue}" scope="page"/>
+											<isset name="swatchTitle" value="${colorValue.displayValue}" scope="page"/>
+											<isset name="thumbnailAlt" value="${colorValue.displayValue}" scope="page"/>
+											<isset name="thumbnailTitle" value="${colorValue.displayValue}" scope="page"/>
+											
+											<iscomment>build the proper URL and append the search query parameters</iscomment>
+										    <isset name="swatchproductUrl" value="${Product.variationModel.url('Product-Show', varAttrColor, colorValue.value).append('start', starting)}" scope="page"/>
+										    <isif condition="${!empty(pdict.ProductSearchResult)}">
+											    <isset name="swatchproductUrl" value="${pdict.ProductSearchResult.url( swatchproductUrl )}" scope="page"/>
+										    </isif>
+											<isif condition="${(!empty(varProd.getOrderableRecommendations(dw.system.Site.getCurrent().getCustomPreferenceValue('UpsellRecommendationType'))) && varProd.getOrderableRecommendations(dw.system.Site.getCurrent().getCustomPreferenceValue('UpsellRecommendationType')).size() > 0)}">
+												<isset name="addUpsell" value="true" scope="page"></isset>
+											<iselse/>	
+												<isset name="addUpsell" value="" scope="page"></isset>
+											</isif>
+											<isif condition="${varProd.getPriceModel().getPriceBookPrice(dw.system.Site.current.preferences.custom.nonMemberPriceBook) == dw.value.Money.NOT_AVAILABLE}">
+												<isset name="regularPrice" value="${varProd.getPriceModel().getPriceBookPrice(dw.system.Site.current.preferences.custom.nonMemberPriceBook)}" scope="page"/>
+											<iselse/>
+												<isset name="regularPrice" value="${dw.util.Currency.getCurrency(dw.system.Site.getCurrent().currencyCode).symbol + (new Number(varProd.getPriceModel().getPriceBookPrice(dw.system.Site.current.preferences.custom.nonMemberPriceBook).value).toFixed(2))}" scope="page"/>
+											</isif>
+											<isif condition="${varProd.getPriceModel().getPriceBookPrice(dw.system.Site.current.preferences.custom.memberPriceBook) == dw.value.Money.NOT_AVAILABLE}">
+												<isset name="memberPrice" value="${varProd.getPriceModel().getPriceBookPrice(dw.system.Site.current.preferences.custom.memberPriceBook)}" scope="page"/>
+											<iselse/>
+												<isset name="memberPrice" value="${dw.util.Currency.getCurrency(dw.system.Site.getCurrent().currencyCode).symbol + (new Number(varProd.getPriceModel().getPriceBookPrice(dw.system.Site.current.preferences.custom.memberPriceBook).value).toFixed(2))}" scope="page"/>
+											</isif>
+											<isif condition="${varProd.getPriceModel().getPriceBookPrice(salePriceBookId)!=dw.value.Money.NOT_AVAILABLE}">
+												<isset name="salesPrice" value="${dw.util.Currency.getCurrency(dw.system.Site.getCurrent().currencyCode).symbol + (new Number(varProd.getPriceModel().getPriceBookPrice(salePriceBookId).value).toFixed(2))}" scope="page"/>
+											<iselse/>
+												<isset name="salesPrice" value="${varProd.getPriceModel().getPriceBookPrice(salePriceBookId)}" scope="page"/>
+											</isif>
+											<isset name="isDefaultVariant" value="${PVM.isSelectedAttributeValue(varAttrColor, colorValue) || (!empty(variantColor) && colorValue.value.equals(variantColor))}" scope="page"/>
+											<isif condition="${isDefaultVariant}"><isset name="FstVariant" value="${varProd}" scope="page"></isset></isif>
+											<iscomment>render a single swatch, the url to the proper product detail page is contained in the href of the swatch link</iscomment>
+											<li class='<isif condition="${isDefaultVariant}">selected</isif>' <isif condition="${(pdict.CurrentCustomer.authenticated || pdict.CurrentSession.custom.cRememberMe) && varProd.custom.isCustomizableFlag && !empty(varProd.custom.kitPrice)}">lang="addtokit" kitprice="${new Number(varProd.custom.kitPrice).toFixed(2)}"</isif> regprice="${regularPrice}" memprice="${memberPrice}" salesprice="${salesPrice}">
+												<a class="swatch" id="${varProd.ID}" upsell="${addUpsell}" title="<isprint value="${colorValue.displayValue}"/>" href="${swatchproductUrl}">									
+													<img class="swatchimage" src="${swatchUrl}" alt="${swatchAlt}" title="${swatchTitle}"/>
+													<img class="swatchimage hiddenthumbnail" src="${thumbnailUrl}" alt="${thumbnailAlt}" title="${thumbnailTitle}"/>
+												</a>
+											</li>
+				
+										</isloop>
+									</ul>
+								</div>
+							</div>
+						</div>
+					<iscomment>
+						Render the size variants for a product search hit. All the size variant will be shown.
+					</iscomment>
+					<iselseif condition="${!empty(selectableSizes) && selectableSizes.size() > 1 && !empty(varAttrSize)}"/>
+					
+						<iscomment>render a link to the palette and hide the actual palette if there are more than five colors contained</iscomment>
+						
+						<label class="sizelabel">${Resource.msg('global.selectsize','locale',null)}</label>
+						<div class="variationattributes">
+						<iscomment>addtocartvariation class is added just to handle add to cart functionality of variants form CLP page</iscomment>
+								<div class="addtocartvariation">
+									<div class="swatches size">
+										<isscript>
+									  		var variantSize = getDefaultVariantColor(Product, selectableSizes,PVM,cleanPVM, varAttrSize, varAttrSize.getAttributeID());
+									  	</isscript>
+										<ul class="swatchesdisplay">
+											<isloop items="${selectableSizes}" var="sizeValue" status="varloop">
+												<iscomment>build the proper URL and append the search query parameters</iscomment>
+											    <isset name="swatchproductUrl" value="${Product.variationModel.url('Product-Show', varAttrSize, sizeValue.value).append('start', starting)}" scope="page"/>
+											    <isif condition="${!empty(pdict.ProductSearchResult)}">
+												    <isset name="swatchproductUrl" value="${pdict.ProductSearchResult.url( swatchproductUrl )}" scope="page"/>
+											    </isif>
+											    <isscript>
+										    		var varProd = getProductForVariantID(Product, sizeValue.ID, varAttrSize);
+												</isscript>
+												<isif condition="${(!empty(varProd.getOrderableRecommendations(dw.system.Site.getCurrent().getCustomPreferenceValue('UpsellRecommendationType'))) && varProd.getOrderableRecommendations(dw.system.Site.getCurrent().getCustomPreferenceValue('UpsellRecommendationType')).size() > 0)}">
+													<isset name="addUpsell" value="true" scope="page"></isset>
+												<iselse/>	
+													<isset name="addUpsell" value="" scope="page"></isset>
+												</isif>
+												<isif condition="${varProd.getPriceModel().getPriceBookPrice(dw.system.Site.current.preferences.custom.nonMemberPriceBook) == dw.value.Money.NOT_AVAILABLE}">
+													<isset name="regularPrice" value="${varProd.getPriceModel().getPriceBookPrice(dw.system.Site.current.preferences.custom.nonMemberPriceBook)}" scope="page"/>
+												<iselse/>
+													<isset name="regularPrice" value="${dw.util.Currency.getCurrency(dw.system.Site.getCurrent().currencyCode).symbol + (new Number(varProd.getPriceModel().getPriceBookPrice(dw.system.Site.current.preferences.custom.nonMemberPriceBook).value).toFixed(2))}" scope="page"/>
+												</isif>
+												<isif condition="${varProd.getPriceModel().getPriceBookPrice(dw.system.Site.current.preferences.custom.memberPriceBook) == dw.value.Money.NOT_AVAILABLE}">
+													<isset name="memberPrice" value="${varProd.getPriceModel().getPriceBookPrice(dw.system.Site.current.preferences.custom.memberPriceBook)}" scope="page"/>
+												<iselse/>
+													<isset name="memberPrice" value="${dw.util.Currency.getCurrency(dw.system.Site.getCurrent().currencyCode).symbol + (new Number(varProd.getPriceModel().getPriceBookPrice(dw.system.Site.current.preferences.custom.memberPriceBook).value).toFixed(2))}" scope="page"/>
+												</isif>	
+												<isif condition="${varProd.getPriceModel().getPriceBookPrice(salePriceBookId)!=dw.value.Money.NOT_AVAILABLE}">
+													<isset name="salesPrice" value="${dw.util.Currency.getCurrency(dw.system.Site.getCurrent().currencyCode).symbol + (new Number(varProd.getPriceModel().getPriceBookPrice(salePriceBookId).value).toFixed(2))}" scope="page"/>
+												<iselse/>
+													<isset name="salesPrice" value="${varProd.getPriceModel().getPriceBookPrice(salePriceBookId)}" scope="page"/>
+												</isif>	
+												<isset name="isDefaultVariant" value="${PVM.isSelectedAttributeValue(varAttrSize, sizeValue) || (!empty(variantSize) && sizeValue.value.equals(variantSize))}" scope="page"/>			
+												<isif condition="${isDefaultVariant}"><isset name="FstVariant" value="${varProd}" scope="page"></isset></isif>
+												<iscomment>render a single swatch, the url to the proper product detail page is contained in the href of the swatch link</iscomment>
+													<isif condition="${sizeValue.displayValue != null}">
+													 	<li class="emptyswatch${varloop.count} <isif condition="${isDefaultVariant}">selected</isif>" <isif condition="${(pdict.CurrentCustomer.authenticated || pdict.CurrentSession.custom.cRememberMe) && varProd.custom.isCustomizableFlag && !empty(varProd.custom.kitPrice)}">lang="addtokit" kitprice="${new Number(varProd.custom.kitPrice).toFixed(2)}"</isif> regprice="${regularPrice}" memprice="${memberPrice}" salesprice="${salesPrice}"><a title="${sizeValue.displayValue}" class="swatchanchor" id="${varProd.ID}" upsell="${addUpsell}" href="${swatchproductUrl}"><isprint value="${sizeValue.displayValue}"/></a></li>
+													<iselse>
+														<li class="emptyswatch${varloop.count} <isif condition="${isDefaultVariant}">selected</isif>" <isif condition="${(pdict.CurrentCustomer.authenticated || pdict.CurrentSession.custom.cRememberMe) && varProd.custom.isCustomizableFlag && !empty(varProd.custom.kitPrice)}">lang="addtokit" kitprice="${new Number(varProd.custom.kitPrice).toFixed(2)}"</isif> regprice="${regularPrice}" memprice="${memberPrice}" salesprice="${salesPrice}"><a id="${varProd.ID}" upsell="${addUpsell}" title="${sizeValue.value}" >" href="${swatchproductUrl}"><isprint value="${sizeValue.value}"/></a></li>
+													</isif>
+											</isloop>
+										</ul>
+									</div>
+								</div>
+						</div>
+						<iscomment>
+						if size variant is only one then label in storefront will be different than multiple sizes.
+						it will be size: 4 Oz
+						</iscomment>
+					<iselseif condition="${!empty(selectableSizes) && (selectableSizes.size() == 1) && !empty(varAttrSize)}"/>
+							<div class="size">
+								<label class="labelsize">${Resource.msg('global.size','locale',null)}</label>
+								<div class="addtocartvariation singlecolor"> 
+									<ul class="swatchesdisplay">
+										<isloop items="${selectableSizes}" var="VV" status="varloop">
+											 <isscript>
+										    		var varProd = getProductForVariantID(Product, VV.ID, varAttrSize);
+											</isscript>
+											<isif condition="${(!empty(varProd.getOrderableRecommendations(dw.system.Site.getCurrent().getCustomPreferenceValue('UpsellRecommendationType'))) && varProd.getOrderableRecommendations(dw.system.Site.getCurrent().getCustomPreferenceValue('UpsellRecommendationType')).size() > 0)}">
+												<isset name="addUpsell" value="true" scope="page"></isset>
+											<iselse/>	
+												<isset name="addUpsell" value="" scope="page"></isset>
+											</isif>
+											<isif condition="${varProd.getPriceModel().getPriceBookPrice(dw.system.Site.current.preferences.custom.nonMemberPriceBook) == dw.value.Money.NOT_AVAILABLE}">
+												<isset name="regularPrice" value="${varProd.getPriceModel().getPriceBookPrice(dw.system.Site.current.preferences.custom.nonMemberPriceBook)}" scope="page"/>
+											<iselse/>
+												<isset name="regularPrice" value="${dw.util.Currency.getCurrency(dw.system.Site.getCurrent().currencyCode).symbol + (new Number(varProd.getPriceModel().getPriceBookPrice(dw.system.Site.current.preferences.custom.nonMemberPriceBook).value).toFixed(2))}" scope="page"/>
+											</isif>
+											<isif condition="${varProd.getPriceModel().getPriceBookPrice(dw.system.Site.current.preferences.custom.memberPriceBook) == dw.value.Money.NOT_AVAILABLE}">
+												<isset name="memberPrice" value="${varProd.getPriceModel().getPriceBookPrice(dw.system.Site.current.preferences.custom.memberPriceBook)}" scope="page"/>
+											<iselse/>
+												<isset name="memberPrice" value="${dw.util.Currency.getCurrency(dw.system.Site.getCurrent().currencyCode).symbol + (new Number(varProd.getPriceModel().getPriceBookPrice(dw.system.Site.current.preferences.custom.memberPriceBook).value).toFixed(2))}" scope="page"/>
+											</isif>
+											<isif condition="${varProd.getPriceModel().getPriceBookPrice(salePriceBookId)!=dw.value.Money.NOT_AVAILABLE}">
+												<isset name="salesPrice" value="${dw.util.Currency.getCurrency(dw.system.Site.getCurrent().currencyCode).symbol + (new Number(varProd.getPriceModel().getPriceBookPrice(salePriceBookId).value).toFixed(2))}" scope="page"/>
+											<iselse/>
+												<isset name="salesPrice" value="${varProd.getPriceModel().getPriceBookPrice(salePriceBookId)}" scope="page"/>
+											</isif>
+											<isif condition="${varloop.first}"><isset name="FstVariant" value="${varProd}" scope="page"></isset></isif>
+											<li class="emptyswatch-single selected" <isif condition="${(pdict.CurrentCustomer.authenticated || pdict.CurrentSession.custom.cRememberMe) && varProd.custom.isCustomizableFlag && !empty(varProd.custom.kitPrice)}">lang="addtokit" kitprice="${new Number(varProd.custom.kitPrice).toFixed(2)}"</isif> regprice="${regularPrice}" memprice="${memberPrice}" salesprice="${salesPrice}">
+												<isif condition="${VV.displayValue != null}"><a id="${varProd.ID}" upsell="${addUpsell}" title="${VV.displayValue}" class="swatchanchor"><isprint value="${VV.displayValue}"/></a><iselse><a id="${Product.variationModel.getVariants()[0].ID}" title="${VV.value}"><isprint value="${VV.value}"/></a></isif>
+											</li>
+										</isloop>
+									</ul>
+								</div>
+							</div>
+					</isif>
+		
+				</div><!-- END:  -->
+
+				<isif condition="${!(ProductTile.master || ProductTile.variant)}">
+					<isif condition="${'size' in ProductTile.custom}"> 
+						<isset name="sizeCustom" value="${ProductTile.custom.size}" scope="page"/>
+					</isif>
+				</isif>
+				
+				<isif condition="${!empty(sizeCustom)}"><label class="labelsize n-size">${Resource.msg('global.size','locale',null)}</label><span class="s-value">${sizeCustom}</span></isif>
+									
+					<iscomment>Renders pricing information depending on the option or variation model, as well as scaled prices and so on.</iscomment>
+						<isif condition="${Product.productSet}">
+							<iscomment>Product set pricing</iscomment>
+							<div class="productsetprice">${Resource.msg('global.buyall','locale',null)}</div>
+							<iscomment>Product master price range depending on the represented variants</iscomment>						
+							<iscomment><iselseif condition="${Product.master && Product.priceModel.priceRange}"/>
+								<div class="salesprice"><isprint value="${Product.priceModel.minPrice}"/> - <isprint value="${Product.priceModel.maxPrice}"/></div>
+							</iscomment>
+						<iselse/>						
+							<iscomment>For Product master without a price range get the pricing from firstRepresentedProduct </iscomment>
+							<isif condition="${Product.master && !Product.priceModel.priceRange}">
+								<iscomment>Preserve current product instance</iscomment>
+								<isset name="OrgProduct" value="${Product}" scope="page"/>
+								<iscomment>need to check what is the significance of first represented product</iscomment>
+								<isset name="Product" value="${Product}" scope="page"/>
+							</isif>
+		
+		
+							<iscomment>
+								Check whether the product has price in the sale pricebook. If so, then
+								display two prices: crossed-out standard price and sales price.
+							</iscomment>
+							<iscomment>If product is master then price will be set to first variant.and original product will be set back.</iscomment>
+							<isif condition="${ProductTile.master && ProductTile.variants.length > 0}">
+								<isset name="ProductTemp" value="${Product}" scope="page"/>
+								<isset name="Product" value="${FstVariant}" scope="page"/>
+									<isinclude template="product/components/gr_pricing"/>
+								<isset name="Product" value="${ProductTemp}" scope="page"/>
+							<iselse>
+								<isinclude template="product/components/gr_pricing"/>
+							</isif>
+							
+							
+							<isif condition="${!empty(pdict.OrgProduct)}">
+								<iscomment>Restore current product instance</iscomment>
+								<isset name="Product" value="${OrgProduct}" scope="page"/>
+								<isset name="OrgProduct" value="${null}" scope="page"/>
+							</isif>
+						</isif>
+						<!-- Variable for adding to kit need to be set here and will be used later. -->
+				<iscomment>	
+				<!-- Promotions will not be shown on tile page. -->
+					<div class="promo">
+						<isset name="promos" value="${dw.campaign.PromotionMgr.activeCustomerPromotions.getProductPromotions(Product)}" scope="page"/>
+						<isif condition="${!empty(promos)}">
+							<isloop items="${promos}" var="promo">
+								<div class="promotionalMessage">
+									<isprint value="${promo.calloutMsg}" encoding="off"/>
+								</div>
+							</isloop>
+						</isif>
+			
+					</div><!-- END: promo -->
+				</iscomment>
+				<isset name="PriceModel" value="${Product.getPriceModel(Product.getOptionModel())}" scope="page"/>
+				<isset name="memberPrice" value="${PriceModel.getPriceBookPrice(dw.system.Site.current.preferences.custom.memberPriceBook).valueOrNull}" scope="page"/>
+				<input type="hidden" class="quantityinput" value="${Number(empty(pdict.CurrentHttpParameterMap.Quantity.stringValue) ? 1 : pdict.CurrentHttpParameterMap.Quantity.stringValue).toFixed()}"/>
+			
+				<iscomment>If the product is master product then product will be added through jquery written in categoryproducthits.isml</iscomment>
+				<isif condition="${ProductTile.master && ProductTile.variants.length > 0}">
+					<button type="button" title="${Resource.msg('global.addtocart','locale',null)}" value="${Resource.msg('global.addtocart','locale',null)}" class="addtocartbutton addtobag green">
+					<span class="lc"></span>
+					<span>${Resource.msg('global.addtocart','locale',null)}</span></button>				
+				<iselse/>
+				<div class="buttonCont">
+					<button type="button" title="${Resource.msg('global.addtocart','locale',null)}" value="${Resource.msg('global.addtocart','locale',null)}" class="addtocartbutton greenButton" onclick="javascript:app.minicart.addFromCLP('${Product.ID}', '${Product.getAvailabilityModel().isInStock()}','${(!empty(Product.getOrderableRecommendations(dw.system.Site.getCurrent().getCustomPreferenceValue('UpsellRecommendationType'))) && Product.getOrderableRecommendations(dw.system.Site.getCurrent().getCustomPreferenceValue('UpsellRecommendationType')).size() > 0)}')">
+					<span>${Resource.msg('global.addtocart','locale',null)}</span></button>
+					</div>
+				</isif>
+				
+			<isif condition="${(pdict.CurrentCustomer.authenticated || pdict.CurrentSession.custom.cRememberMe)}">
+				<iscomment>
+				add to kit will be displayed only for logged in members.
+				</iscomment>
+				<isif condition="${!empty(Product.thumbnail)}">
+					<isset name="imageURL" value ="${Product.thumbnail}" scope="page"/>
+				<iselse>
+					<isset name="imageURL" value ="${URLUtils.staticURL('/images/noimagesmall.png')}" scope="page"/>
+				</isif>
+				<isif condition="${ProductTile.custom.isCustomizableFlag && !empty(ProductTile.custom.kitPrice)}">	
+					<div class="kitdisplay" <isif condition="${ProductTile.master && ProductTile.variants.length > 0 && !(FstVariant.custom.isCustomizableFlag && !empty(FstVariant.custom.kitPrice))}">style='display:none'</isif>>	
+						<div class="kitprice bold">${Resource.msg('global.addtokit','locale',null)}<isprint value="${dw.util.Currency.getCurrency(dw.system.Site.getCurrent().currencyCode).symbol}"/>
+						<span class="kitpricevalue">
+							<isif condition="${ProductTile.master && ProductTile.variants.length > 0}">
+								${new Number(FstVariant.custom.kitPrice).toFixed(2)}
+							<iselse/>
+								${new Number(ProductTile.custom.kitPrice).toFixed(2)}
+							</isif>
+						</span>
+						 <span class="formfieldtooltip">
+           		    		<a class="tooltip" onclick="javascript:learnMorePageClicked()"><span class="help-icon"></span></a>
+           		    	</span>
+						</div>
+						<isif condition="${ProductTile.master && ProductTile.variants.length > 0}">
+							<button type="button" title="${Resource.msg('global.butaddtokit','locale',null)}" value="${Resource.msg('global.butaddtokit','locale',null)}" class="addtocartbutton addtokit addtokitvar sp-button">
+								<span class="blc"></span>
+								<span>${Resource.msg('global.butaddtokit','locale',null)}</span>
+							</button>				
+						<iselse/>
+							<button class="addtocartbutton sp-button" type="button" title="${Resource.msg('global.butaddtokit','locale',null)}" value="${Resource.msg('global.butaddtokit','locale',null)}" onclick="javascript:addProduct('${Product.ID}')">
+								<span class="blc"></span>
+								<span>${Resource.msg('global.butaddtokit','locale',null)}</span>
+							</button>
+						</isif>
+					</div>
+				</isif>
+			</isif>
+					
+		
+		
+				<div class="review">
+		
+					<iscomment>
+					<script type="text/javascript"><!--
+						var pr_page_id = "${Product.ID}";
+						var pr_zip_location="/example";
+		
+						// avoid securitiy warnings with registered users: (mixed content)
+						var pr_write_review = "${URLUtils.http('PowerReviews-WriteReview')}?pid=${Product.ID}";
+						var pr_read_review = "${URLUtils.http('Product-Show')}?pid=${Product.ID}#prReview";
+		
+						// full url to custom css to control review display
+						var pr_style_sheet = null;
+		
+						if(typeof(snippet) != "undefined") {
+							snippet(document);
+						}
+					//--></script>
+					</iscomment>
+		
+		        </div><!-- END: review -->
+	</div>
+	<!-- END: producttile -->
+<iselse/>
+	<!-- ProductSearchHit was not in dictionary, so blank. -->
+</isif>

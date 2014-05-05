@@ -1,0 +1,8 @@
+<iscache status="off"/><isset name="download_url" value="${session.custom.product_download_url}" scope="page"/><isscript>
+importPackage(dw.object);
+if(empty(download_url)){
+	if(!empty( request.getHttpCookies()['Cps.product_download_url']) && !empty( request.getHttpCookies()['Cps.product_download_url'].value)){
+		download_url =  request.getHttpCookies()['Cps.product_download_url'].value;
+	}
+}
+</isscript><isprint encoding="off" value="${download_url}"/>

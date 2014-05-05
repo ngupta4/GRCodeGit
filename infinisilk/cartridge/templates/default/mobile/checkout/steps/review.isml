@@ -1,0 +1,27 @@
+<!--- TEMPLATENAME: review.isml --->
+<isset name="showOrderButton" value="${false}" scope="page" />
+<isset name="ShowBrowsingOrderYourSystem" value="${true}" scope="pdict" />
+<isset name="ShowOtherWaysToPurchase" value="${true}" scope="pdict" />
+<isset name="ShowRelatedLinks" value="${false}" scope="pdict" />
+<isset name="ShowUpsells" value="${false}" scope="pdict" />
+<isset name="ShowGuarantee" value="${true}" scope="pdict" />
+<isset name="ShowCartPhone" value="${true}" scope="pdict" />
+<isset name="ShowOtherWaysToPurchase" value="${false}" scope="pdict" />
+<isset name="ShowBrowsingOrderYourSystem" value="${false}" scope="pdict" />
+<isinclude template="util/reporting/ReportBasket.isml" />
+<div class="completeyourorder">
+	<form action="${URLUtils.httpsContinue()}" method="post">
+		<div class="reviewContOrder">
+			<button class="orngBtnBig continueBtn" type="submit" name="${pdict.CurrentForms.personinf.apply.htmlName}" value="Complete"><span class="button-bg-left"></span><span class="button-bg-main">${Resource.msg('', 'resources', 'Complete Your Order')}</span></button>
+		</div>
+	</form>
+</div>
+<div class="orderConfimationContainer">
+<div class="ordersummary">
+	<isinclude template="checkout/components/ordersummary" />
+</div>
+
+<div class="yourinformation">
+	<isinclude template="checkout/components/yourinformation" />
+</div>
+</div>

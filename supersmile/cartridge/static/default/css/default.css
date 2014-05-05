@@ -1,0 +1,62 @@
+/*---------- Global CSS ----------*/
+html, body, div, span, applet, object, iframe, h1, h2, h3, h4, h5, h6, p, blockquote, pre, a, abbr, acronym, address, big, cite, code,
+del, dfn, em, img, ins, kbd, q, s, samp, small, strike, sub, sup, tt, var, b, u, i, center, dl, dt, dd, ol, ul, li,
+fieldset, form, label, legend, table, caption, tbody, tfoot, thead, tr, th, td, article, aside, canvas, details, embed, figure, figcaption, footer, header, hgroup, menu, nav, output, ruby, section, summary, time, mark, audio, video, button, select { margin: 0; padding: 0; border: 0; font-size: 100%; font: inherit; vertical-align: baseline; outline:none;}
+/* HTML5 display-role reset for older browsers */
+article, aside, details, figcaption, figure, 
+footer, header, hgroup, menu, nav, section { display: block;}
+
+body {font-family: Arial,Helvetica,sans-serif; font-size: 12px; font-weight: normal; color: #333333;}
+
+ol, ul { list-style: none;}
+blockquote, q { quotes: none;}
+blockquote:before, blockquote:after,
+q:before, q:after { content: ''; content: none;}
+table { border-collapse: collapse; border-spacing: 0;}
+
+p strong { font-weight: bold; }
+p { margin:0px 0px 15px 0px; line-height: 1.3em;}
+
+caption, th, td { text-align: left; font-weight: normal; vertical-align: top;}
+blockquote, q { quotes: none;}
+h1,h2, h3, h4, h5, h6{ font-weight: bold;font-family:Arial,Helvetica,sans-serif;}
+:focus { outline: 0;}
+.mainWrapper{ margin: 0 auto; width: 960px;}
+.header{ padding: 30px 0 10px;}
+.contentasset .footer{text-align: right;color:#616265;font-size:11px;padding-top:18px;}
+/* c2c2c2 */
+.header-sas{ padding: 30px 0 10px;width: 960px;float:left;}
+.header-sas .logo{float:left; padding-top: 17px;}
+.header-sas .mbg{float:right;}
+.theKits li.sasTabs{width:442px;float: left;padding:18px; min-height: 818px;}
+.theKits li.tab2{border-left:1px solid #c2c2c2;}
+.theKits{border-bottom:1px solid #c2c2c2;float: left;border-left:1px solid #c2c2c2;border-right:1px solid #c2c2c2;margin-bottom: 100px;padding-bottom: 6px;}
+.sasheading{float: left;padding: 12px 10px;font-family: Arial,Helvetica,sans-serif;font-weight: bold;font-size:18px; background:#3b5d84 url(../images/rep-sap.jpg) repeat-x;color:#fff;width:940px; }
+.kitSummary li { color: #363636;font-size: 12px;line-height: 20px;list-style: disc inside none;}
+.orderVarButtonWraper {display: block;float: left;height:72px; width: 443px;}
+h2{color:#363636;font-size:18px}
+p{color: #363636;float: left;font-size: 13px; width: 434px;}
+p strong.red{color:#ff0707;}
+p.save{color:#00bdb6; font-size:24px;font-weight: bold;margin:0px; text-align: center;padding-top:20px;padding-bottom: 0;}
+h3{font-size:13px;  padding-bottom: 5px;}
+.left-box{float:left; width: 246px;}
+.right-box{float:left;width: 196px;}
+.productDesc,.productDetails{float:left;min-height: 329px;}
+.description {float: left;padding-top: 17px;}
+p.fps{color: #FF0000;font-size: 16px;font-weight: bold; padding-top: 5px; position: relative;text-align: center; top: -24px;}
+.orderBtn{background: url("../images/ordernow.png") no-repeat  0 0;  display: block; height: 44px; left:137px; position: relative; top: -25px; width: 171px; text-indent: -9999px;}
+.orderBtn.bottom_1, .orderBtn.bottom_2 {background: url("../images/order-cta3o.jpg") no-repeat  0 0;  display: block; height: 44px; left:69px; position: relative; top: 0px; width:301px; text-indent: -9999px;}
+.orderBtn.bottom_2 {background: url("../images/order-cta9o.jpg") no-repeat  0 0;}
+.fps-bottom{float: left;}
+.fps-bottom .fps{ top: 0px;}
+.kitSummary .price{bottom: -110px;position: relative;  text-align: center;color: #363636;font-size: 24px;font-weight:bold;}
+ .tab2 .kitSummary .price{ bottom: 2px;}
+.showPrice{display:none;}
+.kitSummary .price .per-month{font-size:11px;}
+sub{font-size:0.7em}
+h1.text-indent{height:1px;width:1px;text-indent:-9999px;}
+.kitsContainer{float:left;}
+
+/* selectasystem styling */
+.phoneSlot {text-align: right;color: #888;font-size: 14px;top:15px;position:relative;text-transform:uppercase;}
+ .phoneSlot .phone {display:inline-block;}

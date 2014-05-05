@@ -1,0 +1,47 @@
+<!--- TEMPLATENAME: emailsubscribe.isml --->
+<isdecorate template="components/pt_unsubscribe">
+<isset name="OmniturePage" value="emailUnsubscribe" scope="pdict" />
+<isinclude template="util/modules"/>
+<div class="dialogContainer dialog unsubscribe" id="popup_optout-body">
+   <div class="unsubscribeMain">
+	<isif condition="${pdict.unsubscribeBrandID=='GR'}">
+   	<iscontentasset aid="unsubscribeGR"/>
+   <iselse>
+	<iscontentasset aid="unsubscribe"/>
+   </isif>
+	<div class="proactiv_content">
+					<div id="modal_dialog_message" class="proactiv_message">
+						<div class="signup-container">
+							<form action="${URLUtils.continueURL()}" method="post" name="${pdict.CurrentForms.emailsubscribe.optout.htmlName}" id="unsubscribeform">
+					   		<div class="unsubscribelastName">
+					   			<label for="lastName">${Resource.msg('forms.emailsubscribe.optout.lastName.label','forms',null)}</label>
+					   			<isinputfield formfield="${pdict.CurrentForms.emailsubscribe.optout.lastName}" type="input" label="false" attribute1="requiredmesage" value1="${Resource.msg('forms.contactinf.lastname.parse-error','forms',null)}">
+					   		</div>
+					   		<div class="unsubscribeEmailAddress">
+					   			<label for="email">${Resource.msg('forms.emailsubscribe.optout.email.label','forms',null)}</label>
+					   			<isinputfield formfield="${pdict.CurrentForms.emailsubscribe.optout.email}" type="input" label="false" attribute1="requiredmesage" value1="${Resource.msg('forms.contactinf.email.parse-error','forms',null)}">
+					   	    </div>					
+							<div class="unsubscribeButton">
+								<button class="input-button btnColorB aButton emailsubscribe" type="submit" value="" name="${pdict.CurrentForms.emailsubscribe.optout.unsubscribe.htmlName}">Submit</button>
+								<button class="input-button aButton" type="reset" value="" name="">Clear</button>
+							</div>
+					      <span htmlfor="${pdict.CurrentForms.emailsubscribe.optout.lastName.htmlName}" generated="true" class="errorclient" style="display: none;"></span>
+					      <span htmlfor="${pdict.CurrentForms.emailsubscribe.optout.email.htmlName}" generated="true" class="errorclient" style="display: none;"></span>
+					   		<p class="successmessage" style="display: none;">${Resource.msg('forms.emailsubscribe.optout.successmessage','forms',null)}</p>
+								<h5 class="error-message"<isif condition="${'ErrorCode' in pdict && !empty(pdict.ErrorCode)}"> style="display:none"</isif>><isif condition="${'ErrorCode' in pdict && !empty(pdict.ErrorCode)}">${Resource.msg('error.messages.'+pdict.ErrorCode,'locale',null)}</isif></h5>
+							</form>
+						</div>
+						<h5 class="error-message"<isif condition="${'ErrorCode' in pdict && !empty(pdict.ErrorCode)}"> style="display:none"</isif>><isif condition="${'ErrorCode' in pdict && !empty(pdict.ErrorCode)}">${Resource.msg('error.messages.'+pdict.ErrorCode,'locale',null)}</isif></h5>
+
+					</div>
+				</div>
+	<div class="proactiv_popBkd"> </div>
+  </div>
+</div>
+<isinclude template="util/errordisplay"/>
+<script type="text/javascript"><!--
+jQuery(document).ready(function() {
+	jQuery('span.errormessage').css('display','none');
+}
+</script>
+</isdecorate>

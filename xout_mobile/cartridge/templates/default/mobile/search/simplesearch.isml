@@ -1,0 +1,23 @@
+<script type="text/javascript"><!--
+var searchSuggestURL = "${URLUtils.url('mSearch-GetSuggestions')}";
+
+jQuery(document).ready(function() {
+
+});
+//--></script>
+
+<isscript>
+	var defaultSearchValue = "";
+	//var defaultSearchValue = Resource.msg('simplesearch.searchtext','search',null);
+</isscript>
+
+<div class="sitesearch">
+	<form action="${URLUtils.http('mSearch-Show')}" method="get" id="SimpleSearchForm" >
+		<input type="text" name="q" value="${defaultSearchValue}"  id="searchinput" />
+		<iscomment>
+		    Please do not use a image based button here, because it will prevent caching due to its dynamic
+		    image click coordinates in the url. It is possible but might hurt the performance.
+		</iscomment>
+		<button type="submit" value="${Resource.msg('global.go','locale',null)}" name="simplesearch"><span>${Resource.msg('global.go','locale',null)}</span></button>	
+	</form>
+</div><!-- END: sitesearch -->

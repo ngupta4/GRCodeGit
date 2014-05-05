@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<form xmlns="http://www.demandware.com/xml/form/2008-04-19">
+	<field formid="password" label="forms.accountinf.password.label" type="string" min-length="8" max-length="32" range-error="forms.accountinf.password.range-error" />
+	<field formid="passwordconfirm" label="forms.accountinf.passwordconfirm.label" type="string" min-length="8" max-length="32" range-error="forms.accountinf.password.range-error" value-error="forms.accountinf.password.value-error"/>
+	
+	<field formid="age" label="forms.accountinf.age.label" max-length="2" type="string" />
+	<field formid="gender" label="forms.accountinf.gender.label" type="string">
+		<options>
+			<option optionid="female" label="forms.accountinf.female.label" value="female" />
+			<option optionid="male" label="forms.accountinf.male.label" value="male" />
+		</options>
+	</field>
+</form>

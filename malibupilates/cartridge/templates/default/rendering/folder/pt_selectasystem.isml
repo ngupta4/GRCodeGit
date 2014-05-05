@@ -1,0 +1,72 @@
+<!--- TEMPLATENAME: pt_selectasystem.isml --->
+<!DOCTYPE html>
+<html>
+<isinclude template="util/modules"/>
+<iscache type="relative" hour="24"/>
+<isscript>
+	importScript('guthyrenker_core:common/libUtils.ds');
+</isscript>
+
+<iscomment>This page must be cachable. It inherits the caching attributes by the decorated template.</iscomment>
+
+<head>
+	<isset name="noBackground" value="true" scope="page"/>
+	<iscomment>Include all important information globally , e.g. meta-data, link information, and javascript.</iscomment>
+	<isinclude template="components/header/htmlhead"/>
+
+	<link href="${URLUtils.staticURL('/css/checkout.css')}" type="text/css" rel="stylesheet" />
+	
+    <iscomment>Insert meta tag for the "Google-Verification" feature to verify that you are the owner of this site.</iscomment>
+    <isif condition="${'GoogleVerificationTag' in dw.system.Site.current.preferences.custom && dw.system.Site.current.preferences.custom.GoogleVerificationTag!=''}">
+        <meta name="google-site-verification" content="<isprint value="${dw.system.Site.current.preferences.custom.GoogleVerificationTag}"/>" />
+    </isif>
+</head>
+<body class="${bodyclass}">
+
+<iscomment>Cookies and Javascript enabled check</iscomment>
+<isinclude template="components/browsertoolscheck"/>
+
+<div id="container" class="pt_selectasystem ${CCC.getContainerClasses()}">
+	<isinclude template="components/header/header"/>
+	
+	<div id="main">
+		<div id="content" class="contentPage">
+  			<isreplace/>
+  		</div>
+	</div><!-- END: main -->
+
+	<isif condition="${CCC.showFooter}">
+		<isinclude template="components/footer/footer"/>
+	</isif>
+	<isinclude template="common/google_analytics" />
+</div><!-- END: container -->
+
+<div id="popupBG">&nbsp;</div>
+<isif condition="${shouldShowDebugInfo()}">
+	<iscomment>this is the template rendering the homepage</iscomment>
+	<pre><!-- +1.888.553.9216 --><!--This phone is a requirement to support existing Gomez monitor of SiteGenesis. Demadware customers can remove this.-->
+		
+	LandingTemplate: ${CCC.landingTemplate}
+	Campaign Code:${CCC.campaignCode}
+	Campaign ID:${getCurrentCampaignCode()}
+	ShowHeader?:${CCC.showHeader}
+	ShowFooter?:${CCC.showFooter}
+	ShowNav?:${CCC.showNav}
+	ShowOrderButton?:${CCC.showOrderButton}
+	Phone:${CCC.phone}
+	
+	</pre>
+</isif>
+</body>
+
+<script type="text/javascript">
+jQuery("#offer-AXWE3L div.name h2").ready(function() { 
+		var p = jQuery("#offer-AXWE3L div.name h2").html();
+
+		p = p.replace(' Deluxe','<br/><span class="orangeTxt" style="font-style:italic">Deluxe</span>');
+
+		jQuery("#offer-AXWE3L div.name h2").html(p);
+	});	
+</script>
+
+</html>

@@ -1,0 +1,50 @@
+<iscontent type="text/plain" charset="UTF-8" compact="true"/>
+<iscomment>
+	Creates json containing variation data
+	Attributes: [{id: "", name: "", ui: , vals: []}], variants: [{id: "", attributes: {attrid: attrval...}}]
+</iscomment>
+{"variations": {
+<isif condition="${pdict.Product.isVariant() || pdict.Product.isMaster()}">
+	<isif condition="${pdict.CurrentVariationModel != null}">
+		<isset name="PVM" value="${pdict.CurrentVariationModel}" scope="page"/>
+	<iselse/>
+		<isset name="PVM" value="${pdict.Product.variationModel}" scope="page"/>
+	</isif>
+"formid": "${pdict.CurrentForms.product.variation.dynamicHtmlName}",
+	"attributes": [
+		<isloop items="${PVM.productVariationAttributes}" var="VA" status="loopstatus0">
+			<isset name="vaId" value="${VA.getAttributeID()}" scope="page">
+			{"id": "${vaId}", "name": "${VA.displayName}", "uuid" : "${dw.util.UUIDUtils.createUUID()}", "ui":
+				<isif condition="${vaId == 'color' || vaId == 'size' || vaId == 'width' || vaId == 'waist' || vaId == 'length'}">
+					1, <iscomment>custom ui i.e. divs controlled via css</iscomment>
+				<iselse/>
+					0, <iscomment>default ui i.e. dropdown</iscomment>
+				</isif>
+					"vals": [<isloop items="${PVM.getAllValues(VA)}" var="VV" status="loopstatus">
+						{"id": "<isprint value="${VV.ID}"/>",
+						"val" : <isif condition="${VV.displayValue != null}">"<isprint value="${VV.displayValue}"/>"<iselse/>"<isprint value="${VV.value}"/>"</isif>
+						}
+						<isif condition="${!loopstatus.last}">,</isif>							
+						</isloop>]					
+				}<isif condition="${!loopstatus0.last}">,</isif>
+		</isloop>
+		], "variants": [
+		<isset name="OrigProduct" value="${pdict.Product}" scope="pdict"/>
+		<isloop items="${PVM.variants}" var="VAR" status="loopstatus">
+			{"id": "${VAR.ID}", "attributes": {
+			<isset name="VVM" value="${VAR.variationModel}" scope="page"/>
+				<isloop items="${VVM.productVariationAttributes}" var="VA" status="loopstatus1">
+					"${VA.getAttributeID()}":
+
+						<isset name="VAL" value="${VVM.getSelectedValue(VA)}" scope="page"/>
+						"<isprint value="${VAL.value}"/>"
+					<isif condition="${!loopstatus1.last}">,</isif>
+				</isloop>},
+			<isset name="AVM" value="${VAR.availabilityModel}" scope="page"/>
+			<isinclude template="mobile/product/components/availabilityjson"/>,		
+			<isset name="Product" value="${VAR}" scope="pdict"/>
+			<isinclude template="mobile/product/components/pricingjson"/>
+			}<isif condition="${!loopstatus.last}">,</isif>
+		</isloop>]
+</isif>
+}}

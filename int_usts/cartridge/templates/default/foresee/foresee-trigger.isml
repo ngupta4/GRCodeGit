@@ -1,0 +1,54 @@
+<!--- TEMPLATENAME: foresee-trigger.isml --->
+<isscript>
+	importPackage( dw.system );
+	importPackage( dw.util );
+	
+	var foreseeQId = "6sJmheP5LU9igNllgCIbDg==";
+	if(!empty(Site.getCurrent().getCustomPreferenceValue("foreseeID"))){
+		foreseeQId = Site.getCurrent().getCustomPreferenceValue("foreseeID");
+	}
+	
+	var ForeseeIsOn = false;
+	if(!empty(Site.getCurrent().getCustomPreferenceValue("isForeseeIncluded"))){
+		ForeseeIsOn = Site.getCurrent().getCustomPreferenceValue("isForeseeIncluded");
+	}
+	
+	var foreseeDomain = "ustechsupport.com";
+	if(!empty(Site.getCurrent().getCustomPreferenceValue("siteDomain"))){
+		foreseeDomain = Site.getCurrent().getCustomPreferenceValue("siteDomain");
+	}
+</isscript>
+<isif condition="${ForeseeIsOn}">
+	<script type="text/javascript">
+		var $$FSR = {
+				   'timestamp': 'May 15, 2012 @ 12:46 PM',
+				   'version': '12.2.6',
+				   'enabled': true,
+				   'sessionreplay': true,
+				   'auto' : true,
+				   'encode' : false,
+				   'files': '/foresee/',
+				   //'swf_files': '__swf_files_' needs to be sef when foresee-transport.swf is not located at 'files'
+				   'id': '6sJmheP5LU9igNllgCIbDg==',
+				   'definition': 'foresee-surveydef.js',
+				   'embedded': false,
+				   'replay_id': 'grdev.com',
+				   'renderer':'W3C',	// or "ASRECORDED"
+				   'layout':'CENTERFIXED',	// or "LEFTFIXED" or "LEFTSTRETCH" or "CENTERSTRETCH"
+				   'sites': [
+				      {
+				      name: 'usts',
+				         path: /\w+-?\w+\.(com|org|edu|gov|net|co\.uk)/
+				      },
+				      {
+				      name: 'usts',
+				         path: '.',
+				         domain: 'default'
+				      }
+				   ],
+				   storageOption: 'cookie'
+		};
+	</script>
+	
+	<script language="JavaScript" type="text/javascript" src="${URLUtils.staticURL('foresee/foresee-trigger.js')}"></script>
+</isif>

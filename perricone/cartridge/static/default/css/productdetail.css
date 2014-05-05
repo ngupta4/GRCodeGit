@@ -1,0 +1,57 @@
+.clear{ clear:both;}
+.top-l-corner{background:url(../images/prod-white-roundbg.jpg) no-repeat;  height: 8px;  left: -4px; position: absolute; top:-4px;width:8px; }
+.top-r-corner{background:url(../images/prod-white-roundbg-right.jpg) no-repeat; height: 8px;  right: -4px; position: absolute; top:-4px;width:8px;}
+.bot-l-corner{background:url(../images/prod-bot-left-bg.jpg) no-repeat; position:absolute; bottom:-4px; left:-4px;height: 8px;width:8px;}
+.bot-r-corner{background:url(../images/prod-bot-right-bg.jpg) no-repeat; position:absolute; bottom:-4px; right:-4px;height: 8px;width:8px;}
+
+.tab{position:relative; border-bottom:1px #afafaf solid; font-size:11px; color:#4e4d4b;height: 24px;}
+.tab ul li{ display:inline-block; background:#fff;  text-align:center; height:23px; line-height:23px; position:relative; border:1px #afafaf solid;border-bottom:none; float:left;  }
+.tab ul li a{padding:0px 20px;  display: block; height: 23px; color:#6c9973 !important;font-weight:bold;}
+.tab ul li .l-corner{background:url(../images/l-tab-corner.png) no-repeat left top; position:absolute; top:-1px; left:-1px; width:6px; height:5px;}
+.tab ul li .r-corner{background:url(../images/r-tab-corner.png) no-repeat right top; position:absolute; top:-1px; right:-1px; width:6px; height:5px;}
+.tab ul li.active{background:#4e4d4b;}
+.tab ul li.active a{color:#e3d8b6 !important;}
+
+/*------------------------------------------------
+				Product Detail Page
+--------------------------------------------------*/
+.productdetail {padding:47px 0 0 0;}
+.productdetail .productdetailcolumn{width:310px;float:left;}
+.productdetail .productdetailcolumn .productimage{width:300px; border:1px solid #d7d7d7;float:left;}
+.productdetail .productdetail-center{width:556px;float:left;padding-left:23px;}
+.productdetail .productdetail-center h2{ border-bottom: 1px solid #D7D7D7;color: #4E4D4B;font-size: 18px;padding: 0 0 11px;width: 554px;font-weight: bold;}
+.productdetail .productdetail-center h2.productname{ border-bottom: 0px ;}
+.productdetail .productleft{width:289px;float:left;}
+.productdetail .BVBrowserFF{width:554px;border-bottom:1px dotted #dadada;padding:5px 0;float: left;}
+.productdetail .productreview{width:289px;float:left;border-bottom:1px solid #d7d7d7;padding:9px 0;}
+.productdetail .productreview .facebook{width:71px;float:left; overflow: hidden;}
+.productdetail .productreview .share{width:75px;float:left;}
+.productdetail .productdetail-center .price-area{float: left;width: 280px; padding: 0 0 10px 0;}
+.productdetail .productdetail-center .variationattributes{float: left;width: 280px;padding: 8px 0;}
+.productdetail .productdetail-center .addtocartbar{ width: 297px;float: left;}
+.productdetail .productdetail-center .addtocartbar .quanity{float: left;}
+.productdetail .productdetail-center .addtocartbar .addtocartbutton{float: right;}
+#producttab, #pdpTabsDiv {border-bottom: 1px solid #AFAFAF;color: #4E4D4B;font-size: 11px;width: 256px;padding: 10px 0 0;border: 0px;float: right;}
+#pdpATCDivpdpMain .kit{float: left; border-top: 1px dotted #DADADA; width: 296px; margin-top: 15px;}
+.productdetail #pdpATCDivpdpMain.addtocartbar .kit .kitprice{}
+.productdetail #pdpATCDivpdpMain .addtocartbar .kit .kitprice .addtocartbutton{}
+#producttab ul, #pdpTabsDiv ul{background: none;float: right;width: 257px;padding: 0;border: none;}
+#pdpTabsDiv, #pdpTabsDiv ul {padding: 10px 0 0 6px;width: 894px;}
+#producttab ul li,#pdpTabsDiv ul li {background: #fff; border-color: #AFAFAF #AFAFAF ; border-style: solid solid none;border-width: 1px 1px medium;display: inline-block;float: left;height: 23px; line-height: 23px;position: relative;text-align: center;font-size: 11px;margin: 0;}
+#producttab  ul li a,#pdpTabsDiv ul li a {color: #6C9973 !important;display: block;font-weight: bold;height: 23px;padding: 0 5px;}
+#producttab ul li .l-corner{ background: url("../images/l-tab-corner.png") no-repeat scroll left top transparent;height: 5px;left: -1px;position: absolute;top: -1px;width: 6px;}
+#producttab  ul li .r-corner{background: url("../images/r-tab-corner.png") no-repeat scroll right top transparent;height: 5px;position: absolute;right: -1px;top: -1px;width: 6px;}
+#producttab ul li.ui-state-active, #pdpTabsDiv  ul li.ui-state-active{background:#4E4D4B;}
+#producttab ul li.ui-state-active a, #pdpTabsDiv ul li.ui-state-active a {color: #E3D8B6 !important;}
+#producttab .productdescription{width:220px;float: right;height:222px;padding:14px 18px;border: 1px solid #D7D7D7;}
+#pdpTabsDiv .pdpTab{padding:14px 18px;border: 1px solid #D7D7D7;width:851px;float:left;}
+/*------------------------------------------------
+				variation Attributes
+--------------------------------------------------*/
+.variationattributes .swatches {position: relative;}
+.variationattributes .swatches ul.swatchesdisplay {clear: both;list-style: none outside none;margin: 0;padding: 5px 0;width: 295px;}
+.variationattributes .swatches li {border: 1px solid #CCCCCC;float: left;margin: 1px;padding: 1px;text-align: center;}
+.variationattributes .swatches li:hover, .variationattributes .swatches li.selected {border: 2px solid #f26522;}
+.variationattributes .swatches li a {color: #0099CC;display: block; font-size: 11px; height: 20px;line-height: 20px;overflow: hidden;padding: 0;text-decoration: none;width: 23px;}
+.variationattributes .swatches li:hover a, .variationattributes .swatches li.selected a {height: 18px;line-height: 18px;width: 21px;}
+

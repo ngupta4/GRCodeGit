@@ -1,0 +1,25 @@
+<div id="header">
+	<isif condition="${pdict.phoneNumber != null}">
+		<!-- <a href="tel:<isprint value="${pdict.phoneNumber}"/>">
+  			<img src="${URLUtils.staticURL('/themes/xout_mobile/images/button/btn_CallToOrder.png')}"/>
+		</a> -->
+		<isslot id="m-header" context="global" description="click to call" />
+	<iselse/>
+		<a href="tel:<isinclude url="${URLUtils.abs('mPhone-PhoneNumber')}" />">
+		  	<img src="${URLUtils.staticURL('/themes/xout_mobile/images/button/btn_CallToOrder.png')}"/>
+		</a>
+	</isif>
+  	<a class="mlogo" href="${URLUtils.url('mHome-Show')}" title="${Resource.msg('global.storename','locale',null)}">
+  		<img src="${URLUtils.staticURL('/themes/xout_mobile/images/header/logo.png')}"/>
+  	</a>
+  	<a class="mbuy" href="${URLUtils.url('mOrder-ShowBuyNow')}">
+  		<img src="${URLUtils.staticURL('/themes/xout_mobile/images/button/btn_BuyNow.png')}"/>
+  	</a>
+  	
+    <iscomment>INCLUDE: Mini-cart, do not cache</iscomment>
+    <iscomment>
+    	<isinclude url="${URLUtils.url('mCart-MiniCart')}"/>
+    </iscomment>
+    
+    <div class="clear"><!-- FLOAT CLEAR --></div>
+</div><!-- END: header -->

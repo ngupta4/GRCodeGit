@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html>
+<isinclude template="util/modules"/>
+
+<isscript>
+	importScript('guthyrenker_core:common/libUtils.ds');
+
+	var category : dw.catalog.Category = dw.catalog.CatalogManager.getCategory(CCC.campaignCode);	
+</isscript>
+
+<iscomment>This page must be cachable. It inherits the caching attributes by the decorated template.</iscomment>
+
+<head>
+	<isset name="noBackground" value="true" scope="page"/>
+	<iscomment>Include all important information globally , e.g. meta-data, link information, and javascript.</iscomment>
+	<isinclude template="components/header/htmlhead"/>
+
+	<link href="${URLUtils.staticURL('/css/checkout.css')}" type="text/css" rel="stylesheet" />
+	
+    <iscomment>Insert meta tag for the "Google-Verification" feature to verify that you are the owner of this site.</iscomment>
+    <isif condition="${'GoogleVerificationTag' in dw.system.Site.current.preferences.custom && dw.system.Site.current.preferences.custom.GoogleVerificationTag!=''}">
+        <meta name="google-site-verification" content="<isprint value="${dw.system.Site.current.preferences.custom.GoogleVerificationTag}"/>" />
+    </isif>
+</head>
+<body class="${bodyclass} futura ${pdict.step == 2 ? 'confirmation-page' : 'checkout-page'}"> 
+
+<iscomment>Cookies and Javascript enabled check</iscomment>
+<isinclude template="components/browsertoolscheck"/>
+
+<isset name="multiCheckout" value="${pdict.multiCheckout}" scope="page"/>
+<isif condition="${multiCheckout}">
+	<isset name="checkoutHeader" value="${Resource.msg('cart3steps.header','rendering',null)}" scope="page"/>
+	<isset name="checkoutClass" value="cart_multiple" scope="page"/>
+<iselse>	
+	<isset name="checkoutHeader" value="${Resource.msg('cart2steps.header','rendering',null)}" scope="page"/>
+	<isset name="checkoutClass" value="cart_single" scope="page"/>
+</isif>
+
+<div id="container" class="pt_storefront pt_checkout ${CCC.getContainerClasses()}">
+	<div id="main">
+	
+	<div class="checkout_header">
+		<isslot id="checkout-header" context="category" description="Checkout Header" context-object="${category}"/>
+	</div>
+	<div class="clear"></div>
+	<div class="content_checkout">
+	
+		<div class="offer_sidebar_left">
+			<isslot id="cart-left-top" context="category" description="Cart Left Top Slot" context-object="${category}"/>				
+			<div>
+				<isinclude url="${URLUtils.url('COCart-ShowRecommendation')}"/>
+			</div>
+			<isslot id="cart-left-bottom" context="category" description="Cart Left Bottom Slot" context-object="${category}"/>				
+			<isslot id="cart-phone-number" context="category" description="Cart Phone Number Content Slot" context-object="${category}"/>
+		</div>
+		
+		<div class="checkout_right ${checkoutClass}">
+				
+	  		<isreplace/>
+	  		
+	  		<iscomment>
+	  		<div class="mcafee_logo">
+				<iscontentasset aid="cart-comfort-copy" />		
+			</div>		
+			</iscomment>
+		</div><!-- END: checkout_right -->
+	
+	</div><!-- END: content_checkout -->
+  	
+  	<iscontentasset aid="social-network-bar" />
+  	
+	</div><!-- END: main -->
+
+	<isinclude template="components/header/header"/>
+	
+	<isif condition="${CCC.showFooter}">
+		<isinclude template="components/footer/footer"/>
+	</isif>
+	<isinclude template="common/google_analytics" />
+</div><!-- END: container -->
+
+<div id="popupBG">&nbsp;</div>
+<isif condition="${shouldShowDebugInfo()}">
+	<iscomment>this is the template rendering the checkout pages</iscomment>
+	<pre><!-- +1.888.553.9216 --><!--This phone is a requirement to support existing Gomez monitor of SiteGenesis. Demadware customers can remove this.-->
+		
+	LandingTemplate: ${CCC.landingTemplate}
+	Campaign Code:${CCC.campaignCode}
+	Campaign ID:${getCurrentCampaignCode()}
+	ShowHeader?:${CCC.showHeader}
+	ShowFooter?:${CCC.showFooter}
+	ShowNav?:${CCC.showNav}
+	ShowOrderButton?:${CCC.showOrderButton}
+	Phone:${CCC.phone}
+	
+	</pre>
+</isif>
+<script type="text/javascript">
+jQuery(document).ready(function () {
+	jQuery("a.details").bind("click", function(event){
+		event.preventDefault();
+		//jQuery("button.details").click();
+		return false;
+	});
+	
+});
+</script>
+</body>
+</html>

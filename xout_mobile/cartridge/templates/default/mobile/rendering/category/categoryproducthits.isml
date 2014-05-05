@@ -1,0 +1,32 @@
+<isdecorate template="mobile/pt_mobile">
+<isinclude template="mobile/util/modules"/>
+
+<isscript>
+	var psc = pdict.ProductSearchResult.category;
+</isscript>
+
+<div id="categoryproducthits">
+
+		<isif condition="${!pdict.ProductPagingModel.empty}">
+		
+		<ispagingbar pageurl="${pdict.ProductSearchResult.url('mSearch-Show')}" pagingmodel="${pdict.ProductPagingModel}">
+		
+			<isset name="currentPageStart" value="${(pdict.ProductPagingModel.currentPage) * pdict.ProductPagingModel.pageSize}" scope="pdict"/>
+			<div>
+		    	<isproductgrid producthits="${pdict.ProductPagingModel.pageElements}" productrows="${1000}" productstoskip="${0}" productsperrow="${4}" scope="search">
+			</div>
+
+		<ispagingbar pageurl="${pdict.ProductSearchResult.url('mSearch-Show')}" pagingmodel="${pdict.ProductPagingModel}">
+			
+		<iselse/>
+
+			<iscomment>display no results</iscomment>
+			<div>
+				${Resource.msg('productresultarea.noresults','search',null)}
+			</div>
+
+		</isif>
+		
+</div>
+
+</isdecorate>

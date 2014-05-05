@@ -1,0 +1,196 @@
+<isset name="DecoratorTemplate" value="search/pt_productsearchresult" scope="page"/>
+
+<isif condition="${pdict.CurrentHttpParameterMap.format.stringValue == 'ajax'}">
+	<isset name="DecoratorTemplate" value="util/pt_empty" scope="page"/>
+</isif>
+
+<isdecorate template="${DecoratorTemplate}">
+<div  id="content">
+<input type="hidden" id="tagetPipeline" value="${pdict.TargetPipeline}"/>
+<input type="hidden" id="tagetParams" value="${pdict.TargetPipelineParams}"/>
+<script type="text/javascript"><!--
+			// init the search result object
+			app.search.result = new app.search.SearchResult(<isif condition="${!empty(pdict.ProductSearchResult.searchPhrase)}">true<iselse/>false</isif>, <isif condition="${!empty(pdict.ProductSearchResult.categoryID)}">"${pdict.ProductSearchResult.categoryID}"<iselse>null</isif>);
+		//--></script>
+
+<iscomment>
+	Use the decorator template based on the requested output. If a partial page was requested an empty decorator is used.
+	The default decorator for the product hits page is search/pt_productsearchresult.
+</iscomment>
+<iscomment>Removed for kit customizer release
+<iscache type="relative" minute="30" varyby="price_promotion"/></iscomment>
+<isinclude template="util/modules"/>
+<iscomment>
+	Configured as default template for the product search results.Displays a global slot with static html and the product search
+	result grid.
+</iscomment>
+
+<iscomment>create reporting event</iscomment>
+<isinclude template="util/reporting/ReportSearch.isml"/>
+<div class="content">
+<isslot id="CategoryPromoBanner" context="category" description="Category Promo Banner" context-object="${pdict.ProductSearchResult.category}"/>
+
+<iscomment><isif condition="${!empty(pdict.CurrentHttpParameterMap.cgid)}">
+		<h2><isprint value="${dw.catalog.CatalogMgr.getCategory(pdict.CurrentHttpParameterMap.cgid.value).displayName}"/></h2>
+	</isif></iscomment>
+	<isif condition="${!empty(pdict.ProductSearchResult.category)}">
+		<isslot id="cat-banner" context="category" description="Category Banner" context-object="${pdict.ProductSearchResult.category}"/>
+	<iselse/>
+		<isslot id="search-result-banner" description="Promotional Search Result Banner" context="global"/>
+</isif>
+</div>		
+
+<div class="content" >
+<div class="producthits allproducts">
+<isif condition="${!empty(pdict.ProductSearchResult.category)}">
+	<isset name="cat" value="${pdict.ProductSearchResult.category}" scope="page">
+	<iscomment><isset name="subCategories" value="${cat.parent.onlineSubCategories}" scope="page"></iscomment>
+	<isset name="subCategories" value="${cat.onlineOutgoingCategoryLinks}" scope="page">
+	<h3 class="catheader">${cat.displayName}</h3>
+	<isset name="productsperrow" value="${4}" scope="page"/>
+	<isif condition="${!empty(subCategories)}">
+		<isset name="templateClosingMarker" value="0" scope="page"/>
+		<isloop items="${subCategories}" var="catLink">
+			<isset name="subCat" value=${catLink.targetCategory} scope="page"/>
+				
+			<isif condition="${!empty(subCat.onlineProducts) && subCat.ID != cat.ID}">
+				<h3>${subCat.displayName}</h3>
+				
+				<div class="productresultarea">
+
+					<isset name="templateRowCounter" value="${0}" scope="page"/>
+					<isset name="templateProductPerRowCounter" value="${0}" scope="page"/>
+					<isset name="templateClosingMarker" value="${0}" scope="page"/>
+					
+					<isloop items="${subCat.onlineProducts}" var="Product" status="loopstate">		
+						<isif condition="${(Product.getAvailabilityModel().isInStock()) && ((null==Product.custom.isAKitFlag || Product.custom.isAKitFlag != true) || catLink.typeCode == dw.catalog.CategoryLink.LINKTYPE_CROSS_SELL)}">				
+						<isset name="ProductHit" value="${new Object()}" scope="page"/>	
+						<isscript>
+							ProductHit['product'] = Product;
+						</isscript>	
+										
+						
+						<!-- do we have to start a new row -->
+						<isif condition="${templateClosingMarker == 0}">					
+							<div class="productlisting">		
+							<isset name="templateClosingMarker" value="${1}" scope="page"/>
+						</isif>
+				
+						<isset name="starting" value="${(loopstate.count + startingOffset)}" scope="page"/>
+				
+						<iscomment>display a tile per product</iscomment>
+						<isinclude template="product/productsearchhittile"/>
+				
+						<isset name="templateProductPerRowCounter" value="${templateProductPerRowCounter + 1}" scope="page"/>
+				
+						<isif condition="${templateProductPerRowCounter == productsperrow}">
+							<iscomment>Yes, we have something to close</iscomment>															
+							<iscomment>Row is done</iscomment>
+								<div class="clear"><!-- FLOAT CLEAR --></div>
+							</div>	
+							<isset name="templateRowCounter" value="${templateRowCounter + 1}" scope="page"/>
+							<isset name="templateProductPerRowCounter" value="${0}" scope="page"/>
+							<isset name="templateClosingMarker" value="${0}" scope="page"/>
+						</isif>
+									
+						<isif condition="${templateRowCounter == productrows}">
+							<isbreak/>
+						</isif>
+						</isif>							
+					</isloop>
+					<isif condition="${templateClosingMarker == 1}">
+						<iscomment>Yes, we have still something to close</iscomment>
+							<div class="clear"><!-- FLOAT CLEAR --></div>
+						</div>
+					</isif>		
+				 
+				 <div class="clear"><!-- FLOAT CLEAR --></div>	
+				 </div>
+			</isif>
+		</isloop>
+	</isif>
+</isif>
+</div>
+</div>
+	  
+		
+<iscomment>suggest similar search phrase below the breadcrumb</iscomment>
+<isif condition="${!empty(pdict.ProductSearchResult.getSuggestedSearchPhrase())}">
+	<div class="didyoumean">
+		${Resource.msg('search.nohits.didyoumeanex','search',null)}
+		<a title="${pdict.ProductSearchResult.suggestedSearchPhrase}" href="<isprint value="${URLUtils.http('Search-Show','q',pdict.ProductSearchResult.suggestedSearchPhrase)}"/>"><isprint value="${pdict.ProductSearchResult.suggestedSearchPhrase}"/></a>
+	</div>
+</isif>
+
+
+<iscomment>Include inline JS to update the refinements</iscomment>
+<isinclude template="search/components/jsrefinementsupdate"/>
+</div>
+<isset name="OmniturePage" value="CategoryLandingPage" scope="pdict">
+<script type="text/javascript">
+
+
+jQuery(document).ready(function(){
+function equalHeight(group) {
+       var tallest = 0;
+       group.each(function() {
+               var thisHeight = $(this).height();
+               if(thisHeight > tallest) {
+               tallest = thisHeight;
+               }
+       });
+       group.height(tallest);
+}
+
+function equalHeightname(group) {
+       var tallestname = 0;
+       group.each(function() {
+       var thisHeightname = $(this).height();
+       if(thisHeightname > tallestname) {
+       tallestname = thisHeightname;
+       }
+       });
+       group.height(tallestname);
+}
+
+
+	$('.swatchesdisplay li:last-child').addClass("last");
+		equalHeight($(".productlisting .producttile .producttilemain .white-bg"));
+    	equalHeight($(".productlisting .producttile .gr-bg-wraper .white-bg"));
+	 	equalHeightname($(".productlisting .producttile .gr-bg-wraper .white-bg .name"));
+     	equalHeight($(".productlisting .producttile .gr-bg-wraper .white-bg .description"));
+		equalHeightname($(".productlisting .producttile .gr-bg-wraper .white-bg .kitdisplay"));
+       
+       // equalHeightdescription($(".productlisting .producttile .gr-bg-wraper .white-bg .description"));
+       
+});
+
+</script>
+<script type="text/javascript">
+
+	//Add To Bag for Variant Products
+	 jQuery(".white-bg .addtobag").each(function() {		
+		  jQuery(this).click(function() 
+		  {
+			  var parentObj = jQuery(this).siblings('.swatches');
+			  var productid=  parentObj.find('.addtocartvariation li.selected a').attr('id');
+			  var upsell =  parentObj.find('.addtocartvariation li.selected a').attr('upsell');
+			  app.minicart.addFromCLP(productid, 'true',upsell);
+		 });
+	 });
+	 jQuery(".white-bg .addtokitvar").each(function() {		
+		  jQuery(this).click(function() 
+		  {
+			  var parentObj = jQuery(this).parent().siblings('.swatches');
+			  var productid=  parentObj.find('.addtocartvariation li.selected a').attr('id');
+			  var isKitAdditionAllowedVal =  parentObj.find('.addtocartvariation li.selected input').val();
+			  addProduct(productid,isKitAdditionAllowedVal);
+		 });
+	 });
+ </script>
+
+
+
+
+ 				 
+</isdecorate>

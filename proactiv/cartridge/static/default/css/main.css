@@ -1,0 +1,1158 @@
+
+/*****
+
+This file is meant to live in the realm global asset library, so that the urls can be referenced
+from custom objects.
+
+*****/
+#page_index3g_homepage #main {
+	padding:20px 15px 0;
+}
+/* #main #secondaryContent {
+	position:absolute;
+	left:0;
+} */
+/* #main #primaryContent {
+	width:387px;
+	background:#eee;
+	position:absolute;
+	left:199px;
+	padding:5px;
+} */
+#main #primaryContent .blockContent {
+	overflow:visible;
+	/*width:387px;*/
+	padding:0;
+}
+#homepageBanner {
+	width:877px;
+	height:411px;
+	border:1px #494641 solid;
+	margin-left:9px;
+	overflow:hidden;
+	position:relative;
+	background:#eee;
+}
+#homepageBanner ul {
+	display:block;
+/*	width:100%; */
+}
+#homepageBanner ul li {
+	/*width:100%;
+	height:100%;*/
+	height:411px;
+		display:none;
+	z-index:3;
+}
+#homepageBanner ul li#banner1 a.ordertoday {
+	background:url(../images/homepage/billboards/b1-order.png) top;
+	display:none;
+	width:162px;
+	height:33px;
+	position:relative;
+	left:696px;
+	top:-100px;
+}
+#homepageBanner ul li.billboard {
+	background:url(../images/homepage/billboards/cr.jpg) top left no-repeat #eee;
+}
+#homepageBanner ul li#banner1 {
+	display:block;
+	background-position:left top;
+}
+#homepageBanner ul li#banner2 {
+	background-position:left -413px;
+}
+#homepageBanner ul li#banner3 {
+	background-position:left -826px;
+}
+#homepageBanner ul li#banner4 {
+	background-position:left bottom;
+}
+/* Award Rotator */
+#homepageBanner ul li#banner1 #homepageBanner ul li#banner3, #homepageBanner ul li#banner5, #homepageBanner ul li#banner7 {
+	background:url("../images/homepage/billboards/cr.jpg") no-repeat scroll left top #EEEEEE;
+}
+#homepageBanner ul li#banner3 {
+	background-position:left -413px;
+}
+#homepageBanner ul li#banner5 {
+	background-position:left -826px;
+}
+#homepageBanner ul li#banner7 {
+	background-position:left bottom;
+}
+#homepageBanner ul li#banner2, #homepageBanner ul li#banner4, #homepageBanner ul li#banner6, #homepageBanner ul li#banner8 {
+	background:url(../images/homepage/billboards/awards.png) #eee;
+}
+#homepageBanner ul li#banner2 {
+	background-position:0 top;
+}
+#homepageBanner ul li#banner4 {
+	background-position:-293px top;
+}
+#homepageBanner ul li#banner6 {
+	background-position:-586px top;
+}
+#homepageBanner ul li#banner8 {
+	background-position:-879px top;
+}
+/* End Award Rotator */
+#overBanner {
+	position:absolute;
+	top:0;
+	right:0;
+	width:583px;
+	height:411px;
+	/* background:url(../images/homepage/billboards/tophalf-white-proactiv-fs.jpg) no-repeat scroll 0 0 #FFF; */
+	display:block;
+	z-index:50;
+	border-left:1px solid #494641;
+}
+#homepageBanner #overBanner a.ordertoday {
+	background:url(../images/homepage/billboards/ordernow-white.png) repeat scroll center top transparent;
+	display:block;
+	height:32px;
+	position:relative;
+	top:-65px;
+	width:162px;
+	z-index:200;
+	left:335px;
+}
+#homepageBanner ul li#banner2 a.ordertoday {
+	position:relative;
+	left:759px;
+	top:-30px;
+	color:#979797;
+	font-weight:700;
+}
+#homepageBanner ul li#banner2 a.ordertoday:hover {
+	color:#df6400;
+}
+#bannerNav {
+	text-align:center;
+	z-index:20000;
+	position:relative;
+	display:none;
+	margin:-35px auto 0;
+}
+#bannerNav span {
+	z-index:20000;
+}
+#bannerNav a {
+	background:url(../images/homepage/billboards/dots.png) center left no-repeat;
+	width:12px;
+	height:12px;
+	display:block;
+	float:left;
+	z-index:20000;
+	margin:0 4px;
+}
+#bannerNav a.activeBoard, #bannerNav a:hover {
+	background-position:right;
+}
+#midMessage {
+	text-align:center;
+	padding-top: 10px;
+	width:895px;
+	height:15px;
+}
+span.test {
+	margin:0 auto;
+}
+#homeBottom ul {
+	margin-top:9px;
+}
+#homeBottom ul li {
+	border:1px solid #4e4d4b;
+	width:285px;
+	height:160px;
+	float:left;
+	margin:0 0 25px 9px;
+}
+#cwnyc {
+	display:none;
+}
+#homeBottom ul li h2 {
+	background:#494641;
+	font-family:Arial, Helvetica, sans-serif;
+	font-weight:700;
+	color:#FFF;
+	font-size:14px;
+	margin:2px 2px 0;
+	padding:5px 14px 6px;
+}
+/* #homeBottom ul li#box1 {
+	margin-left:8px;
+	display:none;
+} */
+#biebertile, #biebertile-link {
+	background:url(../images/homepage/box1.jpg) no-repeat bottom;
+}
+#homeBottom ul li#box1 a {
+	background:url(../images/homepage/box1.jpg) no-repeat bottom;
+	display:block;
+	width:100%;
+	height:128px;
+}
+#homeBottom ul li#box2 .mbg {
+	float:left;
+	margin:8px;
+}
+#homeBottom ul li#box2 span.guarantee {
+	font-size:12px;
+	font-weight:700;
+	color:#4e6680;
+	float:right;
+	margin-top:10px;
+	margin-right:20px;
+}
+#main P.mbgMeta {
+	float:left;
+	width:130px;
+	font-size:14px;
+	color:#545454;
+	border-bottom:1px solid #CCC;
+	text-align:center;
+	margin:0 5px 14px;
+	padding:15px 0;
+}
+.bigButton {
+	height:100%;
+	width:100%;
+	display:block;
+	position:relative;
+}
+.orderBtn {
+	background:url(../images/interface/btn-order3.png) #fff no-repeat center;
+	position:absolute;
+	width:340px;
+	height:35px;
+	top:415px;
+	left:24px;
+}
+.orderBtn:hover {
+	background:url(../images/interface/btn-order3_on.png) #fff no-repeat center;
+	position:absolute;
+	width:340px;
+	height:35px;
+	top:415px;
+	left:24px;
+}
+#socialBackground {
+	background:#FFF;
+	margin:0 auto;
+}
+#socialBar {
+	width:883px;
+	background:#FFF;
+	margin:0 auto;
+}
+#promoEmail {
+	float:left;
+	font-size:13px;
+	position:relative;
+	left:2px;
+	padding-top:5px;
+}
+#promoEmail .errorclient, #promoEmail .successmessage {
+	display: block;
+}
+#promoEmail .value {
+	display: inline-block;
+	width: 130px;
+}
+#promoEmail label {
+	float:left;
+	margin-right:10px;
+}
+#promoEmail label strong {
+	font-weight:700;
+}
+input.promoEmail {
+	width:150px;
+	height:17px;
+	border:1px solid #CCC;
+	font-size:11px;
+	float:left;
+	display: inline-block;
+}
+input.emailSubmit {
+	float:left;
+	margin-left:10px;
+	margin-top:0;
+}
+.socialMeta {
+	font-size:13px;
+	text-align:right;
+}
+.socialLinks {
+	float:right;
+	margin-left:35px;
+	margin-top:5px;
+}
+.socialLinks a {
+	position:relative;
+	top:-4px;
+	margin-right:auto;
+	margin-left:auto;
+}
+#main .loggedIn #primaryContent .blockContent {
+	position:relative;
+	height:578px;
+	min-height:578px;
+}
+#main .loggedIn #primaryContent .scroller {
+	position:relative;
+	width:375px;
+	height:390px;
+	top:1px;
+	left:6px;
+	margin-bottom:10px;
+}
+#main .loggedIn #primaryContent .scrollerFrame {
+	position:absolute;
+	height:4px;
+	width:4px;
+	background-image:url(../images/homepage/scroller_frame.png);
+}
+#main .loggedIn #primaryContent .scrollerFrame.tl {
+	top:0;
+	left:0;
+	background-position:0 0;
+}
+#main .loggedIn #primaryContent .scrollerFrame.tr {
+	top:0;
+	right:0;
+	background-position:0 -100px;
+}
+#main .loggedIn #primaryContent .scrollerFrame.bl {
+	bottom:0;
+	left:0;
+	background-position:0 -200px;
+}
+#main .loggedIn #primaryContent .scrollerFrame.br {
+	bottom:0;
+	right:0;
+	background-position:0 -300px;
+}
+#main .loggedIn #primaryContent .scrollerContain {
+	width:375px;
+	height:390px;
+	position:absolute;
+	overflow:hidden;
+}
+#main .loggedIn #primaryContent .scrollerContent {
+	width:10005px;
+	position:absolute;
+}
+#main .loggedIn #primaryContent .scrollerContent .scrollerItem {
+	height:390px;
+	float:left;
+	position:relative;
+}
+#main .loggedIn #primaryContent .scroller div.previousInactive, #main .loggedIn #primaryContent .scroller div.nextInactive {
+	background:url(../images/homepage/btn_homearrow_inactive.png) 0 0 no-repeat;
+	height:27px;
+	width:27px;
+	position:absolute;
+	top:205px;
+	z-index:3;
+}
+#main .loggedIn #primaryContent .scroller div.previousInactive {
+	left:17px;
+}
+#main .loggedIn #primaryContent .scroller div.nextInactive {
+	right:17px;
+	background-position:0 -100px;
+}
+#main .loggedIn #primaryContent .scroller a.previous, #main .loggedIn #primaryContent .scroller a.next, #main .loggedIn #primaryContent .scroller a.previous_nojs, #main .loggedIn #primaryContent .scroller a.next_nojs {
+	position:absolute;
+	display:block;
+	background:url(../images/homepage/btn_homearrow.png) 0 0 no-repeat;
+	height:27px;
+	width:27px;
+	text-indent:-99999em;
+	top:205px;
+	z-index:4;
+}
+#main .loggedIn #primaryContent .scroller a.previous, #main .loggedIn #primaryContent .scroller a.previous_nojs {
+	background-position:0 0;
+	left:17px;
+	visibility:hidden;
+}
+#main .loggedIn #primaryContent .scroller a.previous_nojs {
+	visibility:visible;
+}
+#main .loggedIn #primaryContent .scroller a.next, #main .loggedIn #primaryContent .scroller a.next_nojs {
+	background-position:0 -100px;
+	right:17px;
+}
+#main .loggedIn #primaryContent .blockContent h3 {
+	border:0;
+	background:url(../images/homepage/title_shopthecatalog.png) 0 0 no-repeat;
+	width:317px;
+	height:24px;
+	text-indent:-99999em;
+	position:absolute;
+	top:55px;
+	left:32px;
+	margin:0;
+	padding:0;
+}
+#main .loggedIn #primaryContent .blockContent h4 {
+	padding-top:10px;
+	background:url(../images/homepage/title_greatoffers.png) left bottom no-repeat;
+	height:10px;
+	text-indent:-99999em;
+	margin:10px;
+}
+#main .loggedIn #primaryContent .blockContent ul.catalogSections {
+	position:absolute;
+	bottom:10px;
+	padding:0 10px;
+}
+#main .loggedIn #primaryContent .blockContent ul.catalogSections li {
+	float:left;
+}
+#main .loggedIn #primaryContent .blockContent ul.catalogSections li a {
+	display:block;
+	background:url(../images/homepage/btn_catalog.png) 0 0 no-repeat;
+	width:77px;
+	height:25px;
+	font-size:11px;
+	line-height:12px;
+	color:#20374f;
+	margin:0 5px 0 0;
+	padding:25px 5px 10px;
+}
+#main .loggedIn #primaryContent .blockContent ul.catalogSections li a:hover {
+	color:#1e568d;
+}
+#main .loggedIn #primaryContent .blockContent ul.catalogSections li.btnKits a {
+	margin-bottom:5px;
+}
+#main .loggedIn #primaryContent .blockContent ul.catalogSections li.btnSolvers a {
+	background-position:0 -100px;
+	margin-bottom:5px;
+}
+#main .loggedIn #primaryContent .blockContent ul.catalogSections li.btnControl a {
+	background-position:0 -200px;
+	margin-bottom:5px;
+	margin-right:0;
+}
+#main .loggedIn #primaryContent .blockContent ul.catalogSections li.btnBody a {
+	background-position:0 -300px;
+}
+#main .loggedIn #primaryContent .blockContent ul.catalogSections li.btnMoisture a {
+	background-position:0 -400px;
+}
+#main .loggedIn #primaryContent .blockContent ul.catalogSections li.btnMakeup a {
+	background-position:0 -500px;
+}
+#main .loggedIn #primaryContent .blockContent ul.catalogSections li.btnSun a {
+	background-position:0 -600px;
+}
+#main .loggedIn #primaryContent .blockContent ul.catalogSections li.btnSpecial a {
+	background-position:0 -700px;
+	margin:0;
+}
+#main .loggedIn #secondaryContent #welcome .blockContent {
+	height:368px;
+	min-height:368px;
+	overflow:hidden;
+}
+#main .loggedIn #secondaryContent #welcome .contain {
+	padding:4px 6px 3px 7px;
+}
+#main .loggedIn #secondaryContent #welcome .contain h3 {
+	color:#388B9C;
+	font-size:12px;
+	font-weight:700;
+	margin-bottom:8px;
+}
+#main .loggedIn #secondaryContent #welcome .contain h5 {
+	background:url(../images/homepage/title_hello.png) left center no-repeat;
+	padding-left:40px;
+	font-weight:700;
+	margin-bottom:5px;
+}
+#main .loggedIn #secondaryContent #welcome .contain p {
+	line-height:1.3em;
+}
+#main .loggedIn #secondaryContent ul.nav_myAccount {
+	padding-bottom:0;
+	margin-bottom:0;
+	position:relative;
+	z-index:15;
+}
+#main .loggedIn #secondaryContent ul.nav_myAccount li {
+	display:inline;
+}
+#main .loggedIn #secondaryContent ul.nav_myAccount li a {
+	display:block;
+	border-bottom:1px solid #ccc;
+	font-weight:700;
+	font-size:.95em;
+	cursor:pointer;
+	color:#4e4d4b;
+	padding:2px 10px;
+}
+#main .loggedIn #secondaryContent ul.nav_myAccount li a:hover {
+	color:#A18D53;
+}
+#main .loggedIn #secondaryContent ul.nav_myAccount li.last a {
+	border-bottom:0;
+}
+#main .loggedIn #secondaryContent h4 {
+	height:18px;
+	font-weight:700;
+	color:#e5d8b6;
+	background:#4e4d4b;
+	padding:2px 10px;
+}
+#main .loggedIn #secondaryContent .productPromo.block {
+	margin-top:5px;
+	margin-bottom:0;
+}
+#main .loggedIn #secondaryContent .productPromo .blockContent {
+	position:relative;
+	overflow:visible;
+	padding-bottom:10px;
+	text-align:center;
+	height:179px;
+}
+* html #main .loggedIn #secondaryContent .productPromo .blockContent {
+	padding-bottom:4px;
+}
+#main .loggedIn #secondaryContent .productPromo .blockContent .dotwack {
+	position:absolute;
+	top:-12px;
+	left:-5px;
+}
+#main .loggedIn #secondaryContent .productPromo img {
+	margin:2px auto 6px;
+}
+* html #main .loggedIn #secondaryContent .productPromo img {
+	margin-bottom:4px;
+}
+#main .loggedIn #secondaryContent .productPromo h5 {
+	background:url(../images/homepage/title_promo_minisystem.png) 0 0 no-repeat;
+	height:14px;
+	text-align:left;
+	text-indent:-99999em;
+	margin:0 9px;
+}
+#main .loggedIn #secondaryContent .productPromo p {
+	text-align:left;
+	margin:0 8px 1px;
+}
+#main .loggedIn #secondaryContent .productPromo a.btnAddCart {
+	margin:7px auto 0;
+}
+.productPromo a.btnAddCart {
+	background:url(../images/interface/btn-w-0.0.png) 0 -100px no-repeat;
+	height:22px;
+	width:104px;
+	display:block;
+	text-indent:-99999em;
+}
+#main #tertiaryContent {
+	width:295px;
+	overflow:hidden;
+	margin:0 0 0 600px;
+}
+#tertiaryContent .blockGrey {
+	width:283px;
+	margin-left:0!important;
+	overflow:hidden;
+	padding:5px;
+}
+#tertiaryContent h5 {
+	height:10px;
+	text-indent:-99999px;
+	margin:5px 0 10px;
+}
+#tertiaryContent .productPromo .blockContent {
+	position:relative;
+	overflow:visible;
+	height:125px;
+	min-height:137px;
+}
+#tertiaryContent .productPromo .blockContent .dotwack {
+	position:absolute;
+	top:-10px;
+	left:-5px;
+}
+#tertiaryContent .productPromo h5 {
+	background:url(../images/homepage/title_promo_greentea.png) center 0 no-repeat;
+	height:29px;
+	width:81px;
+	text-indent:-99999em;
+	margin:7px 0 5px;
+}
+#tertiaryContent .productPromo .blockContent p {
+	line-height:1.3em;
+	margin-bottom:4px;
+}
+#tertiaryContent .productPromo .blockContent .back {
+	background:url(../images/homepage/back_water.jpg) right 5px no-repeat;
+	margin-left:120px;
+}
+#tertiaryContent .productPromo .blockContent .productImg {
+	float:left;
+	display:inline;
+	width:92px;
+	margin:10px 0 0 12px;
+}
+#tertiaryContent .productPromo .blockContent .productImg div.save {
+	background:url(../images/homepage/title_promo_savings.png) center 0 no-repeat;
+	text-indent:-99999em;
+	height:9px;
+	margin:10px 0 0;
+}
+#tertiaryContent .productPromo .blockContent a.btnAddCart {
+	position:absolute;
+	bottom:10px;
+	left:133px;
+}
+#tertiaryContent #tips .blockContent {
+	height: 253px;
+	overflow: hidden;
+	padding-left: 3px;
+	position: relative;
+}
+#tertiaryContent #tips h5 {
+	background:url(../images/homepage/title_tipsforusing.png) 0 0 no-repeat;
+	text-indent:-99999em;
+	height:10px;
+	overflow:hidden;
+	padding:0;
+}
+#tertiaryContent #tips ul {
+	margin:5px 0 0;
+}
+#tertiaryContent #tips ul li {
+	float:left;
+	font-size:.95em;
+	width:122px;
+	display:inline;
+}
+#tertiaryContent #tips ul li a {
+	display:block;
+	background:url(../images/interface/btn-circles.png) 0 -200px;
+	font-weight:700;
+	padding:1px 0 1px 23px;
+}
+#tertiaryContent #tips .bottomLink {
+	position:absolute;
+	bottom:0;
+	width:240px;
+}
+#tertiaryContent #tellus.block {
+	background:url(../images/club-catalog/bv_banner.jpg) left bottom no-repeat;
+}
+#tertiaryContent #tellus .blockContent {
+	background:url(../images/homepage/back_tellus_right.png) right bottom no-repeat;
+	height:134px;
+	position:relative;
+}
+#tertiaryContent #tellus p {
+	line-height:1.25em;
+}
+#tertiaryContent #tellus h5 {
+	background:url(../images/homepage/title_howitsgoing.png) 0 0 no-repeat;
+	height:29px;
+	width:103px;
+	text-indent:-99999em;
+	margin-top:8px;
+}
+#tertiaryContent #tellus a.btnStart {
+	background:url(../images/interface/btn-w-0.0.png) 0 -300px no-repeat;
+	height:22px;
+	width:74px;
+	display:block;
+	text-indent:-99999em;
+	position:absolute;
+	right:50px;
+}
+#tertiaryContent #tellus a.btnStart:hover {
+	background-position:-300px -300px;
+}
+#userDetailsFade {
+	top:0;
+	left:0;
+	position:absolute;
+	height:800px;
+	background-image:url(../images/white-fade.png);
+	opacity:.79;
+	width:100%;
+	z-index:4999;
+}
+#userDetails {
+	position:absolute;
+	top:50%;
+	left:50%;
+	margin-top:-215px;
+	margin-left:-310px;
+	width:621px;
+	height:355px;
+	z-index:5000;
+	background-image:url(../images/homepage/bg_frame_userdetails.jpg);
+	padding-top:84px;
+}
+#userDetails .bottom {
+	position:absolute;
+	bottom:0;
+	height:14px;
+	background:url(../images/homepage/bg_frame_userdetails.jpg) bottom left;
+	width:621px;
+}
+#userDetails h3 {
+	background:transparent url(../images/titles_8-75.png) no-repeat scroll 0 -1650px;
+	height:53px;
+	text-indent:-99999px;
+	overflow:hidden;
+	margin:0 0 55px 34px;
+}
+#userDetails .new {
+	display:block;
+	position:absolute;
+	background:url(../kitcustomize/templates/kitphase1/img/logo_new_green.gif) no-repeat;
+	height:41px;
+	width:41px;
+	left:32px;
+	top:32px;
+	z-index:1;
+	text-indent:-999em;
+}
+#userDetails p {
+	color:#67bacb;
+	font-weight:700;
+	font-size:12px;
+	border-bottom:1px solid #67bacb;
+	padding-bottom:2px;
+	margin:0 20px 0 34px;
+}
+#userDetails form div {
+	border-bottom:1px solid #CCC;
+	height:25px;
+	padding-top:9px;
+	font-size:11px;
+	margin:0 20px 0 34px;
+}
+#userDetails div h4 {
+	font-weight:700;
+	float:left;
+	width:200px;
+}
+#userDetails div select {
+	border:1px solid #C3C3C3;
+	color:#666;
+}
+#userDetails .submit {
+	border:none;
+	padding:0 0 0 163px;
+}
+#userDetails a.save {
+	display:block;
+	background:#FFF url(../images/btn-w-13.png) no-repeat scroll 0 0;
+	height:22px;
+	width:125px;
+	text-indent:-9999px;
+	float:left;
+	margin:12px 10px 18px 0;
+}
+#userDetails a.cancel {
+	display:block;
+	background:#FFF url(../images/btn-w-13.png) no-repeat scroll 0 -100px;
+	height:22px;
+	width:80px;
+	text-indent:-9999px;
+	float:left;
+	margin:12px 0 18px;
+}
+#userDetails a.close {
+	display:block;
+	background:#FFF url(../images/btn-w-13.png) no-repeat scroll 0 -200px;
+	height:22px;
+	width:80px;
+	text-indent:-9999px;
+	float:left;
+	margin:10px 0 18px 30px;
+}
+#page_loggedin #lyt_btmFooter_social {
+	top:0;
+}
+#page_index3g_homepage #homeBottom ul li h2 {
+	background:url(../images/homepage/box-header-bg.jpg) repeat-x center center;
+}
+#homeBottom ul li#box3 {
+	margin-right:0;
+}
+#award_ticker {
+	background:url(../images/homepage/awards/hp_awd_bg.jpg) no-repeat center left;
+	width:879px;
+	height:55px;
+	position:relative;
+	top:-20px;
+	left:9px;
+	display:none;
+}
+.awardLogo {
+	position:absolute;
+	left:5px;
+	bottom:0;
+	width:60px;
+	height:55px;
+	background:url(../images/homepage/awards/awardlogos.png) no-repeat center top;
+}
+.awardLogo.seventeen {
+	background-position:center -120px;
+}
+.awardLogo.instyle {
+	background-position:center -60px;
+}
+.awardName {
+	width:330px;
+	position:absolute;
+	left:75px;
+	height:20px;
+	font-weight:700;
+	color:#4e4d4b;
+	font-size:14px;
+	background-color:#FFF;
+	bottom:15px;
+}
+.award {
+	position:absolute;
+	left:415px;
+	height:30px;
+	padding-top:18px;
+}
+.award.teenvogue {
+	padding-top:10px;
+}
+#main #award_ticker a {
+	position:absolute;
+	top:0;
+	left:0;
+	width:100%;
+	height:100%;
+	display:block;
+	z-index:10000;
+}
+body.body #homepageBanner ul li#banner1 {
+	background:url(../images/homepage/billboards/sboard.jpg) no-repeat #FFF;
+}
+body.nyc #homepageBanner ul li#banner1 {
+	background:url(../images/homepage/billboards/caroline-wozniacki-special.jpg) no-repeat #FFF;
+}
+body.nyc #overBanner {
+	background:none;
+}
+body.nyc #homeBottom ul li#biebertile {
+	display:none;
+}
+body.nyc #homeBottom ul li#cwnyc {
+	display:block;
+	background:url(../images/homepage/caroline-tile.jpg) no-repeat #FFF;
+}
+body.nyc #homepageBanner #overBanner a.ordertoday {
+	background:url(../images/homepage/billboards/b3-order.png) bottom no-repeat;
+	width:161px;
+	height:46px;
+	left:340px;
+	top:-105px;
+	z-index:220;
+}
+body.nyc #homepageBanner #overBanner a.ordertoday:hover {
+	background-position:top;
+}
+body.nyc .top40_audio, body.nyc .shortdisclaimer, body.nyc .disclaimer {
+	display:none;
+}
+body.nyc .disclaimer {
+	text-align:right;
+	right:6px;
+	color:#648a93;
+	line-height:12px;
+}
+body.body #homepageBanner #overBanner a.ordertoday {
+	background:url(../images/homepage/billboards/ss_button.png) repeat scroll center top transparent;
+	height:32px;
+	top:-60px;
+	left:650px;
+	width:189px;
+}
+body.radio #homepageBanner ul li#banner1 {
+	background:url(../images/homepage/billboards/r-white_board.jpg) no-repeat #000;
+}
+body.radio #homepageBanner #overBanner a.ordertoday {
+	background:url(../images/homepage/billboards/ordernow-white.png) repeat scroll center top transparent;
+	display:block;
+	height:32px;
+	position:relative;
+	top:-100px;
+	width:162px;
+	z-index:200;
+	left:690px;
+}
+body.radio #radio {
+	background:url(../images/homepage/avril-lavigne.jpg);
+}
+body.radio #homeBottom ul li#radio .boxBottom a {
+	display:block;
+	height:160px;
+	width:100%;
+}
+body.radio #homeBottom ul li#box2 span.guarantee {
+	display:none;
+}
+body.radio #main P.mbgMeta {
+	display:none;
+}
+body.radio #homeBottom ul li#box2 .mbg {
+	display: none;
+}
+body.radio #homeBottom ul li#box2 a {
+	background:url(../images/homepage/radio_mbg.jpg) no-repeat bottom;
+	display:block;
+	width:100%;
+	height:128px;
+}
+body.riskfree #homepageBanner ul li#banner1 {
+	background:url(../images/homepage/billboards/rh_board.jpg) no-repeat #000;
+}
+body.riskfree #homepageBanner #overBanner a.ordertoday {
+	background:url(../images/homepage/billboards/b2-order.png) repeat scroll center top transparent;
+	display:block;
+	height:33px;
+	position:relative;
+	top:-100px;
+	width:162px;
+	left:690px;
+}
+body.riskfree #radio {
+	background:url(../images/homepage/avril-lavigne.jpg);
+}
+body.riskfree #homeBottom ul li#radio .boxBottom a {
+	display:block;
+	height:160px;
+	width:100%;
+}
+
+body.mask #homepageBanner ul li#banner1 {
+	background:url(../images/homepage/billboards/mask_board.jpg) no-repeat #fff;
+}
+body.mask #homepageBanner #overBanner a.ordertoday {
+	background:url(../images/homepage/billboards/b2-order.png) repeat scroll center top transparent;
+	display:block;
+	height:33px;
+	position:relative;
+	top:-130px;
+	width:162px;
+	left:690px;
+}
+body.mask #radio {
+	background:url(../images/homepage/avril-lavigne.jpg);
+}
+body.mask #homeBottom ul li#radio .boxBottom a {
+	display:block;
+	height:160px;
+	width:100%;
+}
+
+body.top40 #homepageBanner ul li#banner1 {
+	background:url(../images/homepage/billboards/top40_fs_billboard.jpg) no-repeat #000;
+}
+body.top40 #homepageBanner #overBanner a.ordertoday {
+	background:url(../images/homepage/billboards/ordernow-white.png) repeat scroll center top transparent;
+	display:block;
+	height:32px;
+	position:relative;
+	top:-100px;
+	width:162px;
+	left:690px;
+}
+body.sweeps #homepageBanner {
+	width:877px;
+	height:575px;
+	border:1px #494641 solid;
+	margin-left:9px;
+	overflow:hidden;
+	position:relative;
+	background:#eee;
+}
+body.sweeps #homepageBanner ul li#banner1 {
+	background:url(../images/homepage/billboards/grammyboard_fs.jpg) no-repeat #000;
+}
+body.sweeps #homepageBanner #overBanner a.ordertoday {
+	background:url(../images/homepage/billboards/gbutton.png) repeat scroll center top transparent;
+	display:block;
+	height:43px;
+	position:relative;
+	top:-190px;
+	width:220px;
+	left:630px;
+}
+#hpslideshow {
+	width:166px;
+	height:71px;
+	position:absolute;
+	top:50px;
+	left:55px;
+}
+#award_box {
+	display:none;
+	position:relative;
+	background:url(../images/homepage/pa_at_bg.jpg);
+}
+.video_players {
+	position:absolute;
+	z-index:20000;
+	left:22px;
+	top:82px;
+}
+#main h1, #homeBottom ul li#biebertile-link, #homeBottom ul li#radio, #userDetailsOverlay, #userDetails .notice, .anAward, .anAward div, body.body #homeBottom ul li#biebertile, body.radio #homeBottom ul li#biebertile-link, body.body #homeBottom ul li#radio, body.radio div.shortdisclaimer, body.radio div.sh_disclaimer, body.top40 div.shortdisclaimer, body.sweeps div.shortdisclaimer, body.radio #homeBottom ul li#box1, body.radio #homeBottom ul li#biebertile, body.radio #homeBottom ul li#biebertile-link, body.riskfree div.shortdisclaimer, body.mask div.shortdisclaimer, body.riskfree div.sh_disclaimer, body.mask div.sh_disclaimer, body.top40 div.shortdisclaimer, body.riskfree #homeBottom ul li#box1, body.mask #homeBottom ul li#box1, body.riskfree #homeBottom ul li#biebertile, body.mask #homeBottom ul li#biebertile, body.riskfree #homeBottom ul li#biebertile-link, body.mask #homeBottom ul li#biebertile-link, img.seventeen, img.instyle, .promo {
+	display:none;
+}
+#homepageBanner ul li#banner1 a.ordertoday:hover, #homepageBanner #overBanner a.ordertoday:hover {
+	background-position:bottom;
+}
+#homeBottom ul li#biebertile, #homeBottom ul li#box2 a.guarantee, #main .loggedIn #primaryContent .scroller div.previousInactive, #main .loggedIn #primaryContent .scroller div.nextInactive, #main .loggedIn #primaryContent .scroller a.previous, #main .loggedIn #primaryContent .scroller a.next, .anAward.activated, body.body div.shortdisclaimer, body.body #homeBottom ul li#box1, body.radio #homeBottom ul li#radio, body.riskfree #homeBottom ul li#radio, body.mask #homeBottom ul li#radio, .promo.active {
+	display:block;
+}
+#homeBottom ul li#biebertile .boxBottom a, #homeBottom ul li#biebertile-link .boxBottom a, #homeBottom ul li#award_box .boxBottom a, #homeBottom ul li#cwnyc .boxBottom a {
+	display:block;
+	height:128px;
+	width:100%;
+}
+#main .loggedIn #primaryContent .scroller a.previous:hover, #main .loggedIn #primaryContent .scroller a.previous_nojs:hover, #userDetails a.save:hover {
+	background-position:-300px 0;
+}
+#main .loggedIn #primaryContent .scroller a.next:hover, #main .loggedIn #primaryContent .scroller a.next_nojs:hover, .productPromo a.btnAddCart:hover, #userDetails a.cancel:hover {
+	background-position:-300px -100px;
+}
+#main .loggedIn #secondaryContent .productPromo p a, #tertiaryContent .productPromo .blockContent a {
+	font-size:.95em;
+}
+div.disclaimer, div.shortdisclaimer {
+	bottom:5px;
+	color:#6f6f6f;
+	font-size:11px;
+	position:absolute;
+	right:40px;
+}
+body.body #homepageBanner, body.radio #homepageBanner, body.radio #overBanner, body.riskfree #homepageBanner, body.mask #homepageBanner, body.riskfree #overBanner, body.mask #overBanner, body.top40 #homepageBanner, {
+ border:1px #333 solid;
+}
+body.body #overBanner, body.radio #overBanner, body.riskfree #overBanner, body.mask #overBanner, body.top40 #overBanner, body.riskfree #overBanner, body.mask #overBanner {
+	background:none;
+	width:100%;
+}
+div.disclaimer {
+	display:none;
+}
+div.shortdisclaimer {
+	display:none;
+}
+div.longdisclaimer {
+	display:none;
+}
+body.body div.disclaimer, body.radio div.disclaimer, body.riskfree div.disclaimer, body.mask div.disclaimer, body.top40 div.disclaimer, body.sweeps div.disclaimer {
+	color:#666;
+	display:none;
+	left:20px;
+}
+div.top40_audio {
+	display:none;
+}
+body.top40 div.top40_audio {
+	position:relative;
+	display:block;
+	left:20px;
+	top:-200px;
+}
+body.nyc #overBanner {
+	border-left:0px;
+}
+body.sweeps #overBanner {
+	background:none;
+	width:100%;
+	height:575px;
+}
+body.sweeps div.longdisclaimer {
+	display:block;
+	float:left;
+	margin-top: -24px;
+	margin-left:60px;
+	color:#FFF;
+	left:5px;
+	text-align:left;
+	font-size:16px;
+	line-height:normal;
+}
+body.sweeps a.fbSweeps {
+	background-image: url(../images/social/fbDark.png);
+	margin: -78px 10px 0 25px;
+	position:relative;
+	width:26px;
+	height:27px;
+	display:block;
+	z-index:200;
+}
+img.walkthroughImg {
+	margin-top: -5px;
+}
+#main a.restartLink {
+	position: absolute;
+	bottom: 0;
+	right: 13px;
+	z-index: 500;
+	font: bold 11px Arial, Verdana, sans-serif;
+	color: #00647A;
+}
+body.aff #overBanner {
+	position:absolute;
+	top:0;
+	right:0;
+	width:583px;
+	height:411px;
+	background:url(../images/homepage/billboards/tophalf-white-proactiv-fs.jpg) no-repeat scroll 0 0 #FFF;
+	display:block;
+	z-index:50;
+	border-left:1px solid #494641;
+}
+body.aff #homepageBanner #overBanner a.ordertoday {
+	background:url(../images/homepage/billboards/ordernow-white.png) repeat scroll center top transparent;
+	display:block;
+	height:32px;
+	position:relative;
+	top:-65px;
+	width:162px;
+	z-index:200;
+	left:335px;
+}
+body.aff #homepageBanner #overBanner a.ordertoday:hover {
+	background-position: bottom;
+}
+body.aff div.disclaimer {
+	display:none;
+}
+body.aff div.shortdisclaimer {
+	display:none;
+}
+body.aff #homeBottom ul li#biebertile, body.aff #homeBottom ul li#biebertile-link {
+	display:none;
+}
+body.aff #homeBottom ul li#box1 {
+	display:block;
+}
+body.home #homeBottom ul li#biebertile {
+	display:none;
+}
+body.home #homeBottom ul li#biebertile-link {
+	display:block;
+}
+#main_val_Container { display:none; }

@@ -1,0 +1,55 @@
+<iscomment>
+	Displays order details, such as order number, creation date, payment information,
+	order totals and information for each contained shipment.
+	This template module can be used in order confirmation pages as well as in the
+	order history to render the details of a given order. Depending on the context
+	being used in, one might omit rendering certain information.
+
+	Parameters:
+
+	order		: the order whose details to render
+	orderstatus	: if set to true, the order status will be rendered
+	              if set to false or not existing, the order status will not be rendered
+</iscomment> 
+<isset name="Order" value="${pdict.order}" scope="page"/>
+	<div class="orderHeader">
+			<div class="whiteBg">
+				<div class="title">${Resource.msg('confirmation.ordersummary','checkout',null)}</div>
+				
+				<div class="summaryWraper">	
+					<div class="orderNumber detailsRow">
+						<span class="label">${Resource.msg('orderdetails.ordernumber','components',null)}</span>
+						<span class="value"><isprint value="${Order.orderNo}"/></span>
+					</div><!-- END: ordernumber -->
+	    			<div class="orderDate detailsRow">
+						<span class="label">${Resource.msg('yourOrder.orderdate','checkout',null)}: </span>
+						<span class="value"><isprint value="${pdict.Order.creationDate}" formatter="MM-dd-yyyy"/></span>
+					</div><!-- END: orderdate -->
+				
+					<iscomment>include template that renders order status</iscomment>
+					<isif condition="${!empty(pdict.orderstatus) && pdict.orderstatus == 'true'}">
+						<isinclude template="account/orderhistory/orderstatusinclude"/>
+					</isif>
+	
+					<iscomment>updated to show total without tax</iscomment>
+					<div class="orderTotal detailsRow">
+						<span class="label">${Resource.msg('summary.ordertotal','checkout',null)}</span>
+						<iscomment><span class="value"><isprint value="${Order.totalGrossPrice}"/></span></iscomment>
+						<span class="value"><isprint value="${Order.totalNetPrice}"/></span>
+					</div>
+		
+					<div class="actions buttonwraper">
+						<a href="${URLUtils.http('Cart-ContinueShopping')}" class="brownButton contShoppingBtn aButton">
+							<span>${Resource.msg('confirmation.continueshop','checkout',null)}</span>
+						</a>
+						<form action="${URLUtils.https('CORtnOrderSummary-OrderDetails')}" method="POST">
+							<input type="hidden" name="orderID" value="${pdict.Order.originalOrderNo}"/>
+							<input type="submit" class="grayButton viewOrderDetailsBtn aButton newOrderbtn" value="${Resource.msg('confirmation.itemdetails','checkout',null)}" />
+						</form>
+						<iscomment>
+						<a href="${URLUtils.https('CORtnOrderSummary-OrderDetails','orderID', pdict.Order.originalOrderNo)}" class="grayButton viewOrderDetailsBtn aButton"><span>${Resource.msg('confirmation.itemdetails','checkout',null)}</span></a>
+						</iscomment>
+					</div>
+				</div>
+			</div>
+	</div><!-- END: orderheader -->

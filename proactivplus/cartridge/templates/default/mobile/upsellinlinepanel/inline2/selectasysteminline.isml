@@ -1,0 +1,9 @@
+<isinclude template="util/modules"/>
+<isscript>
+	var CCC : Object = pdict.CurrentCampaignConfig;
+	if( !empty(CCC) ) {
+		offerCodes = CCC.sasOfferCodes;
+	}
+</isscript>
+<isredirect location="${URLUtils.https('COCart-AddProduct','pid',offerCodes[0])}" permanent="true"/>
+

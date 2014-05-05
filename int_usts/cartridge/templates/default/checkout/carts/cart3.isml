@@ -1,0 +1,114 @@
+<!--- TEMPLATENAME: cart3.isml --->
+<isscript>
+	importPackage(dw.object);
+	importPackage(dw.catalog);
+	
+	var CCC : Object = pdict.CurrentCampaignConfig;
+	var campaignCode : String = CCC.campaignCode;
+	
+	var showHeader : boolean = CCC.showHeader;
+	var showFooter : boolean = CCC.showFooter;
+	var showNav : boolean = CCC.showNav;
+	var showOrderButton : boolean = CCC.showOrderButton;
+	var sasPageFlag :boolean = pdict.CurrentSession.custom.omnSasPage;
+	var category : dw.catalog.Category = CCC.getCampaignCategory();
+</isscript>
+
+<isset name="decorator" value="${empty(pdict.CheckoutStep) || 'cartinformation' == pdict.CheckoutStep ? 'content/checkout/pt_checkout_slp' : ('confirmation' == pdict.CheckoutStep ? 'content/checkout/pt_checkout_confirmation' : 'content/checkout/pt_checkout') }" scope="page" />
+<isset name="slp_cart" value="${true}" scope="request" />
+
+<iscomment>Decorator will setup header & footer, cart3.isml, will setup left column, and checkout fields</iscomment>
+<isdecorate template="${decorator}">
+
+  <script type="text/javascript">
+	var sasPageFlag ='<isprint value="${sasPageFlag}"/>';
+  </script>
+
+  <isinclude template="util/modules" />
+  <isset name="multiCheckout" value="${false}" scope="pdict" />
+  <isinclude template="common/mediaPixelsInit.isml"/>
+
+  <isif condition="${false}">
+    <iscomment>Slots for single-page checkout</iscomment>
+    <isslot id="singlepage-cart-banner-top" description="singlepage cart banner top" context="category" context-object="${category}" />
+    <isslot id="singlepage-cart-header" description="singlepage cart header" context="category" context-object="${category}" />
+    <isslot id="singlepage-cart-top-footer" description="singlepage cart top footer" context="category" context-object="${category}" />
+    <isslot id="singlepage-cart-top" description="singlepage cart top" context="category" context-object="${category}" />
+    <isslot id="singlepage-cart-center" description="singlepage cart center" context="category" context-object="${category}" />
+    <isslot id="singlepage-cart-top-bottom" description="singlepage cart bottom" context="category" context-object="${category}" />
+    <isslot id="singlepage-cart-footer" description="singlepage cart footer" context="category" context-object="${category}" />
+    <isslot id="singlepage-confirm-header" description="singlepage cart header" context="category" context-object="${category}" />
+    <isslot id="singlepage-confirm-footer" description="singlepage confirm footer" context="category" context-object="${category}" />
+  </isif>
+
+  <iscomment>Setup omniture variables</iscomment>
+  <isset name="OmniturePage" value="slpCheckout" scope="pdict">
+
+  <isif condition="${empty(pdict.CheckoutStep) || 'cartinformation' == pdict.CheckoutStep}">
+
+    <iscomment>Disable checkout button for cart. We don't need it at this step</iscomment>
+	<isset name="EnableCheckout" value="${false}" scope="pdict" />
+		
+	<div id="selectyourshipment"><span>Select Your Method of Shipment</span></div>
+ 	<isinclude template="checkout/components/errors" />
+	
+    <div class="main_content">
+      <div class="mainc_left_column">
+	    <isslot id="singlepage-cart-center" description="singlepage cart center" context="category" context-object="${category}" />
+      </div>
+      <div class="mainc_right_column">
+        <isslot id="singlepage-cart-top" description="singlepage cart top" context="category" context-object="${category}" />
+      
+	    <form action="${URLUtils.httpsContinue()}" method="post" id="${pdict.CurrentForms.cart.htmlName}" class="checkoutform">
+		  <iscomment>Include a details form</iscomment>
+		  <isinclude template="checkout/personinformation/slp_personinformation" />		
+
+		  <iscomment>Include a customer cart</iscomment>
+          <isinclude template="checkout/cart/cocart" /> 
+	    </form>
+      </div>
+    </div>
+
+	<script type="text/javascript">
+      //doc ready click terms button, hide it as well
+	  $(document).ready(function(){
+	    $('#dwfrm_personinf_agree').prop('checked', true);
+		$('#dwfrm_personinf_agree').hide();
+		$('.agreeBox p').text('Clicking "Place Order" indicates that you have read and agreed to USTechSupport\'s');
+		$('#agreeTerms').appendTo('.agreeBox p');
+	  });
+	</script>
+		  
+	<iscomment>Media Pixel</iscomment>
+	<isslot id="MediaPixelForCart" context="global" description="MediaPixelForCart" />
+	
+  <iselseif condition="${'confirmation' == pdict.CheckoutStep}">
+	<ischeckoutbreadcrumbs type="simple" step="confirm" paypal="${pdict.IsPaypalPayment}" />
+		
+	<isinclude template="checkout/components/errors" />
+		
+	<isinclude template="checkout/steps/confirmation" />
+	<isset name="OmniturePage" value="COConfirmationAcq" scope="pdict">
+
+  <iselseif condition="${'cartempty' == pdict.CheckoutStep}">
+	<ischeckoutbreadcrumbs type="simple" step="" paypal="${pdict.IsPaypalPayment}" />
+		
+	<isinclude template="checkout/components/errors" />
+		
+	<isinclude template="checkout/steps/cartempty" />
+  </isif>
+</isdecorate>
+
+<isif condition="${empty(pdict.CheckoutStep) || 'cartinformation' == pdict.CheckoutStep}">
+  
+  <div class="mboxDefault"></div>
+  <script type="text/javascript">mboxCreate("mcp_dw_cart_tracker",'sourceCode=' + C('Cps.sku'));</script>
+
+<iselseif condition="${'review' == pdict.CheckoutStep}">
+
+  <iscomment>In Preview Page</iscomment>
+
+<iselseif condition="${'confirmation' == pdict.CheckoutStep}">
+	<div class="mboxDefault"></div>
+  <script type="text/javascript">mboxCreate('mcp_dw_orderconfirm_tracker','sourceCode=' + C('Cps.sku'));</script>
+</isif>

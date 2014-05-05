@@ -1,0 +1,63 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<isinclude template="util/modules"/>
+<isscript>importPackage(dw.content);
+  importPackage(dw.util);
+  importPackage(dw.catalog);
+  
+  importScript('guthyrenker_core:common/libUtils.ds');
+  
+  var contentInfo    = getCurrentContentInfo(pdict.CurrentHttpParameterMap);
+  var folderPathInfo = getRetentionFolderPathInfo(contentInfo);
+  
+  var CurrentFolder  : Folder = contentInfo.folder;
+  var CurrentContent : Content = contentInfo.content;
+  
+  var CurrentFolderPath : String = folderPathInfo.folderPath;
+  var RootFolder        : Folder = folderPathInfo.rootFolder;
+  
+  CurrentFolderPath += " body_"+RootFolder.ID+" "+RootFolder.ID;
+  
+  var PageID : String = "page_";
+  
+  if( empty(CurrentContent) ) {
+  PageID += CurrentFolder.ID;
+  } else {
+  PageID += CurrentContent.ID;
+  }
+  var showNav : boolean = CCC.showNav;
+  var showOrderButton : boolean = CCC.showOrderButton;
+  var CCC : Object = pdict.CurrentCampaignConfig;</isscript>
+<iscomment>This page must be cachable. It inherits the caching attributes by the decorated template.</iscomment>
+<head>
+<iscomment>
+Include all important information globally , e.g. meta-data, link information, and javascript.
+</iscomment>
+<isinclude template="components/header/htmlhead"/>
+<iscomment>Add page specific header information here.</iscomment>
+<isif condition="${'customCSSFile' in pdict.Content.custom && !empty(pdict.Content.custom.customCSSFile)}">
+<link href="${pdict.Content.custom.customCSSFile.URL}" type="text/css" rel="stylesheet" />
+</isif>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+</head>
+<body class="${pdict.Content.ID}">
+<isinclude template="common/mboxglobal"/>
+	<iscomment>Cookies and Javascript enabled check</iscomment>
+	<isset name="showOrderButton" value="${true}" scope="pdict"/>
+	<isinclude template="components/browsertoolscheck"/>
+	
+	<isinclude template="components/header/header"/>
+	
+	<div id="container" class="pt_contentPages ${CCC.getContainerClasses()} ">
+	
+	  <isreplace/>
+	
+	  <isinclude template="components/footer/footer"/>
+	
+	  <isinclude template="components/footer/pixels"/>
+	  
+	  <isinclude template="common/google_analytics" />
+	</div>
+	<!-- END: container -->
+</body>
+</html>

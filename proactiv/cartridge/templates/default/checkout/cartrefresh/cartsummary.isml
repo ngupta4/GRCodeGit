@@ -1,0 +1,313 @@
+<!--- TEMPLATENAME: cartinformation.isml --->
+<script type="text/javascript">
+app.proactiv.resources.set({
+	'cartFormID' : '${pdict.CurrentForms.cart.htmlName}',
+	'cartUpdateBtnID' : '${pdict.CurrentForms.cart.updateCart.htmlName}'
+});
+
+
+var campaignCode = '${pdict.CurrentCampaignConfig['campaignCode']}';
+
+app.proactiv.resources.set({
+	'verifyEmailLimit' : ${pdict.CurrentSession.privacy.verifyemaillimit},
+	'verifyEmailUrl' : '<isprint value="${URLUtils.url('GRMiddleware-VerifyEmail')}" encoding="off"/>',
+	'billingEqualsShipping' : ${pdict.BillingEqualsShipping},
+	'billingEqualsShippingCheckbox' : '${pdict.CurrentForms.personinf.useAsBillingAddress.htmlName}',
+	'updateShippingPriceUrl' : '${URLUtils.url("COCart-SetShippingMethod")}',
+	'updateSupplyURL' : '${URLUtils.url("Airline-UpdateCart")}',
+	'updateQtyUrl' : '${URLUtils.url("COCart-UpdateProductQty")}',
+	'subtotal-selector' : '.merchandiseTotal',
+	'cart-description' : '.order-summary-right #coreOffer .shortDescription ',
+	'product-id' : '.order-summary-right #coreOffer .codeProductId',
+	'product-id_1' : '.herosection .product_Id',
+	'shipping-price-selector' : '${"#"}totalshippingprice .value',
+	'total-price-selector' : '.order-totals .totalPrice, .ordertotalfinal .totalPrice',
+	'core-offer-id' : '.coreid',
+	'product-name' : '#coreOffer .detailscolumn .name.core',
+	'hero-image' : '.imagecolumn img',
+	'vitaminsection' : '.shortDescription.vitamin',
+	'vitaminname' : '.name.vitamin',
+	'removeVitaminURL' : '${URLUtils.url("Airline-Remove")}',
+	'heroName' : '.herosection .name',
+	'kitStringValue' : '${Resource.msg("cart.refresh.kit", "locale", null)}',
+	'heroDesc' : '.herosection .shortDescription',
+	'PayLaterTerms' : '.productBasedLegalTerms',
+	'swatch-image' : '.orderSummaryBottom #prodSummary .swatchImg img'
+});
+</script>
+
+<isscript>
+
+importScript('guthyrenker_businesslogic:airline/GetShippingPrice.ds');
+
+var ShippingMethodsMap : Map = getShippingPrice(pdict.Basket.defaultShipment);
+	
+</isscript>
+<iscomment>Include a customer cart</iscomment>
+				
+<input type="hidden" id="cartID" value="${pdict.CurrentCampaignConfig['cartID']}" />	
+<isset name="ShowUpsells" value="${true}" scope="pdict" />
+<div class="order-summary-right">
+<h4>${Resource.msg('cart.title.order.summary','locale',null)}</h4>
+<isset name="vitProd" value="${null}" scope="page"/>
+<table class="ch_selected_products" summary="Cart">
+	<tbody>
+	
+	<iscomment>LOOP TO SEPARATE DIFFERENT SHIPMENTS ex: Gift Registry Shipments Etc.</iscomment>
+	<isloop items="${pdict.CurrentForms.cart.shipments}" var="Shipment" status="loopstate">
+		<iscomment>Put core offer first in new array</iscomment>						
+		
+		<isloop items="${Shipment.items}" alias="FormLi" status="loopstate">
+		<isset name="lineItem" value="${FormLi.object}" scope="page"/>
+		<isif condition="${lineItem.product.custom.coreItem}">	
+			<isset name="selectedProductId" value="${lineItem.productID}" scope="page" />
+			<isif condition="${pdict.CurrentForms.personinf.creditcard.type.htmlValue == 'PayLater'}">
+				<isset name="recommendationType" value="${12}" scope="page" />	
+				<isset name="aProduct" value="${ProductMgr.getProduct(selectedProductId)}" scope="page" />
+				<isset name="recommendIter" value="${aProduct.getRecommendations(recommendationType)}" scope="page" />	
+				<isset name="recommendedProduct" value="" scope="page" />
+				<isloop items="${recommendIter}" alias="recommendL" status="loopstateRecommend">		
+					<isset name="recommendedProduct" value="${recommendL.getRecommendedItem()}" scope="page" />
+				</isloop>
+				<isset name="selectedProductId" value="${recommendedProduct.ID}" scope="page" />
+				<div id="paylaterLegalTerms" style="display:none;">
+					<isprint value="${lineItem.product.custom.paylaterLegalTerms}" encoding="off"/>	
+				</div>
+			</isif>
+		<iselse>
+			<isset name="selectedVitProductId" value="${lineItem.productID}" scope="page" />
+			<isif condition="${pdict.CurrentForms.personinf.creditcard.type.htmlValue == 'PayLater'}">
+				<isset name="recommendationType" value="${12}" scope="page" />	
+				<isset name="aProduct" value="${ProductMgr.getProduct(selectedVitProductId)}" scope="page" />
+				<isset name="recommendIter" value="${aProduct.getRecommendations(recommendationType)}" scope="page" />	
+				<isset name="recommendedVitProduct" value="" scope="page" />
+				<isloop items="${recommendIter}" alias="recommendL" status="loopstateRecommendVit">		
+					<isset name="recommendedVitProduct" value="${recommendL.getRecommendedItem()}" scope="page" />
+				</isloop>
+				<isset name="selectedVitProductId" value="${recommendedVitProduct.ID}" scope="page" />
+			</isif>
+		</isif>
+		
+			<isscript>
+				var isInWishList = false;
+			</isscript>			
+			<iscomment>Product Area!</iscomment>
+			<isif condition="${lineItem.bonusDiscountLineItem == null}">
+			<iscomment>if free vitamin is present in cart then, div for vitamin will not be added to table. Instead it will be displayed in separate div</iscomment>
+			<isif condition="${!lineItem.product.custom.coreItem}">
+				<isset name="vitProd" value="${lineItem.product}" scope="page"/>
+				<input type="hidden" name="crossSellIDAddedToCart" class="crossSellIDAddedToCart" value="${lineItem.productID}" />
+				<input type="hidden" name="crossSellIDRegular" class="crossSellIDRegular" value="${selectedVitProductId}" /> 
+				<iscontinue/>
+			</isif>
+			<tr>
+				<td id="cartOverlayBg" <isif condition="${!lineItem.product.custom.coreItem}"> class="cartOverlayBg coreOffer"</isif>>
+					<div class="prodWrapper">
+						
+					<table width="100%" cellpadding="0" cellspacing="0" border="0">
+					<!-- Product item -->
+						<tr class="tablerow"<isif condition="${lineItem.product.custom.coreItem}"> id="coreOffer" <iselse> id="freeOffer"</isif>>
+							<span class="imagecolumn">
+								
+							</span>
+							<td class="detailscolumn">
+								<iscomment>Call module to render product</iscomment>
+								<div <isif condition="${lineItem.product.custom.coreItem}">class="name core"<iselse>class="name nonCore"</isif>>
+									<isprint value="${lineItem.productName}" encoding="off" />
+								</div><!-- END: name -->
+							</td>
+						</tr>
+                        <!--  Added for to pass Brand Id to seewhy -->
+                        <isscript>			
+                               importScript("guthyrenker_businesslogic:login/FindProductSpecificBrand.ds" );			
+                               var productBrand : String = findProductBrand(lineItem.product,Resource.msg('acq.default.segment','configuration','2'));			
+                       </isscript>
+						<tr class="tablerow"<isif condition="${lineItem.product.custom.coreItem}"> id="coreOffer" <iselse> id="freeOffer"</isif>>
+							<td valign="middle" class="quantitycolumn">
+								<isset name="maxQty" value="${lineItem.product.custom.maxQty || 1}" scope="page" />
+								<isif condition="${lineItem.product.custom.coreItem}">
+									<input type="hidden" name="pid" class="coreid" value="${selectedProductId}" />
+									<input type="hidden" name="pidCY" class="coreidCY" value="${lineItem.productID}" />
+									<!--  Added for to pass Brand Id to seewhy -->
+									<input type="hidden" name="productBrandCY" class="productBrand" value="${productBrand}" />
+								</isif>
+								<isif condition="${(maxQty >= 1) && (lineItem.product.custom.coreItem)}">								
+									<select class="quantityselector" id="quantity_${loopstate.index}" name="${FormLi.quantity.htmlName}" title="${Resource.msgf('cart.quantitylabel', 'rendering', null, maxQty)}" <isif condition="${maxQty == 1}">   disabled="disabled" </isif> >
+										<isloop begin="${1}" end="${+maxQty}" status="quantityStatus">
+											<option value="${quantityStatus.index}"<isif condition="${lineItem.quantity == quantityStatus.index}"> selected="selected"</isif>>${quantityStatus.index} ${Resource.msg('cart.refresh.kit', 'locale', null)}</option>
+										</isloop>
+									</select>
+								</isif>
+							
+								
+								<iscomment>Static 30 Day Supply for right upsell</iscomment>
+								<isif condition="${lineItem.product.custom.coreItem}">
+						<isscript>
+							var upRecommend : dw.util.Iterator = lineItem.product.getRecommendations(5).iterator();
+							var hasUpsell : Boolean = false;
+							var recommend : Recommendation = null;
+							var recommendedProduct : Product = null;
+							while (upRecommend.hasNext()){
+								hasUpsell=true;
+								isUpsell = 'true';
+								recommend  = upRecommend.next();
+			                    recommendedProduct = recommend.getRecommendedItem();
+							}
+							
+						</isscript>
+						<isscript>
+							var downsellrecommend : dw.util.Iterator = lineItem.product.getRecommendations(10).iterator();
+							var hasDownsell : Boolean = false;
+							var downsellRecommend : Recommendation;
+							var downsellProduct : Product;
+							while (downsellrecommend.hasNext()){
+								hasDownsell=true;
+								downsellRecommend  = downsellrecommend.next();
+			                    downsellProduct = downsellRecommend.getRecommendedItem();
+							}
+							
+						</isscript>
+						<input type="hidden" name="has-upsell" id="has-upsell" value="${hasUpsell}" />
+							<select class="daySupply" id="daySupply">
+							<isif condition="${hasUpsell}">
+								<option value="${lineItem.product.ID}">
+									${Resource.msg('cart.title.supply.thirty','rendering',null)}
+								</option>
+								<option value="${recommendedProduct.ID}">
+									${Resource.msg('cart.title.supply.ninety','rendering',null)}
+								</option>
+							<iselse>
+								<option value="${lineItem.product.ID}">
+									${Resource.msg('cart.title.supply.ninety','rendering',null)}
+								</option>
+								<option value="${downsellProduct.ID}">
+									${Resource.msg('cart.title.supply.thirty','rendering',null)}
+								</option>
+							</isif>
+							</select>
+						</isif>
+													
+							</td>
+						</tr>
+						<tr>
+							<td align="right">
+								<isif condition="${pdict.CurrentCampaignConfig['cartID']!=100 && pdict.CurrentCampaignConfig['cartID']!=102 && lineItem.product.custom.coreItem}">
+									<a class="back_to_top" href="#Step1">${Resource.msg('cart_refersh.backtotop', 'rendering', null)}</a>								
+								<iselse>
+									<a class=<isif condition="${lineItem.product.custom.coreItem}">"remove_item ccremove"<iselse>"remove_vitamin free"</isif> href="javascript:void(0);" name="${lineItem.productID}" title="${Resource.msg('cart.removeitem', 'rendering', null)}">${Resource.msg('cart_refersh.removeitem', 'rendering', null)}</a>								
+								</isif>
+							</td>
+						</tr>
+						<tr class="tablerow"<isif condition="${lineItem.product.custom.coreItem}"> id="coreOffer" <iselse> id="freeDesc"</isif>>
+							<td>
+								<div class="shortDescription">
+									<isprint value="${lineItem.product.custom.cartDescription}" encoding="off"/>								
+								</div><!-- END: shortDescription -->
+							</td>
+						</tr>						
+					</table> 
+					</div>
+				</td>
+			</tr>		
+				
+			</isif>
+		</isloop>
+	</isloop>
+	</tbody>
+</table>
+<iscomment>If vitamin in present in cart then render vitamin details otherwise div will be blank</iscomment>
+<div class="name vitamin" id="crossSell">
+	<isif condition="${vitProd != null}">
+		<div id="freeOffer">
+			<isprint value="${vitProd.name}" encoding="off"/>
+			<a href="javascript:void(0);" class="remove_vitamin free" name="${vitProd.ID}" title="${Resource.msg('cart.removeitem', 'rendering', null)}">${Resource.msg('cart_refersh.removeitem', 'rendering', null)}</a>
+		</div>
+	</isif>
+</div>
+<div class="shortDescription vitamin">
+	<isif condition="${vitProd != null}">
+		<div id="freeDesc">
+			<isprint value="${vitProd.custom.cartDescription || vitProd.shortDescription}" encoding="off"/>
+		</div>
+	</isif>
+</div>
+
+
+<div class="order-totals">
+	<iscomment>Sub Total block</iscomment>
+	<div class="sub_total">
+		<span class="cocart-label">
+			${Resource.msg('cart.ordersubtotal.label.new', 'rendering', null)}&nbsp;
+		</span>
+		<div id="subTotal" class="merchandiseTotal cocart-price">					
+			<isprint value="${pdict.Basket.getAdjustedMerchandizeTotalPrice(false)}"/>
+		</div>		
+	</div>
+	<iscomment>Shipping Total block</iscomment>
+	<div class="shipping_total"> 	
+		<iscomment>
+		Hide "recalculate" link
+		<a id="recalculate" href="${URLUtils.httpContinue()}">${Resource.msg('cart.recalculate.label','rendering',null)}</a>
+		</iscomment>
+		
+		<iscomment>Shipping Method block</iscomment>
+		<isscript>
+			var i = 1;
+			var flag = true;
+		</isscript>
+		<div id="totalshippingprice">
+			<span>${Resource.msg('cart.ordershipping.label.new', 'rendering', null)}</span>
+			<div class="value" id="shipTotal">
+				<isif condition="${pdict.Basket.shippingTotalPrice.available}"><isprint value="${pdict.Basket.shippingTotalPrice}"/><iselse/>&nbsp;</isif>
+			</div>
+		</div>
+		<isif condition="${ShippingMethodsMap.size() > 0}">
+			<div class="shippingmethodslist">
+				<select id="${pdict.CurrentForms.cart.shippingMethodID.htmlName}" name="${pdict.CurrentForms.cart.shippingMethodID.htmlName}" class="shipList">
+					<isloop items="${ShippingMethodsMap.keySet()}" var="shippingMethod" status="shippingState">
+						<isscript>
+						var shippingCost = ShippingMethodsMap.get(shippingMethod);
+						var isSelected = !empty(pdict.DefaultShipment) && (shippingMethod.ID == pdict.DefaultShipment.shippingMethodID);
+						
+						// Using the last sorted available shipping method so we can support multiple default shipping methods for now... this might be redesigned with more detailed business requirements
+						
+						//if (pdict.CurrentForms.cart.shippingMethodID.value)
+						//{
+						//	isSelected = shippingMethod.ID == pdict.CurrentForms.cart.shippingMethodID.value;
+						//}
+						
+						if(isSelected){
+							flag = false;
+						}
+							
+						if (flag && i == ShippingMethodsMap.size()) {
+							isSelected = true;
+						}
+						i++;
+						</isscript>
+						<div class="labelwrapper ${shippingMethod.ID.toLowerCase().replace(/\W/,'_')}">
+							<div class="shippinglabel"></div>					
+							<option value="${shippingMethod.ID}"<isif condition="${isSelected}"> selected="selected"</isif>><isprint value="${shippingMethod.displayName}"/> <span class="shipmentprice">$<isprint value="${shippingCost.value}" style="MONEY_LONG" /></span></option>				
+						</div>
+					</isloop>
+				</select>				
+			</div>
+		</isif>
+		<div class="clearfix"></div>
+	</div>
+	<div class="shippingNote">${Resource.msg('cart.ordertotal.note', 'rendering', null)}</div>				
+	<iscomment>order total</iscomment>
+	<div class="order_total">
+		<span class="cocart-container">
+			<div class="totalPrice cocart-price" id="orderTotal_1">					
+				<isprint value="${pdict.Basket.getTotalNetPrice()}"/>
+			</div>
+			<span class="cocart-label">
+				${Resource.msg('cart.ordertotal.label.new', 'rendering', null)}&nbsp;
+			</span>	
+		</span>
+	</div>
+	
+	
+</div>
+</div>

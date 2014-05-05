@@ -1,0 +1,228 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<?demandware-pipeline version="2.0"?>
+
+<pipeline type="view">
+  <description>Creates and uploads an export file for the previous day's orders.</description>
+  <branch basename="_ANONYMOUS_BRANCH_1">
+    <segment>
+      <node>
+        <text-node>
+          <description>Main pipeline that is used by a scheduled Job to create an export  file containing Order Date, Order Number, Brand, Cart ID, and Item Code--for each Site. These files are stored in a temporary directory. This pipeline/Job precedes Export_OrderNumbers-Compile, which compiles all of the data generated here into one file and then archives them.</description>
+        </text-node>
+        <node-display width="3" x="0" y="1"/>
+      </node>
+    </segment>
+  </branch>
+  <branch basename="Start">
+    <segment>
+      <node>
+        <start-node call-mode="private" name="Start" secure="false"/>
+        <node-display x="1" y="2"/>
+      </node>
+      <simple-transition>
+        <transition-display>
+          <bend-point relative-to="source" x="0" y="1"/>
+        </transition-display>
+      </simple-transition>
+      <node>
+        <pipelet-node pipelet-name="Script" pipelet-set-identifier="bc_api">
+          <config-property key="Transactional" value="false"/>
+          <config-property key="OnError" value="PIPELET_ERROR"/>
+          <config-property key="ScriptFile" value="feeds/GetOrderNumberExportDates.ds"/>
+          <key-binding alias="Logger" key="ScriptLog"/>
+          <key-binding alias="dateYesterday" key="dateYesterday"/>
+          <key-binding alias="DateYesterday" key="DateYesterday"/>
+          <key-binding alias="BeginningDate" key="BeginningDate"/>
+          <key-binding alias="EndingDate" key="EndingDate"/>
+          <key-binding alias="CurrentJobParameterMap.startDate" key="StartDate"/>
+        </pipelet-node>
+        <node-display x="0" y="1"/>
+        <branch basename="b2" source-connector="error">
+          <transition target-connector="in">
+            <transition-display>
+              <bend-point relative-to="source" x="1" y="0"/>
+            </transition-display>
+          </transition>
+          <segment>
+            <node>
+              <stop-node name="DATE_ERROR"/>
+              <node-display orientation="horizontal" x="1" y="0"/>
+            </node>
+          </segment>
+        </branch>
+      </node>
+      <simple-transition/>
+      <node>
+        <pipelet-node custom-name="Search orders of current user" pipelet-name="SearchSystemObject" pipelet-set-identifier="bc_api">
+          <config-property key="ObjectType" value="Order"/>
+          <config-property key="SearchExpression" value="creationDate &gt; {1}"/>
+          <config-property key="SortExpression" value="creationDate"/>
+          <key-binding alias="OrdersUnpaged" key="SearchResult"/>
+          <key-binding alias="OrdersUnpagedCount" key="SearchResultCount"/>
+          <key-binding alias="null" key="Search3Key"/>
+          <key-binding alias="null" key="Search4Key"/>
+          <key-binding alias="null" key="Search4Value"/>
+          <key-binding alias="null" key="Search5Key"/>
+          <key-binding alias="null" key="Search5Value"/>
+          <key-binding alias="2" key="SortBy1Direction"/>
+          <key-binding alias="null" key="SortBy2"/>
+          <key-binding alias="null" key="SortBy2Direction"/>
+          <key-binding alias="null" key="SortBy3"/>
+          <key-binding alias="null" key="SortBy3Direction"/>
+          <key-binding alias="null" key="Search1Key"/>
+          <key-binding alias="BeginningDate" key="Search1Value"/>
+        </pipelet-node>
+        <node-display x="0" y="1"/>
+      </node>
+      <simple-transition/>
+      <node>
+        <decision-node condition-key="OrdersUnpagedCount &gt; 0" condition-operator="expr"/>
+        <node-display x="0" y="1"/>
+        <branch basename="b3" source-connector="yes">
+          <transition target-connector="in"/>
+          <segment>
+            <node>
+              <pipelet-node pipelet-name="Script" pipelet-set-identifier="bc_api">
+                <config-property key="Transactional" value="false"/>
+                <config-property key="OnError" value="PIPELET_ERROR"/>
+                <config-property key="ScriptFile" value="feeds/ExportOrderNumbers.ds"/>
+                <key-binding alias="Logger" key="ScriptLog"/>
+                <key-binding alias="OrdersOut" key="OrdersOut"/>
+                <key-binding alias="OrdersUnpaged" key="Orders"/>
+                <key-binding alias="&quot;temp&quot;" key="TempDir"/>
+              </pipelet-node>
+              <node-display x="0" y="1"/>
+              <branch basename="b2" source-connector="error">
+                <transition target-connector="in">
+                  <transition-display>
+                    <bend-point relative-to="source" x="1" y="0"/>
+                  </transition-display>
+                </transition>
+                <segment>
+                  <node>
+                    <stop-node name="EXPORT_ERROR"/>
+                    <node-display orientation="horizontal" x="1" y="0"/>
+                  </node>
+                </segment>
+              </branch>
+            </node>
+            <simple-transition>
+              <transition-display>
+                <bend-point relative-to="source" x="0" y="1"/>
+              </transition-display>
+            </simple-transition>
+            <node>
+              <end-node/>
+              <node-display x="0" y="1"/>
+            </node>
+          </segment>
+        </branch>
+      </node>
+      <simple-transition>
+        <transition-display>
+          <bend-point relative-to="source" x="1" y="0"/>
+        </transition-display>
+      </simple-transition>
+      <node>
+        <end-node name="NO_DATA"/>
+        <node-display orientation="horizontal" x="1" y="0"/>
+      </node>
+    </segment>
+  </branch>
+  <branch basename="_ANONYMOUS_BRANCH_3">
+    <segment>
+      <node>
+        <text-node>
+          <description>This script sets up the date to be used as a date range in the next Pipelet to grab all orders starting with the passed in Date. The script expects the Job Configuration parameter to use the variable: startDate and be in the following date format: MM/DD/YYYY</description>
+        </text-node>
+        <node-display x="0" y="3"/>
+      </node>
+    </segment>
+  </branch>
+  <branch basename="_ANONYMOUS_BRANCH_4">
+    <segment>
+      <node>
+        <text-node>
+          <description>This pipeline is used by a scheduled Job to create a compiled export file containing all of the files in the temporary directory that were created by Export_OrderNumbers-Start. After writing the data, the file in the temporary directory is moved to an archive directory.</description>
+        </text-node>
+        <node-display width="3" x="4" y="1"/>
+      </node>
+    </segment>
+  </branch>
+  <branch basename="Compile">
+    <segment>
+      <node>
+        <start-node call-mode="private" name="Compile" secure="false"/>
+        <node-display x="5" y="2"/>
+      </node>
+      <simple-transition>
+        <transition-display>
+          <bend-point relative-to="source" x="0" y="1"/>
+        </transition-display>
+      </simple-transition>
+      <node>
+        <pipelet-node pipelet-name="Script" pipelet-set-identifier="bc_api">
+          <config-property key="Transactional" value="false"/>
+          <config-property key="OnError" value="PIPELET_ERROR"/>
+          <config-property key="ScriptFile" value="feeds/CompileOrderNumbers.ds"/>
+          <key-binding alias="Logger" key="ScriptLog"/>
+          <key-binding alias="&quot;archive&quot;" key="ArchiveDir"/>
+          <key-binding alias="&quot;temp&quot;" key="TempDir"/>
+        </pipelet-node>
+        <node-display x="0" y="1"/>
+        <branch basename="b2" source-connector="error">
+          <transition target-connector="in">
+            <transition-display>
+              <bend-point relative-to="source" x="1" y="0"/>
+            </transition-display>
+          </transition>
+          <segment>
+            <node>
+              <stop-node name="COMPILE_ERROR"/>
+              <node-display orientation="horizontal" x="1" y="0"/>
+            </node>
+          </segment>
+        </branch>
+      </node>
+      <simple-transition>
+        <transition-display>
+          <bend-point relative-to="source" x="0" y="1"/>
+        </transition-display>
+      </simple-transition>
+      <node>
+        <end-node/>
+        <node-display x="0" y="1"/>
+      </node>
+    </segment>
+  </branch>
+  <branch basename="_ANONYMOUS_BRANCH_6">
+    <segment>
+      <node>
+        <text-node>
+          <description>Get all of a Site's Orders based on date from previous script.</description>
+        </text-node>
+        <node-display x="0" y="4"/>
+      </node>
+    </segment>
+  </branch>
+  <branch basename="_ANONYMOUS_BRANCH_7">
+    <segment>
+      <node>
+        <text-node>
+          <description>End the Job if there are no Orders found.</description>
+        </text-node>
+        <node-display x="0" y="5"/>
+      </node>
+    </segment>
+  </branch>
+  <branch basename="_ANONYMOUS_BRANCH_8">
+    <segment>
+      <node>
+        <text-node>
+          <description>Create export file based on date and store it in a temporary directory.</description>
+        </text-node>
+        <node-display x="0" y="6"/>
+      </node>
+    </segment>
+  </branch>
+</pipeline>

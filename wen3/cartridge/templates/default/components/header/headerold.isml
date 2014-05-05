@@ -1,0 +1,55 @@
+<iscomment>Mbox Redirect</iscomment>
+<isinclude template="common/mboxglobal"/>
+<isscript>
+		importPackage(dw.object);
+		importPackage(dw.catalog);
+		
+		importScript('int_gutheyrenker:common/libEncoding.ds');
+      importScript('guthyrenker_core:common/libUtils.ds');
+</isscript>
+<isset name="CCC" value="${pdict.CurrentCampaignConfig}" scope="page" />
+<isset name="category" value="${CCC.getCampaignCategory()}" scope="page" />
+<isslot id="campaign-css" context="category" description="Campaign CSS" context-object="${category}"/>
+<iscomment>Check the htmlhead.isml for the server side tracking pixel</iscomment>
+<isif condition="${dw.system.Site.getCurrent().getCustomPreferenceValue('GRMVisitorLogPixelEnabled') == true}">
+    <img src="${URLUtils.url('GRMiddleware-VisitorLog', 'urlpath', request.httpPath, 'urlquery', request.httpQueryString)}" width="1" height="1"/>
+</isif>
+<isif condition="${('showNav' in this && !!showNav) || empty(CCC) || empty(CCC.showNav) }">
+	<isset name="showNav" value="${true}" scope="page" />
+<iselse/>
+	<isset name="showNav" value="${CCC.showNav}" scope="page" />
+</isif>
+
+<isscript>
+
+      var contentInfo    = getCurrentContentInfo(pdict.CurrentHttpParameterMap);
+      var CurrentContent : Content = contentInfo.content;
+      
+      if (pdict.CurrentHttpParameterMap.enableSearch.value == 'true') {
+      		pdict.CurrentSession.custom.enableSearch = true;
+      }
+</isscript>
+
+<isif condition="${!empty(CurrentContent) && CurrentContent.ID == 'rightnow-header'}">
+  <isif condition = "${request.httpCookies['PHPSESSID'] == null}">
+    <iscookie name="PHPSESSID" value="${pdict.CurrentSession.sessionID}" path="/" maxAge="-1" />
+  </isif>
+  
+  <script type="text/javascript">
+    var session_id = "<isprint value="${pdict.CurrentSession.sessionID}">";
+  </script>
+  <link href="${URLUtils.absStatic('/css/cust_care/global.css')}" media="screen" rel="stylesheet" type="text/css" />
+  <link href="${URLUtils.absStatic('/css/cust_care/main.css')}" media="screen" rel="stylesheet" type="text/css" />  
+  <link href="${URLUtils.absStatic('/css/cust_care/js_on_styles.css')}" media="screen" rel="stylesheet" type="text/css">
+  
+</isif>
+  
+
+<isif condition="${showNav}">
+	<isinclude url="${URLUtils.url('Home-IncludeHeaderMenuOld')}"/>
+<iselse/>
+
+</isif>
+
+<iscomment>Cookies and Javascript enabled check</iscomment>
+<isinclude template="components/browsertoolscheck"/>

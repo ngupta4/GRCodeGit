@@ -1,0 +1,26 @@
+<!--- TEMPLATENAME: socialmedia.isml --->
+
+<script type="text/javascript">
+
+	(function(d){
+		 var js, id = 'facebook-jssdk'; if (d.getElementById(id)) {return;}
+		 js = d.createElement('script'); js.id = id; js.async = true;
+		 js.src = "//connect.facebook.net/en_US/all.js#appId=246675388709012&xfbml=1";
+		 d.getElementsByTagName('head')[0].appendChild(js);
+		}(document));
+
+</script>
+<div class="socialMediaContainer">
+	<ul>
+		<li>
+			<g:plusone size="medium" annotation="none"></g:plusone>
+		</li>
+		<li>
+			<div id="fb-root"></div>
+			<div class="fb-like" data-href="www.xout.com" data-send="false" data-layout="button_count" data-width="40" data-show-faces="false" data-font="arial"></div>
+		</li>
+		<li>
+			<a href="http://twitter.com/share" class="twitter-share-button" target="_blank" data-count="none"><img src="${URLUtils.staticURL('/images/social/twitter.png')}"/></a>
+		</li>
+	</ul>
+</div>

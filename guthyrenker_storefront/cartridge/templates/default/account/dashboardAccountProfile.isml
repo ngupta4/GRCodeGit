@@ -1,0 +1,35 @@
+<div class="top">
+            <h2>
+              <isprint value="${Resource.msg('account.information','account',null)}"/>
+            </h2>
+	            <a href="${URLUtils.https('Account-EditProfile')}">
+	            <isprint value="${Resource.msg('account.edit','account',null)}"/>
+	            </a>
+            
+          </div>
+          <div class="inner-l">
+            <div class="row">
+              <label>
+                <isprint value="${Resource.msg('account.name','account',null)}"/>
+              </label>
+              <isprint value="${pdict.CurrentCustomer.profile.firstName}"/> <isprint value="${pdict.CurrentCustomer.profile.lastName}"/>
+            </div>
+            <div class="row">
+              <label>
+                <isprint value="${Resource.msg('account.email','account',null)}"/>
+              </label>
+              <isprint value="${pdict.CurrentCustomer.profile.email}"/>
+            </div>
+            <div class="row">
+              <div class="password">
+                <label>
+                  <isprint value="${Resource.msg('account.password','account',null)}"/>
+                </label>
+                <isprint value="${Resource.msg('account.aestrisick','account',null)}"/>
+              </div>
+              <div class="ch-password"><a href="${URLUtils.https('Account-ChangePassword','targetPipeline','Account-Show')}" title="" >
+                <isprint value="${Resource.msg('account.change.password','account',null)}"/>
+                </a></div>
+              
+            </div>
+          </div>

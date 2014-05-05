@@ -1,0 +1,119 @@
+<!--- TEMPLATENAME: successstories.isml --->
+<iscache status="off"/>
+
+<iscomment>
+	This template is created before the 'wrapper' template, so we can set
+	up the template configuration for the 'pt_storefront' template right here.
+</iscomment>
+
+
+<isdecorate template="content/pt_content">
+	<isinclude template="util/modules"/>
+	<isscript>
+		importPackage(dw.object);
+		importPackage(dw.catalog);
+		importPackage(dw.content);
+		importPackage(dw.util);
+		
+		var CCC : Object = pdict.CurrentCampaignConfig;
+	
+		var campaignCode : String = CCC.campaignCode;
+		
+		var showHeader : boolean = CCC.showHeader;
+		var showFooter : boolean = CCC.showFooter;
+		var showNav : boolean = CCC.showNav;
+		var showOrderButton : boolean = CCC.showOrderButton;
+		
+		var category : dw.catalog.Category = CCC.getCampaignCategory();
+		
+		
+		//@TODO: jacked this code from pt_browsefoldercontent. Can probably be cleaned up
+		importScript('guthyrenker_core:common/libUtils.ds');
+	
+		var CurrentFolder : Folder = null;
+		var CurrentContent : Content = null;
+		
+		if( "fdid" in pdict.CurrentHttpParameterMap && !empty(pdict.CurrentHttpParameterMap.fdid.value) ) {
+			CurrentFolder = ContentMgr.getFolder(pdict.CurrentHttpParameterMap.fdid.stringValue);
+		}
+		
+		if( "cid" in pdict.CurrentHttpParameterMap && !empty(pdict.CurrentHttpParameterMap.cid.value) ) {
+			CurrentContent = ContentMgr.getContent(pdict.CurrentHttpParameterMap.cid.stringValue);
+		}
+		
+		if( empty(CurrentContent) && !empty(CurrentFolder) && !empty(CurrentFolder.onlineContent) ) {
+			CurrentContent = CurrentFolder.onlineContent[0];
+		}
+		if( empty(CurrentFolder) && !empty(CurrentContent) && !empty(CurrentContent.classificationFolder) ) {
+			CurrentFolder = CurrentContent.classificationFolder;
+		}
+		if( empty(CurrentFolder) && !empty(CurrentContent) && !empty(CurrentContent.folders) ) {
+			CurrentFolder = CurrentContent.folders[0];
+		}
+		
+		var CurrentFolderPath : String = CurrentContent.ID;
+		var RootFolder = CurrentFolder;
+		while( !empty(RootFolder.parent) && RootFolder.parent.ID!='primary-navigation') {
+			CurrentFolderPath += " "+RootFolder.ID;
+			RootFolder = RootFolder.parent;
+		}
+		CurrentFolderPath += " body_"+RootFolder.ID+" "+RootFolder.ID;
+		
+		var PageID : String = "page_";
+		
+		if( empty(CurrentContent) ) {
+			PageID += CurrentFolder.ID;
+		} else {
+			PageID += CurrentContent.ID;
+		}
+		
+		var headerContent : Content = dw.content.ContentMgr.getContent(CurrentContent.ID+"-header");
+		
+		
+	</isscript>
+	
+	<iscontentasset aid="${CurrentContent.ID}" />
+	<iscontentasset aid="${CurrentContent.ID + '-body'}" />
+	
+	
+	<iscontentasset aid="${CurrentContent.ID + '-before-after'}" />
+				
+	<isset name="showBottomCTA" value="${false}" scope="page" />
+	<isif condition="${showBottomCTA}">
+		<isslot id="mp-bottomCTA" context="global" description="Offer Content Page Bottom Content Slot"/>
+	</isif>
+	
+	
+	
+	
+<script type="text/javascript">
+jQuery(document).ready(function() {
+
+	var banners    = jQuery('.bnaImages img'),
+		thumbs     = jQuery('.bnaThumbs img'),
+		highlights = jQuery('.bnaThumbs div.highlight');
+	
+
+	jQuery(highlights).click(function() {
+		if (!jQuery(this).hasClass("selected")) {
+			var realLength = (thumbs.length > banners.length) ? banners.length : thumbs.length;
+			
+			for (var i=0; i < realLength; i++) {
+				if (jQuery(highlights)[i] === jQuery(this)[0]) {
+					jQuery(thumbs).removeClass('selected');
+					jQuery(highlights).removeClass('selected');
+					jQuery(thumbs[i]).addClass('selected');
+					jQuery(highlights[i]).addClass('selected');
+					jQuery(banners).fadeOut("slow");
+					jQuery(banners[i]).fadeIn("slow").addClass('selected')
+				}
+			}
+		}
+	});
+
+	
+});
+</script>
+
+
+</isdecorate>

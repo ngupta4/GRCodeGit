@@ -1,0 +1,22 @@
+<div class="cart-info">
+	<h5>Your Order Summary</h5>	
+	<isloop items="${pdict.Basket != null ? pdict.Basket.allProductLineItems : pdict.Order.allProductLineItems}" var="pli" status="loopStatus">
+		<div class="name big"><isprint value="${pli.product.name}" /><br/><isprint value="${pli.product.custom.directions}" /></div>
+		<div class="qty upper grey">QTY: <isprint value="${pli.quantity.value.toFixed()}" /></div>
+		<div class="total">$<isprint value="${pli.product.priceModel.price.value}" /></div>
+	</isloop>
+	<div class="linespace"></div>
+	<div class="name"></div>
+	<div class="qty upper grey">Sub Total:</div>
+	<div class="total">$<isprint value="${pdict.Basket != null ? pdict.Basket.getAdjustedMerchandizeTotalPrice().value : pdict.Order.getAdjustedMerchandizeTotalPrice().value}" /></div>
+	
+	<div class="linespace"></div>
+	<div class="name"></div>
+	<div class="qty upper grey">Shipping:</div>
+	<div class="total">$<isif condition="${pli.shippingLineItem != null}"><isprint value="${pli.shippingLineItem.getAdjustedPrice().value}" /><iselse/><isif condition="${pdict.Basket != null}"><isprint value="${pdict.Basket.getShippingTotalPrice().value}" /><iselse/><isprint value="${pdict.Order.getShippingTotalPrice().value}" /></isif></isif></div>
+	
+	<div class="linespace"></div>					 
+	<div class="name grey">${Resource.msg('cart.taxmessage','rendering',null)}</div>
+	<div class="qty bold upper">Your Total:</div>
+	<div class="total bold">$<isprint value="${pdict.Basket != null ? pdict.Basket.getTotalNetPrice().value : pdict.Order.getTotalNetPrice().value}" /></div>
+</div>

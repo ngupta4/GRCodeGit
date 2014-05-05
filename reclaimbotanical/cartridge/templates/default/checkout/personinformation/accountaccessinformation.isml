@@ -1,0 +1,25 @@
+<!--- TEMPLATENAME: accountaccessinformation.isml --->
+<div class="checkoutBox accessInfo">
+	<label class="blockheading">${Resource.msg('accountaccess.title', 'rendering', null)}</label>
+	
+	<div class="checkoutBoxInner">
+		<iscomment>Slot for "access-your-account" content asset</iscomment>
+		<iscontentasset aid="access-your-account" />
+		
+		<isif condition="${!empty(pdict.CurrentForms.personinf.account.error)}">
+			<div class="errorform">
+				${pdict.CurrentForms.personinf.account.error}
+			</div>
+		</isif>
+
+			<div class="password row">
+				<isinputfield id="password" formfield="${pdict.CurrentForms.personinf.account.password}" type="password" attribute2="tabindex" value2="27"/>
+			</div>
+			<div class="passwordconfirm row">
+				<isinputfield id="PasswordReType" formfield="${pdict.CurrentForms.personinf.account.passwordconfirm}" type="password" attribute2="tabindex" value2="28"/>
+			</div>
+				
+			
+		
+	</div> <!-- END:checkoutBoxInner -->
+</div>

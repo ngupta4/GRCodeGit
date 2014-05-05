@@ -1,0 +1,320 @@
+
+
+/* =Main 
+-----------------------------------------------------*/
+/*1.0 titles*/
+
+
+.system #main #primaryContent.index  h1 {
+}
+
+#page_dermatologists #main #primaryContent h1 {
+	background-image: transparent url(../images/titles_system-75.png) no-repeat scroll 0pt -450px;	
+}
+
+#page_dr-katie-rodan #main #primaryContent h1 {
+	font-size:26px;
+	text-transform:uppercase;
+	line-height:30px;
+	margin-bottom:32px;
+}
+
+#page_dr-kathy-fields #main #primaryContent h1  {
+	font-size:26px;
+	text-transform:uppercase;
+	line-height:30px;
+	margin-bottom:30px;
+}
+
+.system.guarantee #main #primaryContent h1 {
+
+}
+
+.system.activmember #main #primaryContent h1 {
+	line-height:40px;
+}
+
+.system.tellafriend #main #primaryContent h1 {
+}
+
+
+
+/*Footer bonus*/
+
+#footerOrderBonus {
+	height: 165px;
+}
+
+#footerOrderBonus .blockContent {
+	height:151px; 
+	overflow:hidden;
+}
+
+#orderBonus{ 
+	width:225px; 
+	float:right; 
+}
+	
+#orderBonus .blockContent .bonusContent { 
+	position:relative;
+}
+
+#orderBonus .blockContent .bonusContent h4 { 
+	text-indent: -99999px; 
+	background: url(../images/customer-care/order-now-bonus-h4.png) top left no-repeat; 
+	width:139px; 
+	height:51px;
+	margin:0 0 0 60px; 
+}
+
+#orderBonus .blockContent .bonusContent img { 
+	position:absolute; 
+	top:1px; 
+	left:1px;
+}
+
+* html .body_customercare #orderBonus .blockContent .bonusContent img { 
+	left:1px;
+}
+#orderBonus .blockContent .bonusContent ul {
+	 margin:10px 0 0;
+}
+
+#orderBonus .blockContent .bonusContent ul li { 
+	border-bottom:1px solid #d6d6d6; 
+	padding:8px 10px 8px 40px; 
+	line-height: 1.2em;
+}
+
+#orderBonus .blockContent .bonusContent ul li.l1 { 
+	border-top:1px solid #d6d6d6; 
+	background: url(../images/interface/bonus_1.png) no-repeat 12px 5px; 
+}
+
+#orderBonus .blockContent .bonusContent ul li.l2 { 
+	background: url(../images/interface/bonus_2.png) no-repeat 12px 5px; 
+}
+
+#orderWen {
+	/*margin:0 228px 0 0; */
+	width: 437px;
+}
+
+#orderWen ul {
+	margin-left: 10px;
+}
+
+#orderWen ul li {
+	width: 195px;
+	float: left;
+	background: url(../images/interface/bullet-prodcolor.png) 60px 5px no-repeat;
+}
+
+#orderWen ul li.oilfree {
+	background-position: 60px -295px;
+}
+
+#orderWen ul li.oilcontrol {
+	background-position: 60px -95px;
+}
+
+#orderWen ul li img {
+	float: left;
+	margin: 0 5px;
+}
+
+#orderWen ul li a {
+	font-weight: bold;
+	display: block;
+}
+
+#orderWen ul li a,
+#orderWen ul li p {
+	margin-left: 75px;
+	line-height: 1.3em;
+}
+
+#orderWen .blockContent h4 { 
+	text-indent: -99999px; 
+	background: url(../images/system/title_acnefighting.png) 0 0 no-repeat; 
+	height: 15px;
+	width: 184px;
+	margin: 10px 0 6px 10px;
+
+}
+
+#orderWen .blockContent h5 { 
+	text-indent: -99999px; 
+	background: url(../images/system/title_enhance.png) 0 0 no-repeat; 
+	height: 15px;
+	width: 375px;
+	margin: 0 0 12px 10px;
+
+}
+
+
+#main #primaryContent .contain .primaryBody h3.dermatologistBio{
+	margin: 27px 0px 5px;
+}
+
+
+/* added stuff  */
+
+#main #primaryContent .contain .primaryBody h3{
+	margin: 27px 0pt 5px;
+}
+
+#main #primaryContent .contain .primaryBody{
+	margin: -15px 230px 0px 0px;
+}
+
+#main #primaryContent .contain .primaryBody {
+		width:675px;
+		margin:-12px 0 0 0;
+}
+
+
+/* system/wensystem.php late additions */
+
+	/* Overwrite css/pages/system/main.css (line 7) - system/wensystem.php */	
+	#page_wensystem #main #primaryContent h1 {
+		background-position:0 -750px;
+	}
+	
+	/* Overwrite css/pages/system/main.css (line 63) - system/wensystem.php */	
+	#page_wensystem .threeStep .step .altimg img {
+		margin-bottom:0;
+		margin-left:0;
+	}
+
+	/* Set Block Title's Width and Height - system/wensystem.php */
+	#page_wensystem .threeStep .step h4.altimg {
+		width:211px;height:18px;
+	}
+	#page_wensystem .threeStep .step h5.altimg {
+		width:211px;height:18px;
+	}
+	
+	/* Overwrite the 3 Blocks' height - system/wensystem.php */
+	#page_wensystem .threeStep .step {
+		height:460px;
+	}
+	
+	/* Overwrite the 3 Blocks' alignment - system/wensystem.php */	
+	#page_wensystem .threeStepBlock .blockContent {
+		padding:10px 0 12px 11px;
+	}
+	#page_wensystem .threeStepBlock .blockContent a.btnOrderYourSystem {
+		position:relative;
+		margin:15px auto 0;
+	}
+	
+	/* Relocated the contents in the box at bottom - system/wensystem.php */
+	#page_wensystem #footerOrderBonus {
+		position:relative;
+		height:198px;
+	}
+	#page_wensystem #orderWen {
+		position:relative;
+	}
+	#page_wensystem #orderBonus {
+		float:none;
+		position:absolute;
+		top:3px;
+		right:3px;
+	}	
+	#page_wensystem #orderWen .blockContent h4 {
+		margin:0 0 6px 10px;
+	}
+	#page_wensystem #orderBonus .blockContent {
+		height:164px;
+		padding-top:24px;
+	}
+	#page_wensystem #orderWen .blockContent {
+		padding-top:13px;
+		height:175px;
+	}
+	#page_wensystem #orderWen .blockContent h5 {
+		height:49px;
+	}
+
+
+
+/* 	system/activmember.php late additions */
+
+	#page_activmember #main #primaryContent .contain .primaryBody h3{
+		margin: 27px 0pt 5px;
+	}
+	
+	#page_activmember #main #primaryContent .contain .primaryBody{
+		margin:-12px 0 0 0;
+		width:450px;
+	}
+	
+	/* add to left_nav */ 
+	#page_activmember .block.nav .blockContent ul li.l5 a, 
+	#page_activmember-ex_products .block.nav .blockContent ul li.l5 .sl3 a { 
+
+	}
+	.activmember .block.nav .blockContent ul li.l5 a, 
+	.activmember .block.nav .blockContent ul li.l5 ul {
+	}
+	#page_activmember .block.nav .blockContent ul li.l5 li a {
+		font-weight:normal;
+	}
+	#main .block.nav .blockContent ul ul li a:hover {
+		background-position:10px -93px;
+	}
+	
+	.system.activmember #main #primaryContent h1 {
+		width:440px;
+	}
+	
+
+/* Adjust footer alignment - system/popup_renewing_nojs.php */
+	
+	#page_popup_renewing_nojs #footer {
+		width:786px;
+	}
+	#page_popup_renewing_nojs #footer #countryselector, 
+	#page_popup_renewing_nojs #footer .copyright {
+		left:0;
+	}
+	ul.paProducts{
+		width:655px;
+		list-style:none;
+		
+	}
+	ul.paProducts li{
+		border-bottom:1px solid #4e4d4b;
+		margin-top:20px;
+	}
+	ul.paProducts li img{
+		float:left;
+		margin: 0 20px;
+	}
+	#main #primaryContent .paProducts li h4{
+		font-size:26px;
+		font-weight:normal;
+		color:#4e4d4b;
+		font-family:Helvetica, Arial, sans-serif;
+		padding:20px 0;
+		}
+	ul.paProducts li p{
+		font-size:14px;
+		line-height:20px;
+		color:#4e4d4b;
+	}
+	#main a.ordersystem{
+		background:url(../images/aboutpa/ordersystem.png) no-repeat bottom;
+		width:188px;
+		height:22px;
+		text-indent:-99999px;
+		display:block;
+		margin:0 auto;
+		margin-top:-20px;
+		margin-bottom:20px;
+	}
+	#main a.ordersystem:hover{
+		background-position:top;
+	}

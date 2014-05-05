@@ -1,0 +1,24 @@
+<!--- TEMPLATENAME: kitinclude.isml --->
+
+<isif condition="${!empty(dw.web.Resource.msg('kitcustomizer.isenabled','configuration',null)) && dw.web.Resource.msg('kitcustomizer.isenabled','configuration',null)=='true'}">
+<isif condition="${pdict.CurrentCustomer.authenticated || (pdict.CurrentSession.custom.cRememberMe && (pdict.CurrentRequest.httpCookies['rememberMe'] != null))}">
+	<iscomment>js for kit customizer from producto</iscomment>
+	<script src="${URLUtils.staticURL('/js/kitcustomizer/kitSessionDataManager.js')}" type="text/javascript"></script>
+	<script src="${URLUtils.staticURL('/js/kitcustomizer/kit.js')}" type="text/javascript"></script>
+	<script src="${URLUtils.staticURL('/js/kitcustomizer/kitwidget.js')}" type="text/javascript"></script>
+	<script src="${URLUtils.staticURL('/js/kitcustomizer/jstorage.min.js')}"></script>
+	<isinclude url="${URLUtils.url('KitCustomizer-RenderKitDetail')}"/>
+	
+	<iscomment>Hidden fields for Kit Customizer JS</iscomment>
+	<input type="hidden" id="tagetPipeline" value="${pdict.TargetPipeline}"/>
+	<input type="hidden" id="tagetParams" value="${pdict.TargetPipelineParams}"/>
+	<input type="hidden" id="showKit" value="${pdict.CurrentHttpParameterMap.showKit.stringValue}"/>
+	<input type="hidden" id="contParam" value="${pdict.CurrentHttpParameterMap.kitcontinue.stringValue}"/>
+	
+	<isset name="brandOpen" value="${Resource.msg('brand.name','omniture',null)}" scope="page" />
+	<script type="text/javascript">
+	     var brand='${brandOpen}';
+	</script>
+</isif>	
+</isif> 
+

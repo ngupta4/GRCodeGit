@@ -1,0 +1,309 @@
+<!--- TEMPLATENAME: customertestimonials.isml --->
+
+<isdecorate template="rendering/folder/pt_contentpage">
+<link href="${URLUtils.staticURL('/css/main_customer.css')}" type="text/css" rel="stylesheet" />
+  <isinclude template="util/modules"/>
+  <iscomment>create reporting event</iscomment>
+  <isinclude template="util/reporting/ReportSearch.isml"/>
+  <div style="clear:both;"></div>
+  <div class="mainWide">
+    <div class="main">
+      <div id="content">
+        <div class="center">
+        
+            <isif condition="${empty(pdict.Content.custom.categoryName)}">
+              <isset name="folderName" value="${pdict.Content.classificationFolder.displayName}"/>
+               <isslot id="top-contentpage-banner" context="category" description="Top  left banner content pages" context-object="${dw.catalog.CatalogMgr.getCategory(folderName)}"/>
+              <iselse>
+            
+              <isslot id="top-contentpage-banner" context="category" description="Top  left banner content pages" context-object="${dw.catalog.CatalogMgr.getCategory(pdict.Content.custom.categoryName)}"/>
+            </isif>
+            <isinclude template="content/content/htmlcontentasset" />
+            <div class="testi-wraper">
+<div id="beforeAfterGallery" class="contain">
+<div class="pageHead">
+<isprint value="${Resource.msg('gallery.page.head', 'rendering', null)}"/>	
+</div>
+
+            
+<isscript>
+	var customerTestimonialFolder = dw.content.ContentMgr.getFolder('before-and-after-gallery');
+	var testimonials = customerTestimonialFolder.onlineContent;
+</isscript>
+
+	<div class="searchHeader clear">
+		<form id="filterSet" action="${URLUtils.url('Page-Show', 'cid', 'before-and-after-gallery')}" method="get">
+			<input type="hidden" name="cid" value="before-and-after-gallery" />
+			
+			<h3>${Resource.msg('gallery.filter.labelnew', 'rendering', null)}</h3>
+
+			<select id="age_selector" name="age_selector">
+				<option selected="selected" value="all_ages">${Resource.msg('gallery.filter.ages.all', 'rendering', null)}</option>
+				<option value="13_18">${Resource.msg('gallery.filter.ages.1318', 'rendering', null)}</option>
+				<option value="19_29">${Resource.msg('gallery.filter.ages.1929', 'rendering', null)}</option>
+				<option value="30_45_">${Resource.msg('gallery.filter.ages.3045', 'rendering', null)}</option>
+			</select> <select id="gender_selector" name="gender_selector">
+				<option selected="selected" value="both_genders">${Resource.msg('gallery.filter.gender.both', 'rendering', null)}</option>
+				<option value="male">${Resource.msg('gallery.filter.gender.male', 'rendering', null)}</option>
+				<option value="female">${Resource.msg('gallery.filter.gender.female', 'rendering', null)}</option>
+			</select> <select id="skin_tone_selector" name="skin_tone_selector">
+				<option selected="selected" value="all_skin_tones">${Resource.msg('gallery.filter.tone.all', 'rendering', null)}</option>
+				<option value="light">${Resource.msg('gallery.filter.tone.light', 'rendering', null)}</option>
+				<option value="medium">${Resource.msg('gallery.filter.tone.medium', 'rendering', null)}</option>
+				<option value="tan">${Resource.msg('gallery.filter.tone.tan', 'rendering', null)}</option>
+				<option value="dark">${Resource.msg('gallery.filter.tone.dark', 'rendering', null)}</option>
+			</select>
+			<button type="submit" class="btnStoriesFind" title="${Resource.msg('gallery.filter.find.title', 'rendering', null)}">${Resource.msg('gallery.filter.find', 'rendering', null)}</button>
+			</form>
+
+	<script type="text/javascript">
+
+	function recomputeControllers(numPages) {
+		var pages = jQuery('.galleryController:first li');
+		for( i=0, ii=pages.length; i<ii; i++ ) {
+			if( i<numPages ) {
+				jQuery(pages[i]).show();
+			} else {
+				jQuery(pages[i]).hide();
+			}
+		}
+		var pages = jQuery('.galleryController:last li');
+		for( i=0, ii=pages.length; i<ii; i++ ) {
+			if( i<numPages ) {
+				jQuery(pages[i]).show();
+			} else {
+				jQuery(pages[i]).hide();
+			}
+		}
+	}
+	var _currentPage = 0;
+	function nextPage() {
+		var matches = jQuery('${"#"}galleryHolder li:visible');
+		var numPages = Math.ceil(matches.length / 9).toFixed();
+
+		if( _currentPage < (numPages-1) ) {
+			goToPage(_currentPage+1);
+		}
+	}
+	function prevPage() {
+		if( _currentPage > 0 ) {
+			goToPage(_currentPage-1);
+		}
+	}
+	function goToPage(page) {
+		if( page == _currentPage ) return;
+		
+		// Set pagination controller
+		jQuery('${"#"}primaryContent').removeClass('s'+_currentPage);
+		jQuery('${"#"}primaryContent').addClass('s'+page);
+		
+		// Figure out (current-page)*680px
+		var newLeft = -1*page*660;
+		
+		// Scroll over to current page
+		jQuery('${"#"}galleryHolder').animate({left:newLeft.toFixed()+"px"});
+		
+		// Update current page
+		_currentPage = page;
+	}
+	
+	jQuery(function(){
+		var mmatches = jQuery('${"#"}galleryHolder li');
+		var numPages = Math.ceil(mmatches.length / 9).toFixed();
+		recomputeControllers(numPages);
+		
+		//jQuery('${"#"}filterSet select').change(function(){
+		jQuery('${"#"}filterSet').submit(function() {
+			var root = jQuery('${"#"}galleryHolder');
+			root.animate({'left':'10px'});
+			
+			// Set pagination controller
+			if( _currentPage>0 ) {
+				jQuery('${"#"}primaryContent').removeClass('s'+_currentPage);
+				jQuery('${"#"}primaryContent').addClass('s0');
+				_currentPage = 0;
+			}
+
+			// Gather selections of all three selects
+			var els = jQuery('${"#"}filterSet select'), el;
+			var filters = 'li';
+			var notFilters = 'li:not(';
+			for( var i=0, ii=els.length; i<ii; i++ ) {
+				el = els[i];
+				if( el.selectedIndex > 0 ) {
+					filters += "."+jQuery(el).val();
+					notFilters += "."+jQuery(el).val();
+				}
+			}
+			notFilters += ')';
+			
+			// Figure out which ones are visible
+			var matches = jQuery('${"#"}galleryHolder '+filters);
+
+			// Create new sets 
+			var notMatches = [];
+
+			if( filters!='li' ) {
+				for( i=0, ii=mmatches.length; i<ii; i++ ) {
+					if( jQuery.inArray(mmatches[i], matches)==-1 ) {
+						notMatches.push(mmatches[i]);
+					}
+				}
+				//notMatches = jQuery('${"#"}galleryHolder '+notFilters);
+			}
+			
+			// Recompute controllers
+			var numPages = Math.ceil(matches.length / 9).toFixed();
+
+			recomputeControllers(numPages);
+
+			root.html('');
+			
+			var uel, juel;
+			for( i=0, ii=numPages; i<ii; i++ ) {
+				uel = jQuery("<ul class='set"+i+"' />");
+				for( var j=0, jj=9; j<jj; j++ ) {
+					uel.append(matches[i*9+j]);
+				}
+				root.append(uel);
+			}
+			if( notMatches.length>0 ) {
+				juel = jQuery('ul.set10');
+				if( juel.length > 0 ) {
+					uel = juel;
+				} else {
+					uel =  jQuery("<ul class='set10' />");
+				}
+				for( var j=0, jj=notMatches.length; j<jj; j++ ) {
+					uel.append(notMatches[j]);
+				}
+				root.append(uel);
+			}
+
+			jQuery('${"#"}gallerynomatches')[matches.length ? 'hide' : 'show']();
+			jQuery('.galleryController')[matches.length ? 'show' : 'hide']();
+
+			return false;
+		});
+
+		/* Reset filter */
+		jQuery('.btnStoriesAll').click(function() {
+			jQuery('${"#"}filterSet select').each(function() {
+				jQuery(this).val(jQuery('option:first', this).val());
+			});
+
+			jQuery('${"#"}filterSet').submit();
+
+			return false;
+		});
+	});
+	
+	</script>
+	</div><!--end searchHeader -->
+	<div class="divider-wraper"><div class="divider"></div></div>
+	<iscomment><div class="galleryController">
+		<div class="positionSet" style="margin-left: 228px; display: block;">
+			<a onclick="prevPage(); return false;" href="" class="previous">Previous</a>
+    	<ul id="setLinks">
+         <li class="l1" id="set0"><a onclick="goToPage(0); return false;" href="">Set 1</a></li>
+         <li class="l2" id="set1"><a onclick="goToPage(1); return false;" href="">Set 2</a></li>
+         <li class="l3" id="set2"><a onclick="goToPage(2); return false;" href="">Set 3</a></li>
+         <li class="l4" id="set3"><a onclick="goToPage(3); return false;" href="">Set 4</a></li>
+         <li class="l5" id="set4"><a onclick="goToPage(4); return false;" href="">Set 5</a></li>
+         <li class="l6" id="set5"><a onclick="goToPage(5); return false;" href="">Set 6</a></li>
+         <li class="l7" id="set6"><a onclick="goToPage(6); return false;" href="">Set 7</a></li>
+         <li class="l8" id="set7"><a onclick="goToPage(7); return false;" href="">Set 8</a></li>
+         <li class="l9" id="set8"><a onclick="goToPage(8); return false;" href="">Set 8</a></li>
+			</ul>
+			<a onclick="nextPage(); return false;" href="" class="next">Next</a>
+		</div>
+	</div>
+	</iscomment>
+	<div id="galleryMask">
+		<div id="galleryHolder" style="position: relative; left: 0px; top: 0px;">
+		
+			<ul class="set0">
+			<isloop items="${testimonials}" var="testimonial" status="tstat">
+				<isif condition="${tstat.index>0 && tstat.index % 9 == 0}">
+							</ul>
+							<ul class="set${(tstat.index/9).toFixed()}">
+				</isif>
+				<li class="${testimonial.custom.skinTone.value} ${testimonial.custom.age.value} ${testimonial.custom.gender.value}">
+					<div class="blockgrey">
+						<div class="block">
+							<div class="blockTop"><div class="blockTopRight"></div></div>
+							<div class="blockContent">
+								<h3><a href="${URLUtils.url('Page-Show','cid',testimonial.ID)}" class="dotted"><isprint value="${testimonial.custom.title}" encoding="off" /></a></h3>
+								<p>${testimonial.custom.shortDescription}</p>
+								<img alt="Satisfied customer uses Proactiv acne solution" src="${testimonial.custom.beforeAfterImgThumb.url}" class="profileImg" />
+							</div>
+							<div class="blockBottom"><div class="blockBottomRight"></div></div>
+						</div>
+					</div>
+				</li>
+			</isloop>
+			</ul>
+			
+		</div><!-- /galleryHolder -->
+		
+		<div id="gallerynomatches">
+			<isprint value="${Resource.msg('gallery.nomatches', 'rendering', null)}" encoding="off" />
+		</div>
+	</div><!-- /galleryMask -->
+
+
+	<div class="galleryController bottom clear">
+		<div class="positionSet" style="margin-left: 189px; display: block;">
+			<a onclick="prevPage(); return false;" href="" class="previous">Previous</a>
+	   	<ul id="setLinks">
+         <li class="l1" id="set0"><a onclick="goToPage(0); return false;" href="">Set 1</a></li>
+         <li class="l2" id="set1"><a onclick="goToPage(1); return false;" href="">Set 2</a></li>
+         <li class="l3" id="set2"><a onclick="goToPage(2); return false;" href="">Set 3</a></li>
+         <li class="l4" id="set3"><a onclick="goToPage(3); return false;" href="">Set 4</a></li>
+         <li class="l5" id="set4"><a onclick="goToPage(4); return false;" href="">Set 5</a></li>
+         <li class="l6" id="set5"><a onclick="goToPage(5); return false;" href="">Set 6</a></li>
+         <li class="l7" id="set6"><a onclick="goToPage(6); return false;" href="">Set 7</a></li>
+         <li class="l8" id="set7"><a onclick="goToPage(7); return false;" href="">Set 8</a></li>
+         <li class="l9" id="set8"><a onclick="goToPage(8); return false;" href="">Set 8</a></li>
+			</ul>
+			<a onclick="nextPage(); return false;" href="" class="next">Next</a>
+		</div>
+	</div>
+	<iscomment><div class="note">
+		<p class="legend">Includes Video Footage</p>			
+		<p>* Actual un-retouched photos. Individual results vary. Age of customer at time of photo.</p>
+	</div></iscomment>
+	
+	</div>
+	
+</div>
+</div>
+				
+
+          <div class="rightsection">  
+            <isif condition="${empty(pdict.Content.custom.categoryName)}">
+              <isset name="folderName" value="${pdict.Content.classificationFolder.displayName}"/>
+              <isslot id="right-side-contentpages" context="category" description="right navigation content pages" context-object="${dw.catalog.CatalogMgr.getCategory(folderName)}"/>
+               <isslot id="right-side-contentpages1" context="category" description="right navigation content pages1" context-object="${dw.catalog.CatalogMgr.getCategory(folderName)}"/>
+                <isslot id="right-side-contentpages2" context="category" description="right navigation content pages2" context-object="${dw.catalog.CatalogMgr.getCategory(folderName)}"/>
+                <isslot id="MediaPixel" context="category" description="MediaPixel" context-object="${dw.catalog.CatalogMgr.getCategory(folderName)}"/>
+                
+              <iselse>
+              <isslot id="right-side-contentpages" context="category" description="right navigation content pages" context-object="${dw.catalog.CatalogMgr.getCategory(pdict.Content.custom.categoryName)}"/>
+              <isslot id="right-side-contentpages1" context="category" description="right navigation content pages1" context-object="${dw.catalog.CatalogMgr.getCategory(pdict.Content.custom.categoryName)}"/>
+              <isslot id="right-side-contentpages2" context="category" description="right navigation content pages2" context-object="${dw.catalog.CatalogMgr.getCategory(pdict.Content.custom.categoryName)}"/>
+              <isslot id="MediaPixel" context="category" description="MediaPixel" context-object="${dw.catalog.CatalogMgr.getCategory(pdict.Content.custom.categoryName)}"/>
+            </isif>
+            <isif condition="${pdict.CurrentCustomer.authenticated || pdict.CurrentCustomer.registered || pdict.CurrentSession.custom.cRememberMe}">
+			<isinclude url="${URLUtils.url('DrWalkthrough-TileLaunch')}"/>
+			</isif>
+            
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <isset name="OmniturePage" value="StaticContent" scope="pdict">
+</isdecorate>
+
+

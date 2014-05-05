@@ -1,0 +1,108 @@
+/**
+* Demandware Script File
+* To define input and output parameters, create entries of the form:
+*
+* @<paramUsageType> <paramName> : <paramDataType> [<paramComment>]
+*
+* where
+*   <paramUsageType> can be either 'input' or 'output'
+*   <paramName> can be any valid parameter name
+*   <paramDataType> identifies the type of the parameter
+*   <paramComment> is an optional comment
+*
+* For example:
+*
+*   @input currentRequest : dw.system.Request
+*   @output Brand : String
+*   @output loggedin : Number
+*   @output softCookieExists : Boolean
+*
+*/
+importPackage( dw.system );
+importPackage( dw.web );
+
+function execute( args : PipelineDictionary ) : Number
+{
+  var remmemberMeCookie,loggedinCookie,brandCookie;
+  var brand : String = null ;
+  var brandlg,brandrm,softCookie;
+    if(null!= args.currentRequest.httpCookies['rememberMe']){
+    	remmemberMeCookie = args.currentRequest.httpCookies['rememberMe'].value;
+    	brandrm= findSoftCookieBrand(remmemberMeCookie);
+    }
+     if(null!= args.currentRequest.httpCookies['soft']){
+    	softCookie = args.currentRequest.httpCookies['soft'].value;
+    }
+    if(null!= args.currentRequest.httpCookies['brand']){
+    	brandCookie = args.currentRequest.httpCookies['brand'].value;
+    	brandlg = brandCookie;
+    }
+    if(null!= args.currentRequest.httpCookies['loggedin']){
+    	loggedinCookie = args.currentRequest.httpCookies['loggedin'].value;
+    	if(null!=loggedinCookie){
+    		var loggedinValue = loggedinCookie;
+    		args.loggedin = new Number(loggedinValue);
+    	}else{
+    		args.loggedin = 0;
+    	}
+    	
+    }
+    
+    if(null!=softCookie){
+    args.softCookieExists = true;
+    } 
+    //Update the Brand
+    if(null!=brandlg){
+    	brand = brandlg;
+    }
+    else if(null!=brandrm){
+    	brand = brandrm;
+    }
+    
+    args.Brand = brand;
+    Logger.debug("Brand In Cookie is : "+brand);
+    
+    return PIPELET_NEXT;
+}
+
+function findSoftCookieBrand(cookiecontent){
+	var brand;
+	if(cookiecontent.search(new RegExp('%3AP4'))>0)
+    {
+    	brand = dw.web.Resource.msg('site.static.brand2','configuration',null);
+    }
+    else if((cookiecontent.search(new RegExp('%3APA'))>0))
+    {
+    	brand = dw.web.Resource.msg('site.static.brand1','configuration',null);
+    }else{
+    		brand = dw.web.Resource.msg('site.static.brand1','configuration',null);
+    		
+    		//If Cookie Exists but the Brand is not an attribute then add that attribute in cookie as PA.
+    		var cookies:Cookies = request.getHttpCookies();
+    		var oldCookie:Cookie = cookies['rememberMe'];
+     		if(oldCookie.value.indexOf("PA")==-1){		
+    		 if(!empty(oldCookie)){
+	            var removeCookie:Cookie = new Cookie("rememberMe", "");
+	            removeCookie.setMaxAge(0);
+	            removeCookie.setPath(oldCookie.path);
+	            removeCookie.setDomain(oldCookie.domain);
+	            response.addHttpCookie(removeCookie);
+	            
+	            var preferences  = 60*60*24*30;
+	           
+		            var newCookie:Cookie = new Cookie("rememberMe", oldCookie.value+'%3APA');
+		            newCookie.setDomain(Site.current.getCustomPreferenceValue("GRCookiesDomain"));
+		            newCookie.setMaxAge(preferences);
+		            newCookie.setPath("/");
+		            response.addHttpCookie(newCookie);
+	            
+	        }
+	    }
+    		
+    }
+    
+  
+	return brand;
+}
+
+

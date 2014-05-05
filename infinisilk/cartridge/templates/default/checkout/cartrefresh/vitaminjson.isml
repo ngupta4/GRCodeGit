@@ -1,0 +1,32 @@
+<!--- TEMPLATENAME: vitaminjson.isml --->
+
+<iscontent type="application/json" charset="UTF-8" compact="true">
+{
+	<isif condition=${empty(pdict.ErrorStatus)}>
+	"success": true,
+	"update": {
+	    "CartDescription" : {
+	    	"stringValue":"<isprint value="${pdict.Product.custom.cartDescription || pdict.Product.shortDescription}">"
+	    }
+	    ,
+	    "ProdId" : {
+	    	"stringValue":"<isprint value="${pdict.Product.ID}">"
+	    },
+	    "ProdName" : {
+	    	"stringValue":"<isprint value="${pdict.Product.name}">"
+	    }
+	}
+    <iselse/>
+		"success": false,
+		"error":"<isprint value="${pdict.ErrorCode}"/>"
+    </isif>
+} 
+<iscomment>
+
+
+
+<isif condition="${!empty({pdict.Product.getImage('medium', 0).url)}">
+	    				<isprint value="${pdict.Product.getImage('medium', 0)}">
+					<iselse>
+						<isprint value="${URLUtils.staticURL('/images/noimagemedium.png')}">
+					</isif></iscomment>

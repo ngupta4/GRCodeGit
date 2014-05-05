@@ -1,0 +1,40 @@
+<isdecorate template="mobile/pt_mobile">
+	
+<isinclude url="${pdict.Location + "&pwr=true"}"/>
+
+<iscomment>
+	This template implements the write product recommendation page (simmilar to the productdetails page). It includes
+	the basic product information template (product/product-*), and
+	shows less additional product information, such as attributes, accessories,
+	bundled products, but a product recommendation form.
+</iscomment>
+
+<isinclude template="mobile/util/modules"/>
+
+<div id="pwrwritediv">
+	<isset name="image" value="${pdict.Product.getImage('medium',0)}" scope="page"/>
+	<isif condition="${!empty(image)}">
+		<isset name="imageUrl" value="${image.url}" scope="page"/>
+	<iselse/>
+		<isset name="imageUrl" value="${URLUtils.staticURL('/images/noimagemedium.png')}" scope="page"/>
+	</isif>
+	<img src="${imageUrl}" alt="${pdict.Product.name}" />
+	
+	<h1 ><!-- Product Name Display --><isprint value="${pdict.Product.name}"/></h1>
+	
+	
+	<div><!-- W3C float clearing recommendation --></div>
+	<isscript>
+		var source = "web";
+		if (pdict.CurrentHttpParameterMap.source.stringValue == "email") {
+			source = "email";
+		}
+	</isscript>
+	<iframe src="http://services.powerreviews.com/SubmitReview.do?pageId=${pdict.Product.ID}&merchantId=6690&source=${source}&merchantUserEmail=user@yoursite.com&promoCode=coupon&cssOverride=${URLUtils.httpStatic("/css/reviews.css")}&pr_locale=" frameborder="0" height="2000" width="590px" scrolling="no"/></iframe>
+</div>
+	<script type="text/javascript"><!--
+		jQuery(document).ready(function(){			
+		
+		});
+	//--></script>		
+</isdecorate>

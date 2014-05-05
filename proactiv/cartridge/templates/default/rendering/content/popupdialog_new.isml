@@ -1,0 +1,13 @@
+<!--- TEMPLATENAME: popupdialog_new.isml --->
+<isinclude template="util/modules"/>
+<isdecorate template="rendering/content/pt_popupdialog_new">
+		<isscript>
+			var CCC : Object = pdict.CurrentCampaignConfig;
+		</isscript>
+		<isif condition="${!empty(pdict.CurrentHttpParameterMap.cid.stringValue)}">
+			<iscontentasset aid="${pdict.CurrentHttpParameterMap.cid.stringValue}"/>
+		<iselse/>
+			<iscontentasset aid="${'nocontentsfound'}"/>
+		</isif>
+						
+</isdecorate>

@@ -1,0 +1,96 @@
+<isloop items="${pdict.Basket.productLineItems}" var="pli" status="loopstate">
+	<isif condition="${pli.product.custom.coreItem}">
+		<isset name="Product" value="${pli.product}" scope="page">
+	</isif>
+</isloop>
+<iscontent type="application/json" charset="UTF-8" compact="true" />
+{
+	<isif condition=${empty(pdict.ErrorStatus)}>
+	"success": true,
+	"update": {
+	    "SubTotal" : {
+	        "stringValue": "<isprint value="${pdict.Basket.getAdjustedMerchandizeTotalPrice(false)}">",
+	        "number": <isprint value="${pdict.Basket.getAdjustedMerchandizeTotalPrice(false).value}" formatter="###0.00">
+	    },
+	    "ShippingPrice" : {
+	        "stringValue": "<isprint value="${pdict.Basket.getAdjustedShippingTotalPrice()}">",
+	        "number": <isprint value="${pdict.Basket.getAdjustedShippingTotalPrice().value}" formatter="###0.00">
+	    },
+	    "TotalPrice" : {
+	        "stringValue": "<isprint value="${pdict.Basket.getTotalNetPrice()}">",
+	        "number": <isprint value="${pdict.Basket.getTotalNetPrice().value}" formatter="###0.00">
+	    },
+	     "ProductPrice" : {
+	    	"stringValue":"<isprint value="${Product.priceModel.getPrice()}">"
+	    },
+	    "CartDescription" : {
+	    	"stringValue":"<isprint value="${Product.custom.cartDescription}">"
+	    }
+	    ,
+	     "ShortDescription" : {
+	    	"stringValue":"<isprint value="${Product.custom.orderButtonCallout}">"
+	    },
+	     "paylaterLegalTerms" : {
+	    	"stringValue":"<isprint value="${Product.custom.paylaterLegalTerms}">"
+	    },
+	    "CoreId" : {
+	    	"stringValue":"<isprint value="${Product.ID}">"
+	    },
+	    "ProdName" : {
+	    	"stringValue":"<isprint value="${Product.name}">"
+	    },
+	    "kitQuantity" : {
+	    	"stringValue":"<isprint value="${Product.custom.maxQty}">"
+	    },
+	    "HeroImage" : {
+	    	"stringValue":"<isprint value="${Product.getImage('medium', 0).url}">",
+	    	"title": <isif condition="${Product.getImage('medium', 0).title}" >
+	    				"<isprint value="${Product.getImage('medium', 0).title}" >"
+	    			<iselse>
+	    				"<isprint value="${Product.name}" >"
+	    			</isif>
+	    },
+	    "SwatchImage" : {
+	    	"stringValue":"<isprint value="${Product.getImage('swatch', 0).url}">"
+	    },
+	    "UpsellProd" : {
+	    	"stringValue":"<isprint value="${pdict.upsellProduct.ID}">"
+	    },
+	     "daySupply" : <isif condition="${!empty(pdict.downsellProduct)}">
+	     					[{"value": "${Product.ID}",
+	     					  "label": "${Resource.msg('cart.title.supply.ninety','rendering',null)}"},
+	     					 {"value": "${pdict.downsellProduct.ID}",
+	     					  "label": "${Resource.msg('cart.title.supply.thirty','rendering',null)}"}]
+	     				<iselse>
+	     					  [{"value": "${Product.ID}",
+	     					  "label": "${Resource.msg('cart.title.supply.thirty','rendering',null)}"},
+	     					   {"value": "${pdict.upsellProduct.ID}",
+	     					  "label": "${Resource.msg('cart.title.supply.ninety','rendering',null)}"}]
+	    				</isif>
+	    ,
+	    "pageReload" : {
+	    	"stringValue": "${pdict.Basketempty}"
+	    	},
+	    "ShipList" : [
+	    	<isloop items="${pdict.ShippingMethodsMap.keySet()}" var="shippingMethod" status="shippingState">
+						<isscript>
+						var shippingCost = pdict.ShippingMethodsMap.get(shippingMethod);
+						var isSelected = !empty(pdict.DefaultShipment) && (shippingMethod.ID == pdict.DefaultShipment.shippingMethodID);					
+						if (i == pdict.ShippingMethodsMap.size()) {
+							isSelected = true;
+						}
+						i++;
+						</isscript>
+						{
+						      "value":"${shippingMethod.ID}",
+						      "lable":"${shippingMethod.displayName} $<isprint value="${shippingCost.value}" style="MONEY_LONG" />",
+						      "selected":"${isSelected}"
+						 }<isif condition="${!shippingState.last}">,</isif>
+					</isloop>
+	    ]
+	}
+    <iselse/>
+		"success": false,
+		"error":"<isprint value="${pdict.ErrorCode}"/>"
+    </isif>
+} 

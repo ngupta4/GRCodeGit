@@ -1,0 +1,91 @@
+<isdecorate template="mobile/content/home/pt_storefront">
+<iscache status="off"/>
+<isinclude template="mobile/util/modules"/>
+<isset name="OmniturePage" value="Homepage" scope="pdict">	
+<isinclude template="common/mediaPixelsInit.isml"/>
+<iscomment>
+	This template is created before the 'wrapper' template, so we can set
+	up the template configuration for the 'pt_storefront' template right here.
+</iscomment>
+<isscript>
+		importPackage(dw.object);
+		importPackage(dw.catalog);
+		
+		importScript('int_gutheyrenker:common/libEncoding.ds');
+		
+		var CCC : Object = pdict.CurrentCampaignConfig;
+	
+		var landingTemplate : String = CCC.landingTemplate;
+		var campaignCode : String = CCC.campaignCode;
+		
+		var showHeader : boolean = CCC.showHeader;
+		var showFooter : boolean = CCC.showFooter;
+		var showNav : boolean = CCC.showNav;
+		var showOrderButton : boolean = CCC.showOrderButton;
+		
+		var containerClasses : String = CCC.getContainerClasses();
+		
+		var category : dw.catalog.Category = CCC.getCampaignCategory();
+		pdict.CurrentSession.custom.omnSasPage = false;
+
+
+		var offersList : dw.util.ArrayList = new dw.util.ArrayList();
+			for( var i=0; i<CCC.sasOfferCodes.length; i++ ) {
+					offersList.add(CCC.sasOfferCodes[i]);
+			}
+</isscript>
+
+<isloop items="${offersList}" var="offerID" status="loopstate" >
+	<isif condition="${!empty(dw.web.Resource.msg('bazaarvoice.isenabled','bazaarvoice',null)) 
+						&& dw.web.Resource.msg('bazaarvoice.isenabled','bazaarvoice',null) == 'true'}">
+		<isset name="Product" value="${dw.catalog.ProductMgr.getProduct(offerID)}" scope="page"/>
+		<div class="${'BVInlineRating'+loopstate.count}" id="${offerID}" style="display: none;">	
+		<isinclude template="bv/display/rr/catinlineratings"/>Rating: <isprint value="${bvAvgRating+'/'+bvRatingRange}" />
+		</div>
+		
+	</isif>
+ </isloop>
+   <div class="page-wrapper-main">
+		<isslot id="m-home-page-main-area" description="Home Page Main Content Area" context="global"/>
+	</div>	
+	<isif condition="${false}">
+		<iscomment>Initializing category content slot for checkout page</iscomment>
+		<isslot id="order-by-phone" context="category" description="Cart Phone Number Content Slot" context-object="${category}" />
+		
+		<iscomment>Slots for single-page checkout</iscomment>
+		<isslot id="singlepage-cart-banner" description="Single-page checkout cart banner" context="category" context-object="${category}" />
+		<isslot id="singlepage-cart-right-top" description="Single-page checkout right top slot" context="category" context-object="${category}" />
+		<isslot id="singlepage-cart-right-middle" description="Single-page checkout right middle slot" context="category" context-object="${category}" />									
+	</isif>
+		
+	<iscomment>
+		Initializing Single Product Landing Page slots
+		<isslot id="cart-promo-header" description="Cart Header Promo Area" context="category" context-object="${category}" />
+		<isslot id="cart-promo-footer" description="cart Promo footer" context="category" context-object="${category}" />
+		<isslot id="cart-left-promo-area" description="Cart Left Promo Area" context="category" context-object="${category}" />
+		<isslot id="cart-bottom-promo-area" description="Cart Bottom Promo Area" context="category" context-object="${category}" />
+		<isslot id="overnight-shipment-cart-header" description="Overnight shipment cart header" context="category" context-object="${category}" />
+		<isslot id="overnight-shipment-cart-center" description="Overnight shipment cart center" context="category" context-object="${category}" />		
+		<isslot id="SLP-winback-personalinfo" description="SLP-winback-personalinfo" context="category" context-object="${category}" />
+
+		Cart2 slots	
+		<isslot id="cart2-top-banner" description="Cart2 top banner" context="category" context-object="${category}" />
+		<isslot id="sas-top-banner" description="SAS page top banner" context="category" context-object="${category}" />
+
+		Special Campaign CSS
+		<isslot id="campaign-css" context="category" description="Campaign CSS" context-object="${category}"/>
+		<isslot id="homeheader" context="category" description="Home page Header Top" context-object="${category}"/>	
+    	<isslot id="left-orderpromo-contentpages"  context="category" description="Contentpages left orderpromo area at bottom" context-object="${category}" />
+    	
+    	SAS bottom compare coupon slot
+		<isslot id="sas-coupon" context="category" description="coupon code" context-object="${category}"/>
+    	
+    	SAS bottom compare table slot
+		<isslot id="sas-bottom" context="category" description="compare table" context-object="${category}"/>
+	</iscomment>
+
+	<iscomment>Media Pixel</iscomment>
+	<isslot id="MediaPixelForLandingPages" context="global" description="MediaPixelForLandingPages" />
+	
+</isdecorate>
+

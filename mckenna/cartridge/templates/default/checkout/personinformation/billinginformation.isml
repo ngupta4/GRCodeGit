@@ -1,0 +1,46 @@
+<!--- TEMPLATENAME: billinginformation.isml --->
+<div class="checkout_box cb_billing">
+	<h4>${Resource.msg('personinformation.billinginformation.label','rendering',null)}</h4>
+	<div class="checkout_box_inner">
+	
+	    <div class="formfield first_name">
+	    	<isinputfield formfield="${pdict.CurrentForms.personinf.billtoaddress.firstName}" type="input" attribute1="requiredmesage" value1="${Resource.msg('forms.addressinf.firstname.missing','forms',null)}" attribute2="tabindex" value2="5">
+	    </div>
+	    
+	    <div class="formfield last_name">
+	    	<isinputfield formfield="${pdict.CurrentForms.personinf.billtoaddress.lastName}" type="input" attribute1="requiredmesage" value1="${Resource.msg('forms.addressinf.lastname.missing','forms',null)}" attribute2="tabindex" value2="6">
+	    </div>
+	    
+	    <div class="formfield address">
+	   		<isinputfield formfield="${pdict.CurrentForms.personinf.billtoaddress.address1}" type="input" attribute1="requiredmesage" value1="${Resource.msg('forms.addressinf.address1.missing','forms',null)}" attribute2="tabindex" value2="7">
+	    </div>
+	    
+	    <div class="formfield address">
+	    	<isinputfield formfield="${pdict.CurrentForms.personinf.billtoaddress.address2}" type="input" attribute1="tabindex" value1="8">
+	    </div>
+	    
+	    <div class="formfield city">
+	    	<isinputfield formfield="${pdict.CurrentForms.personinf.billtoaddress.city}" type="input" attribute1="requiredmesage" value1="${Resource.msg('forms.addressinf.city.missing','forms',null)}" attribute2="tabindex" value2="9">
+	    </div>	   
+	    
+	    <div class="formfield statezip">										
+			<div class="state">
+				<isinputfield formfield="${pdict.CurrentForms.personinf.billtoaddress.states.stateUS}" type="select" attribute1="requiredmesage" value1="${Resource.msg('forms.addressinf.state.missing','forms',null)}" attribute2="tabindex" value2="10">
+			</div>
+			<div class="zip">
+	    		<isinputfield formfield="${pdict.CurrentForms.personinf.billtoaddress.zip}" type="input" attribute1="requiredmesage" value1="${Resource.msg('forms.addressinf.zip.missing','forms',null)}" attribute2="tabindex" value2="11">    		   
+	    	</div>
+	    </div>
+	    
+	     <isif condition=${multiCheckout}>
+	    	<div class="formfield country">
+		    	<isinputfield formfield="${pdict.CurrentForms.personinf.billtoaddress.country}" type="select" attribute1="requiredmesage" value1="${Resource.msg('forms.addressinf.country.missing','forms',null)}" attribute2="tabindex" value2="12"> 
+		    </div>
+	    <iselse>
+		    <div style="display: none">
+	    		<input type="hidden" value="US" name="${pdict.CurrentForms.personinf.billtoaddress.country.htmlName}">
+	    	</div>
+	    </isif>
+    
+    </div>
+</div>

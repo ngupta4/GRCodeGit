@@ -1,0 +1,20 @@
+/**
+*
+*   @input Login : String
+*   @input Password: String 
+*   @output loginstatus : String
+*   @output changepassword : String
+*
+*/
+importPackage( dw.system );
+
+function execute( args : PipelineDictionary ) : Number
+{
+	
+	// Code for MW web service call to verify the user and if the user should change the password
+	args.loginstatus = dw.web.Resource.msg('login.status','middleware',null);
+	args.changepassword = dw.web.Resource.msg('login.changepassword','middleware',null);
+  
+
+   return PIPELET_NEXT;
+}

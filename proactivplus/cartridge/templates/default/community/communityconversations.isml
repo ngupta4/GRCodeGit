@@ -1,0 +1,64 @@
+<iscomment>
+	Renders Community Conversations Page
+</iscomment>
+<isdecorate template="community/pt_community">
+<div class="communitylt fleft">
+	<isif condition="${'bvCategory' in pdict.CurrentHttpParameterMap && !empty(pdict.CurrentHttpParameterMap.bvCategory.value)}">
+		<isset name="catID" value="${pdict.CurrentHttpParameterMap.bvCategory.value}" scope="page"/>
+	<iselse>
+		<isset name="catID" value="${dw.system.Site.getCurrent().getCustomPreferenceValue('bvDefaultConversationCategory')}" scope="page"/>
+	</isif>
+	
+	<isif condition="${'displayName' in pdict.CurrentHttpParameterMap && !empty(pdict.CurrentHttpParameterMap.displayName.value)}">
+		<isset name="categoryName" value="${pdict.CurrentHttpParameterMap.displayName.value}" scope="page"/>
+	<iselse>
+		<isset name="categoryName" value="${dw.system.Site.getCurrent().getCustomPreferenceValue('bvDefaultConversationCategoryName')}" scope="page"/>
+	</isif>
+	
+	<h1><isprint value="${Resource.msgf('community.conversation.about','community',null, categoryName)}"/></h1>
+	<isscript>
+     importScript('int_bazaarvoice:libBazaarvoice.ds');
+     importPackage( dw.io );
+     var qaEnabled : boolean = dw.system.Site.getCurrent().getCustomPreferenceValue("bvEnableAA");
+	</isscript>
+<isif condition="${qaEnabled}">
+    <div id="BVQAContainer">
+        <isif condition="${content}">
+            <isprint value="${content}" encoding="off" />
+        </isif>
+    </div>
+    <iscomment>
+    	Below subjectType is hard coded to category as here system will display the questions based on categories. 
+    	And the categoryId is picked from httpParameterMap. And corresponding questions are displayed.
+    </iscomment>
+    <script type="text/javascript">
+        function getAADisplayCode() {
+            try {
+                <isprint value="${dw.system.Site.getCurrent().getCustomPreferenceValue('bvAADisplayCodeJavascript')}" encoding="off" />
+            }catch(e){
+                //The JS in the try-catch above is user-definable.  Catch and suppress any errors and just return a default.
+            }
+            return "${dw.system.Site.getCurrent().getCustomPreferenceValue('bvAADefaultDisplayCode')}";
+        }
+
+        var configData = {};
+        configData.displayCode = getAADisplayCode();
+        configData.summaryContainerDiv = "BVQASummaryContainer";
+        configData.contentContainerDiv = "BVQAContainer";
+        configData.subjectType = "product";//"${bvSubject.bvSubjectType}";
+        configData.productId = "${catID}";
+        
+        configData.onEvent = function(json) {
+            <isprint value="${dw.system.Site.getCurrent().getCustomPreferenceValue('bvAAOnEventJavascript')}" encoding="off" />
+        };
+        if($BV != null){
+        	$BV.ui("qa", "show_questions", configData);
+        }
+    </script>       
+</isif>
+</div>
+<div class="communityrt fright">
+	<isinclude template="community/conversationsrightnav"/>
+</div>
+<div class="clear"></div>
+</isdecorate>

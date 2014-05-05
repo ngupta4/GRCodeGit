@@ -1,0 +1,361 @@
+<isset name="pagetitle" value="${Resource.msg('pagetitle.changePaymentMethod','account',null)}" scope="pdict"/>
+<isdecorate template="account/pt_account">
+<isinclude template="util/modules"/>
+     <istabdisplayed  tabid="PI"/>
+ <div class="pageWrapper accountContainer">
+	  	<div class="accountForm newPaymeMethod" >
+	  	 
+   <iscomment>Include common framework to make tabs</iscomment>
+    
+	<isif condition="${pdict.actionEvent=='save'}">
+		<isset name="OmniturePage" value="MyAccountPaymentInfoAdd" scope="pdict">
+		<h2 class="formTitle">${Resource.msg('paymentinstrument.details.action.save.title','account',null)}</h2>
+	<iselseif condition="${pdict.actionEvent=='changeContinuityMethod'}">
+		<isset name="OmniturePage" value="MyAccountPaymentInfoChange" scope="pdict">
+		<h2 class="formTitle">${Resource.msg('paymentinstrument.details.action.changecontinuity.title','account',null)}</h2>
+		<div class="topLabel">
+			<span class="InfoTitle"><isprint value="${Resource.msg('paymentinstrumentlist.header1','account',null)}" encoding="off"/></span>
+			<p class="textInfo"><isprint value="${Resource.msg('paymentinstrument.details.action.changecontinuity.titlemsg1','account',null)}" encoding="off"/></p>
+		</div>
+	<iselseif condition="${pdict.actionEvent=='edit'}">
+		<isset name="OmniturePage" value="MyAccountPaymentInfoChangeSavedMethod" scope="pdict">
+		<h2 class="formTitle">${Resource.msg('paymentinstrument.details.action.edit.title','account',null)}</h2>
+		<div class="topLabel">
+			<p class="textInfo">${Resource.msg('paymentinstrument.details.action.edit.titlemsg1','account',null)}</p>
+			<p class="textInfo">${Resource.msg('paymentinstrument.details.action.edit.titlemsg2','account',null)}</p>
+		</div>
+	</isif>
+	<!-- display the MW API errors -->
+	<isinclude template="util/errordisplay"/>	
+	<form id="CreditCardForm" name="CreditCardForm" action="${URLUtils.httpsContinue()}"  method="post" id="newcreditcard">
+		<isif condition="${'format' in pdict.CurrentHttpParameterMap && pdict.CurrentHttpParameterMap.format.stringValue=='dialog'}">
+			<isset name="DecoratorTemplateName" value="${'rendering/content/pt_popupdialog'}" scope="page"/>
+		<iselse/>
+			<isset name="DecoratorTemplateName" value="${'error/pt_error'}" scope="page"/>
+		</isif>
+		<fieldset>
+			<iscomment>display select box with stored credit cards if customer is authenticated</iscomment>
+			<isif condition="${pdict.CurrentCustomer.authenticated && !empty(pdict.CustomerPaymentInstruments) && pdict.changeContinuityCC !=null && pdict.changeContinuityCC == true}">
+				<div class="creditcardlist regRow">
+					<iscomment><div class="selectcreditcard">
+						<label class="label">
+							<span class="requiredindicator">${Resource.msg('global.requiredsymbol','locale',null)}</span>
+							<span class="requiredlabel">${Resource.msg('billing.selectcreditcard','checkout',null)}</span>
+						</label>
+					</div>(N/R)</iscomment>
+					<isset name="prePayCheck" value="${(pdict.CurrentForms.paymentinstruments.creditcards.newcreditcard.number.value == null) && (pdict.CurrentForms.paymentinstruments.creditcards.newcreditcard.object.custom.CustomerPaymentMethod.value == '2')}" scope="page"/>
+					<select name="${pdict.CurrentForms.paymentinstruments.creditcards.newcreditcard.defaultCreditCardID.htmlName}" 
+						id="${pdict.CurrentForms.paymentinstruments.creditcards.newcreditcard.defaultCreditCardID.htmlName}"">
+						<isloop items="${pdict.CustomerPaymentInstruments}" var="creditCardInstr">
+							<isif condition="${null!=creditCardInstr.creditCardType}">
+								<option value="${creditCardInstr.UUID}"  <isif condition="${(creditCardInstr.UUID==pdict.CurrentForms.paymentinstruments.creditcards.newcreditcard.defaultCreditCardID.value) && !prePayCheck}">selected="selected"</isif> >${Resource.msg('global.bracket.open','locale',null)}
+									<isprint value="${creditCardInstr.creditCardType}"/>${Resource.msg('global.bracket.close','locale',null)}
+									<isprint value="${creditCardInstr.maskedCreditCardNumber}"/> 
+								</option>
+							</isif>
+						</isloop>
+						<option value="" <isif condition="${null==pdict.CurrentForms.paymentinstruments.creditcards.newcreditcard.defaultCreditCardID.value || prePayCheck}">selected="selected"</isif>>${Resource.msg('paymentinstrumentlist.addnewpaymentcard','account',null)}</option>
+					</select>
+				</div>
+			</isif>
+			
+			<div class="formfields regRow">
+				<iscomment>
+					<isif condition="${pdict.actionEvent=='save'}">
+						<div class="top-label2">${Resource.msg('paymentinstrumentlist.validpayment','account',null)}</div>
+					</isif>		
+				</iscomment>	
+		   			 <div class="newLableMsg"><h3></h3></div>
+		   				 <iscomment>
+		   					 <h3>${Resource.msg('paymentinstrumentlist.new.pymnt.label','account',null)}</h3>
+		   				</iscomment>
+						<iscomment> fields for the add mode   </iscomment>
+						<div class="formfield cardtype regRow">
+							<iscomment><isinputfield formfield="${pdict.CurrentForms.paymentinstruments.creditcards.newcreditcard.type}" type="select" 
+							 attribute1="${disableArrt}" value1="${disableVal}" />
+							</iscomment>
+							<div class="label">	<span class="labeltext">${Resource.msg('creditcard.type','forms',null)}</span><span class="requiredindicator">*</span></div>
+							 <select id="${pdict.CurrentForms.paymentinstruments.creditcards.newcreditcard.type.htmlName}" 
+									  name="${pdict.CurrentForms.paymentinstruments.creditcards.newcreditcard.type.htmlName}" 
+									  <isif condition="${pdict.actionEvent=='edit' || pdict.actionEvent=='changeContinuityMethod'}"> disabled="disabled" 
+									  	</isif> mandatory="mandatory">
+								  	<option	value="">${Resource.msg('creditcard.select','forms',null)}</option>	
+								 	<isloop items="${dw.order.PaymentMgr.getPaymentMethod(dw.order.PaymentInstrument.METHOD_CREDIT_CARD).activePaymentCards}" var="cards">
+								 		<option value="${cards.cardType}"
+								 		 <isif condition="${cards.cardType==pdict.CurrentForms.paymentinstruments.creditcards.newcreditcard.type.htmlValue}">  selected="selected"
+								 		  </isif> >
+									 		${cards.name}
+								 		</option>
+								 	</isloop>
+							</select>
+							<div class="cardtypeerror errormessage""></div>
+						
+						</div>
+						<div class="formfield regRow cardNumber">
+							<isinputfield formfield="${pdict.CurrentForms.paymentinstruments.creditcards.newcreditcard.number}"  type="input" 
+							 maxlength="16" size="17" id="numberId" attribute1="${disableArrt}" value1="${disableVal}" attribute2="requiredmesage" value2="${Resource.msg('forms.paymentinf.creditcard.number.numbermissing','forms',null)}" />
+						
+						</div>
+						<div class="displayContiDupError">
+								<isif condition="${pdict.duplicateCard==true}">
+									<span class="redMessage">${Resource.msg('paymentinstrumentlist.duplicate.continuity.card','account',null)}</span>
+								</isif>
+						</div>
+						<!-- end of the add mode  -->
+					
+					<div class="formfield expirationdate regRow">
+						<label class="label" for="dwfrm_profile_customer_firstname">						
+							<span class="labeltext">${Resource.msg('paymentinstrumentdetails.expires','account',null)}</span>
+							<span class="requiredindicator">*</span>
+						</label>
+						<iscomment>
+						<!-- continuity condition for disabling fields -->
+						<isif condition="${pdict.actionEvent=='changeContinuityMethod'}" >
+							<div class="month">
+								<isinputfield formfield="${pdict.CurrentForms.paymentinstruments.creditcards.newcreditcard.month}" type="select" 
+								 attribute1="disabled" value1="disabled" attribute2="requiredmesage" value2="${Resource.msg('creditcard.monthmissingerror','forms',null)}"/>
+							</div>
+							<div class="year">
+								<isinputfield formfield="${pdict.CurrentForms.paymentinstruments.creditcards.newcreditcard.year}" type="select" 
+								 attribute1="disabled" value1="disabled" attribute2="requiredmesage" value2="${Resource.msg('creditcard.monthmissingerror','forms',null)}"/>
+							</div>
+						<!-- end of continuity disabling condition -->
+					
+						<iselse>
+						</iscomment>
+							<div class="month">
+							   <isinputfield formfield="${pdict.CurrentForms.paymentinstruments.creditcards.newcreditcard.month}" type="select" attribute2="requiredmesage" value2="${Resource.msg('creditcard.monthmissingerror','forms',null)}" />
+							</div>
+							<div class="year">
+								<isinputfield formfield="${pdict.CurrentForms.paymentinstruments.creditcards.newcreditcard.year}" type="select" attribute2="requiredmesage" value2="${Resource.msg('creditcard.yearmissingerror','forms',null)}" />
+							</div>
+						<iscomment></isif></iscomment>
+					</div>
+			  </div><!--  end for the formFields -->
+			<div class="actions">	
+				<button class="btnColorB aButton" type="submit" value="UpdateCreditCard"   id="saveButtonId" name="${pdict.CurrentForms.paymentinstruments.creditcards.create.htmlName}">${Resource.msg('savechanges.button','account',null)}</button>
+				<a href="${URLUtils.https('PaymentInstruments-List')}" title="Cancel" class="aButton">
+					${Resource.msg('global.cancel','locale',null)}							 
+				</a>
+			</div>
+			<input type="hidden" name="${pdict.CurrentForms.paymentinstruments.secureKeyHtmlName}" value="${pdict.CurrentForms.paymentinstruments.secureKeyValue}" />
+		</fieldset>		
+	</form>
+	</div><!-- END: creditcard_form -->
+			
+	<div class="confirmationcontainer regRow" id="confirmationcontainer" style="display:none;">
+		<div class="errorform">${Resource.msg('account.forbidden','account',null)}</div><!-- END: errorform -->
+		<button id="confirmBtn" type="button" class="aButton">${Resource.msg('global.close','locale',null)}</button>			
+	</div>
+	<div class="requiredcaption"><span class="requiredindicator">*</span>required</div>
+</div>
+
+<script type="text/javascript"><!--		
+	jQuery(document).ready(function() {	
+
+		// execute unobtrusive js code
+		app.execUjs();
+		
+		jQuery("#saveButtonId").attr("disabled","disabled");
+		jQuery("#saveButtonId").addClass("buttonDisable");
+
+		
+		// on-focus remove errorclass
+		$('#numberId').keyup(function () {
+			var maxLength = $(this).attr('maxlength');
+			if($(this).val().length == maxLength) {
+				$('span.errormessage').hide();
+				$('#numberId').css('border','1px solid #B7B7B7');
+			 }
+			if($(this).val().length !== maxLength) {
+				$('span.errormessage').hide();
+				
+			 }
+		});
+		
+		
+		// used when creating a new credit card
+		$("#numberId").keypress(function() {
+			jQuery("#saveButtonId").removeAttr("disabled");
+			jQuery("#saveButtonId").removeClass("buttonDisable");
+		});
+		
+		var selectedCCId = jQuery("select[name=${pdict.CurrentForms.paymentinstruments.creditcards.newcreditcard.defaultCreditCardID.htmlName}]").val();
+		var pageMode= "${pdict.actionEvent}";
+		if (selectedCCId=="" || selectedCCId==null){	
+			changeFieldsOnChangeContinuity("");
+		}else{
+			// Handle page load on continuity mode
+			 if(pageMode=="changeContinuityMethod"){
+				 changeFieldsOnChangeContinuity("disabled");
+			}
+			// end of the continuity mode
+		}
+
+		// handles edit mode on page load
+		
+		if(pageMode=="edit"){
+			jQuery("input[name=${pdict.CurrentForms.paymentinstruments.creditcards.newcreditcard.number.htmlName}]").attr("disabled","disabled");
+			jQuery("select[name=${pdict.CurrentForms.paymentinstruments.creditcards.newcreditcard.type.htmlName}]").attr("disabled", "disabled");
+		}
+		jQuery(".month select").change(function() {
+			jQuery("#saveButtonId").removeAttr("disabled");
+			jQuery("#saveButtonId").removeClass("buttonDisable");
+			$('span.errormessage').hide();
+		});
+		jQuery(".year select").change(function() {
+			jQuery("#saveButtonId").removeAttr("disabled");
+			jQuery("#saveButtonId").removeClass("buttonDisable");
+			$('span.errormessage').hide();
+		});		
+		//end of edit mode code
+		
+		
+		
+		jQuery("#saveButtonId").click(function(event) {
+				var val = jQuery("select[name=${pdict.CurrentForms.paymentinstruments.creditcards.newcreditcard.type.htmlName}]").val();
+				var val1 = jQuery("select[name=${pdict.CurrentForms.paymentinstruments.creditcards.newcreditcard.month.htmlName}]").val();
+				var val2 = jQuery("select[name=${pdict.CurrentForms.paymentinstruments.creditcards.newcreditcard.year.htmlName}]").val();
+                 if(val==""){
+					jQuery(".cardtypeerror").text('${Resource.msg('creditcard.typemissing','forms',null)}');
+	                
+					if ((val1 != "" && val2 != "") && (val=="") ){
+	
+						jQuery(".cardtypeerror").text('${Resource.msg('creditcard.typemissing','forms',null)}');
+	
+	                    event.preventDefault();
+					}
+           }
+
+		});	 
+		
+		jQuery('#applyBtn').click( function() {
+			action = "${pdict.CurrentForms.paymentinstruments.creditcards.create.htmlName}";
+			jQuery('#formaction').append("<input name='" + action + "' type='hidden' />");
+			
+			var post = jQuery('#CreditCardForm').serialize();
+	  		jQuery.ajax({
+			   type: "POST",
+			   url: app.URLs.submitDialogURL,
+			   data: post,
+			   dataType: 'html',
+			   success: function(data){
+			   		jQuery("#dialogcontainer").empty().html(data);
+			   },
+			   failure: function(data) {
+			   	//	alert("${Resource.msg('global.serverconnection','locale',null)}");		
+			   },
+			   error : function(XMLHttpRequest, textStatus, errorThrown){
+				   jQuery('#confirmationcontainer').show();	
+				   jQuery('#confirmationcontainer').dialog({
+					   		bgiframe: true,
+							autoOpen: false,
+							modal: true,
+					    	height: 100,
+    						width: 300,
+					    	resizable: false
+					});
+				    jQuery('#confirmationcontainer').dialog('option', 'title', jQuery('#dialogcontainer').dialog('option', 'title'));	
+					jQuery('#confirmationcontainer').dialog('open');
+				}
+			});		
+		});
+
+		jQuery('#confirmBtn').unbind("click").click( function() {
+            jQuery('.confirmationcontainer').dialog('close');
+            jQuery('#dialogcontainer').dialog('close');      
+      	}); 
+
+		//changes the selection of the given form select to the given value
+		function changeFormSelection(selectElem, selectedValue) {
+			if(!selectElem) return;
+			var options = selectElem.options;
+			if(options.length > 0) {
+				// find index of value to select
+				var idx = 0;
+				for(var i=0; i<options.length; i++) {
+					if(options[i].value != selectedValue) continue;
+					idx = i; break;
+				}
+				selectElem.selectedIndex = idx;
+			}
+		}
+		
+
+		jQuery(".cardtype select").change(function() {
+			var val = jQuery("select[name=${pdict.CurrentForms.paymentinstruments.creditcards.newcreditcard.type.htmlName}]").val();
+			if(val!="")	{ 
+				jQuery(".cardtypeerror").text('');
+				jQuery("#saveButtonId").removeAttr("disabled");
+				jQuery("#saveButtonId").removeClass("buttonDisable");
+			}
+			else{
+				jQuery(".cardtypeerror").text('${Resource.msg('creditcard.typemissing','forms',null)}');
+			}
+			
+		});
+			
+		// display the credit card details on select of the credit card from list
+			jQuery(".creditcardlist select").change(function() {
+				$('span.errormessage').hide();
+				var cardUUID = jQuery(this).val();	 
+				if(cardUUID!=null && cardUUID!=""){			
+					// load card details
+					var url = app.util.appendParamToURL("${URLUtils.url('PaymentInstruments-SelectCreditCard')}", 'creditCardUUID', cardUUID);
+					var result = app.ajax.getJson({
+						url: url,
+						callback: function(data) {
+							if(!data || !data.creditCard) {
+								return false;
+							}
+							populateFieldsOnChangeContinuity(data);
+							changeFieldsOnChangeContinuity("disabled");
+						}
+					});
+					jQuery(".newLableMsg h3").text("");
+					var custCCId="${pdict.CurrentCustomer.profile.custom.defaultCreditCardID}";
+					if(cardUUID!=custCCId){
+						jQuery("#saveButtonId").removeAttr("disabled");
+					}else{
+						jQuery("#saveButtonId").attr("disabled","disabled");
+						}
+				}else{
+					// making the fields editable
+					changeFieldsOnChangeContinuity("");
+					
+					// clearing the fields of the form
+					jQuery("input[name=${pdict.CurrentForms.paymentinstruments.creditcards.newcreditcard.owner.htmlName}]").val("");
+					jQuery("input[name=${pdict.CurrentForms.paymentinstruments.creditcards.newcreditcard.number.htmlName}]").val("");
+					changeFormSelection(jQuery("select[name=${pdict.CurrentForms.paymentinstruments.creditcards.newcreditcard.type.htmlName}]")[0],'');
+					changeFormSelection(jQuery("select[name=${pdict.CurrentForms.paymentinstruments.creditcards.newcreditcard.month.htmlName}]")[0],'');
+					changeFormSelection(jQuery("select[name=${pdict.CurrentForms.paymentinstruments.creditcards.newcreditcard.year.htmlName}]")[0],'');
+					jQuery("#saveButtonId").removeAttr("disabled");
+					jQuery(".newLableMsg h3").text(" ${Resource.msg('paymentinstrumentlist.new.pymnt.label','account',null)}");
+					
+					}	
+				//hide the displayContiDupError
+				jQuery('.displayContiDupError').hide();
+			});
+	      	
+			function populateFieldsOnChangeContinuity(data){
+				// fill the form / clear the former cvn input
+				jQuery("input[name=${pdict.CurrentForms.paymentinstruments.creditcards.newcreditcard.owner.htmlName}]").val(data.creditCard.holder);
+				jQuery("input[name=${pdict.CurrentForms.paymentinstruments.creditcards.newcreditcard.number.htmlName}]").val(data.creditCard.maskedNumber);
+				changeFormSelection(jQuery("select[name=${pdict.CurrentForms.paymentinstruments.creditcards.newcreditcard.type.htmlName}]")[0],data.creditCard.type);
+				changeFormSelection(jQuery("select[name=${pdict.CurrentForms.paymentinstruments.creditcards.newcreditcard.month.htmlName}]")[0],data.creditCard.expirationMonth);
+				changeFormSelection(jQuery("select[name=${pdict.CurrentForms.paymentinstruments.creditcards.newcreditcard.year.htmlName}]")[0],data.creditCard.expirationYear);
+				jQuery("#saveButtonId").removeAttr("disabled");
+				jQuery("#saveButtonId").removeClass("buttonDisable");
+			}
+			function changeFieldsOnChangeContinuity(attrVal){
+				// fill the form / clear the former cvn input
+				jQuery("input[name=${pdict.CurrentForms.paymentinstruments.creditcards.newcreditcard.number.htmlName}]").attr("disabled",attrVal);
+				jQuery("select[name=${pdict.CurrentForms.paymentinstruments.creditcards.newcreditcard.type.htmlName}]").attr("disabled", attrVal);
+				jQuery("select[name=${pdict.CurrentForms.paymentinstruments.creditcards.newcreditcard.month.htmlName}]").attr("disabled", attrVal);
+				jQuery("select[name=${pdict.CurrentForms.paymentinstruments.creditcards.newcreditcard.year.htmlName}]").attr("disabled", attrVal);
+			}
+
+	});
+//--></script>
+
+</isdecorate>

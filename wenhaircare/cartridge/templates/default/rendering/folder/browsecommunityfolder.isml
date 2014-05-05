@@ -1,0 +1,85 @@
+<isscript>
+    importPackage(dw.content);
+    importPackage(dw.util);
+    importPackage(dw.catalog);
+    
+    importScript('guthyrenker_core:common/libUtils.ds');
+    
+    var contentInfo    = getCurrentContentInfo(pdict.CurrentHttpParameterMap);
+    var folderPathInfo = getFolderPathInfo(contentInfo);
+    
+    var CurrentFolder  : Folder = contentInfo.folder;
+    var CurrentContent : Content = contentInfo.content;
+    
+    var CurrentFolderPath : String = folderPathInfo.folderPath;
+    var RootFolder        : Folder = folderPathInfo.rootFolder;
+    
+    
+</isscript>
+
+<isset name="ShowProactiv365Sidebar"  value="true"             scope="pdict"/>
+<isset name="ShowRelatedLinks"        value="false"            scope="pdict"/>
+<isset name="ShowOptionalMenu"        value="false"            scope="pdict"/>
+<isset name="FolderNavigationClass"   value="foldernavigation" scope="pdict"/>
+<isset name="LeftNavRenderSubFolder"  value="true"             scope="pdict"/>
+
+<isdecorate template="search/pt_browsefoldercontents">
+
+<isinclude template="util/modules"/>
+
+<iscomment>create reporting event</iscomment>
+<isinclude template="util/reporting/ReportSearch.isml"/>
+
+<isinclude template="content/content/htmlcontentasset" />
+<isset name="OmniturePage" value="StaticContent" scope="pdict">
+
+<script type="text/javascript">
+
+
+
+    jQuery(function(){
+    	app.accordion.init(".accordion", ">h3.accordion-header");
+    	app.accordion.init("#secondaryContent .foldernavigation", ">li>a");
+    });
+
+    
+    function expandPrimary(folderID){
+        var $folder = jQuery(".contentfoldernavigation [data-folderid=" + folderID + "]");
+        app.accordion.expandAccordion($folder);
+    }
+
+    jQuery(function(){
+    	function expandSecondary(folderID){
+            var $folder = jQuery(".foldernavigation [data-folderid=" + folderID + "]");
+            app.accordion.expandAccordion($folder);
+        }
+        
+        <isif condition="${!empty(pdict.CurrentHttpParameterMap.folderid)}">
+            expandPrimary("${pdict.CurrentHttpParameterMap.folderid.value}");
+            expandSecondary("${pdict.CurrentHttpParameterMap.folderid.value}");
+        </isif>
+        
+        //SYNCHRONIZE LEFT AND RIGHT PANES
+        jQuery("#secondaryContent .foldernavigation .folderlink").click(function(){
+            expandPrimary(jQuery(this).attr('data-folderid'));
+            return false;
+        });
+    });
+</script>
+<div class="contentfoldernavigation">
+<div class="exploretopic">
+    <div class="boxTop">
+        <img style="float: left;"  src="${URLUtils.staticURL('/images/boxCorner_topLeft.jpg')}">
+        <img style="float: right;" src="${URLUtils.staticURL('/images/boxCorner_topRight.jpg')}">
+    </div>
+    <h3>${Resource.msg("community.explore.topic", "locale", null)}</h3>
+</div>
+<isset name="Folder" value="${CurrentFolder}" scope="page"/>
+<isinclude template="components/renderfoldervalues"/>
+<div class="boxBottom">
+    <img style="float: left;"  src="${URLUtils.staticURL('/images/boxCorner_bottomLeft.jpg')}">
+    <img style="float: right;" src="${URLUtils.staticURL('/images/boxCorner_bottomRight.jpg')}">
+    </div>
+</div>
+
+</isdecorate>

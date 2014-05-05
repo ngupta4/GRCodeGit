@@ -1,0 +1,54 @@
+<!--- TEMPLATENAME: findretailer.isml --->
+
+<isinclude template="util/modules" />
+
+<isdecorate template="content/kiosklocator/pt_kiosklocator">
+
+<div class="kiosk-locator">
+<div class="pageHead">
+<h1>Find A Proactiv Kiosk: Kiosk Locator</h1>
+<p class="intro">To purchase Proactiv products in person, enter your Zip Code and distance below and click the &#8220;Find&#8221; button to see a map of locations near you.</p>
+</div>
+<div class="blockGrey">
+	<div class="block">
+		<div class="blockTop"><div class="blockTopRight"></div></div>
+		<h3>Kiosk Locator</h3>
+		<div class="block-content">				
+			<form action="${URLUtils.continueURL()}" method="post" id="${pdict.CurrentForms.kiosklocator.htmlName}" class="kioskSearchForm">
+				<isinputfield formfield="${pdict.CurrentForms.kiosklocator.country}" type="hidden" value="US"/>
+				
+				<div class="zipGroup float-left" >
+					<isinputfield formfield="${pdict.CurrentForms.kiosklocator.zip}" type="input" attribute1="maxlength" value1="12" attribute2="requiredmesage" value2="${Resource.msg('forms.testimony.require.zip','forms',null)}"/>
+				</div>
+									
+				<div class="distanceGroup float-left" id="zipGroupPos">
+					<isinputfield formfield="${pdict.CurrentForms.kiosklocator.radius}" type="select" />
+					<span>miles</span>
+				</div>
+				<button class="btnKioskLocator gr-btn float-left" type="submit" alt="Find" name="${pdict.CurrentForms.kiosklocator.find.htmlName}">Find</button>
+			</form>
+			<div class="blockBottom"><div class="blockBottomRight"></div></div>	
+		</div>
+	</div>
+</div>
+
+</div>
+<script>
+	jQuery(function(){
+		jQuery.validator.addMethod("zip",function(value, element) {
+			var result = this.optional(element) || /^(\d{5})(-\d{4})?$/.test(value)
+			if (!result) {
+				setTimeout(function() {
+					jQuery.validator.blockFocusCleanup = true;
+					element.focus();
+					jQuery.validator.blockFocusCleanup = false;
+				}, 1);
+			}else{
+				jQuery(element).find('.errormessage').remove();
+			}
+			return result;
+		},"You must provide valid zip code");
+	});
+</script>
+
+</isdecorate>

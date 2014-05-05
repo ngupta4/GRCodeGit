@@ -1,0 +1,37 @@
+<!--- TEMPLATENAME: echeckAccountUpdateContinuity.isml --->
+<div class="formfield echeck_number" style="display: none;">
+                <div class="displayContiDupError reg-row">
+					<isif condition="${pdict.duplicateCard==true}">
+						<span class="redMessage">${Resource.msg('paymentinstrumentlist.duplicate.continuity.bankAccount','account',null)}</span>
+					</isif>
+				</div>
+				
+		       <iscomment>
+		       	<div class="eCheckContainers">
+					<div class="label">${Resource.msg(pdict.CurrentForms.personinf.eCheck.bankAccountType.label, 'forms', null)}<span class="requiredindicator">*</span></div>
+					<div class="value">
+						<isloop items="${pdict.CurrentForms.paymentinstruments.creditcards.newcreditcard.bankAccountType.options}" var="bankAccountType"  status="accType">
+							<label>
+								<input type="radio" id="bankAccountType_${bankAccountType.value}"  tabindex="21" name="${pdict.CurrentForms.paymentinstruments.creditcards.newcreditcard.bankAccountType.htmlName}"<isif condition="${accType.first}"> checked="checked"</isif> value="${bankAccountType.value}"  />
+								${Resource.msg(bankAccountType.label, 'forms', null)}
+							</label>
+						</isloop>
+					</div>
+				</div>
+		       </iscomment>
+			
+		    	<div class="eCheckContainersInputFields">
+		    		<isinputfield id="routing" formfield="${pdict.CurrentForms.paymentinstruments.creditcards.newcreditcard.routing}" xhtmlclass="routing" type="input" 
+		    	attribute1="requiredmesage" value1="${Resource.msg('forms.paymentinf.eCheck.routing.numbermissing','forms',null)}" attribute2="tabindex" value2="22" attribute3="autocomplete" value3="off"/>
+		    	</div>
+		    	
+		    	<div class="eCheckContainersInputFields">
+		    		<isinputfield id="account" formfield="${pdict.CurrentForms.paymentinstruments.creditcards.newcreditcard.account}" xhtmlclass="account" type="input" 
+		    	attribute1="requiredmesage" value1="${Resource.msg('forms.paymentinf.eCheck.account.numbermissing','forms',null)}" attribute2="tabindex" value2="23" attribute3="autocomplete" value3="off"/>
+		    	</div>
+		    	<div class="eCheckContainers">
+		    		<div class="eCheckSample"> 
+		 				<iscontentasset aid="eCheck-sample-ret"/>
+					</div>
+				</div>    	
+ </div>

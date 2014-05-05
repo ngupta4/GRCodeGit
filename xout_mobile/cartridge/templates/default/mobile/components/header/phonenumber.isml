@@ -1,0 +1,10 @@
+<isscript>
+	var phoneCookieValue : String = "";
+	var cookieContainer:dw.web.Cookies = request.getHttpCookies();
+    for each(var cookie:dw.web.Cookie in cookieContainer) {
+        if(cookie.getName() == 'phoneNumber') {
+            phoneCookieValue = cookie.getValue();         
+        }
+    }
+</isscript>
+<isprint value="${phoneCookieValue}"/>

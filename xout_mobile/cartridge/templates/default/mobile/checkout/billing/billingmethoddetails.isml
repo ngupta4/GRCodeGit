@@ -1,0 +1,43 @@
+<isdecorate template="mobile/pt_mobile">
+<isinclude template="mobile/util/modules"/>
+<div id="paymentmethodform" class="mobilecontent paymentcreditcardform">
+    <h3>${Resource.msg('billing.paymentdetails','checkout',null)}</h3>
+	<form action="${URLUtils.httpsContinue()}" method="post" name="CardDetailForm">
+		<iscomment>render credit card input form</iscomment>		
+		<table>
+			<tr>
+				<td>
+					<isinputfield formfield="${pdict.CurrentForms.billing.paymentMethods.creditCard.type}" type="select" value="false"/>
+					<isinputfield formfield="${pdict.CurrentForms.billing.paymentMethods.creditCard.type}" type="hidden"/>
+				</td>
+				<td><span class="cardtype"><isprint value="${pdict.CurrentForms.billing.paymentMethods.creditCard.type.htmlValue}"/></span></td>
+			</tr>
+			<tr>
+				<td colspan="2"><isinputfield formfield="${pdict.CurrentForms.billing.paymentMethods.creditCard.owner}" type="input"/></td>
+			</tr>
+	    	<tr>
+				<td colspan="2" class="cardnumber"><isinputfield formfield="${pdict.CurrentForms.billing.paymentMethods.creditCard.number}" type="input"/></td>
+			</tr>
+			<tr>
+				<td colspan="2">
+					<span class="requiredindicator">*</span>
+					<span>${Resource.msg('billing.cardexpiration','checkout',null)}</span>
+				</td>
+			</tr>
+			<tr>
+				<td class="month"><isinputfield formfield="${pdict.CurrentForms.billing.paymentMethods.creditCard.month}" type="select" label="false"/></td>
+				<td class="year"><isinputfield formfield="${pdict.CurrentForms.billing.paymentMethods.creditCard.year}" type="select" label="false"/></td>
+			</tr>
+			<tr>
+				<td colspan="2" class="cvnnumber"><isinputfield formfield="${pdict.CurrentForms.billing.paymentMethods.creditCard.cvn}" type="input"/></td>
+			</tr>
+			<tr class="actionbuttons">
+				<td colspan="2">
+					<button type="submit" value="${Resource.msg('global.back','locale',null)}" name="${pdict.CurrentForms.billing.back.htmlName}"><span>${Resource.msg('global.back','locale',null)}</span></button>
+					<button type="submit" value="${Resource.msg('global.continuecheckout','locale',null)}" name="${pdict.CurrentForms.billing.confirm.htmlName}" class="continuecheckout"><span>${Resource.msg('global.continuecheckout','locale',null)}</span></button>
+				</td>
+			</tr>
+		</table>
+	</form>
+</div>
+</isdecorate>

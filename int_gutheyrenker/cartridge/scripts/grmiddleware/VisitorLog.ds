@@ -1,0 +1,137 @@
+/**
+*   Visitor Log call
+*
+*   @input Request : dw.system.Request
+*   @input URLQuery : String
+*   @input URLPath : String
+*   @input URLReferer : String
+*   @input currentCustomer : dw.customer.Customer
+*/
+
+importPackage( dw.system );
+importPackage( dw.net );
+
+importScript( "grmiddleware/libGRMiddleware.ds" );
+importScript( "common/libOAuth.ds" );
+
+function callVisitorLogService(request:Request, urlPath, urlQuery, currentCustomer,urlReferer):Boolean{
+	var session:Session = request.session;
+	
+	//Included locally for now, might look at moving this logic elsewhere in the future.
+	
+	var loginState : String = "";
+	var siteArea : String = "";
+	var mwid : String = "";
+	var account : String = "";
+	var uci : String = "";
+	//allow the referrer to be passed from the page for ajax calls
+	if(empty(urlReferer))
+		urlReferer = request.httpReferer;
+	
+	if (currentCustomer.registered) {
+		loginState = "logged in";
+		siteArea = "retention";
+		mwid = currentCustomer.profile.custom.mwid;
+		account = currentCustomer.profile.custom.accountNumber;
+	} else if (session.custom.cRememberMe) {
+		loginState = "remember me";
+		siteArea = "retention";
+	} else {
+		loginState = "anonymous";
+		siteArea = "acquisition";
+	}
+	if (!empty(request.httpCookies['uci'])) {
+		uci = request.httpCookies['uci'].value;
+	}
+    var url:String = pref("GRMLogVisitorURL","https://logapi.grc-network.com/logs/visitor");// "https://log-staging.grdev.com/log/visitor");
+    
+    var client : HTTPClient = openOAuthUrl("POST", url);
+    
+    var message:XML =
+        <visitorLogs 
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="visitorLog_1-0.xsd">
+            <visitor>
+                <productLine>{dw.system.Site.getCurrent().getCustomPreferenceValue("GRMProductLine")}</productLine>
+                <uid>{getCustomerUID(request)}</uid>
+                <sessionStartDate>{formatISODate(getSessionStartDate(session))}</sessionStartDate>
+                <landingDate>{formatISODate(new Date())}</landingDate>
+                <referrer>{notNull(urlReferer)}</referrer>
+                <pageId>{notNull(urlPath)}</pageId>
+                <pageQuery>{notNull(urlQuery)}</pageQuery>
+                <serverName>{notNull(dw.system.Site.getCurrent().getCustomPreferenceValue("GRMServerName"))}</serverName>
+                <remoteAddress>{notNull(request.httpRemoteAddress)}</remoteAddress>
+                <userAgent>{notNull(request.httpHeaders["user-agent"])}</userAgent>
+            </visitor>
+        </visitorLogs>;
+    message.visitor.loginState = loginState;
+    message.visitor.siteArea = siteArea;        
+    if (mwid != "") {
+    	message.visitor.mwid = mwid;
+    }
+    message.visitor.account = account;
+    message.visitor.uci = uci;
+    
+    /* Mobile Attributes */
+    if(!empty(session.custom.renderingGroup))
+  		message.visitor.renderingExperience = session.custom.renderingGroup.ID;
+    if(!empty(session.custom.deviceCategory))
+  		message.visitor.deviceGroup = session.custom.deviceCategory;
+    if(!empty(session.custom.device))
+  		message.visitor.device = session.custom.device;
+   
+    var APITimeout = dw.system.Site.getCurrent().getCustomPreferenceValue("GRMVisitorLogAPITimeout");
+    
+    if(empty(APITimeout)){
+        APITimeout = 1000;
+    }
+    client.timeout = APITimeout;
+    client.send(message.toString());
+    
+    Logger.debug("Visitor Log: " + message.toString());
+    Logger.debug("Visitor Log responsed with " + client.statusCode + "; " + client.statusMessage + ", url is '"  + url + "'");
+    
+    if(client.statusCode != 200){
+        Logger.error("Visitor Log responded with " + client.statusCode + "; " + client.statusMessage + ", url is '"  + url + "'");
+        return false;
+    }
+    
+    return true;
+}
+
+function execute( args : PipelineDictionary ) : Number
+{
+    var maxRetries = dw.system.Site.getCurrent().getCustomPreferenceValue("GRMVisitorLogRetries");
+    if(empty(maxRetries)){
+        maxRetries = 3;
+    }
+    var lastFailTime:Date = dw.system.Site.getCurrent().getCustomPreferenceValue("GRMVisitorLogFailTime");
+    
+    if(lastFailTime != null){
+        var timeOut = dw.system.Site.getCurrent().getCustomPreferenceValue("GRMVisitorLogTimeOut");
+        if(empty(timeOut)){
+        	timeOut = 30 * 1000;
+        }
+        
+        if(new Date().getTime() < lastFailTime.getTime() + timeOut){
+            Logger.error("Skipping visitor log request due timeout");
+            return PIPELET_NEXT; 
+        }
+        
+        //dw.system.Site.getCurrent().preferences.custom.GRMVisitorLogFailTime = null;
+    }
+    
+    do{
+        try{
+	        if(callVisitorLogService(args.Request, args.URLPath, args.URLQuery, args.currentCustomer,args.URLReferer)){
+
+	            return PIPELET_NEXT;
+	        }
+        }catch(e){
+            Logger.error("Error calling Visitor Log Service: " + e);
+        }
+    }while(maxRetries-- > 0);
+    
+    //dw.system.Site.getCurrent().preferences.custom.GRMVisitorLogFailTime = new Date();
+    return PIPELET_ERROR;
+}

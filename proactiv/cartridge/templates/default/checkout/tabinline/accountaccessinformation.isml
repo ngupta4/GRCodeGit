@@ -1,0 +1,36 @@
+<!--- TEMPLATENAME: accountaccessinformation.isml --->
+<div class="checkout_box access_info">
+	<h4><isprint value="${Resource.msg('accountaccess_refersh.title','rendering',null)}" encoding="off"/></h4>
+	
+	<div class="checkout_box_inner">
+		<iscomment>Slot for "access-your-account" content asset
+			<iscontentasset aid="access-your-account" />
+		</iscomment>
+		
+		<isif condition="${!empty(pdict.CurrentForms.personinf.account.error)}">
+			<div class="errorform">
+				${pdict.CurrentForms.personinf.account.error}
+			</div>
+		</isif>
+
+		<div class="formfields">
+		<fieldset class="age_and_gender">
+				<div class="formfield gender">
+					
+					<div class="value">
+						<isloop items="${pdict.CurrentForms.personinf.account.gender.options}" var="gender" status="loop_status">
+							<label>
+								<input type="radio" id="gender_${gender.value}" name="${pdict.CurrentForms.personinf.account.gender.htmlName}"<isif condition="${gender.selected}"> checked="checked"</isif> value="${gender.value}" tabindex="${loop_status.count}" />
+								${Resource.msg(gender.label, 'forms', null)}
+							</label>
+						</isloop>
+					</div>
+				</div>
+				<div class="formfield age">
+					<label>${Resource.msg('forms_refresh.accountinf.age.label', 'forms', null)}</label>
+					<isinputfield id="age" formfield="${pdict.CurrentForms.personinf.account.age}" type="tel" size="5" attribute2="tabindex" value2="3" attribute3="placeholder" value3="Age" XhtmlClass="age"/>
+				</div>				
+			</fieldset>
+		</div>
+	</div>
+</div>

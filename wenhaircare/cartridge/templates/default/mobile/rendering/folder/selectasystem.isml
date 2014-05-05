@@ -1,0 +1,420 @@
+<!--- TEMPLATENAME: selectasystem.isml --->
+<isdecorate template="mobile/search/pt_selectasystem_full">
+<isinclude template="util/modules"/>
+<isscript>
+	importPackage(dw.util);
+	importPackage(dw.catalog);
+	var CCC : Object = pdict.CurrentCampaignConfig;
+	//get the campaign code and append this
+	var sasCat:Category = CatalogMgr.getCategory('m-' + CCC.campaignCode + '-SAS');
+</isscript>
+
+<isset name="OmniturePage" value="Offerpage" scope="pdict" />
+<div class="context" data-role="content">
+	<div class="segment-style">
+		<isslot id="m-sas-banner" context="category" description="SAS Banner (mobile)" context-object="${sasCat}"/>
+		
+		<div data-role="navbar" id="tab">
+		  <ul>
+		  <isloop items="${sasCat.onlineSubCategories}" var="cat" status="page_status" >
+		     <isif condition="${!empty(cat.onlineProducts)}">
+				<isslot id="Tab" context="category" description="Tab Button" context-object="${cat}"/>
+		     </isif>
+		  </isloop>
+		  </ul>
+		</div>
+	</div>
+		<div class="tab-content theKits">
+  			<isloop items="${sasCat.onlineSubCategories}" var="cat" status="page_status" >
+		    <isif condition="${!empty(cat.onlineProducts)}">
+		    <isif condition="${cat.onlineProducts.length > 1}">
+		    	<iscomment>Second gift defaultly selected</iscomment>
+		    	<isset name="offer" value="${cat.onlineProducts[1]}" scope="page"/>
+		    	<iscomment>Drop in some java script to handle all the swipe actions</iscomment>
+		    <iselse>
+		    	<iscomment>First gift selected and it is the only one</iscomment>
+		    	<isset name="offer" value="${cat.onlineProducts[0]}" scope="page"/>
+		    </isif>
+		    <isset name="num" value="${(page_status.index + 1).toFixed()}" scope="page"/>
+			<div class="tab${num} <isif condition="${!page_status.first}">ui-screen-hidden</isif>">
+				<isslot id="ProductTop" context="category" description="Top Product Info" context-object="${cat}"/>
+				
+				<isif condition="${cat.onlineProducts.length > 1}">
+				
+				<!-- Swipe -->
+				<div class="ui-swipe-custom">
+					  <img class="go-left-${num}" src="${URLUtils.staticURL('mobile/images/go-left-alt.gif')}">
+				 	 <img class="go-right-${num}" src="${URLUtils.staticURL('mobile/images/go-right-alt.gif')}">
+
+					<div id='mySwipe${num}'  class='swipe'>
+					  <div class='swipe-wrap'>
+					  	<isloop items="${cat.onlineProducts}" var="gift" status="gift_status" >
+					      <div>
+					       
+					      		
+					      		<iscomment>
+					      		<div  class="gift-switch orange containing-element center">			      			
+					      			<a id="${gift.ID}" href="${dw.web.URLUtils.https('COCart-AddProduct','pid',gift.ID)}" rel="external" data-role="button" data-theme="a" data-inline="true"
+					      			  onclick="s.linkTrackVars='prop62';s.prop62='OrderNow:'+s.pageName+':btn1';s.tl(this,'o','OrderNow:'+s.pageName+':btn1');">${gift.custom.altGiftName}</a>
+					      		</div>
+					            </iscomment>
+					      
+					      
+					<isset name="kit1Name" value="" scope="page"/>
+								<isif condition="${'kitFrequency' in gift.custom}">
+									<isset name="kit1Name" value="${gift.custom.kitFrequency}" scope="page"/>
+								</isif>
+								
+                                <isset name="varAttrCollection" value="${gift.variationModel.productVariationAttributes}" scope="page"/>
+                               
+                                <isscript>
+                                  numGifts = "";
+
+						          switch(gift.variationModel.getAllValues(varAttrCollection[0]).length){
+							        case(1):
+							        	numGifts = Resource.msg('sas.full.one','locale',null);
+								        break;
+							        case(2):
+								        numGifts = Resource.msg('sas.full.two','locale',null);
+								        break;
+							        case (3):
+								        numGifts = Resource.msg('sas.full.three','locale',null);
+								        break;
+							        case (4):
+							        default:
+								        numGifts = Resource.msg('sas.full.four','locale',null);
+								        break;
+						            }
+                                </isscript> 
+                                <div class="fragHeading"><strong>${Resource.msgf('sas.fragrances.text','locale',null,numGifts)}</strong></div>
+								<div class="h-lable">${Resource.msg('sas.selectyourkit.freg','locale',null)}</div>
+								
+										<span class="varprodid"></span>
+										<isloop items="${varAttrCollection}" var="varAttr" status="variant_count">
+										
+											<ul class="fragranceul" <isif condition="${empty(kit1Name)}">masterID="${gift.ID}"</isif>>
+												<isset name="defaultVariant" value="${gift.variationModel.getDefaultVariant()}" scope="page" />
+												<isset name="defaultVariantVal" value="${gift.variationModel.getVariationValue(defaultVariant,varAttr)}" scope="page" /> 
+												<isloop items="${gift.variationModel.getAllValues(varAttr)}" var="varVal" status="varVal_count">
+												<isset name="selectedFlag" value="${(selectedVariationVal == varVal.value) || (selectedVariationVal =='' && varVal.value == defaultVariantVal.value)}" scope="page" />
+													<li val="${varVal.ID}" class='selected'>
+														<input type="radio"  class="${varAttr.ID}" name="fragrancegroup${offers_status.count}" value='<isprint value="${varVal.displayValue}" encoding="off"/>' <isif condition="${selectedFlag}">checked='checked'</isif> />
+														<isset name="varImg" value="${varVal.getImage('swatch',0)}" scope="page"/>
+														<isif condition="${!varImg}">
+															<isprint value="${varVal.displayValue}" encoding="off"/>
+														<iselse/>
+															<img src="${varImg.url}" alt="${varVal.displayValue}" title="${varVal.displayValue}" class="radioFragImg"/>
+															<isprint value="${varVal.displayValue}" encoding="off"/>
+														</isif>
+													</li>
+												</isloop>
+											</ul>
+										</isloop>
+										<isif condition="${!empty(kit1Name)}">
+										<div class="orderNowSideBySide">
+										<p class="deluxeOrderHeader"><isprint value="${kitName}" encoding="off"/></p>
+										<div class="OrderSubline">${Resource.msg('sas.selectyourkit','locale',null)}</div>
+											<ul class="kitselectionul">
+												<li masterID="${gift.ID}" class="selected">
+														<div class="opText"><isprint value="${kit1Name}" encoding="off"/>-  <span>Only <isprint value="${offer.variationModel.getDefaultVariant().getPriceModel().getPrice()}"/></span></div>
+												</li>
+											</ul>
+										</isif>
+											<isif condition="${offer.master && gift.variationModel.variants.size() > 0}">
+							                      <div class="orderVarButtonWraper">
+							                      	<iscomment>for showing different order button based on kit.</iscomment>
+							                      	<isif condition="${(kitName.indexOf('Deluxe') != -1) }">
+							                      			<isset name="buttonClassName" value="deluxe" scope="page"/>
+							                      	<iselse>
+							                      			<isset name="buttonClassName" value="basic" scope="page"/>
+							                      	</isif>
+							                      	<a class="orderVarButton-${buttonClassName}" onclick="javascript:app.sas.addFragranceFromOldSAS(this)">${Resource.msg('sas.addtokit','locale',null)}</a>
+							                      </div>
+							                      <iscomment><div class="hilite"><img width="170" height="23" alt="FREE SHIPPING" src="${URLUtils.staticURL('images/wen/fs_ribbon.gif')}" /></div></iscomment>
+							                      </div>     
+											<iselse/>
+												  <a href="${URLUtils.url('CoCart-AddProduct','pid',gift.ID)}">${Resource.msg('sas.ordernow','locale',null)}</a> 								
+											</isif>	
+					      </div>
+					     </isloop>
+					  </div>
+					</div>
+
+				 	 <script type="text/javascript">
+				 	 
+				 	 var swipeid = '#mySwipe' + '${num}';
+				 	 
+			         $(swipeid + ' img').on('touchstart click', function(event) {
+			            window.mySwipe.unfreeze();
+			         });
+			         $('.tab${num} .gift-switch,.tab${num} .gift-switch *').on('touchstart click', function(event) {
+			            window.mySwipe.freeze();
+			         });
+			         $('.tab${num} .gift-switch,.tab${num} .gift-switch *').on('touchend', function(event) {
+			            window.mySwipe.unfreeze();
+			         });
+			         
+			         $('.tab${num} .ui-swipe-custom .go-left-${num}').click(function()
+			         {
+			         	thistabnum=${num};
+			            window.mySwipe.prev();
+			            $("#sphere"+thistabnum+"-1").attr("src", "${URLUtils.staticURL('mobile/images/1.png')}");
+			            $("#sphere"+thistabnum+"-2").attr("src", "${URLUtils.staticURL('mobile/images/2.png')}");
+			            $("#sphere"+thistabnum+"-3").attr("src", "${URLUtils.staticURL('mobile/images/3.png')}");
+			            var sphere = $("#sphere"+thistabnum+"-"+(window.mySwipe.getPos()+1));
+			            var scr = sphere.attr("src").replace(".png","-active.png");
+			            sphere.attr("src", scr);
+						var offerID =  sphere.attr("data-value");
+						$('#' + offerID).trigger('click');
+						var link = $("#sas-cto"+thistabnum).attr('href').replace(/pid=.*/,'pid=' + offerID);
+						$("#sas-cto"+thistabnum).attr('href',link);
+			         });
+			
+			         $('.tab${num} .ui-swipe-custom .go-right-${num}').click(function()
+			         {
+			         	thistabnum=${num};
+			            window.mySwipe.next();
+			            $("#sphere"+thistabnum+"-1").attr("src", "${URLUtils.staticURL('mobile/images/1.png')}");
+			            $("#sphere"+thistabnum+"-2").attr("src", "${URLUtils.staticURL('mobile/images/2.png')}");
+			            $("#sphere"+thistabnum+"-3").attr("src", "${URLUtils.staticURL('mobile/images/3.png')}");
+			            var sphere = $("#sphere"+thistabnum+"-"+(window.mySwipe.getPos()+1));
+			            var scr = sphere.attr("src").replace(".png","-active.png");
+			            sphere.attr("src", scr);
+						var offerID =  sphere.attr("data-value");
+						$('#' + offerID).trigger('click');
+						var link = $("#sas-cto"+thistabnum).attr('href').replace(/pid=.*/,'pid=' + offerID);
+						$("#sas-cto"+thistabnum).attr('href',link);
+			         });
+				 	 $('.tab${num} .go-left-${num}').hover(function() {
+	       		        var src = $(".go-left-${num}").attr('src').indexOf('left-alt.gif') > -1 ? "${URLUtils.staticURL('mobile/images/go-left.gif')}" : "${URLUtils.staticURL('mobile/images/go-left-alt.gif')}";
+	        			$(".go-left-${num}").attr('src',src);
+
+	       				 return false;
+	   				 });
+				 	 $('.tab${num} .go-right-${num}').hover(function() {
+	       		        var src = $(".go-right-${num}").attr('src').indexOf('go-right-alt.gif') > -1 ? "${URLUtils.staticURL('mobile/images/go-right.png')}" : "${URLUtils.staticURL('mobile/images/go-right-alt.gif')}";
+	        			$(".go-right-${num}").attr('src',src);
+	       				 return false;
+	   				 });
+					$('.tab${num} .gift-switch :input').click(function(){
+						var offerID = $(this).val();
+						var link = $("#sas-cto").attr('href').replace(/pid=.*/,'pid=' + offerID);
+						$("#sas-cto").attr('href',link);
+						if($(this).prop("checked"))
+							$(this).parents(".gift-switch").addClass("dark");
+						else
+							$(this).parents(".gift-switch").removeClass("dark");
+					});					
+					$('.tab${num} #gift-num img').click(function(){
+						var offerID = $(this).attr("data-value");
+						$('#' + offerID).trigger('click');
+					});
+
+					
+					
+				 	 </script>
+
+				</div>
+				<!-- Swipe -->	<!-- VARIATION ATTRIBUTE GOES HERE -->
+				<div id="gift-num" class="center">
+				 <iscomment>
+					<isloop items="${cat.onlineProducts}" var="gift" status="gift_status">
+						  <img data-value="${gift.ID}" id="sphere${num}-${(gift_status.index + 1).toFixed()}" style="margin-top:30px;" src="${URLUtils.staticURL('mobile/images/' + (gift_status.index+1).toFixed() +'.png')}" width="" alt="">
+					</isloop>	
+				</iscomment>		
+				</div>
+				<iselse>
+				
+				<iscomment>Only one gift, no swipe needed</iscomment>
+					  	<isloop items="${cat.onlineProducts}" var="gift" status="gift_status">
+					     <div class="center">
+					       <isset name="kitName" value="${gift.name}" scope="page"/>
+					       <h1><isprint value="${Resource.msg('sas.wenhaircare','locale',null) + ' '+kitName}" encoding="off"/></h1>
+								<isif condition="${!empty(gift.shortDescription)&&!empty(gift.shortDescription.markup)}">
+									<p class="nameDesc"><isprint value="${gift.shortDescription.markup}" encoding="off"/></p>
+							    </isif>
+					      		<div class="l-panel">
+									<div class="productimage">
+										<isset name="kitProductImage" value="${gift.getImage('large',0)}" scope="page"/>
+										
+											
+										<iscomment>If image couldn't be determined, display a "no image" medium</iscomment>
+										<isif condition="${!kitProductImage}">
+											<isset name="thumbnailUrl" value="${URLUtils.staticURL('/images/noimagemedium.png')}" scope="page"/>
+										<iselse/>
+											<isset name="thumbnailUrl" value="${kitProductImage.url}" scope="page"/>						
+										</isif>
+										
+										<isset name="thumbnailAlt" value="${gift.name}" scope="page"/>
+										<isset name="thumbnailTitle" value="${gift.name}" scope="page"/>
+										<img src="${thumbnailUrl}" alt='<isprint value="${thumbnailAlt}" encoding="off"/>' title='<isprint value="${thumbnailTitle}" encoding="off"/>'/>
+										
+									 </div>
+									 <div class="orderlabel">
+									 
+									   <isif condition="${gift.master && gift.variationModel.variants.size() > 0}">
+					                      <a class="orderVarButton" onclick="javascript:app.sas.addFragranceFromOldSASMobile(this)">Order Now</a>
+										<iselse/>
+										  <a href="${URLUtils.url('CoCart-AddProduct','pid',gift.ID)}">Order Now</a> 								
+										</isif>
+									
+									</div>
+								<isif condition="${!empty(gift.longDescription)&&!empty(gift.longDescription.markup)}">
+									<div class="text"><isprint value="${gift.longDescription.markup}" encoding="off"/></div>
+								</isif>
+								
+								</div>
+					      		<isset name="kit1Name" value="" scope="page"/>
+								<isif condition="${'kitFrequency' in gift.custom}">
+									<isset name="kit1Name" value="${gift.custom.kitFrequency}" scope="page"/>
+								</isif>
+								
+                                <isset name="varAttrCollection" value="${gift.variationModel.productVariationAttributes}" scope="page"/>
+                               
+                                <isscript>
+                                  numGifts = "";
+
+						          switch(gift.variationModel.getAllValues(varAttrCollection[0]).length){
+							        case(1):
+							        	numGifts = Resource.msg('sas.full.one','locale',null);
+								        break;
+							        case(2):
+								        numGifts = Resource.msg('sas.full.two','locale',null);
+								        break;
+							        case (3):
+								        numGifts = Resource.msg('sas.full.three','locale',null);
+								        break;
+							        case (4):
+							        default:
+								        numGifts = Resource.msg('sas.full.four','locale',null);
+								        break;
+						            }
+                                </isscript> 
+                                	<div class="fragHeading"><strong>${Resource.msgf('sas.fragrances.text','locale',null,numGifts)}</strong></div>
+								<div class="h-lable">${Resource.msg('sas.selectyourkit.freg','locale',null)}</div>
+								
+										<span class="varprodid"></span>
+										<isloop items="${varAttrCollection}" var="varAttr" status="variant_count">
+											<ul class="fragranceul" <isif condition="${empty(kit1Name)}">masterID="${gift.ID}"</isif>>
+												<isset name="defaultVariant" value="${gift.variationModel.getDefaultVariant()}" scope="page" />
+												<isset name="defaultVariantVal" value="${gift.variationModel.getVariationValue(defaultVariant,varAttr)}" scope="page" /> 
+												<isloop items="${gift.variationModel.getAllValues(varAttr)}" var="varVal" status="varVal_count">
+												<isset name="selectedFlag" value="${(selectedVariationVal == varVal.value) || (selectedVariationVal =='' && varVal.value == defaultVariantVal.value)}" scope="page" />
+													<li val="${varVal.ID}" class='selected'>
+														<input type="radio"  class="${varAttr.ID}" name="fragrancegroup${offers_status.count}" value='<isprint value="${varVal.displayValue}" encoding="off"/>' <isif condition="${selectedFlag}">checked='checked'</isif> />
+														<isset name="varImg" value="${varVal.getImage('swatch',0)}" scope="page"/>
+														<isif condition="${!varImg}">
+															<isprint value="${varVal.displayValue}" encoding="off"/>
+														<iselse/>
+															<img src="${varImg.url}" alt="${varVal.displayValue}" title="${varVal.displayValue}" class="radioFragImg"/>
+															<isprint value="${varVal.displayValue}" encoding="off"/>
+														</isif>
+													</li>
+												</isloop>
+											</ul>
+										</isloop>
+										<isif condition="${!empty(kit1Name)}">
+										<div class="orderNowSideBySide">
+										<p class="deluxeOrderHeader"><isprint value="${kitName}" encoding="off"/></p>
+										<div class="OrderSubline">${Resource.msg('sas.selectyourkit','locale',null)}</div>
+											<ul class="kitselectionul">
+												<li masterID="${gift.ID}" class="selected">
+														<div class="opText"><isprint value="${kit1Name}" encoding="off"/>-  <span>Only <isprint value="${gift.variationModel.getDefaultVariant().getPriceModel().getPrice()}"/></span></div>
+												</li>
+											</ul>
+										</isif>
+											<isif condition="${gift.master && gift.variationModel.variants.size() > 0}">
+							                      <div class="orderVarButtonWraper">
+							                      	<iscomment>for showing different order button based on kit.</iscomment>
+							                      	<isif condition="${(kitName.indexOf('Deluxe') != -1) }">
+							                      			<isset name="buttonClassName" value="deluxe" scope="page"/>
+							                      	<iselse>
+							                      			<isset name="buttonClassName" value="basic" scope="page"/>
+							                      	</isif>
+							                      	<a class="orderVarButton-${buttonClassName}" onclick="javascript:app.sas.addFragranceFromOldSAS(this)">${Resource.msg('sas.addtokit','locale',null)}</a>
+							                      </div>
+							                      <iscomment><div class="hilite"><img width="170" height="23" alt="FREE SHIPPING" src="${URLUtils.staticURL('images/wen/fs_ribbon.gif')}" /></div></iscomment>
+							                      </div>     
+												<iselse/>
+												  <a href="${URLUtils.url('CoCart-AddProduct','pid',gift.ID)}">${Resource.msg('sas.ordernow','locale',null)}</a> 								
+											</isif>
+					      </div>
+					     </isloop><!-- end product loop -->
+					<script>
+					$(function()
+					 {
+						var prevSelection = "tab1";
+					
+						$("#tab ul li").click(function()
+						{
+							$(this).children("a").attr("data-tab-class");
+							var newSelection = $(this).children("a").attr("data-tab-class");
+							$("."+prevSelection).addClass("ui-screen-hidden");
+							$("."+newSelection).removeClass("ui-screen-hidden");
+							prevSelection = newSelection;
+						});
+					});
+					</script>		
+				</isif>
+				<isslot id="ProductBottom" context="category" description="Bottom Product Info" context-object="${cat}"/>		
+			
+		</div>
+		</isif>
+		</isloop>
+	
+<script language="javascript">
+jQuery(document).ready(function(){
+	$("#sphere1-2").attr("src", "${URLUtils.staticURL('mobile/images/2-active.png')}");
+	$("#sphere2-2").attr("src", "${URLUtils.staticURL('mobile/images/2-active.png')}");
+	$("#tab ul li").click(function()
+	{
+		$("#sphere1-1").attr("src", "${URLUtils.staticURL('mobile/images/1.png')}");
+		$("#sphere1-2").attr("src", "${URLUtils.staticURL('mobile/images/2-active.png')}");
+		$("#sphere1-3").attr("src", "${URLUtils.staticURL('mobile/images/3.png')}");
+		$("#sphere2-1").attr("src", "${URLUtils.staticURL('mobile/images/1.png')}");
+		$("#sphere2-2").attr("src", "${URLUtils.staticURL('mobile/images/2-active.png')}");
+		$("#sphere2-3").attr("src", "${URLUtils.staticURL('mobile/images/3.png')}");
+		
+		var	offerID = $("#sphere1-2").attr("data-value");
+		if(offerID){
+			//update tab active state
+			document.getElementById("sas-cto1").href=document.getElementById("sas-cto1").href.replace(/pid=.*/,'pid=' + offerID);
+		}
+		offerID = $("#sphere2-2").attr("data-value");
+		if(offerID){
+			//update tab active state
+			document.getElementById("sas-cto2").href=document.getElementById("sas-cto2").href.replace(/pid=.*/,'pid=' + offerID);
+		}
+		
+		$("#tab ul li").find("img").each(function( key, value ) {if(value.src.indexOf('-active')>-1){value.src=value.src.replace('-active.png','.png')}else{value.src=value.src.replace('.png','-active.png')}})
+		
+	})
+});
+
+$(function(){
+
+	var prevSelection = "tab1";
+
+    window.mySwipe = $('#mySwipe1').Swipe().data('Swipe');
+     
+	$("#tab ul li").click(function()
+	{
+		$(this).children("a").attr("data-tab-class");
+		var newSelection = $(this).children("a").attr("data-tab-class");
+		$("."+prevSelection).addClass("ui-screen-hidden");
+		$("."+newSelection).removeClass("ui-screen-hidden");
+		prevSelection = newSelection;
+	});
+	
+	$("#tab ul li").click(function(){
+		var index = $("#tab ul li").index(this) + 1;
+		window.mySwipe = $('#mySwipe'+ index).Swipe().data('Swipe');
+	});
+});
+</script>
+	
+	</div>	
+    <iscomment> SAS Page Pixels</iscomment>
+    
+</div>
+</isdecorate>

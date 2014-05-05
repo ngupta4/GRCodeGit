@@ -1,0 +1,53 @@
+<!--- TEMPLATENAME: triggerseewhy.isml --->
+<isif condition="${'seeWhyIncluded' in dw.system.Site.current.preferences.custom && dw.system.Site.current.preferences.custom.seeWhyIncluded}">
+<isset name="emailVal" value="" scope="page"/>
+<isif condition="${'profile' in pdict.CurrentCustomer && null != pdict.CurrentCustomer.profile && null != pdict.CurrentCustomer.profile.email}">
+	<isset name="emailVal" value="${pdict.CurrentCustomer.profile.email}" scope="page"/>
+</isif>
+	<script type="text/javascript">
+	  cy.SUPPRESSDEFAULT = true;
+	  $(document).ready(function(){
+	  	$("#dwfrm_personinf_contact_email, #email").change(cy_checkFieldsAndGetImageSrc);
+	  	$("#dwfrm_personinf_contact_emailconfirm, #emailConfirm").change(cy_checkFieldsAndGetImageSrc);
+	  	$("#billFirstName").change(cy_checkFieldsAndGetImageSrc);
+		$("#billLastName").change(cy_checkFieldsAndGetImageSrc);
+		$("#billState").change(cy_checkFieldsAndGetImageSrc);
+		$("#paymentMethod").change(cy_checkFieldsAndGetImageSrc);
+	  });
+	  function getImageSrc()
+	  {
+	    cy.CUSTOMERCODE = "${dw.system.Site.current.preferences.custom.seeWhyCustomerCode}";
+	    cy.FunnelLevel = "2";
+	    if( "${emailVal}" == ""){
+	    	cy.UserId = $("#email").val();
+	    }else{
+    		cy.UserId = "${emailVal}";
+	    }
+	  }
+	  function cy_checkFieldsAndGetImageSrc() {
+	  // if SwapProducts changed the cy.CUSTOM3 value, then don't change it here!
+	  if ((typeof window.swapProducts === 'undefined') || (typeof window.cy.CUSTOM3 === 'undefined')) {
+		  		cy.CUSTOM3=jQuery('.coreidCY').val();
+		  	}else{
+		  		cy.CUSTOM = window.CUSTOM3;
+		  	}
+			cy.USERID=$("#dwfrm_personinf_contact_email, #email").val();
+			cy.CUSTOM1=$('#billFirstName').val();
+			cy.CUSTOM2=$('#billLastName').val();
+			cy.CUSTOM4=$('#billState').val();
+			cy.CUSTOM5="";
+			cy.FUNNELLEVEL='4';
+			if ($('paymentMethod').val() == 'PREPAY'){
+				cy.FUNNELLEVEL = 5;
+			} 
+			if (isEmailValid(cy.USERID)){
+				cy_getImageSrc();
+			}
+		}
+	
+	  function isEmailValid(emailAddress) {
+				var pattern = new RegExp(/^(("[\w-\s]+")|([\w-]+(?:\.[\w-]+)*)|("[\w-\s]+")([\w-]+(?:\.[\w-]+)*))(@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$)|(@\[?((25[0-5]\.|2[0-4][0-9]\.|1[0-9]{2}\.|[0-9]{1,2}\.))((25[0-5]|2[0-4][0-9]|1[0-9]{2}|[0-9]{1,2})\.){2}(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[0-9]{1,2})\]?$)/i);
+				return pattern.test(emailAddress);
+	  }
+	</script>
+</isif>

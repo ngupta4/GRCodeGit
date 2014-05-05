@@ -1,0 +1,55 @@
+/**
+* Demandware Script File
+* To define input and output parameters, create entries of the form:
+*
+* @<paramUsageType> <paramName> : <paramDataType> [<paramComment>]
+*
+* where
+*   <paramUsageType> can be either 'input' or 'output'
+*   <paramName> can be any valid parameter name
+*   <paramDataType> identifies the type of the parameter
+*   <paramComment> is an optional comment
+*
+* For example:
+*    @input currentSession : dw.system.Session
+*    @input isAutoLogin : Boolean
+*    @input isKitRequest : Boolean
+*    @input email : String
+*    @input brand : String
+*
+*/
+importPackage( dw.system );
+importPackage( dw.web );
+importPackage(dw.object );
+importPackage( dw.customer );
+importScript('int_gutheyrenker:common/libUtils.ds'); 
+
+function execute( args : PipelineDictionary ) : Number
+{
+	
+	
+		var domain:String = Site.current.getCustomPreferenceValue("GRCookiesDomain");
+		var preferences : CustomAttributes = 60*60*24*30;//dw.system.Site.getCurrent().preferences.custom.Credential_Cookies_Age;
+		if(!(args.isKitRequest)){
+			//Adding cookie for Brand
+			if(null!=args.brand && !empty(args.brand)){
+				var brandCookie:Cookie=new Cookie("brand",args.brand);
+				brandCookie.setMaxAge(-1);
+				brandCookie.setDomain(domain);
+				brandCookie.setPath("/"); 
+				request.addHttpCookie(brandCookie);
+			}
+			//Adding a Soft Logged in Cookie
+			if((null == args.isAutoLogin ||args.isAutoLogin == false) && (args.brand != Resource.msg('site.configutation.brand','configuration',null))){
+			  if(null!=args.email && !empty(args.email)){
+				var softCookie:Cookie=new Cookie("soft",args.email);
+				softCookie.setMaxAge(-1);
+				softCookie.setDomain(domain);
+				softCookie.setPath("/"); 
+				request.addHttpCookie(softCookie);
+			  }
+			}
+		}
+	return PIPELET_NEXT;
+}
+

@@ -1,0 +1,39 @@
+<isdecorate template="mobile/pt_mobile">
+<isinclude template="mobile/util/modules"/>
+
+<iscomment>
+	This template visualizes the first step of the single shipping checkout
+	scenario. It renders a form for the shipping address and shipping method
+	selection. Both are stored at a single shipment only.
+</iscomment>
+
+<iscomment>Report this checkout step (we need to report two steps)</iscomment>
+<isset name="checkoutstep" value="${2}" scope="pdict"/>
+<isset name="checkoutname" value="${'ShippingAddress'}" scope="pdict"/>
+
+<isset name="checkoutstep" value="${3}" scope="pdict"/>
+<isset name="checkoutname" value="${'ShippingMethod'}" scope="pdict"/>
+
+<div id="singleshipping" class="mobilecontent">
+
+    <h3>${Resource.msg('shipping.selectshippingaddress','checkout',null)}</h3>
+    <form action="${URLUtils.httpsContinue()}" method="post" id="RegistrationForm">
+
+    <isif condition="${!pdict.CurrentCustomer.isAnonymous() && pdict.CurrentCustomer.profile.addressBook.addresses.size() > 0}">
+   		<a href="${URLUtils.https('mCOShipping-CreateShipping','EditMode', true)}" class="linkbar">${Resource.msg('singleshipping.createheader','checkout',null)}</a>
+    	
+    	<div>
+    	
+    	<h4>${Resource.msg('shipping.selectfromaddresbook','checkout',null)}</h4>
+    	
+    	<isloop items="${pdict.CurrentCustomer.profile.addressBook.addresses}" var="address">	
+    		<a href="${URLUtils.https('mCOShipping-CreateShipping','addressID',address.ID)}" class="linkbar"><isprint value="${address.ID}"/></a>
+		</isloop>
+
+    	</div>
+    	
+    </isif>
+    </form>
+</div><!-- END: checkout -->
+
+</isdecorate>

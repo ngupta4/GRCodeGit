@@ -1,0 +1,38 @@
+<!--- TEMPLATENAME: simplecheckout.isml --->
+<isdecorate template="content/checkout/pt_checkout">
+<iscomment>
+	This template is created before the 'wrapper' template, so we can set
+	up the template configuration for the 'pt_storefront' template right here.
+</iscomment>
+<isscript>
+	importPackage(dw.object);
+	importPackage(dw.catalog);
+	
+	var CCC : Object = pdict.CurrentCampaignConfig;
+	var campaignCode : String = CCC.campaignCode;
+	
+	var showHeader : boolean = CCC.showHeader;
+	var showFooter : boolean = CCC.showFooter;
+	var showNav : boolean = CCC.showNav;
+	var showOrderButton : boolean = CCC.showOrderButton;
+	
+	var category : dw.catalog.Category = CCC.getCampaignCategory();
+</isscript>
+<isinclude template="util/modules"/>
+<isinclude template="util/reporting/ReportBasket.isml"/>
+		
+		<ischeckoutbreadcrumbs />
+		
+		<div class="content_box_outer_pdp">
+			<div class="content_box_inner_sp">
+				<isinclude template="checkout/cart/cocart" />
+				<isinclude template="checkout/personinformation/personinformation"/>
+			</div>
+		</div>		
+		
+		<isset name="OmniturePage" value="SimpleCheckout" scope="pdict">
+		
+		<script>document.write('<s'+'cript language="JavaScript" src="https://view.atdmt.com/jaction/grkpmk_McKennaShoppingCart_1"></s'+'cript>')</script><noscript><iframe src="https://view.atdmt.com/iaction/grkpmk_McKennaShoppingCart_1" width="1" height="1" frameborder="0" scrolling="No" marginheight="0" marginwidth="0" topmargin="0" leftmargin="0"></iframe></noscript>
+		<script language="javascript" src="https://t4.mgplatform.com/gr/pm_sr.js"></script>
+		
+</isdecorate>

@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<form xmlns="http://www.demandware.com/xml/form/2008-04-19">
+	<include formid="contact" name="contactinf"/>
+	<include formid="creditcard" name="paymentinf"/>
+	<include formid="billtoaddress" name="addressinf"/>
+
+	<include formid="shipptoaddress" name="addressinf"/>
+	
+	<include formid="account" name="accountinf"/>
+	
+	<field formid="agree" label="forms.checkout.agree.label" type="boolean" mandatory="true" value-error="forms.checkout.agree.value-error"/>
+	<field formid="useAsBillingAddress" label="forms.checkout.useasbillingaddress.label" type="boolean" default-value="true" mandatory="false" />
+	
+	<field formid="ukey" label="forms.personinf.ukey.label" type="string" mandatory="true" missing-error="forms.checkout.ukey.missing-error" valid-error="forms.checkout.ukey.valid-error" />
+	<!-- all possible actions performed on checkout -->
+	<action formid="apply" valid-form="true" />
+</form>

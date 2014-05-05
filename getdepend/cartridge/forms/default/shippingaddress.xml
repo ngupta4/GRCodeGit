@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+<form xmlns="http://www.demandware.com/xml/form/2008-04-19">
+
+	<field formid="firstName" label="profile.firstname" type="string" mandatory="true" binding="firstName" max-length="50" 
+			missing-error="forms.errorzip" range-error="forms.address.field.invalid"
+			regexp="^[a-zA-Z ]+$" parse-error="forms.address.field.invalid" />
+	<field formid="lastName" label="profile.lastname" type="string" mandatory="true" binding="lastName" max-length="50" 
+			missing-error="forms.address.lastname.missing" range-error="forms.address.field.invalid"
+			regexp="^[a-zA-Z ]+$" parse-error="forms.address.field.invalid" />
+	<field formid="address1" label="forms.address1" type="string" mandatory="true" binding="address1" max-length="50" missing-error="address.addressline1.missingerror" range-error="forms.address.field.invalid" />
+	<field formid="address2" label="forms.address2" type="string" mandatory="false" binding="address2" max-length="50" range-error="forms.address.field.invalid" />
+	<field formid="city" label="forms.city" type="string" mandatory="true" binding="city" min-length="2" max-length="50" missing-error="forms.address.city.missing" range-error="forms.address.field.invalid" />
+	<field formid="zip" label="forms.zippostalcode" type="string" mandatory="true" min-length="5" max-length="10" 
+			regexp="^(\d{5})(-\d{4})?$" binding="postalCode" missing-error="forms.errorzip" range-error="address.zip.invaliderror" 
+			parse-error="address.zip.invaliderror" />
+	<field formid="country" label="forms.country" mandatory="true" default-value="US" type="string"  binding="countryCode" missing-error="forms.address.country.missing" value-error="forms.address.field.invalid" />
+	
+	<!-- use global state list -->
+	<include formid="states" name="states"/>
+
+	<!-- phone is not mandatory for shipping addresses -->
+	<field formid="phone" label="profile.phone" type="string" mandatory="false" binding="phone" max-length="20" missing-error="forms.address.phone.missing" range-error="forms.address.field.invalid" />
+	<field formid="eveningPhone" label="profile.eveningPhone" type="string" mandatory="false" binding="eveningPhone" max-length="20" missing-error="forms.address.phone.missing" range-error="forms.address.field.invalid" />
+	
+	<!-- actions provided by the edit shipping address dialog -->
+	<action formid="apply" valid-form="true"/>
+	<action formid="remove" valid-form="false"/>
+</form>

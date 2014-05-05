@@ -1,0 +1,106 @@
+<!--- TEMPLATENAME: billinginformation.isml --->
+<p class="required_text"><span class="requiredindicator">*</span> ${Resource.msg('cart.requiredtext', 'rendering', null)}</p>
+
+<div class="checkout_box cb_billing">
+	<h4>${Resource.msg('personinformation.billinginformation.label','rendering',null)}</h4>
+	<div class="checkout_box_inner">
+	
+		<isif condition="${!empty(pdict.CurrentForms.personinf.billtoaddress.error)}">
+			<div class="errorform">
+				${pdict.CurrentForms.personinf.billtoaddress.error}
+			</div>
+		</isif>
+
+	    <div class="formfield first_name">
+	    	<isinputfield id="billFirstName" formfield="${pdict.CurrentForms.personinf.billtoaddress.firstName}" type="input" attribute1="requiredmesage" value1="${Resource.msg('forms.addressinf.firstname.missing','forms',null)}" attribute2="tabindex" value2="9">
+	    </div>
+	    
+	    <div class="formfield last_name">
+	    	<isinputfield id="billLastName" formfield="${pdict.CurrentForms.personinf.billtoaddress.lastName}" type="input" attribute1="requiredmesage" value1="${Resource.msg('forms.addressinf.lastname.missing','forms',null)}" attribute2="tabindex" value2="10">
+	    </div>
+	    
+	    <div class="formfield first address">
+	   		<isinputfield id="billAddress" formfield="${pdict.CurrentForms.personinf.billtoaddress.address1}" type="input" attribute1="requiredmesage" value1="${Resource.msg('forms.addressinf.address1.missing','forms',null)}" attribute2="tabindex" value2="11">
+	    </div>
+	    
+	    <div class="formfield second address">
+	    	<isinputfield id="billAddress2" formfield="${pdict.CurrentForms.personinf.billtoaddress.address2}" type="input" attribute1="tabindex" value1="12">
+	    </div>
+	    
+	    <div class="formfield citystatezip">										
+			<div class="city" style="margin:0px;">
+	    		 <isinputfield id="billCity" formfield="${pdict.CurrentForms.personinf.billtoaddress.city}" type="input" attribute1="requiredmesage" value1="${Resource.msg('forms.addressinf.city.missing','forms',null)}" attribute2="tabindex" value2="13">
+	    	</div>
+			<div class="state">
+				<isinputfield id="billState" formfield="${pdict.CurrentForms.personinf.billtoaddress.states.stateUS}" type="select" attribute1="requiredmesage" value1="${Resource.msg('forms.addressinf.state.missing','forms',null)}" attribute2="tabindex" value2="14">
+			</div>
+			<div class="zip">
+	    		<isinputfield id="billZip" formfield="${pdict.CurrentForms.personinf.billtoaddress.zip}" type="input" attribute1="requiredmesage" value1="${Resource.msg('forms.addressinf.zip.missing','forms',null)}" attribute2="tabindex" value2="15">    		   
+	    	</div>
+	    </div>
+	    <div class="formfield emailaddress">
+	    	<isinputfield id="billEmail" formfield="${pdict.CurrentForms.personinf.contact.email}" type="input" attribute1="requiredmesage" value1="${Resource.msg('forms.addressinf.email.missing','forms',null)}" attribute2="tabindex" value2="16"/>
+	    </div>
+	    <div class="formfield email_confirm">
+	    	<isinputfield formfield="${pdict.CurrentForms.personinf.contact.emailconfirm}" type="hidden" >
+	    </div>	
+	    <div class="formfield phone">
+	    	<isinputfield id="billPhone" formfield="${pdict.CurrentForms.personinf.contact.daytimephone}" type="input" attribute1="requiredmesage" value1="${Resource.msg('forms.addressinf.phone.missing','forms',null)}" attribute2="tabindex" value2="17"/>
+	    </div>
+	    <div class="formfield sameAsBilling">
+	    	<isinputfield id="sameAsBilling" formfield="${pdict.CurrentForms.personinf.useAsBillingAddress}" type="checkbox" />
+	    </div>
+	    
+	    <div style="display: none">
+    		<input type="hidden" value="US" name="${pdict.CurrentForms.personinf.billtoaddress.country.htmlName}">
+    	</div>
+    </div>
+</div>
+
+<script type="text/javascript">
+	jQuery(document).ready(function() {
+		jQuery("input[name=${pdict.CurrentForms.personinf.useAsBillingAddress.htmlName}]").click(function() {
+			if(jQuery(this).is(":checked")) {
+				jQuery(".cb_shipping").hide();
+			} else {
+				jQuery(".cb_shipping").show();
+			}
+		});
+		<isif condition="${!showOrderFormAndTotals}">
+		jQuery(".cb_billing input").each(function() {
+			var total = (jQuery(this).attr("tabindex")-0) + 15;
+			jQuery(this).attr("tabindex",total);
+		});
+		</isif>
+		jQuery("#dwfrm_cart").submit(function(){
+    		var email = jQuery("input[name=dwfrm_personinf_contact_email]").val();
+    		jQuery("input[name=dwfrm_personinf_contact_emailconfirm]").attr("value",email);
+    		
+    		if(jQuery("input[name=${pdict.CurrentForms.personinf.useAsBillingAddress.htmlName}]").is(":checked")){
+	    		var firstName = jQuery("input[name=dwfrm_personinf_billtoaddress_firstName]").val(); 
+	            jQuery("input[name=dwfrm_personinf_shipptoaddress_firstName]").attr("value",firstName);
+	           
+	            var lastName = jQuery("input[name=dwfrm_personinf_billtoaddress_lastName]").val(); 
+	            jQuery("input[name=dwfrm_personinf_shipptoaddress_lastName]").attr("value",lastName);
+	           
+	            var shipAddress1 = jQuery("input[name=dwfrm_personinf_billtoaddress_address1]").val(); 
+	            jQuery("input[name=dwfrm_personinf_shipptoaddress_address1]").attr("value",shipAddress1);
+	           
+	            var shipAddress2 = jQuery("input[name=dwfrm_personinf_billtoaddress_address2]").val(); 
+	            jQuery("input[name=dwfrm_personinf_shipptoaddress_address2]").attr("value",shipAddress2);
+	           
+	            var shipCity = jQuery("input[name=dwfrm_personinf_billtoaddress_city]").val(); 
+	            jQuery("input[name=dwfrm_personinf_shipptoaddress_city]").attr("value",shipCity);
+	           
+	            var shipState = jQuery("#billState").val(); 
+	             jQuery("#shipState").val(shipState);
+	           		            
+	            var shipZip = jQuery("input[name=dwfrm_personinf_billtoaddress_zip]").val(); 
+	            jQuery("input[name=dwfrm_personinf_shipptoaddress_zip]").attr("value",shipZip);
+	           
+	            var shipCountry = jQuery("input[name=dwfrm_personinf_billtoaddress_country]").val(); 
+	            jQuery("input[name=dwfrm_personinf_shipptoaddress_country]").attr("value",shipCountry);
+	     	}
+   		});
+	});
+</script>

@@ -1,0 +1,19 @@
+<isdecorate template="rendering/folder/pt_contentpage">
+<isinclude template="util/modules"/>
+
+<iscomment>create reporting event</iscomment>
+<isinclude template="util/reporting/ReportSearch.isml"/>
+
+<div class="mainWrapper">
+	<div class="pageWrapper">
+	 <isif condition="${empty(pdict.Content.custom.categoryName)}">
+	              	<isset name="folderName" value="${pdict.Content.classificationFolder.displayName}" scope="page"/>
+	               	<isslot id="top-contentpage-banner" context="category" description="Top banner content pages" context-object="${dw.catalog.CatalogMgr.getCategory(folderName)}"/>
+	  <iselse/>            
+	              	<isslot id="top-contentpage-banner" context="category" description="Top  banner content pages" context-object="${dw.catalog.CatalogMgr.getCategory(pdict.Content.custom.categoryName)}"/>
+	 </isif>
+		<isinclude template="content/content/htmlcontentasset" />
+	</div>
+</div>
+<isset name="OmniturePage" value="StaticContent" scope="pdict">
+</isdecorate>

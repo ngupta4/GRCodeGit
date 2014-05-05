@@ -1,0 +1,48 @@
+<isscript>
+	/**
+	  *						!ATTENTION! 
+	  *		Spaces and tabs in this file are crucial, do not edit it
+	  *		if you do not understand what it might change. 
+	  *
+	  *
+	  */
+
+	importScript( 'libFileAttachments.ds' );
+
+	var TestimonyFilePath = dw.io.File.LIBRARIES + dw.io.File.SEPARATOR+dw.system.Site.getCurrent().name + '/default/images/testimonials/'.replace(/\//g, dw.io.File.SEPARATOR) + pdict.Testimony.custom.ID;	
+	var boundary = (new Array(Math.round(Math.random()*10)+10)).join('-')+dw.util.UUIDUtils.createUUID(); 
+	var base64FileMap = getBase64EncodedAttachments(getFileList());
+	
+	function getFileList(): ArrayList {
+		var fileList : dw.util.ArrayList = new dw.util.ArrayList();
+		var fields = ['before1','before2','before3','after1','after2','after3'];
+		var file : dw.io.File = null;
+		
+		if((new dw.io.File(TestimonyFilePath)).exists()){
+			//if testimony object directory exists
+			for each(var fieldName in fields){					
+				if(!empty(fieldName) && !empty(file = new dw.io.File(TestimonyFilePath + dw.io.File.SEPARATOR + pdict.Testimony.custom[fieldName])) && file.exists()){
+					fileList.add(file);
+				}
+			}
+		}
+		return fileList;
+	}
+	
+	
+</isscript><iscontent type="${'multipart/mixed; boundary='+boundary}">
+<isprint value="${'--'+boundary}" encoding="off"/>
+Content-Type: text/html; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+<isinclude template="content/testimony/email_body" />
+<isif condition="${ !empty(base64FileMap) }">
+<isloop items="${ base64FileMap.keySet() }" var="key">
+<isset name="fileContent" value="${ base64FileMap.get(key) }" scope="page"/><isprint value="${'--'+boundary}" encoding="off"/>
+Content-Type: image/<isif condition="${/\.png$/i.test(key)}">png<iselse/>jpeg</isif>; name="${key}"
+Content-Description: ${key}
+Content-Disposition: attachment; filename="${key}"; size=${fileContent.length}; creation-date="${(new Date()).toISOString()}"; modification-date="${(new Date()).toISOString()}"
+Content-Transfer-Encoding: base64
+
+${fileContent}</isloop>
+</isif><isprint value="${'--'+boundary+'--'}" encoding="off"/>

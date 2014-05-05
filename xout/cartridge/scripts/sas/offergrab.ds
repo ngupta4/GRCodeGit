@@ -1,0 +1,129 @@
+/**************************************************************************
+* Grab offers for SAS, so they don't have to be hardcoded in the templates.
+* As of today, the system is set up to store offer A codes in the following places:
+
+*  Left SAS Panel  - Continuity : Current CampaignConfiguration object offer code field
+                   - 1-shot     : Continuity's Product object GiftSelectSKUs field
+                   
+   Right SAS Panel - Continuity : Content Slots - xout-<campaigncode> -> xout-<campaigncode>-sidebyside - 
+                                  alterate-sas-offer-slot
+   				   - 1-shot     : Continuity's Product object GiftSelectSKUs field
+   				   
+   SAS B and C still store their offer codes in Site Preferences -> Storefront Configs
+* 
+* -dsweeney 2/24/2012
+***/
+importPackage( dw.system );
+importPackage( dw.util );
+importPackage( dw.object );
+importPackage( dw.web );
+importPackage( dw.catalog );
+importPackage( dw.content );
+importScript('guthyrenker_core:common/libUtils.ds');
+
+//return popup text array when fed a valid offer code
+function getPopUpText(offer:String){
+	var prod : Product = ProductMgr.getProduct(offer);
+	var popUpList : ArrayList = new ArrayList();
+	if (!empty(prod)) {
+		if (!empty(prod.custom.popUpDetails)) {
+			var popupText : Text = prod.custom.popUpDetails;	
+			popUpList.add(popupText);
+		}
+		if (!empty(prod.custom.popUpDetailsTitle)) {
+			var popupTitle : String = prod.custom.popUpDetailsTitle;	
+			popUpList.add(popupTitle);
+		}
+	}
+	return popUpList;
+}
+
+
+
+function getOfferAndSkus(offer:String) {
+	var offerList : ArrayList = new ArrayList();
+	var prod : Product = ProductMgr.getProduct(offer);
+	
+	if (!empty(prod)) {
+		
+		offerList.add1(prod.ID);	
+		
+		if (!empty(prod.custom.giftSelectSKUs)) {
+			var altSKUs : ArrayList = prod.custom.giftSelectSKUs.split(',');	
+		
+			offerList.add(altSKUs);
+		}
+	}
+			
+	return offerList;
+}
+
+//returns continuity offer always in array index 0
+function getLeftOffersA() {
+	var CCC : Object = getCurrentCampaignConfig();
+	var offerList : ArrayList = new ArrayList();
+
+	if (!empty(CCC)) {
+		var coreProduct : Product = getCoreOffer(CCC);
+		
+		if (!empty(coreProduct)) {
+			offerList.add1(coreProduct.ID);
+			
+			if(!empty(coreProduct.custom.giftSelectSKUs) ) {
+				var altSKUs : ArrayList = coreProduct.custom.giftSelectSKUs.split(',');	
+				offerList.add(altSKUs);
+			} 
+			
+		}
+			
+	}
+	
+	return offerList;
+}
+
+function getLeftOffersB() {
+	var offerList : ArrayList = null;
+	var continuityOffer : String = dw.system.Site.getCurrent().preferences.custom.offerBProducts[0];
+	
+	offerList = getOfferAndSkus(continuityOffer);
+	
+	return offerList;
+}
+
+function getLeftOffersC() {
+	var offerList : ArrayList = null;
+	var continuityOffer : String = dw.system.Site.getCurrent().preferences.custom.offerCProducts[0];
+	
+	offerList = getOfferAndSkus(continuityOffer);
+	
+	return offerList;
+}
+			
+
+
+//kinda fucked up but grabbing the content slot is weird.
+//pass in product ID and returns an arraylist containing offer and alternate offer codes
+function getRightOffersA(offer:String) {
+	
+	return getOfferAndSkus(offer);
+	
+}
+
+function getRightOffersB() {
+	var offerList : ArrayList = null;
+	var continuityOffer : String = dw.system.Site.getCurrent().preferences.custom.offerBProducts[1];
+	
+	offerList = getOfferAndSkus(continuityOffer);
+	
+	return offerList;
+}
+
+function getRightOffersC() {
+	var offerList : ArrayList = null;
+	var continuityOffer : String = dw.system.Site.getCurrent().preferences.custom.offerCProducts[1];
+	
+	offerList = getOfferAndSkus(continuityOffer);
+	
+	return offerList;
+}
+		

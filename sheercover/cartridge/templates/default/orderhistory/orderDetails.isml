@@ -1,0 +1,14 @@
+<iscontent type="application/json" charset="UTF-8" compact="true"/>
+{ <isloop items="${pdict.OrderDetailsListItr}" var="order" status="loopstate">
+	"ID": "<isprint value="${order.id}" />",
+	"ShipName":"<isprint value="${order.shippingAddress.firstName}" /> <isprint value="${order.shippingAddress.lastName}" />",
+	"BillName":"<br/><isprint value="${order.billingaddress.firstName}" /> <isprint value="${order.billingaddress.lastName}" />",
+	"ShippingAddress":"<isprint value="${order.shippingAddress.address}" /><br/><isprint value="${order.shippingAddress.city}" /><br/><isprint value="${order.shippingAddress.state}" /> <isprint value="${order.shippingAddress.postalCode}" /><br/><isprint value="${order.shippingAddress.countryCode}" />",
+    "BillingAddress":"<br/><isprint value="${order.billingaddress.address}" /><br/><isprint value="${order.billingaddress.city}" /><br/><isprint value="${order.billingaddress.state}" /> <isprint value="${order.billingaddress.postalCode}" /><br/><isprint value="${order.billingaddress.countryCode}" />",
+    "ActualPrice":"$<isprint value="${order.totalProductAmount}" />",
+    "ShippingHandling":"$<isprint value="${order.totalShippingAmount}" />",
+    "Tax":"$<isprint value="${order.totalTaxAmount}" />",
+    "Total":"$<isprint value="${order.totalOrderAmount}" />"
+    </isloop>
+}
+	

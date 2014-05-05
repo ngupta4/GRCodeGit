@@ -1,0 +1,65 @@
+/**
+* Demandware Script File
+* 	
+*	This script sets the default product of the campaign to be added to the basket if no pid is given in URL.
+*	Also, if product configuration parameters are present. 
+*	It checks for the first matching product in the products assigned to the campaign's category.
+*	It returns pipelet_error is no campaign is found, else it returns PID to be added to cart.
+*
+* For example:
+*	 @input CurrentHttpParameterMap : dw.web.HttpParameterMap Http Parameter Map
+*	 @input CurrentCampaignConfig : Object
+*    @output Pid : String
+*
+*/
+importPackage( dw.system );
+importPackage( dw.catalog);
+importScript("guthyrenker_core:common/libUtils.ds");
+
+function execute( args : PipelineDictionary ) : Number
+{
+	var CCC : Object = args.CurrentCampaignConfig;
+	if(notNull(CCC)) { 
+		var defaultPid : String = CCC.sasOfferCodes[0];
+		var defaultProduct : Product = ProductMgr.getProduct(defaultPid);
+		if(defaultProduct.master){
+			defaultPid = defaultProduct.variationModel.defaultVariant.ID; // Setting default pid to variant if product is a master.
+		}
+		
+		var	params : HttpParameterMap = args.CurrentHttpParameterMap;
+		if(params.getParameterCount() != 0){ // To prevent unneccessary looping of products.
+			var category : Category = CCC.getCampaignCategory();
+			var offerCodesIterator : Iterator = category.products.iterator(); // Getting products from assigned to campaign's category.
+			var maxParamMatchCount : Number = 0; //Maximum param match count found in all products.
+			
+			while(offerCodesIterator.hasNext()){
+				var product : Product = offerCodesIterator.next(); 
+				if(product.custom.defaultKitSelectionParameters != null){
+					var productParameters : Array = (product.custom.defaultKitSelectionParameters).split('&'); //Getting product attribute defaultKitSelectionParameters
+					var paramMatchCount : Number = 0;  // param match count in this product.
+					for each ( var paramName : String in params.getParameterNames() ){
+						var requestParameter : String = paramName+'='+params[paramName];
+						for each(var productParameter : String in productParameters){
+							if(productParameter.equalsIgnoreCase(requestParameter)){
+								paramMatchCount++;
+							}
+						}
+					}
+					if(paramMatchCount > maxParamMatchCount){
+						maxParamMatchCount = paramMatchCount;
+						defaultPid = product.ID;
+					}
+					if(maxParamMatchCount == params.getParameterCount()){
+						break;
+					}
+				}
+			}
+		}
+	    args.Pid = defaultPid;
+	}
+	else {
+		return PIPELET_ERROR;
+	}
+
+   return PIPELET_NEXT;
+}

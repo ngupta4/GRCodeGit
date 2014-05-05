@@ -1,0 +1,10 @@
+<!--- TEMPLATENAME: alternateoffer.isml --->
+<isinclude template="util/modules"/>
+<iscomment>make sure we have content at all</iscomment>
+<isif condition="${slotcontent != null}">
+	<isif condition="${!empty(slotcontent.content)}">
+		<isloop items="${slotcontent.content}" var="product" status="status">
+			<isinclude url="${URLUtils.url('Product-Offer','pid',product.ID)}" />
+		</isloop>
+	</isif>
+</isif>

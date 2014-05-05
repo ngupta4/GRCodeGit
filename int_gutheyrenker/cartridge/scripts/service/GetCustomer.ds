@@ -1,0 +1,134 @@
+/**
+*   @input emailId : String
+*   @input password: String 
+*   @input sessionId : String
+*   @input remoteIP : String
+*   @input Request : dw.system.Request
+*   @output loginAuthenticated : String
+*   @output member : String
+*	@output responseXMLObject:XML
+*	@output tempPassword: String
+*	@output CustomerStatusCode:String
+*	@output CustomerStatus:String
+*	@output CustomerSegment:String
+*/
+importPackage( dw.customer );
+importPackage( dw.system );
+importPackage( dw.util );
+importPackage( dw.web );
+importPackage( dw.io );
+importPackage( dw.web );
+importPackage( dw.net );
+importPackage( dw.crypto );
+importPackage( dw.object );
+importScript( "grmiddleware/libGRMiddleware.ds" );
+importScript('common/libUtils.ds');
+function execute( args : PipelineDictionary ) : Number
+{
+  		logInfo("GetCustomer : Inside Script");
+  	
+  	if (!(args.emailId)||!(args.password)) {  		
+  		Logger.debug("GetCustomer: email id or password null, Exit with error");	
+  		return PIPELET_ERROR;
+  	}
+  	 	
+  	
+  	//	Code to create the Request XML
+    var encryptedPassword : String= encryptPassword(args.password);
+
+  	var requestXML:String = "<?xml version='1.0' encoding='UTF-8'?><customerRequest xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' xsi:noNamespaceSchemaLocation='customerLoginRequest_0-1.xsd'><clientId>Demandware</clientId><sessionData><sessionId>"+args.sessionId+"</sessionId><ipAddress>"+args.remoteIP+"</ipAddress></sessionData><login><email>"+args.emailId+"</email><password>"+encryptedPassword+"</password></login></customerRequest>"; 
+  	
+  	//Get The UID from Request
+  	var request:Request = args.Request;
+    var uid:String = getCustomerUID(request);
+  	//Create URL
+  	var transactionID = getTransactionID();
+	var serviceURL : String = getServiceURL(args.emailId, uid, transactionID);
+  	logDebug ("LOGIN api URL :"+serviceURL);
+  	
+  	// Call GR API 
+	var http : HTTPClient = new HTTPClient();
+	
+	
+	//Code to Parse Response XML
+	var responseText : String = "";	 
+	var errorResponse : String = "";	
+	
+   	
+	http = callMWAPI(http, "POST", serviceURL,requestXML);
+	responseText = http.text;	      			
+	errorResponse = http.errorText;
+	if( !empty(errorResponse) ) {
+	        	responseText = errorResponse;
+	}   
+        
+	logInfo ("Login Customer response = "+ responseText);
+	logInfo ("Login Customer errorResponse = "+ errorResponse);
+	
+	if( !empty(responseText) ) {		
+		responseText= responseText.replace("&", "&amp;", "g");
+		var responseXML=new XML (responseText);	
+		var status = responseXML.status.toString();
+		if(status == '200'){
+			
+			args.member = responseXML.responseData.login.member.toString();
+			args.loginAuthenticated = responseXML.responseData.login.loginAuthenticated.toString();
+			
+			if(null!=responseXML.responseData.customer.ffc.customerSegment.toString()){
+				args.CustomerSegment = responseXML.responseData.customer.ffc.customerSegment.toString();
+			}
+			
+			//Set make user a successful login or not based on the customer status/code.
+			if(null!=responseXML.responseData.customer.ffc.customerStatus.toString())
+			{
+				args.CustomerStatus = responseXML.responseData.customer.ffc.customerStatus.toString();
+			}
+			if(null!=responseXML.responseData.customer.ffc.customerStatusCode.toString())
+			{
+				args.CustomerStatusCode = responseXML.responseData.customer.ffc.customerStatusCode.toString();
+			}			
+			//Seting the flag for temperary password.
+			if(null!=responseXML.responseData.login.tempPassword.toString())
+			{
+				args.tempPassword = responseXML.responseData.login.tempPassword.toString();
+			}  
+			args.responseXMLObject = responseXML;
+		}else{
+			getErrorResponse (responseXML);	
+			return PIPELET_ERROR;		
+		}
+	}
+	
+	/*New Changes*/
+	/*args.responseXMLObject=new XML ("<?xml version='1.0' encoding='UTF-8'?> <customerResponse xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' xsi:noNamespaceSchemaLocation='customerLoginResponse_0-1.xsd'> <status>200</status> <requestData> <method>login</method> <brand>PA</brand> <uid>VHgNyZ</uid> <trans>12233445514</trans> <email>grsmith@aol.com</email> <details>true</details> </requestData> <responseData> <login> <loginAuthenticated>true</loginAuthenticated> <tempPassword>false</tempPassword> <member>true</member> <mwid>35312</mwid> </login> <customer> <profile> <firstName>GRC</firstName> <lastName>WEBTEST</lastName> <email>johnsmith@gmail.com</email> <mwid>343</mwid> <account>069995926</account> <phones> <dayPhone>818-222-1111</dayPhone> <eveningPhone>310-555-1234</eveningPhone> </phones> <userAttributes> <userAttribute> <fieldName>age</fieldName> <fieldValue>30</fieldValue> </userAttribute> <userAttribute> <fieldName>skinType</fieldName> <fieldValue>dry</fieldValue> </userAttribute> <userAttribute> <fieldName>severity</fieldName> <fieldValue>mild</fieldValue> </userAttribute> <userAttribute> <fieldName>skinTone</fieldName> <fieldValue>medium</fieldValue> </userAttribute> <userAttribute> <fieldName>gender</fieldName> <fieldValue>male</fieldValue> </userAttribute> </userAttributes> </profile> <ffc> <email>johnsmith@gmail.com</email> <account>069995926</account> <instantAccess> <ffcOrderId>16400496</ffcOrderId> <ffcTransactionId>223792601</ffcTransactionId> </instantAccess> <customerStatusCode>1A</customerStatusCode> <customerStatus>member</customerStatus> <customerSegment>1</customerSegment> <addresses> <shippingSameAsBilling>true</shippingSameAsBilling> <billingAddress> <firstName>GRC</firstName> <lastName>WEBTEST</lastName> <address>3340 OCEAN PARK BLVD APT 3300</address> <city>SANTA MONICA</city> <state>CA</state> <postalCode>90405</postalCode> <countryCode>US</countryCode> <phones> <dayPhone>818-222-1111</dayPhone> <eveningPhone>310-555-1234</eveningPhone> </phones> </billingAddress> <shippingAddress> <firstName>GRC</firstName> <lastName>WEBTEST</lastName> <address>3450 OVERLAND AVE APT 2222</address> <city>LOS ANGELES</city> <state>CA</state> <postalCode>90034</postalCode> <countryCode>US</countryCode> <phones> <dayPhone>818-222-1111</dayPhone> <eveningPhone>310-555-1234</eveningPhone> </phones> </shippingAddress> </addresses> <payment><paypal><billingAgreementId>*************1393</billingAgreementId></paypal></payment> <continuityShipments> <firstOrderDate>04/15/2010</firstOrderDate> <maxKitSize>5</maxKitSize> <nextShipment> <kitName>PA4341 4PC 60D</kitName> <productNum>000414</productNum> <shipDate>01/31/2012</shipDate> <status>In Process</status> <products> <product> <productNum>000414</productNum> <title>PA4341 4PC 60D</title> <quantity>2</quantity> </product> <product> <productNum>800003</productNum> <title>PA0877 RENEW CLEANSER 4 OZ</title> <quantity>5</quantity> </product> </products> </nextShipment> <weeksBetweenShipments>16</weeksBetweenShipments> </continuityShipments> </ffc> </customer> </responseData> </customerResponse>");
+	*/
+	logInfo("GetCustomer : Exit");
+    return PIPELET_NEXT;
+}
+
+
+function getServiceURL(email : String, uid : String, trans: String) {
+	var baseURL : String = Site.current.getCustomPreferenceValue("middlewareAPIURL");
+	var brandID= Site.current.getCustomPreferenceValue("GRMProductLine");
+	baseURL= baseURL + "/customer/login/email/"+email+"/details/true/brand/"+brandID+"/uid/"+ uid +"/trans/"+trans ;
+	return baseURL
+}
+
+
+function configureProducts(totalProducts : Array){	
+		var productNum : String = "";
+     	var productTitle : String = "";
+     	var productQty : String = "";		
+		var productXml : String = "<products>";
+		for each(product in totalProducts){
+     			var productAttrbtList = product.split("||");
+     			productNum = productAttrbtList[0];
+     			productTitle = productAttrbtList[1];
+     			productQty = productAttrbtList[2];
+     			var tempProdXml = "<product><productNum>"+productNum+"</productNum><title><![CDATA["+productTitle+"]]></title><quantity>"+productQty+"</quantity></product>";
+     			productXml = productXml + tempProdXml;
+     		}
+     	productXml = productXml + "</products>";
+     	return productXml;
+}
+

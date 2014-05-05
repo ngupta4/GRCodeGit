@@ -1,0 +1,559 @@
+<isif condition="${pdict.changeBilling=='true'}">
+<isset name="pagetitle" value="${Resource.msg('pagetitle.billinginfo','account',null)}" scope="pdict"/>
+<iselse>
+<isset name="pagetitle" value="${Resource.msg('pagetitle.shippinginfo','account',null)}" scope="pdict"/>
+</isif>
+<isdecorate template="account/pt_account">
+<isinclude template="util/modules"/>
+ <istabdisplayed  tabid="AL"/>
+ <div class="pageWrapper accountContainer">
+	 <div class="accountForm addAddress">
+	 	 <iscomment>Include common framework to make tabs</iscomment>
+	
+	    <isif condition="${pdict.EditMode=='true'}">
+		    <isif condition="${pdict.changeShipping=='true'}">
+		    	<h2 class="formTitle">${Resource.msg('change.shipping.address','account',null)}</h2>
+		     	<div class="topLabel">
+		     		<span class="InfoTitle"><isprint value="${Resource.msg('change.note','account',null)}" encoding="off"/></span>
+		     		<p class="textInfo"><isprint value="${Resource.msg('chnge.shipping.note','account',null)}" encoding="off"/></p>
+		     	</div>
+		     	<isset name="OmniturePage" value="MyAccountShipping" scope="pdict">	
+			<iselseif condition="${pdict.changeBilling=='true'}">
+				<h2 class="formTitle">${Resource.msg('change.billing.address','account',null)}</h2>
+				<iscomment>
+				<div class="topLabel">
+					<span class="InfoTitle"><isprint value="${Resource.msg('change.note','account',null)}" encoding="off"/></span>
+					<p class="textInfo"><isprint value="${Resource.msg('chnge.note','account',null)}" encoding="off"/></p>
+				</div>
+				</iscomment>
+				<isset name="OmniturePage" value="MyAccountBilling" scope="pdict">	
+		    <iselse>
+			     <h2 class="formTitle">${Resource.msg('edit.address','account',null)}</h2>
+			     <isset name="OmniturePage" value="EditAddress" scope="pdict">
+		    </isif>
+		<iselse>
+		     <h2 class="formTitle">${Resource.msg('address.newAddress','account',null)}</h2>
+		     <isset name="OmniturePage" value="MyAccountAddressbookAdd" scope="pdict">
+	    </isif>
+	
+	    <isinclude template="util/errordisplay"/> 
+	    
+		<div  id="AddressForm" class="edit_address_form registrationForm" >	
+			<form action="${URLUtils.httpsContinue()}" method="post" name="EditAddressForm" id="EditAddressForm">
+				<fieldset>
+					<div id="editprofile" class="editaddress">	
+					
+						<isif condition="${pdict.Status != null && pdict.Status.isError()}">				 
+						 	<!--- Use the error code value to build an appropriate error message --->
+							<span class="error">
+								<isprint value="${Resource.msg('addressdetails.' + pdict.Status.code, 'account',null)}"/>
+							</span>
+						</isif>
+						
+						<isif condition = "${null!=pdict.genericError && !empty(pdict.genericError)}">
+						 <span class="errormessage"><isprint value="${pdict.genericError}"></span>
+						</isif>
+						<isif condition = "${pdict.isDuplicateAddress}">
+						 <span class="errormessage"><isprint value="${Resource.msg('address.duplicate.message','account',null)}"></span>
+						</isif>	
+				<iscomment>display select box if changing WEN Addresses </iscomment>
+				<isif condition="${(null!= pdict.changeShipping && pdict.changeShipping =='true')	|| (null!= pdict.changeBilling && pdict.changeBilling =='true')}">
+					<isif condition="${!empty(pdict.CurrentCustomer.profile.addressBook.addresses)}">
+						<div class="addresslistclass regRow">	
+						
+						<iscomment>Shipping Address Drop Down</iscomment>
+						<isif condition="${pdict.changeShipping=='true'}">			
+							<select name="${pdict.CurrentForms.profile.address.addressid.htmlName}" id="${pdict.CurrentForms.profile.address.addressid.htmlName}">
+								<isloop items="${pdict.CurrentCustomer.profile.addressBook.addresses}" var="address">
+									<isif condition ="${pdict.CurrentCustomer.profile.custom.shippingSameAsBilling == true}">
+										<isif condition ="${address.ID!=pdict.CurrentCustomer.profile.custom.billingAddressID}">
+											<option value="${address.ID}" <isif condition=${address.ID==pdict.CurrentForms.profile.address.addressid.value}>selected="selected"</isif> ><isprint value="${address.address1}"/></option>
+										</isif>
+									<iselse>
+											<option value="${address.ID}" <isif condition=${address.ID==pdict.CurrentForms.profile.address.addressid.value}>selected="selected"</isif> ><isprint value="${address.address1}"/></option>
+									</isif>
+								</isloop>
+											<option value="" <isif condition=${null==pdict.CurrentForms.profile.address.addressid.value}>selected="selected"</isif>>${Resource.msg('account.selectoraddnew','account',null)}</option>
+							</select>
+						<iscomment>Billing Address Drop Down</iscomment>
+						<iselseif condition="${pdict.changeBilling=='true'}">
+							<select name="${pdict.CurrentForms.profile.address.addressid.htmlName}" id="${pdict.CurrentForms.profile.address.addressid.htmlName}">
+								<isloop items="${pdict.CurrentCustomer.profile.addressBook.addresses}" var="address">
+									<isif condition ="${pdict.CurrentCustomer.profile.custom.shippingSameAsBilling == true}">
+										<isif condition ="${address.ID!=pdict.CurrentCustomer.profile.custom.shippingAddressID}">
+											<option value="${address.ID}" <isif condition=${address.ID==pdict.CurrentForms.profile.address.addressid.value}>selected="selected"</isif> ><isprint value="${address.address1}"/></option>
+										</isif>
+									<iselse>
+											<option value="${address.ID}" <isif condition=${address.ID==pdict.CurrentForms.profile.address.addressid.value}>selected="selected"</isif> ><isprint value="${address.address1}"/></option>
+									</isif>
+								</isloop>
+											<option value="" <isif condition=${null==pdict.CurrentForms.profile.address.addressid.value}>selected="selected"</isif>>${Resource.msg('account.selectoraddnew','account',null)}</option>
+							</select>
+						</isif>
+						
+						</div>
+					</isif>
+				</isif>		
+					
+				<div id="addAddressMessage" style="display:none;">
+					<h2><isprint value="${Resource.msg('address.create.new','account',null)}"></h2>
+				</div>	
+						
+			<!--  formChange id is used to identify any change made in fields -->			
+			<div class="formChange">
+						<div class="formfield addressid">
+							<isinputfield formfield="${pdict.CurrentForms.profile.address.addressid}" type="hidden"/>
+						</div>										
+						<div class="formfield regRow nameContainer">										
+						<div class="formfield  firstName">
+							<isinputfield formfield="${pdict.CurrentForms.profile.address.firstname}" type="input" attribute1="requiredmesage" value1="${Resource.msg('profile.firstname.missingerror','forms',null)}"/>
+						
+						</div>
+						<div class="formfield  lastName">
+							<isinputfield formfield="${pdict.CurrentForms.profile.address.lastname}" type="input" attribute1="requiredmesage" value1="${Resource.msg('profile.lastname.missingerror','forms',null)}"/>
+						</div>
+						</div>
+						<div class="formfield address1 regRow">
+							<isinputfield formfield="${pdict.CurrentForms.profile.address.address1}" type="input" attribute1="requiredmesage" value1="${Resource.msg('address.addressline1.missingerror','forms',null)}"/>
+						</div>
+						<div class="formfield address2 regRow">
+							<isinputfield formfield="${pdict.CurrentForms.profile.address.address2}" type="input"/>
+						</div>
+						<div class="regRow addressContainer">
+								<div class="formfield city">
+									<isinputfield formfield="${pdict.CurrentForms.profile.address.city}" type="input" attribute1="requiredmesage" value1="${Resource.msg('adress.city.missingerror','forms',null)}"/>
+							
+								</div>
+							<iscomment>States Start</iscomment>
+								<div class="formfield state" id="stateUS">			
+									<isinputfield formfield="${pdict.CurrentForms.profile.address.states.state}" type="select" attribute1="requiredmesage" value1="${Resource.msg('adress.state.missingerror','forms',null)}"/>
+								</div>
+							<iscomment>States End</iscomment>
+							<div class="formfield zipfield">
+								<isinputfield formfield="${pdict.CurrentForms.profile.address.zip}" type="input" attribute1="requiredmesage" value1="${Resource.msg('adress.zip.missingerror','forms',null)}"/>
+							</div>
+						</div>
+						<div class="formfield country regRow">
+							<isinputfield formfield="${pdict.CurrentForms.profile.address.country}" type="input"/>
+						</div>
+						<div class="formfield regRow phoneContainer">
+							<div class="label">${Resource.msg('day.phone','account',null)}&nbsp;
+							<isif condition="${null!=pdict.changeBilling && pdict.changeBilling=='true'}">
+								<span class="requiredindicator">*</span>
+							</isif>
+							</div>
+					 	<div class="formfield phone">
+		             	  <input type="text" id="phone1" <isif condition="${null!=pdict.changeBilling && pdict.changeBilling=='true'}"> class="small required"<iselse> class="small" </isif> maxlength="3" size="3"/>
+		                  <input type="text" id="phone2" <isif condition="${null!=pdict.changeBilling && pdict.changeBilling=='true'}">class="small required"<iselse> class="small"</isif> maxlength="3" size="3"/>
+		                  <input type="text" id="phone3" <isif condition="${null!=pdict.changeBilling && pdict.changeBilling=='true'}">class="numberbox required"<iselse> class="small"</isif> maxlength="4" size="6"/>
+						</div> 
+							<isinputfield formfield="${pdict.CurrentForms.profile.address.phone}" type="hidden" id="phonenumber"/>
+						<isif condition="${pdict.CurrentForms.profile.address.phone.valid!=true}">
+			              		<div class="errormessage">${Resource.msg('profile.dayphoneno.parseerror','forms',null)}</div>
+			            </isif>
+			           </div>
+			           
+					<iscomment>
+					<!--  Removed Evening Phone Number. -->
+					<div class="formfield phone">
+						<div class="label">${Resource.msg('evening.phone','account',null)}</div>
+		                	<div class="formfield phone">
+		             		  <input type="text" id="eveningphone1" class="small" maxlength="3" size="3"/>
+		                	  <input type="text" id="eveningphone2" class="small" maxlength="3" size="3"/>
+		                	  <input type="text" id="eveningphone3" class="numberbox " maxlength="4" size="6"/>
+							</div>
+							<isinputfield formfield="${pdict.CurrentForms.profile.address.eveningPhone}" type="hidden" id="eveningphone"/>
+							<isif condition="${pdict.CurrentForms.profile.address.eveningPhone.valid!=true}">
+			              	<div class="errormessage">${Resource.msg('profile.dayphoneno.parseerror','forms',null)}</div>
+			             </isif>
+					 </div>
+					 </iscomment>
+					<iscomment>
+					<div class="formfield checklist regRow">
+					     <div class="row">
+					        <label>
+							 <isinputfield formfield="${pdict.CurrentForms.profile.address.shippingAddress}" type="checkbox" label="false" class="checkinput"/>	
+							 <isprint value="${Resource.msg('forms.isshippingaddress', 'forms',null)}"/>
+						   </label>
+					    </div>
+					    <div class="row">
+					      <label>
+							<isinputfield formfield="${pdict.CurrentForms.profile.address.billingAddress}" type="checkbox" label="false" class="checkinput"/>
+							<isprint value="${Resource.msg('forms.isbillingaddress', 'forms',null)}"/>
+					     </label>
+					   </div>
+				   </div>
+				</iscomment>
+		</div><!-- END: editaddress -->	
+	</div><!--  END formChange  -->	
+						
+					<div class="actions">	
+						<isif condition="${pdict.EditMode=='true'}">
+							<button class="btnColorB aButton" type="submit" onclick="beforeSubmit()" value="${Resource.msg('global.apply','locale',null)}" 
+							name="${pdict.CurrentForms.profile.address.create.htmlName}" id="saveButtonId">
+								${Resource.msg('global.apply','locale',null)}								 
+							</button>				
+						<iselse>
+							<button class="btnColorB aButton" type="submit" onclick="beforeSubmit()" value="${Resource.msg('global.apply','locale',null)}" 
+							name="${pdict.CurrentForms.profile.address.create.htmlName}">
+								${Resource.msg('global.addAddress','locale',null)}
+							</button>
+						</isif>				
+						<a class="aButton" href="${URLUtils.https('Address-List')}" title="Cancel" >
+							${Resource.msg('profile.cancel','account',null)}
+					    </a>
+						<isif condition="${!empty(pdict.EditMode)}">
+							<iscomment>
+							not require as per psd
+							<button id="deleteBtn" class="abtn" type="button" value="${Resource.msg('global.delete','locale',null)}"><span>${Resource.msg('global.delete','locale',null)}</span></button></iscomment>
+						</isif>
+					</div><!-- END: actions -->
+					<input type="hidden" name="${pdict.CurrentForms.profile.secureKeyHtmlName}" value="${pdict.CurrentForms.profile.secureKeyValue}"/>
+				</fieldset>
+					
+			</form>
+		</div><!-- END: edit_address_form -->
+		<div class="requiredcaption regRow"> <span class="requiredindicator">*</span>${Resource.msg('global.requiredfield','locale',null)}</div>
+		<div class="confirmationcontainer regRow" id="confirmationcontainer" style="display:none;">
+			<div class="errorform">${Resource.msg('account.forbidden','account',null)}</div><!-- END: errorform -->
+			<button id="confirmBtn" type="button" class="aButton">
+				${Resource.msg('global.close','locale',null)}
+			</button>
+		</div>	
+	</div>
+</div>
+  
+<script type="text/javascript"><!--
+	app.URLs.submitDialogURL = '${URLUtils.httpContinue()}';
+	
+
+	// select credit card from list
+	function beforeSubmit()
+	{
+		if($("#dwfrm_profile_address_states_state").val()!=""){	    	
+	    	jQuery('#stateSpan').text("");	    	   		    	
+	    }else{	    	
+			jQuery('#stateSpan').text("${Resource.msg('adress.state.missingerror','forms',null)}");
+			return false;
+	    }
+	    
+		var textVal1 = jQuery("#phone1").val();
+		var textVal2 = jQuery("#phone2").val();
+		var textVal3 = jQuery("#phone3").val();
+	var textval = textVal1+textVal2+textVal3;
+	jQuery("input[id=phonenumber]").val(textval);
+
+	var textVal4 = jQuery("#eveningphone1").val();
+	var textVal5 = jQuery("#eveningphone2").val();
+	var textVal6 = jQuery("#eveningphone3").val();
+	var textval = textVal4+textVal5+textVal6;
+	jQuery("input[id=eveningphone]").val(textval);
+	
+	}
+	
+	jQuery(".addresslistclass select").change(function() {
+		var addID = jQuery(this).val();	 
+		if(addID!=null && addID!=""){	
+			// load card details
+			var url = app.util.appendParamToURL("${URLUtils.url('Address-SelectAddress')}",'addressID', addID);
+			var result = app.ajax.getJson({
+				url: url,
+				callback: function(data) {
+					if(!data || !data.address) {
+						return false;
+					}
+
+					jQuery("#addAddressMessage").hide();					
+					
+					jQuery("input[name=${pdict.CurrentForms.profile.address.addressid.htmlName}]").val(data.address.ID);
+					jQuery("input[name=${pdict.CurrentForms.profile.address.firstname.htmlName}]").val(data.address.firstName);
+					jQuery("input[name=${pdict.CurrentForms.profile.address.lastname.htmlName}]").val(data.address.lastName);
+					jQuery("input[name=${pdict.CurrentForms.profile.address.address1.htmlName}]").val(data.address.address1);
+					jQuery("input[name=${pdict.CurrentForms.profile.address.address2.htmlName}]").val(data.address.address2);
+					jQuery("input[name=${pdict.CurrentForms.profile.address.city.htmlName}]").val(data.address.city);
+					jQuery("input[name=${pdict.CurrentForms.profile.address.zip.htmlName}]").val(data.address.postalCode);
+					changeFormSelection(jQuery("select[name=${pdict.CurrentForms.profile.address.country.htmlName}]")[0], data.address.countryCode);
+					updateStateOptions(data.address.countryCode);
+					changeFormSelection(jQuery("select[name=${pdict.CurrentForms.profile.address.states.state.htmlName}]")[0], data.address.stateCode);
+
+					var acc1= data.address.phone.substr(0,3);
+					var acc2= data.address.phone.substr(3,3);
+					var acc3= data.address.phone.substr(6,4);
+					jQuery("#phone1").val(acc1);
+					jQuery("#phone2").val(acc2);
+					jQuery("#phone3").val(acc3);
+
+					var acc4= data.address.eveningPhone.substr(0,3);
+					var acc5= data.address.eveningPhone.substr(3,3);
+					var acc6= data.address.eveningPhone.substr(6,4);
+					jQuery("#eveningphone1").val(acc4);
+					jQuery("#eveningphone2").val(acc5);
+					jQuery("#eveningphone3").val(acc6);
+										
+					jQuery("#EditAddressForm span.errormessage").remove();         //added to remove error message on change of select button if value is available
+					jQuery("#EditAddressForm :input").removeClass("errormessage"); // remove errormessage class from all elements.
+				}
+			});
+		}else{
+
+			jQuery("#addAddressMessage").show();
+			
+			jQuery("input[name=${pdict.CurrentForms.profile.address.addressid.htmlName}]").val('');
+			jQuery("input[name=${pdict.CurrentForms.profile.address.firstname.htmlName}]").val('');
+			jQuery("input[name=${pdict.CurrentForms.profile.address.lastname.htmlName}]").val('');
+			jQuery("input[name=${pdict.CurrentForms.profile.address.address1.htmlName}]").val('');
+			jQuery("input[name=${pdict.CurrentForms.profile.address.address2.htmlName}]").val('');
+			jQuery("input[name=${pdict.CurrentForms.profile.address.city.htmlName}]").val('');
+			jQuery("input[name=${pdict.CurrentForms.profile.address.zip.htmlName}]").val('');
+			jQuery("#phone1").val('');
+			jQuery("#phone2").val('');
+			jQuery("#phone3").val('');
+			jQuery("#eveningphone1").val('');
+			jQuery("#eveningphone2").val('');
+			jQuery("#eveningphone3").val('');
+			changeFormSelection(jQuery("select[name=${pdict.CurrentForms.profile.address.states.state.htmlName}]")[0], '');
+			changeFormSelection(jQuery("select[name=${pdict.CurrentForms.profile.address.country.htmlName}]")[0],'');
+			updateStateOptions(data.address.countryCode);
+			
+		}	
+		
+	});
+
+	// updates the options in the states field according to the selection in the country field
+	function updateStateOptions(countrySelection) {
+		var newOptions = null;
+		switch (countrySelection) {
+		case 'US':
+			newOptions = jQuery("select[name=${pdict.CurrentForms.singleshipping.shippingAddress.addressFields.states.stateUS.htmlName}]").children().clone();
+			break;
+		case 'CA':
+			newOptions = jQuery("select[name=${pdict.CurrentForms.singleshipping.shippingAddress.addressFields.states.stateCA.htmlName}]").children().clone();
+			break;
+		case 'DE':
+			newOptions = jQuery("select[name=${pdict.CurrentForms.singleshipping.shippingAddress.addressFields.states.stateDE.htmlName}]").children().clone();
+			break;
+		default:
+			return;
+		}
+		if (newOptions != null) {
+			jQuery("select[name=${pdict.CurrentForms.singleshipping.shippingAddress.addressFields.states.state.htmlName}]").children().remove();
+			jQuery("select[name=${pdict.CurrentForms.singleshipping.shippingAddress.addressFields.states.state.htmlName}]").append(newOptions);
+			jQuery("select[name=${pdict.CurrentForms.singleshipping.shippingAddress.addressFields.states.state.htmlName}]").attr("disabled", false);
+		}
+	}
+
+	//changes the selection of the given form select to the given value
+	function changeFormSelection(selectElem, selectedValue)
+	{
+		if(!selectElem) return;
+		var options = selectElem.options;
+		if(options.length > 0) {
+			// find index of value to select
+			var idx = 0;
+			for(var i=0; i<options.length; i++) {
+				if(options[i].value != selectedValue) continue;
+				idx = i; break;
+			}
+			selectElem.selectedIndex = idx;
+		}
+	}
+
+	
+	
+
+	//updates the state label depending on the given contry code
+	//if the flag updateSelection is set to true the state selection
+	//changes to the first possible select option based on the country
+	function updateStateLabel(countryCode, updateSelection) {
+		var label = "${Resource.msg('forms.state','forms',null)}";
+		if(countryCode == "CA") {
+			label = "${Resource.msg('forms.province','forms',null)}";
+		}
+		jQuery("div.state > .label > .labeltext").html(label);
+
+		if(updateSelection) {
+			var initialOption = "##";
+			if(countryCode == "US") {
+				initialOption = "";
+			} else if(countryCode == "CA") {
+				initialOption = "AB";
+			}
+			changeFormSelection(jQuery("select[name=${pdict.CurrentForms.profile.address.states.state.htmlName}]")[0], initialOption);
+		}
+
+		if (countryCode == '') {
+			jQuery("select[name=${pdict.CurrentForms.profile.address.states.state.htmlName}]").attr("disabled","disabled");
+		} else {
+			jQuery("select[name=${pdict.CurrentForms.profile.address.states.state.htmlName}]").removeAttr("disabled");
+		}
+	}
+
+	// changes the selection of the given form select to the given value
+	function changeFormSelection(selectElem, selectedValue)
+	{
+		if(!selectElem) return;
+		var options = selectElem.options;
+		if(options.length > 0) {
+			// find index of value to select
+			var idx = 0;
+			for(var i=0; i<options.length; i++) {
+				if(options[i].value != selectedValue) continue;
+				idx = i; break;
+			}
+			selectElem.selectedIndex = idx;
+		}
+	}
+		
+	jQuery(document).ready(function() {
+
+		$("#eveningphone1,#eveningphone2,#eveningphone3,#phone1,#phone2,#phone3").keyup(function () {
+		    var maxLength = $(this).attr('maxlength');
+			if($(this).val().length == maxLength) {
+				$(this).next('span').remove();
+		        $(this).next().focus();
+		       
+		    }			
+		});
+
+		$("#phone1,#phone2,#phone3").keydown(function(event) {		      
+		      if ( event.keyCode == 46 || event.keyCode == 8 || event.keyCode == 9 || event.keyCode == 27 || event.keyCode == 13 || (event.keyCode == 65 && event.ctrlKey === true) || (event.keyCode >= 35 && event.keyCode <= 39)) {
+		        return;
+		      }
+		      else {
+		      
+		        if (event.shiftKey || (event.keyCode < 48 || event.keyCode > 57) && (event.keyCode < 96 || event.keyCode > 105 )) {
+		          event.preventDefault();
+		        }
+		      }
+		    });
+		//Hide the Message of Create or Add new Address
+		jQuery("#addAddressMessage").hide();
+		
+		//Enabled button on change field
+		jQuery("#saveButtonId").attr("disabled","disabled");
+		jQuery("#saveButtonId").addClass("buttonDisable");
+		jQuery("#EditAddressForm input,#EditAddressForm select").keypress(function(){
+			jQuery("#saveButtonId").removeAttr("disabled");
+			jQuery("#saveButtonId").removeClass("buttonDisable");		
+		});
+		jQuery("#EditAddressForm input,#EditAddressForm select").change(function(){
+			jQuery("#saveButtonId").removeAttr("disabled");
+			jQuery("#saveButtonId").removeClass("buttonDisable");		
+		});
+		
+
+		/*Making the country field readonly*/
+		jQuery("input[name=${pdict.CurrentForms.profile.address.country.htmlName}]").val("US");
+		jQuery("input[name=${pdict.CurrentForms.profile.address.country.htmlName}]").attr("readonly","readonly");
+		
+		var acc1= $("#phonenumber").val().substr(0,3);
+		var acc2= $("#phonenumber").val().substr(3,3);
+		var acc3= $("#phonenumber").val().substr(6,4);
+		jQuery("#phone1").val(acc1);
+		jQuery("#phone2").val(acc2);
+		jQuery("#phone3").val(acc3);
+
+		/*var acc4= $("#eveningphone").val().substr(0,3);
+		var acc5= $("#eveningphone").val().substr(3,3);
+		var acc6= $("#eveningphone").val().substr(6,4);
+		jQuery("#eveningphone1").val(acc4);
+		jQuery("#eveningphone2").val(acc5);
+		jQuery("#eveningphone3").val(acc6);*/	
+	
+	
+		/*CurrentForms.profile.address.address1
+		var textVal1 = jQuery("input[name=${pdict.CurrentForms.profile.address.address1.htmlName}]").val();
+		var textVal2 = jQuery("input[name=${pdict.CurrentForms.profile.address.city.htmlName}]").val();		
+		var textval3 = textVal1+textVal2;
+		alert(textval3);*/	
+		//Making readonly values of dropdown
+		jQuery("select[name=${pdict.CurrentForms.profile.address.country.htmlName}]").attr("readonly","readonly");
+		
+		// execute unobtrusive js code
+		//	app.execUjs();
+
+		jQuery('#dialogcontainer').dialog('option', 'title', <isif condition="${!empty(pdict.EditMode)}">'${Resource.msg('editaddress.editaddress','account',null)}'<iselse>'${Resource.msg('editaddress.addaddress','account',null)}'</isif>);
+
+		// disable State selection on Address Creation and auto enables on Edit Mode	
+
+			jQuery('#stateUS').show();
+
+
+		jQuery("select[name=${pdict.CurrentForms.profile.address.states.state.htmlName}]").change(function() {
+			jQuery("input[name=${pdict.CurrentForms.profile.address.states.state.htmlName}]").val(jQuery("select[name=${pdict.CurrentForms.profile.address.states.state.htmlName}]").val());		
+		});
+
+		// update state label upon entering page
+		updateStateLabel(jQuery("select[name=${pdict.CurrentForms.profile.address.country.htmlName}]").val(), false);
+
+		// update state label upon country selection
+		jQuery("select[name=${pdict.CurrentForms.profile.address.country.htmlName}]").change(function() {
+			updateStateLabel(jQuery(this).val(), true);
+			
+		});
+		
+		jQuery('#applyBtn').click( function() {
+			action = "${pdict.CurrentForms.profile.address.create.htmlName}";
+			postData(action);			
+		});
+		
+		jQuery('#cancelBtn').click( function() {
+			jQuery('#dialogcontainer').dialog('close');
+		});
+		
+		jQuery('#deleteBtn').click( function() { 			
+			var accepted = confirm("${Resource.msg('forms.customeraddress.deleteaddressconfirm','forms',null)}");		
+			
+			if( accepted ) {
+	   			action = "${pdict.CurrentForms.profile.address.remove.htmlName}";
+				postData(action);
+			}	
+		});
+		
+		jQuery('#confirmBtn').unbind("click").click( function() {
+            jQuery('.confirmationcontainer').dialog('close');
+            jQuery('#dialogcontainer').dialog('close');      
+      	}); 
+
+		jQuery('#confirmationcontainer').bind('dialogclose', function(event, ui) {
+			jQuery('#dialogcontainer').dialog('close'); 
+		});
+      	
+		function postData(action) {			
+			jQuery('#addressformaction').append("<input name='" + action + "' type='hidden' />");
+			var post = jQuery('#EditAddressForm').serialize();
+				
+	  		jQuery.ajax({
+			   type: "POST",
+			   url: app.URLs.submitDialogURL,
+			   data: post,
+			   dataType: 'html',
+			   success: function(data){   
+			   		jQuery("#dialogcontainer").empty().html(data);
+			   },
+			   failure: function(data) {
+			   		alert("${Resource.msg('global.serverconnection','locale',null)}");		
+			   },
+			   error : function(XMLHttpRequest, textStatus, errorThrown){	  
+				   jQuery('#confirmationcontainer').show();	
+				   jQuery('#confirmationcontainer').dialog({
+					   		bgiframe: true,
+							autoOpen: false,
+							modal: true,
+					    	height: 100,
+    						width: 300,
+					    	resizable: false
+					});
+				    jQuery('#confirmationcontainer').dialog('option', 'title', jQuery('#dialogcontainer').dialog('option', 'title'));	
+					jQuery('#confirmationcontainer').dialog('open');
+				}
+			});
+		}			
+	});
+	
+//--></script>
+
+</isdecorate>
+
+
+

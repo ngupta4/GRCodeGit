@@ -1,0 +1,170 @@
+/**
+ * Upload a local file to a WebDAV or SFTP folder.
+ *
+ * @input RemoteFolderURL : String  mandatory, URL to WebDAV or SFTP folder, e.g. "https://www.myserver.com/folder/", "sftp://sftp.myserver.com:22/folder/"
+ * @input RemoteLogin : String  optional, login for Basic Authentication or Digest Autentication
+ * @input RemotePassword : String  optional, password for Basic Authentication or Digest Autentication
+ * @output Status	: dw.system.Status 
+ */
+
+importPackage( dw.io );
+importPackage( dw.net );
+importPackage( dw.system );
+
+function execute( args : PipelineDictionary ) : Number
+{
+	// read parameters
+	var remoteFolderURL : String = args.RemoteFolderURL;
+ 	var remoteLogin : String = args.RemoteLogin;
+ 	var remotePassword : String = args.RemotePassword;
+
+    // check parameters
+    if ( empty( remoteFolderURL ) )
+    {
+    	Logger.getLogger("simplefeeds").error( "CheckConnection: Parameter RemoteFolderURL empty" );
+    	args.Status = new Status(Status.ERROR, "CheckConnection: Parameter RemoteFolderURL empty" );
+    	return PIPELET_ERROR;
+    }
+
+    Logger.getLogger("simplefeeds").debug( "CheckConnection: " +
+    	"RemoteFolderURL: " + remoteFolderURL + ", " +
+    	"RemoteLogin: " + ( !empty( remoteLogin ) ? remoteLogin : "(empty)" ) + ", " +
+    	"RemotePassword: " + ( !empty( remotePassword ) ? "(provided)" : "(empty)" ) );
+	Logger.debug("asdfasdf");
+	// locate file
+
+	var result : boolean;
+
+	if ( remoteFolderURL.indexOf( "sftp://" ) == 0 )
+	{
+		Logger.debug("results: " + result);
+		result = checkSFTPState( remoteFolderURL, remoteLogin, remotePassword, args );
+		Logger.debug("done: " + result);
+	}
+	else
+	{
+		Logger.debug("awesome");
+		result = checkWebDAVState( remoteFolderURL, remoteLogin, remotePassword, args );
+	}
+	
+	if ( !result )
+	{
+		return PIPELET_ERROR;
+	}
+	
+	return PIPELET_NEXT;
+}
+
+function checkWebDAVState( remoteFolderURL : String, remoteLogin : String, remotePassword : String, args : PipelineDictionary ) : boolean
+{
+	// connect
+	var webDAVClient : WebDAVClient;
+	
+	if ( !empty( remoteLogin ) && !empty( remotePassword ) )
+	{
+		// use authentication
+		webDAVClient = new WebDAVClient( remoteFolderURL, remoteLogin, remotePassword );
+	}
+	else
+	{
+		// no authentication
+		webDAVClient = new WebDAVClient( remoteFolderURL );
+	}
+
+	// upload
+
+	if ( !webDAVClient.statusCode )
+	{
+		Logger.getLogger("simplefeeds").error( "CheckConnection: Error while connecting " + 
+			remoteFolderURL +  " to " + remoteFolderURL +  ": " +
+			webDAVClient.statusCode + " " + webDAVClient.statusText );
+		args.Status = new Status(Status.ERROR, "CheckConnection: Error while connecting " + 
+			remoteFolderURL +  " to " + remoteFolderURL +  ": " +
+			webDAVClient.statusCode + " " + webDAVClient.statusText );
+		return false;
+	}
+	
+	// disconnect
+	webDAVClient.close();
+    return true;
+}
+
+function checkSFTPState( remoteFolderURL : String, remoteLogin : String, remotePassword : String, args : PipelineDictionary ) : boolean
+{
+    // for SFTP remoteLogin and remotePassword are required
+    Logger.debug("happy1");
+    if ( empty( remoteLogin ) )
+    {
+    	Logger.getLogger("simplefeeds").error( "CheckConnection: Parameter RemoteLogin empty (required for SFTP)" );
+    	args.Status = new Status(Status.ERROR, "CheckConnection: Parameter RemoteLogin empty (required for SFTP)" );
+    	return false;
+    }
+    Logger.debug("happy2");
+
+    if ( empty( remotePassword ) )
+    {
+    	Logger.getLogger("simplefeeds").error( "CheckConnection: Parameter RemotePassword empty (required for SFTP)" );
+    	args.Status = new Status(Status.ERROR, "CheckConnection: Parameter RemotePassword empty (required for SFTP)" );
+    	return false;
+    }
+	Logger.debug("happy3");
+    // parse URL, e.g. "sftp://sftp.myserver.com:22/folder/"
+	var params : Array = /^sftp:\/\/([^\/:]+)(?::(\d+))?(\/(?:.*\/)?)$/.exec( remoteFolderURL );
+
+	if ( params == null || params.length != 4 )
+	{
+    	Logger.getLogger("simplefeeds").error( "CheckConnection: Parameter RemoteFolderURL not recognized, RemoteFolderURL: " + remoteFolderURL );
+    	args.Status = new Status(Status.ERROR, "CheckConnection: Parameter RemoteFolderURL not recognized, RemoteFolderURL: " + remoteFolderURL );
+    	return null;
+	}
+	Logger.debug("happy4");
+	var host : String = params[1];
+	var port : Number = null;
+	// params[2] is undefined if there was no port provided
+	if ( params[2] != undefined )
+	{
+		port = new Number( params[2] );
+	}
+	var path : String = params[3];
+	Logger.debug("happy5");
+	// connect
+	var sftpClient : SFTPClient = new SFTPClient();
+	var result : boolean;
+	
+	try
+	{
+		Logger.debug("happy5");
+		if ( port != null )
+		{
+			result = sftpClient.connect( host, port, remoteLogin, remotePassword );
+		}
+		else
+		{
+			// use default port
+			result = sftpClient.connect( host, remoteLogin, remotePassword );
+		}
+		Logger.debug("happy10: " + result);
+	}
+	catch ( ex )
+	{
+		Logger.debug("happy6");
+		Logger.getLogger("simplefeeds").error( "CheckConnection: Error while connecting to " +
+			host + ( ( port != null ) ? ( ":" + port ) : "" ) + ": " + ex );		
+		args.Status = new Status(Status.ERROR, "CheckConnection: Error while connecting to " +
+			host + ( ( port != null ) ? ( ":" + port ) : "" ) + ": " + ex);
+		return false;
+	}
+	Logger.debug("happy7");
+	if ( !result )
+	{
+		Logger.getLogger("simplefeeds").error( "CheckConnection: Error while connecting to " +
+			host + ( ( port != null ) ? ( ":" + port ) : "" ) + ": " + sftpClient.errorMessage );		
+		args.Status = new Status(Status.ERROR, "CheckConnection: Error while connecting to " +
+			host + ( ( port != null ) ? ( ":" + port ) : "" ) + ": " + sftpClient.errorMessage );
+		return false;
+	}
+	Logger.debug("happy8");
+	// disconnect
+	sftpClient.disconnect();
+    return true;
+}

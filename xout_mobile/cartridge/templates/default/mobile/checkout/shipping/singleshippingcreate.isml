@@ -1,0 +1,56 @@
+<isdecorate template="mobile/pt_mobile">
+<isinclude template="mobile/util/modules"/>
+<div id="singleshipping" class="mobilecontent checkoutshipping">
+	<form action="${URLUtils.httpsContinue()}" method="post" id="${pdict.CurrentForms.singleshipping.shippingAddress.htmlName}">
+		<div id="addressform" >
+			<h3>${Resource.msg('singleshipping.addressheader','checkout',null)}</h3>		
+			<div class="requiredcaption"><span class="requiredindicator">*</span><span >${Resource.msg('global.requiredfield','locale',null)}</span></div>	    
+	     	<div><!-- firstname -->
+	     		<isinputfield formfield="${pdict.CurrentForms.singleshipping.shippingAddress.addressFields.firstName}" type="input">	    	
+		    </div>
+		    <div><!-- lastname -->
+	    		<isinputfield formfield="${pdict.CurrentForms.singleshipping.shippingAddress.addressFields.lastName}" type="input"/>
+		    </div>
+		    <div><!-- address1 -->
+				<isinputfield formfield="${pdict.CurrentForms.singleshipping.shippingAddress.addressFields.address1}" type="input"/>
+		    </div>
+		    <div><!-- address2 -->
+		    	<isinputfield formfield="${pdict.CurrentForms.singleshipping.shippingAddress.addressFields.address2}" type="input"/> 	
+		    </div>
+		    <div><!-- country -->
+		    	<isinputfield formfield="${pdict.CurrentForms.singleshipping.shippingAddress.addressFields.country}" type="select"/>
+		    </div>  
+		    <div><!-- state -->				
+		    	<isinputfield formfield="${pdict.CurrentForms.singleshipping.shippingAddress.addressFields.states.state}" type="select"/>
+		    </div>
+		    <div><!-- city -->
+		    	<isinputfield formfield="${pdict.CurrentForms.singleshipping.shippingAddress.addressFields.city}" type="input"/>
+		    </div>
+		    <div><!-- zip -->			
+		    	<isinputfield formfield="${pdict.CurrentForms.singleshipping.shippingAddress.addressFields.zip}" type="input"/>
+		    </div>
+		    <div><!-- phone -->
+	    		<isinputfield formfield="${pdict.CurrentForms.singleshipping.shippingAddress.addressFields.phone}" type="input" xhtmlclass="phoneUS"/>
+		    </div>
+		    <iscomment>provide option to add address to address book if customer is authenticated</iscomment>
+	    	<isif condition="${pdict.CurrentCustomer.authenticated}">
+		    	<div>
+		    		${Resource.msg('forms.checkout.addtoaddressbook','forms',null)}: <isinputfield formfield="${pdict.CurrentForms.singleshipping.shippingAddress.addToAddressBook}" type="checkbox" label="false"/>
+		    	</div>
+		    </isif>	    
+		</div><!-- END: shippingaddress -->
+		<div class="formactions">
+			<table cellpadding="0" cellspacing="0" width="100%" border="0">
+				<tr>
+					<td>
+					<isif condition="${!pdict.CurrentCustomer.isAnonymous()}">	
+						<button type="submit" value="back" name="${pdict.CurrentForms.singleshipping.back.htmlName}" class="backbutton"><span>${Resource.msg('global.back','locale',null)}</span></button>
+					</isif>
+					</td>
+					<td align="right"><button type="submit" value="${Resource.msg('global.continuecheckout','locale',null)}" name="${pdict.CurrentForms.singleshipping.confirm.htmlName}"><span>${Resource.msg('global.continuecheckout','locale',null)}</span></button></td>
+				</tr>
+			</table>
+		</div>		
+	</form>
+</div><!-- END: checkoutshipping -->
+</isdecorate>

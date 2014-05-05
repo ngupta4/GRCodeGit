@@ -1,0 +1,78 @@
+<!--- TEMPLATENAME: headerNavigation.isml --->
+<isscript>
+	importPackage(dw.web);
+	importPackage(dw.util);
+	importScript("guthyrenker_core:common/libUtils.ds")
+	
+	function getContentAssetMap(rootFolderId:String):HashMap{
+		var retentionRootFolder:Folder=dw.content.ContentMgr.getFolder(rootFolderId);
+		var contentMap:HashMap = getFolderContent(retentionRootFolder,new HashMap());
+	  	return contentMap;
+	}
+</isscript>
+<isset name="loggedInFlag" value="${false}" scope="page"/>
+<isset name="OnlineSubFolders" value="${getPrimaryNavigation(loggedInFlag,'primary-navigation')}" scope="page" />
+<isset name="ContentMap" value="${getContentAssetMap('primary-navigation')}" scope="page"/>
+<isloop items="${OnlineSubFolders}" var="aFolder1" status="navstat1">
+   <isif condition="${true || !empty(getCustomerUID(request)) || aFolder1.ID != 'community'}">
+	  <isif condition="${ContentMap.get(aFolder1.ID)!=null}">
+	  	<isset name="FolderLinkURL1" value="${URLUtils.http('Page-Show','cid',ContentMap.get(aFolder1.ID))}" scope="page" />
+	  <iselse>
+	  	<isset name="FolderLinkURL1" value="${URLUtils.http('Page-Show','cid',aFolder1.ID)}" scope="page" />
+	  </isif>	  
+
+	  <isif condition="${'linkHref' in aFolder1.custom && !empty(aFolder1.custom.linkHref)}">
+	  		<isset name="FolderLinkURL1" value="${aFolder1.custom.linkHref}" scope="page" />	  		
+	  </isif>
+	  <isif condition="${'linkPipeline' in aFolder1.custom && !empty(aFolder1.custom.linkPipeline)}">
+		<isset name="FolderLinkURL1" value="${URLUtils.http(aFolder1.custom.linkPipeline)}" scope="page" />	  		
+	  </isif>
+	  <div class="sitemapOrderNow">
+	  <ul>
+		 <li id="sitemap-${aFolder1.ID}">
+		 		<a href='<isprint value="${FolderLinkURL1}" encoding="off" />' >${aFolder1.displayName}</a> 
+		 		
+				<isif condition="${null!=aFolder1.ID && aFolder1.ID=='faqs'}">
+				<ul>
+					<li><a class="omniCustomerService" href='<isprint value="${FolderLinkURL1}" encoding="off" />' >${Resource.msg('frequently.asked.questions','rendering',null)}</a></li>
+				</ul>
+				</isif>
+				<isset name="SecondaryNav" value="${aFolder1.ID}" scope="page" />
+				<isset name="SecFolders" value="${getPrimaryNavigation(loggedInFlag,SecondaryNav)}"  scope="page"/>
+					<isif condition="${SecFolders.length>0}">
+					<ul class="subnav">			   
+					 <isloop items="${SecFolders}" var="aFolder2" status="navstat2">					 	  
+   					     	<isset name="FolderLinkURL2" value="" scope="page" />							 
+							<isif condition="${ContentMap.get(aFolder2.ID)!=null}">
+				
+								<isset name="FolderLinkURL2" value="${URLUtils.http('Page-Show','cid',ContentMap.get(aFolder2.ID))}" scope="page" />
+							<iselse>
+								<isset name="FolderLinkURL2" value="${URLUtils.http('Page-Show','cid',aFolder2.ID)}" scope="page" />
+							</isif>
+							
+							<isif condition="${'linkHref' in aFolder2.custom && !empty(aFolder2.custom.linkHref)}">					  	  		
+							 	<isset name="FolderLinkURL2" value="${aFolder2.custom.linkHref}" scope="page" />	  		
+							</isif>
+							
+							<isif condition="${'linkPipeline' in aFolder2.custom && !empty(aFolder2.custom.linkPipeline)}">
+								<isset name="FolderLinkURL2" value="${URLUtils.http(aFolder2.custom.linkPipeline)}" scope="page" />	  		
+							</isif>
+
+   					     <isset name="showInMenu" value="${true}" scope="page"/>
+						 <isset name="showDescriptionInMenu" value="${true}" scope="page" />
+					     <isset name="TertiaryNav" value="${aFolder2.ID}" scope="page" />
+				         <isset name="TertiaryFolders" value="${getPrimaryNavigation(isLoggedIn,TertiaryNav)}" scope="page" />
+							  <li>
+		   					     <isif condition="${TertiaryFolders.length>0}">
+								 <iselse>
+								 	 <a href='<isprint value="${FolderLinkURL2}" encoding="off" />'><isprint value="${aFolder2.displayName}" encoding="off"/></a>								
+							     </isif>		         	     
+							  </li>		
+					  </isloop>					 
+ 				</ul>
+ 			 </isif>
+	</isif>
+	 </li>
+	 </ul>
+	 </div>
+</isloop>

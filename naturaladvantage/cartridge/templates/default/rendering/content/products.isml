@@ -1,0 +1,53 @@
+<!--- TEMPLATENAME: products.isml --->
+<iscache status="off"/>
+
+<iscomment>
+	This template is created before the 'wrapper' template, so we can set
+	up the template configuration for the 'pt_storefront' template right here.
+</iscomment>
+
+
+<isdecorate template="content/home/pt_storefront">
+	<isinclude template="util/modules"/>
+	<isscript>
+		importPackage(dw.object);
+		importPackage(dw.catalog);
+		
+		var CCC : Object = pdict.CurrentCampaignConfig;
+	
+		var campaignCode : String = CCC.campaignCode;
+		
+		var showHeader : boolean = CCC.showHeader;
+		var showFooter : boolean = CCC.showFooter;
+		var showNav : boolean = CCC.showNav;
+		var showOrderButton : boolean = CCC.showOrderButton;
+		
+		var category : dw.catalog.Category = CCC.getCampaignCategory();
+		
+	</isscript>
+	
+	<div class="contents_banner">
+		<iscontentasset aid="contents-products-banner" />
+	</div>
+	
+	<div id="primary-content">
+			
+		<div class="contents_details">
+			
+			<isslot id="prod-list" context="category" description="Product List Content Slot (Products Page)" context-object="${category}"/>
+			
+		</div>	
+			
+		<div class="sidebar_right">
+			<div class="content_box_outer_sp">
+				<div class="content_box_inner_sp">
+					<isslot id="offer-sidebar" context="category" description="Offer Sidebar Right Content Slot" context-object="${category}"/>
+					<iscontentasset aid="static-amazing-results" />
+				</div>
+			</div>
+			<iscontentasset aid="money-back-guarantee" />
+		</div>
+		
+			
+	</div><!-- END: content -->
+</isdecorate>

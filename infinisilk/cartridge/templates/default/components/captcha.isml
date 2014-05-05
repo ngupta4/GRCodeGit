@@ -1,0 +1,25 @@
+<isset name="errormessage" value="${Resource.msg('forms.captcha.errormessage','forms',null)}" scope="page"/>
+<isset name="disclaimer" value="${Resource.msg('forms.captcha.disclaimer','forms',null)}" scope="page"/>
+
+<script type="text/javascript">
+ var RecaptchaOptions = {
+    theme : 'white'
+ };
+ </script>
+<isscript>
+	importScript('guthyrenker_businesslogic:captcha/CaptchaLink.ds');
+	var tempList : dw.util.ArrayList = new dw.util.ArrayList();
+	tempList =links();
+ </isscript>
+<isset name="publickey" value="${Resource.msg('forms.captcha.publickey','forms',null)}" scope="page"/>
+
+<script type="text/javascript" src="${tempList[0]}">
+</script>
+<noscript>
+    <iframe src="${tempList[1]}" height="300" width="500" frameborder="0"></iframe><br />
+    <textarea name="recaptcha_challenge_field" cols="40"  rows="3"></textarea>
+    <input type="hidden" name="recaptcha_response_field" value="manual_challenge" />
+</noscript>
+<isif condition="${pdict.CaptchaSuccess<0}">
+	<div class="errorlabel errormessage">${errormessage}</div>
+</isif>

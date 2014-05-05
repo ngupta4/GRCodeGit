@@ -1,0 +1,143 @@
+<isset name="CurrentFolder"  value="${dw.content.ContentMgr.getFolder('contact-us')}" scope="page"/>
+<isset name="CurrentContent" value="${dw.content.ContentMgr.getFolder('contact-us')}" scope="page"/>
+<isset name="showNav" value="${true}" scope="page" />
+<isscript>
+importScript("guthyrenker_core:common/libUtils.ds");
+</isscript>
+<isset name="pagetitle" value="Reclaim Botanical&reg; Customer Care | Contact Reclaim Botanical&reg;" scope="pdict">
+<isdecorate template="account/pt_contactus">
+<isinclude template="util/modules"/>
+<div class="pageWrapper contactWraper">
+<div class="leftsection">
+<script type="text/javascript">
+   jQuery(function(){
+		/*
+		 * Automatically move to the next text box
+		 * in the case of day phone number
+		*/
+	    jQuery(".day_phone").keyup(function () {
+		    var maxLength = $(this).attr('maxlength');
+			if($(this).val().length == maxLength) {
+		        $(this).next().focus();
+		    }
+		});
+		
+	    if(jQuery(app.resources["CONTACT_US_PHONE"]).val()!= ""){
+			var d_phone_1= jQuery(app.resources["CONTACT_US_PHONE"]).val().substr(0,10);
+			//var d_phone_2= jQuery(app.resources["CONTACT_US_PHONE"]).val().substr(3,3);
+			//var d_phone_3= jQuery(app.resources["CONTACT_US_PHONE"]).val().substr(6,4);
+			jQuery("input#day_phone_1").val(d_phone_1);
+			//jQuery("input#day_phone_2").val(d_phone_2);
+			//jQuery("input#day_phone_3").val(d_phone_3); 
+		};
+
+		jQuery(app.resources["CONTACT_US_SAVE"]).click(function(){
+
+			var day_phone_1 = jQuery("input#day_phone_1").val();
+			var day_phone_2 = jQuery("input#day_phone_2").val();
+			var day_phone_3 = jQuery("input#day_phone_3").val();
+			jQuery(app.resources["CONTACT_US_PHONE"]).val(day_phone_1/* + day_phone_2 + day_phone_3 */);
+
+		});
+		
+   });
+	$(document).ready(function(){
+		$("#dwfrm_contactus_firstname").focus(function(){
+			var jscript = jQuery(app.resources["JSCRIPT_ENABLED"]).val();
+			if(jscript == null || jscript == "false"){
+				jQuery(app.resources["JSCRIPT_ENABLED"]).val("true");
+			}
+		});
+	});
+	</script>
+
+	
+	<form action="${URLUtils.httpsContinue()}" method="post"  class="suppress" id="RegistrationForm">
+		<fieldset>
+		    <div class="blockContent">
+		     	<iscomment><h1 class="titleTextIntend">${Resource.msg('contactus.pagetitle.h1','locale',null)}</h1></iscomment>
+		        <h2 class="pageTitle">${Resource.msg('global.contactus','locale',null)}</h2>
+		        <p>${Resource.msg('global.contactustext','locale',null)}</p>				        
+				<div class="formfields">
+				<div class="requirenote"><span class="requiredindicator">${Resource.msg('global.requiredsymbol','locale', null)}</span>${Resource.msg('contactus.requirednotes','locale',null)}</div>
+					<div class="formrow nameimfo">
+						<div class="formfield" id="first">
+							<isinputfield formfield="${pdict.CurrentForms.contactus.firstname}" type="input" attribute1="requiredmesage" value1="${Resource.msg('forms.contactus.firstname.missing','forms',null)}"/>
+						</div><!-- END: firstname -->
+						<div class="formfield">
+							<isinputfield formfield="${pdict.CurrentForms.contactus.lastname}" type="input" attribute1="requiredmesage" value1="${Resource.msg('forms.contactus.lastname.missing','forms',null)}"/>
+						</div>
+					</div>
+						<isinputfield formfield="${pdict.CurrentForms.contactus.jscriptEnabled}" type="hidden" attribute1="value" value1="false" label="false"/>
+															
+						<div class="formfield">
+							<isinputfield formfield="${pdict.CurrentForms.contactus.email}" type="input" attribute1="requiredmesage" value1="${Resource.msg('forms.contactus.email.missing','forms',null)}"/>
+						</div>
+						<div class="formfield">
+		                    <isinputfield formfield="${pdict.CurrentForms.contactus.reemail}" type="input" 
+		                                  attribute1="requiredmesage" value1="${Resource.msg('forms.contactus.reemail.missing','forms',null)}" 
+		                                  attribute2="equalTo"        value2="${'#'+pdict.CurrentForms.contactus.email.htmlName}"
+		                                  attribute3="equaltomessage" value3="${Resource.msg('forms.contactus.email.match', 'forms', null)}"/>
+		                </div>
+		           <div class="contactMoreText">${Resource.msg('contact.textlarge','locale',null)}</div>
+		            <div class="formrow orderinfo">
+		                <div class="formfield" id="first-box">
+		                    <isinputfield formfield="${pdict.CurrentForms.contactus.ordernumber}" type="input"/>
+		                </div>
+		                <div class="formfield">
+		                    <isinputfield formfield="${pdict.CurrentForms.contactus.accountnumber}" type="input"/>
+		                </div>
+		            </div>
+		            <div class="formrow addressInfo">
+		                <div class="formfield">
+		                    <isinputfield formfield="${pdict.CurrentForms.contactus.address1}" type="input" 
+		                    attribute1="requiredmesage" value1="${Resource.msg('forms.addresserror','forms',null)}"/>
+		                </div>
+		                <div class="formfield">
+		                    <isinputfield formfield="${pdict.CurrentForms.contactus.address2}" type="input"/>
+		                </div>	
+		             </div>		                
+		                <div class="formfield city">
+		                    <isinputfield formfield="${pdict.CurrentForms.contactus.city}" type="input"/>
+		                </div>	
+		            <div class="citystate">
+		           		<div class="formfield" id="state">
+		                    <isinputfield formfield="${pdict.CurrentForms.contactus.states.stateUS}" type="select"/>
+		                </div>
+		                <div class="formfield" id="zip">
+		                    <isinputfield formfield="${pdict.CurrentForms.contactus.zip}" type="input"/>
+		                </div>
+		            </div>
+		                	                	                
+					<div class="formfield  phone">
+					<div class="label">${Resource.msg('contact.profile.phone','forms',null)}:<span class="requiredindicator">${Resource.msg('global.requiredsymbol','locale', null)}</span></div>
+						<div class="value">
+							<input type="text" id="day_phone_1"  class="day_phone ph-1" />
+       				      		<isif condition="${!pdict.CurrentForms.contactus.phone.valid}" >
+                  				<div class="clear phoneErrorMsg" style="color:red; font-size:11px;">${Resource.msg('address.phone.missing','forms',null)}</div>
+                  			</isif>
+             			      		<isinputfield formfield="${pdict.CurrentForms.contactus.phone}" type="hidden" />
+       				      	</div>
+             				</div>		
+					
+					<div class="formfield myquestion">
+					    <isinputfield formfield="${pdict.CurrentForms.contactus.myquestion}" type="select" attribute1="requiredmesage" value1="${Resource.msg('forms.contactus.required','forms',null)}"/>
+					</div>
+					<div class="formfield messege">
+						<isinputfield attribute1="rows" value1="8" attribute2="cols" value2="40" formfield="${pdict.CurrentForms.contactus.comment}" type="textarea" attribute1="requiredmesage" value1="${Resource.msg('forms.contactus.note.missing','forms',null)}"/>
+					</div>
+					 <isinclude template="components/captcha.isml"/>
+				</div><!-- END: formfields -->
+				<div class="actions">
+                    <button class="btnColorB aButton" id="sendBtn" type="submit" value="${Resource.msg('global.send','locale',null)}" name="${pdict.CurrentForms.contactus.send.htmlName}"><span>${Resource.msg('global.submit','locale',null)}</span></button>
+                </div>                      
+			</div>		
+			
+		</fieldset>
+	</form>
+		
+</div>
+<div class="rightsection"><isslot id="contact-rightSection" context="global" description="right navigation content pages"/></div>
+</div>	
+<isset name="OmniturePage" value="Contactus" scope="pdict">	
+</isdecorate>

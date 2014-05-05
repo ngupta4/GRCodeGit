@@ -1,0 +1,24 @@
+/**
+* Demandware Script File
+* Returns a JSON type Object for User Profiles from Bazaarvoice. 
+* [Feel free to add more attributes to json object as per the requirements.]
+*/
+importPackage( dw.system );
+
+function UserProfileJson( profileJson : JSON )
+{
+	return {
+		"DisplayName" : profileJson.DisplayName,
+		"Badge" : profileJson.BadgesOrder.length <= 0 ? "Community Contributor" : profileJson.BadgesOrder[0],
+		"QuestionsCount" : profileJson.QAStatistics.TotalQuestionCount,
+		"AnswersCount" : profileJson.QAStatistics.TotalAnswerCount,
+		"ReviewsCount" : profileJson.ReviewStatistics.TotalReviewCount,
+		"FirstReviewDate" : profileJson.ReviewStatistics.FirstSubmissionTime,
+		"LastReviewDate" : profileJson.ReviewStatistics.LastSubmissionTime,
+		"HelpfullVotes" : profileJson.ReviewStatistics.HelpfulVoteCount,
+		"NotHelpfulVotes" : profileJson.ReviewStatistics.NotHelpfulVoteCount,
+		"FeaturedReviewCount" : profileJson.ReviewStatistics.FeaturedReviewCount,
+		"AverageOverallRating" : profileJson.ReviewStatistics.AverageOverallRating,
+		"Location" : profileJson.Location
+	}
+}

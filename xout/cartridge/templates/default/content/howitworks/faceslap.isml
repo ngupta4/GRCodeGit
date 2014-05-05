@@ -1,0 +1,29 @@
+<isdecorate template="content/pt_howitworks">
+<isinclude template="util/modules"/>
+	<isscript>
+		importPackage(dw.object);
+		importPackage(dw.catalog);
+		
+		var CCC : Object = pdict.CurrentCampaignConfig;
+		
+		var landingTemplate : String = CCC.landingTemplate;
+		var campaignCode : String = CCC.campaignCode;
+		
+		var showHeader : boolean = CCC.showHeader;
+		var showFooter : boolean = CCC.showFooter;
+		var showNav : boolean = CCC.showNav;
+		var showOrderButton : boolean = CCC.showOrderButton;
+		
+		var containerClasses : String = CCC.getContainerClasses();
+		
+		//setup the category to the folder name in the content asset or its classified folder
+		var category : pdict.category;
+		
+		var showsingup : boolean = false;
+		if('showsignup' in dw.system.Site.getCurrent().preferences.custom){
+			showsingup = dw.system.Site.getCurrent().preferences.custom.showsignup;
+		}
+	</isscript>
+<isset name="OmniturePage" value="HowItWorks-FaceSlap" scope="pdict">	
+<isinclude template="content/content/htmlcontentasset"/>
+</isdecorate>

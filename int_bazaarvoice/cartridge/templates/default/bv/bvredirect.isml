@@ -1,0 +1,12 @@
+<!--- TEMPLATENAME: bvredirect.isml --->
+<isif condition="${!empty(pdict.Location) && pdict.Location!= null}">
+	<isif  condition="${pdict.Location.indexOf('userType') < 0}">
+		<isif  condition="${pdict.Location.indexOf('?') >= 0}">
+			<isredirect location="${pdict.Location+'&userType=false'}"/>
+		<iselse>
+			<isredirect location="${pdict.Location+'?userType=false'}"/>
+		</isif>
+	<iselse>
+		<isredirect location="${pdict.Location}"/>
+	</isif>
+</isif>

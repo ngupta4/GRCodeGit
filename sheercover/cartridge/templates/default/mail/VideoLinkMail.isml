@@ -1,0 +1,6 @@
+<!--- TEMPLATENAME: VideoLinkMail.isml --->
+This is a test mail.
+<br/>
+<isif condition="${(!empty(pdict.errorMessage))}">
+The errors are : <isprint value="${pdict.errorMessage}"/>
+</isif>

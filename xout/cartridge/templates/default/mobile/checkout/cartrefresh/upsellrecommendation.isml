@@ -1,0 +1,109 @@
+<!--- TEMPLATENAME: upsellrecommendation.isml --->
+<isinclude template="util/modules"/>
+<script type="text/javascript"><!--
+app.airline.resources.set({
+	'updateSupplyURL' : '${URLUtils.url("Airline-UpdateCart")}',
+	'updateQtyUrl' : '${URLUtils.url("COCart-UpdateProductQty")}',
+	'subtotal-selector' : '.merchandiseTotal',
+	'cart-description' : '.order-summary-right #coreOffer .shortDescription ',
+	'shipping-price-selector' : '${"#"}totalshippingprice .value',
+	'total-price-selector' : '.order-totals .totalPrice, .ordertotalfinal .totalPrice',
+	'core-offer-id' : '.coreid',
+	'product-name' : '.detailscolumn .name.core',
+	'hero-image' : '.imagecolumn img',
+});
+//--></script>
+<isscript>
+			var upgradeProducts : dw.util.ArrayList = new dw.util.ArrayList();
+			var upProd : dw.catalog.Product;
+			if(hasUpsell){
+				upProd=recommendedProduct;
+				upgradeProducts.add(upProd);
+			}
+			else{
+			var upgradeRecommendationsIter : dw.util.Iterator ;
+			upgradeRecommendationsIter = downsellProduct.getOrderableRecommendations(5).iterator();
+			while( upgradeRecommendationsIter.hasNext() )
+					{					   
+						var recommend : dw.catalog.Recommendation = upgradeRecommendationsIter.next();
+						upProd = recommend.getRecommendedItem();
+						upgradeProducts.add( upProd );						
+					}		
+}
+</isscript>
+		<div id="valueUpsellSection" <isif condition="${coreProd.ID==upProd.ID}">style="display:none" class="nav"<iselse>class="block nav"</isif>>
+			<!-- div class="blockTop"><div class="blockTopRight"></div></div-->
+			<div class="blockContent">
+				<isset name="upsellLastID" value="${pdict.CurrentRequest.httpCookies['upsellLastID']}" scope="page" />
+				<isset name="upsellForHopUp" value="" scope="page" />
+				
+				<isloop items="${upgradeProducts}" alias="product" status="loopstate">
+					<isif condition="${empty(upsellLastID) || (!empty(upsellLastID) && empty(upsellForHopUp))}">
+						<isset name="upsellForHopUp" value="${product}" scope="page" />
+					</isif>
+					<input type="hidden" name="upSellID" class="upSellID" value="${product.ID}" />				
+					
+					<isobject object="${product}" view="detail">
+						<div class="related_product" id="upsell-${product.ID}">
+							<div class="upsellcontent">
+							<isset name="prodImg" value="${product.getImage('alternateSelect',0)}" scope="page"/>
+								<isif condition="${!empty(prodImg)}">
+									<img src="${prodImg.url}" />
+								<iselse>
+									<img src="${URLUtils.staticURL('/images/noimagesmall.png')}"/>									
+								</isif>
+								<div class="addtocart_btn">
+									<a class="addtocartbtn" href="javascript:void(0);"><span>${Resource.msg('cart.upsell.addtoorder', 'rendering', null)}</span></a>
+								</div>
+							</div>
+						</div>
+						<script type="text/javascript">
+						<!--
+						var pidair ='${product.ID}';
+						var campaignCode = '${pdict.CurrentCampaignConfig['campaignCode']}';
+						
+						 jQuery('#upsell-'+ pidair + ' .addtocartbtn').click(function(){
+						    	
+						    	
+						        appendUpsellProductToCookie(pidair);
+						        jQuery.getJSON(
+						    			app.airline.resources.get('updateSupplyURL'),
+						    			{
+						    				pid : jQuery('.upSellID').val(),
+						    				isKit : 'true'
+						    			},
+						    			function(supply) {
+						    	        	$('#valueUpsellSection').removeClass('block');
+						    				$('#valueUpsellSection').hide();
+						    				if (supply.success) {
+						    					updateProductInfo(supply);
+						    					var isSelected = 'false';
+						    			      	var i;
+						    			      	var  options ='';
+						    			      	var isSelected = 'false';
+						    			        for(i=0;i<=supply.update.ShipList.length-1; i++){
+						    			        	if(supply.update.ShipList[i].selected=='true'){
+						       			        	    options += '<option value="'+ supply.update.ShipList[i].value + '" selected="selected">' +supply.update.ShipList[i].lable + '</option>';
+						       			        	    isSelected='true';
+						    			        	}
+						    			        	else{
+						    				        	if(i==(supply.update.ShipList.length-1) && isSelected == 'false'){
+						    	   			        	    options += '<option value="'+ supply.update.ShipList[i].value + '" selected="selected">' +supply.update.ShipList[i].lable + '</option>';			        	
+						    				        	}
+						    				        	else{
+						    					        	 options += '<option value="'+ supply.update.ShipList[i].value + '">' +supply.update.ShipList[i].lable + '</option>';			        	
+						    				        	}		
+						    			        	}
+						    			        }
+						    			         $(".shipList").html(options);
+						    			         $('a.remove_item').attr('name',supply.update.CoreId.stringValue); 					        			       
+						    				}
+						    			}
+						    		); 
+						    });
+						-->
+						</script>
+					</isobject>
+				</isloop>
+			</div>			
+		</div>

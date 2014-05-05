@@ -1,0 +1,23 @@
+<isinclude template="mobile/util/modules"/>
+<isif condition="${!empty(pdict.LastVisitedProducts)}">
+	<div>
+		<h4>${Resource.msg('lastvisited.header','product',null)}</h4>
+		<div>
+			<ul id="horicarousel">
+			<isloop items="${pdict.LastVisitedProducts}" var="product" begin="0" end="2">
+				<li>
+					<div>
+						<isproducttile product="${product}" showswatches="${true}" showpricing="${true}" showpromotion="${true}" showrating="${true}">
+					</div>
+				</li>
+			</isloop>
+			</ul>
+		</div>
+		<div><!-- FLOAT CLEAR --></div>
+	</div>
+	<script type="text/javascript"><!--
+	jQuery(document).ready(function() {
+	
+	});
+	//--></script>
+</isif>

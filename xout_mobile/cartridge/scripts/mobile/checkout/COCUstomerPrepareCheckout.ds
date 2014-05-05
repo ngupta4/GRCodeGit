@@ -1,0 +1,34 @@
+/**
+* Demandware Script File
+* Clear the forms
+*
+* @input basket : dw.order.Basket;
+* @output tmp : Object
+*
+*/
+importPackage( dw.system );
+importPackage(dw.order);
+importPackage(dw.web);
+
+function execute( pdict : PipelineDictionary ) : Number
+{
+
+
+	try{
+	 	var forms : Forms = pdict.CurrentForms;
+	 	forms.singleshipping.clearFormElement();
+	 	forms.multishipping.clearFormElement();
+	 	forms.billing.clearFormElement();
+ 	
+	} catch(e) {
+		pdict.tmp = e;
+	}
+	
+	try{
+	 	pdict.basket.removeAllPaymentInstruments();
+	} catch(e) {
+		pdict.tmp = e;
+	}
+
+    return PIPELET_NEXT;
+}

@@ -1,0 +1,22 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<isinclude template="util/modules"/>
+
+<head>
+	<iscomment>Include all important information globally , e.g. meta-data, link information, and javascript.</iscomment>
+	<isinclude template="components/header/htmlhead"/>
+</head>
+<body class="${bodyclass}">
+<div id="container" class="pt_customerservice">
+	<isinclude template="components/header/header"/>
+	<div id="idMainWide" class="mainWide">
+	  	<div class="clearfix" id="main">
+			<isreplace/>
+		</div>
+	</div><!-- END: main -->
+	<isif condition="${CCC.showFooter}">
+		<isinclude template="components/footer/footer"/>
+	</isif>
+</div><!-- END: container -->
+</body>
+</html>

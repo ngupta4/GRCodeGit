@@ -1,0 +1,57 @@
+<isset name="DecoratorTemplate" value="error/pt_error" scope="page"/>
+<isif condition="${!empty(pdict.nodecorator) && pdict.nodecorator == true}">
+	<isset name="DecoratorTemplate" value="util/pt_empty" scope="page"/>
+</isif>
+
+<isdecorate template="${DecoratorTemplate}">
+<isinclude template="util/modules"/>
+<isscript>
+	importPackage(dw.object);
+	importPackage(dw.catalog);
+	
+	var CCC : Object = pdict.CurrentCampaignConfig;
+	var campaignCode : String = CCC.campaignCode;
+	
+	var showHeader : boolean = CCC.showHeader;
+	var showFooter : boolean = CCC.showFooter;
+	var showNav : boolean = CCC.showNav;
+	var showOrderButton : boolean = CCC.showOrderButton;
+	
+	var containerClasses : String = CCC.getContainerClasses();
+	var category : dw.catalog.Category = CCC.getCampaignCategory();
+	
+	var showsingup : boolean = false;
+	if('showsignup' in dw.system.Site.getCurrent().preferences.custom){
+		showsingup = dw.system.Site.getCurrent().preferences.custom.showsignup;
+	}
+</isscript>
+
+<div class="generalerror notfound" style="padding:20px;">
+	<h1>${Resource.msg('generalerror.header','rendering',null)}</h1>
+	<p>${Resource.msg('generalerror.message','rendering',null)}</p>
+</div>		
+<div id="primary-content" style="float:left;">
+
+	<div class="contents_details">
+		<img src="${URLUtils.staticURL('/images/footerStaticHeaderBack.png')}"/>
+
+		<iscontentasset aid="${"contents-site-map-main"}" />
+	</div>
+	<iscomment>
+	<div class="sidebar_right">
+		<div class="content_box_outer_sp">
+			<div class="content_box_inner_sp">
+				<isslot id="offer-sidebar" context="category" description="Offer Sidebar Right Content Slot" context-object="${category}"/>
+				<iscontentasset aid="static-amazing-results" />
+			</div>
+		</div>
+		<iscontentasset aid="money-back-guarantee" />
+	</div>
+	</iscomment>
+</div>
+
+	
+				
+		
+<isset name="OmniturePage" value="GeneralError" scope="pdict">
+</isdecorate>

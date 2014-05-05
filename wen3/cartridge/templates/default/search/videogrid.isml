@@ -1,0 +1,74 @@
+<iscomment>Rendering template for Videos Tab</iscomment>
+<div class="contenthits">
+	<isif condition="${!pdict.VideoPagingModel.empty}">
+		<div class= "articlerow">
+			<isloop items="${pdict.VideoPagingModel.pageElements}" var="asset" status="loopstate">
+				<iscomment>append the search parameters to the article URL</iscomment>
+				<isset name="videoURL" value="${URLUtils.url('Video-Show','cId', asset.ID)}" scope="page"/>
+									
+				<div class="article">
+					<div class="contentimage">					
+							<isif condition="${'videoAssetId' in asset.custom && !empty(asset.custom.videoAssetId)}">
+								<isif condition="${!empty(asset.custom.videoSrc) && asset.custom.videoSrc=='YouTube'}">
+						  		<a href="${videoURL}"><img alt="YouTube" width="217" height="123" src="http://img.youtube.com/vi/${asset.custom.videoAssetId}/default.jpg"></a>
+								<a href="${videoURL}"  class="play"></a>
+								</isif>
+								<isif condition="${!empty(asset.custom.videoSrc) && asset.custom.videoSrc=='Scene7'}">
+						  		<a href="${videoURL}"><img alt="Scene7" width="217" height="123" src="${Resource.msg('image.scene7url','common',null)}${asset.custom.videoAssetId}?fit=constrain,1&wid=219&hei=123"></a>
+								<a href="${videoURL}"  class="play"></a>
+								</isif>
+							<iselse>
+								<a href="${videoURL}"><img src="${URLUtils.staticURL('/images/noimagemedium.png')}" alt="Video" title="Video"/></a>
+								<a href="${videoURL}"  class="play"></a>
+							</isif>
+        							
+					</div>
+					<div class="inner-con">
+					<div class="articlename">
+						<a href="${videoURL}">
+							<isprint value="${asset.name}"/> 
+						</a>
+					</div>
+					<iscomment>
+					<isif condition="${'videoImage' in asset.custom && !empty(asset.custom.videoImage)}">
+						<div class="publishdate">
+							<isprint value="${asset.custom.publishdate}" encoding="off"/>					
+						</div>
+					</isif>
+					
+					<isif condition="${'videoImage' in asset.custom && !empty(asset.custom.videoImage) && 'duration' in asset.custom && !empty(asset.custom.duration)}">
+						${Resource.msg('symbol.pipe','common',null)}
+					</isif>
+					</iscomment>
+					<div class="description">
+						<isprint value="${asset.description}"/>
+					</div>
+					<div class="v-sm-text"><isprint value="${asset.custom.duration}" encoding="off"/> ${Resource.msg('search.min','search',null)} ${Resource.msg('symbol.pipe','common',null)}  ${Resource.msg('search.published','search',null)} <isprint value="${asset.custom.publishdate}"  encoding="off"/></div>
+					<div class="keyword">
+						<isscript>
+							var itemArr : Array = asset.pageKeywords.split(',');
+						</isscript>
+						<isloop items="${itemArr}" var="item"  status="loopitemstate" >
+							<isset name="searchvar" value="${dw.util.StringUtils.trim(item)}" scope="page"/>
+							<a href="${URLUtils.http('Search-Show', 'q', searchvar)}">${item}</a>, 
+							
+							<isif condition="${loopitemstate.last}">
+							<a href="${URLUtils.http('Search-Show', 'q', searchvar)}">${item}</a> 
+							</isif>
+						</isloop>
+					</div>
+					</div>
+				</div>
+				
+				<isif condition="${loopstate.count%4 == 0}">
+				<div class="clear"></div>
+					</div>
+					<div class="articlerow">
+				</isif>
+
+			</isloop>
+		</div>
+		<div class="clear" style="clear:both;"></div>
+			
+	</isif>
+</div>

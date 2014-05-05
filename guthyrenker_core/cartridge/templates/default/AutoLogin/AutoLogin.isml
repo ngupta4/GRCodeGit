@@ -1,0 +1,16 @@
+<iscontent type="text/html" charset="UTF-8" compact="true">
+<isif condition="${!empty(pdict.TargetPipelineParams) && pdict.TargetPipelineParams != '/' && pdict.TargetPipelineParams != null}">
+	<isif  condition="${pdict.TargetPipeline == 'Home-Show'}">
+		<isredirect location="${URLUtils.http(pdict.TargetPipeline)+ '?' + pdict.TargetPipelineParams}"/>
+	<iselseif condition ="${pdict.TargetPipeline != 'Cart-Show'}">
+		<isif  condition="${pdict.CurrentHttpParameterMap.tg.stringValue == 'kit' || pdict.CurrentHttpParameterMap.tg.stringValue == 'AcctShow'}">
+			<isredirect location="${URLUtils.http(pdict.TargetPipeline) + '?' + pdict.TargetPipelineParams}"/>
+		<iselse>
+			<isredirect location="${URLUtils.https(pdict.TargetPipeline) + '/' + pdict.TargetPipelineParams}"/>
+		</isif>
+	<iselse>
+		<isredirect location="${URLUtils.https(pdict.TargetPipeline) + '?' + pdict.TargetPipelineParams}"/>
+	</isif>
+<iselse>
+	<isredirect location="${URLUtils.https(pdict.TargetPipeline)}"/>
+</isif>

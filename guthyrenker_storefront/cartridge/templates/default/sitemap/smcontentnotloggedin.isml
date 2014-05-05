@@ -1,0 +1,76 @@
+<isscript>
+	importScript("guthyrenker_core:common/libUtils.ds")
+	var isLoggedIn : boolean = isLoggedIn();
+</isscript>
+<div class="list-wrpaer">
+<ul class="content-nav">
+<isset name="OnlineSubFolders" value="${getPrimaryNavigation(isLoggedIn,'retention-primary-navigation')}" scope="page" />
+<isset name="ContentMap" value="${getContentAssetMap('retention-primary-navigation')}" scope="page"/>
+<isloop items="${OnlineSubFolders}" var="aFolder1" status="navstat1">
+	<isif condition="${true || !empty(getCustomerUID(request)) || aFolder1.ID != 'community'}">
+	  <isif condition="${ContentMap.get(aFolder1.ID)!=null}">
+	  	<isset name="FolderLinkURL1" value="${URLUtils.http('Page-Show','cid',ContentMap.get(aFolder1.ID))}" scope="page" />
+	  <iselse>
+	  	<isset name="FolderLinkURL1" value="${URLUtils.http('Page-Show','cid',aFolder1.ID)}" scope="page" />
+	  </isif>	  
+	  <isif condition="${'linkHref' in aFolder1.custom && !empty(aFolder1.custom.linkHref)}">
+	  		<isset name="FolderLinkURL1" value="${aFolder1.custom.linkHref}" scope="page" />	  		
+	  </isif>
+	
+		 <li id="${aFolder1.ID}"><a href='<isprint value="${FolderLinkURL1}" encoding="off" />' ><span><h3>${aFolder1.displayName}</h3></span></a> 
+		
+		<isset name="SecondaryNav" value="${aFolder1.ID}" scope="page" />
+		<isset name="SecFolders" value="${getPrimaryNavigation(isLoggedIn,SecondaryNav)}"  scope="page"/>
+				<div class="subnav">
+				 	 <isloop items="${SecFolders}" var="aFolder2" status="navstat2">
+   					      <isset name="FolderLinkURL2" value="" scope="page" />
+						 
+						  <isif condition="${ContentMap.get(aFolder2.ID)!=null}">
+						  	<isset name="FolderLinkURL2" value="${URLUtils.http('Page-Show','cid',ContentMap.get(aFolder2.ID))}" scope="page" />
+						  <iselse>
+						  	<isset name="FolderLinkURL2" value="${URLUtils.http('Page-Show','cid',aFolder2.ID)}" scope="page" />
+						  </isif>
+					  	  <isif condition="${'linkHref' in aFolder2.custom && !empty(aFolder2.custom.linkHref)}">					  	  		
+						  		<isset name="FolderLinkURL2" value="${aFolder2.custom.linkHref}" scope="page" />	  		
+						  </isif>
+						  <isif condition="${(aFolder2.ID!='retention-fromTheCommunity') || (aFolder2.ID=='retention-fromTheCommunity' && pdict.CurrentCustomer.authenticated)}">
+							  <div class="category">
+								 <div class="heading">
+									<a href='<isprint value="${FolderLinkURL2}" encoding="off" />'><h4><isprint value="${aFolder2.displayName}" encoding="off"/></h4></a>
+								 </div>
+								      
+							     <isset name="TertiaryNav" value="${aFolder2.ID}" scope="page" />
+							         <isset name="TertiaryFolders" value="${getPrimaryNavigation(isLoggedIn,TertiaryNav)}" scope="page" />
+									     <isif condition="${TertiaryFolders.length>0}">
+										     <ul>
+										     	<isloop items="${TertiaryFolders}" var="aFolder3" status="navstat3">
+										       		<li>
+										       		  <isif condition="${ContentMap.get(aFolder3.ID)!=null}">
+													  	<isset name="FolderLinkURL3" value="${URLUtils.http('Page-Show','cid',ContentMap.get(aFolder3.ID))}" scope="page" />
+													  <iselse>
+													  	<isset name="FolderLinkURL3" value="${URLUtils.http('Page-Show','cid',aFolder3.ID)}" scope="page" />
+													  </isif>
+														<isif condition="${'linkHref' in aFolder3.custom && !empty(aFolder3.custom.linkHref)}">
+	  													   <isset name="FolderLinkURL3" value="${aFolder3.custom.linkHref}" scope="page" />	  		
+	  													</isif>	
+	  													<isif condition="${'linkParams' in aFolder3.custom && !empty(aFolder3.custom.linkParams)}">
+	  													  	 <isset name="FolderLinkURL3" value="${URLUtils.http('Page-Show','cid',aFolder3.custom.linkParams)}" scope="page" />	  		
+	  													</isif>
+										       		  <a href='<isprint value="${FolderLinkURL3}" encoding="off" />'> - ${aFolder3.displayName}</a>
+										       		</li>
+										       </isloop>
+										     </ul>
+									     <iselse>
+									     </isif>
+									    
+							    </div>
+						    </isif>
+					  </isloop>
+	 			</div>
+	</isif>
+	 </li>
+</isloop>
+</ul>
+
+<iscontentasset aid="sitemap-notloggedin"/>
+</div>

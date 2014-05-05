@@ -1,0 +1,81 @@
+<isdecorate template="rendering/folder/pt_contentpage">
+  <isinclude template="util/modules"/>
+  <iscomment>create reporting event</iscomment>
+  <isinclude template="util/reporting/ReportSearch.isml"/>  
+<div class="mainWide">
+<isif condition="${empty(pdict.Content.custom.categoryName)}">
+            <isif condition="${!empty(pdict.Content.classificationFolder)}">      
+              <isset name="folderName" value="${pdict.Content.classificationFolder.displayName}"/>
+               <isslot id="top-banner" context="category" description="Top Banner content pages" context-object="${dw.catalog.CatalogMgr.getCategory(folderName)}"/>
+               </isif>
+              <iselse>
+            
+              <isslot id="top-banner" context="category" description="Top Banner content pages" context-object="${dw.catalog.CatalogMgr.getCategory(pdict.Content.custom.categoryName)}"/>
+            </isif>
+	 <div class="pageWidth ${pdict.Content.ID}">
+	  <isscript>
+		  importPackage(dw.util);
+		  importScript('guthyrenker_core:common/libUtils.ds');
+		  var CCC : Object = pdict.CurrentCampaignConfig;
+		  var campaignCode : String = CCC.campaignCode;
+		  
+		  if(('contentPageCounter' in pdict.CurrentSession.custom) && (null != pdict.CurrentSession.custom.contentPageCounter)){
+		  	pdict.CurrentSession.custom.contentPageCounter = pdict.CurrentSession.custom.contentPageCounter + 1;
+		  }else{
+		  	pdict.CurrentSession.custom.contentPageCounter = 0;
+		  }	  
+	</isscript>
+	
+			<div class="leftPanel">			
+				<div class="widgetBox leftNav">
+					<div class="widgetTop">
+						<div class="widgetBottom">
+							<isinclude template="search/components/contentStaticLeftNav"/>
+				    	</div>
+				    </div>
+			    </div>	
+			    
+			    <div class="widgetBox">
+					<div class="widgetTop">
+						<div class="widgetBottom">
+						    <isif condition="${'categoryName' in pdict.Content.custom && empty(pdict.Content.custom.categoryName)}">
+						     <isif condition="${!empty(pdict.Content.classificationFolder)}">      
+						      <isset name="folderName" value="${pdict.Content.classificationFolder.displayName}"/>
+						      <isslot id="left-side-contentpages" context="category" description="left navigation content pages" context-object="${dw.catalog.CatalogMgr.getCategory(folderName)}"/>
+						       <isslot id="left-side-contentpages1" context="category" description="left navigation content pages1" context-object="${dw.catalog.CatalogMgr.getCategory(folderName)}"/>
+						        <isslot id="left-side-contentpages2" context="category" description="left navigation content pages2" context-object="${dw.catalog.CatalogMgr.getCategory(folderName)}"/>
+						        </isif>
+						      <iselse>
+						      <isslot id="left-side-contentpages" context="category" description="left navigation content pages" context-object="${dw.catalog.CatalogMgr.getCategory(pdict.Content.custom.categoryName)}"/>
+						      <isslot id="left-side-contentpages1" context="category" description="left navigation content pages1" context-object="${dw.catalog.CatalogMgr.getCategory(pdict.Content.custom.categoryName)}"/>
+						      <isslot id="left-side-contentpages2" context="category" description="left navigation content pages2" context-object="${dw.catalog.CatalogMgr.getCategory(pdict.Content.custom.categoryName)}"/>
+						    </isif>
+			    		</div>
+				    </div>
+			    </div>	
+			    
+			    
+			    <iscomment>Media Pixel</iscomment>
+			    <isslot id="MediaPixelForContentPages" context="global" description="MediaPixelForContentPages" />
+			</div>
+	
+	
+		          <div class="rightPanel">           
+		            <isinclude template="content/content/htmlcontentasset" />           
+		         </div>           
+      </div>        
+        
+  <isset name="OmniturePage" value="StaticContent" scope="pdict">
+ </div> 
+  <isif condition="${!(pdict.CurrentCustomer.authenticated && pdict.CurrentCustomer.registered || (pdict.CurrentRequest.httpCookies['rememberMe']!=null))}">
+	            <isif condition="${'categoryName' in pdict.Content.custom && empty(pdict.Content.custom.categoryName)}">
+	             <isif condition="${!empty(pdict.Content.classificationFolder)}">      
+	                 <isset name="folderName" value="${pdict.Content.classificationFolder.displayName}"/>
+		              <isslot id="right-bottom-orderCta" context="category" description="Right Bottom Order Module" context-object="${dw.catalog.CatalogMgr.getCategory(folderName)}"/>
+		              </isif>
+		             <iselse>
+		           
+		             <isslot id="right-bottom-orderCta" context="category" description="Right Bottom Order Module" context-object="${dw.catalog.CatalogMgr.getCategory(pdict.Content.custom.categoryName)}"/>
+	            </isif>
+	        </isif>        
+</isdecorate>

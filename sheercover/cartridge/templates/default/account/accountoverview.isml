@@ -1,0 +1,19 @@
+<isset name="pagetitle" value="${Resource.msg('pagetitle.profile','account',null)}" scope="pdict"/>
+<isdecorate template="account/pt_account"/>
+<isinclude template="KitCustomizer/kitinclude"/>
+<input type="hidden" id="tagetPipeline" value="${pdict.TargetPipeline}"/>
+<input type="hidden" id="tagetParams" value="${pdict.TargetPipelineParams}"/>
+
+ <div class="pageWrapper accountContainer">
+	<isinclude template="util/modules"/>
+	<div class="accountOverView">
+		<isslot id="account-banner" description="Banner for My Account pages" context="global" />
+		<isif condition = "${null!=pdict.genericError && !empty(pdict.genericError)}">
+			<span class="errormessage updatepass"><isprint value="${pdict.genericError}"></span>
+	  	</isif>
+		<h2 class="formTitle">${Resource.msg('account.header','account',null)}</h2>
+		<isset name="OmniturePage" value="MyAccountLandingPage" scope="pdict">
+		<isinclude url="${URLUtils.url('DisplayDashboard-DashboardView')}"/>
+	</div><!-- END: accountoverview -->
+</div>
+</isdecorate>

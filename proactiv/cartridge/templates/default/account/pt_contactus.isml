@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<isinclude template="util/modules"/>
+<head>
+	<iscomment>Include all important information globally , e.g. meta-data, link information, and javascript.</iscomment>	
+	<isif condition="${!('pagetitle' in pdict)}">
+		<isset name="pagetitle" value="${Resource.msg('pagetitle.contact.us','account',null)}" scope="pdict"/>
+	</isif>
+	<isinclude template="components/header/htmlhead"/>
+	<meta name="keywords" content="${Resource.msg('contactus.meta.keywords','account',null)}">
+	<meta name="description" content="${Resource.msg('contactus.meta.description','account',null)}"/>	
+</head>
+<body  id="pt-contactus">
+	<isinclude template="components/header/header"/>	
+	<isreplace/>		
+	<isinclude template="components/footer/footer"/>
+	<isinclude template="components/footer/pixels"/>
+</body>
+</html>

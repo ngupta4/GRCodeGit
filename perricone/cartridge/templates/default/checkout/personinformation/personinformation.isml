@@ -1,0 +1,154 @@
+<isinclude template="util/modules"/>
+
+<isset name="multiCheckout" value="${pdict.multiCheckout}" scope="page"/>
+<isif condition="${multiCheckout}">
+	<isset name="submitbtnClass" value="continue_btn" scope="page"/>
+<iselse>	
+	<isset name="submitbtnClass" value="complete_order_btn" scope="page"/>
+</isif>
+
+<iscomment>SuppCY checkbox is not checked, then display CY code</iscomment>
+<isif condition="${session.custom.suppCY == null || session.custom.suppCY == 0}">
+
+<script type="text/javascript">
+  cy.SUPPRESSDEFAULT = true;
+  $(document).ready(function(){
+  	$("#dwfrm_personinf_contact_email").change(cy_checkFieldsAndGetImageSrc);
+  	$("#dwfrm_personinf_contact_emailconfirm").change(cy_checkFieldsAndGetImageSrc);
+  	$("#billFirstName").change(cy_checkFieldsAndGetImageSrc);
+	$("#billLastName").change(cy_checkFieldsAndGetImageSrc);
+	$("#billState").change(cy_checkFieldsAndGetImageSrc);
+	$("#paymentMethod").change(cy_checkFieldsAndGetImageSrc);
+  });
+  function getImageSrc()
+  {
+    cy.CUSTOMERCODE = "${dw.system.Site.current.preferences.custom.seeWhyCustomerCode}";
+    cy.FunnelLevel = "2";
+    cy.UserId = "${pdict.CurrentCustomer.profile.email}";
+  }
+  function cy_checkFieldsAndGetImageSrc() {
+	  	cy.CUSTOM3='${lineItem.product.ID}';
+		cy.USERID=$("#dwfrm_personinf_contact_email").val();
+		cy.CUSTOM1=$('#billFirstName').val();
+		cy.CUSTOM2=$('#billLastName').val();
+		cy.CUSTOM4=$('#billState').val();
+		cy.CUSTOM5="";
+		cy.FUNNELLEVEL='4';
+		if ($('paymentMethod').val() == 'PREPAY'){
+			cy.FUNNELLEVEL = 5;
+		} 
+		if (isEmailValid(cy.USERID)){
+			cy_getImageSrc();
+		}
+	}
+</script>
+</isif>
+
+<script type="text/javascript">
+  function isEmailValid(emailAddress) {
+			var pattern = new RegExp(/^(("[\w-\s]+")|([\w-]+(?:\.[\w-]+)*)|("[\w-\s]+")([\w-]+(?:\.[\w-]+)*))(@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$)|(@\[?((25[0-5]\.|2[0-4][0-9]\.|1[0-9]{2}\.|[0-9]{1,2}\.))((25[0-5]|2[0-4][0-9]|1[0-9]{2}|[0-9]{1,2})\.){2}(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[0-9]{1,2})\]?$)/i);
+			return pattern.test(emailAddress);
+  }
+</script>
+
+
+<div class="personinfform">
+
+<iscomment>
+	<div class="intl-orders">
+		<iscontentasset aid="cart-international-site" />
+	</div>
+</iscomment>	
+
+	<iscomment>Billing and shipping</iscomment>
+	<div class="billing_shipping">
+		<isinclude template="checkout/personinformation/billinginformation" />
+		
+		<isinclude template="checkout/personinformation/paymentinformation" />
+		
+		<isinclude template="checkout/personinformation/shippinginformation" />
+		
+		<div class="agree_box">
+			<iscontentasset aid="termsAndConditionCreditCard"/>	
+			<isinputfield id="termsAndConditions" formfield="${pdict.CurrentForms.personinf.agree}" type="checkbox" attribute1="requiredmesage" value1="${Resource.msg('forms.checkout.agree.value-error','forms',null)}" attribute2="tabindex" value2="24">
+		</div>
+	</div>
+	<div class="clearfix"></div>
+		
+	<div class="checkout_bottom clearfix">
+	  	<iscomment>order total</iscomment>
+	<div class="ordertotalfinal">
+		<span class="cocart-container">
+			<div class="totalPrice cocart-price" id="orderTotal_2">					
+				<isprint value="${pdict.Basket.getTotalNetPrice()}"/>
+			</div>
+			<span class="cocart-label">
+				${Resource.msg('cart.ordertotal.label', 'rendering', null)}&nbsp;
+			</span>
+		</span>
+	</div>
+	
+		
+		<div class="${submitbtnClass}">
+				<input type="hidden" value="x" name="${pdict.CurrentForms.personinf.apply.htmlName}" />
+				<button class="continueBtn" id="contYourOrder" type="submit" value="${Resource.msg('global.checkout', 'locale', null)}" name="${pdict.CurrentForms.personinf.apply.htmlName}" tabindex="25"><span>${Resource.msg('checkout.submit', 'rendering', null)}</span></button>
+		</div>
+		<div class="clearfix"></div>
+	</div>
+</div>
+
+<script type="text/javascript"><!--
+app.proactiv.resources.set({
+	'verifyEmailLimit' : ${pdict.CurrentSession.privacy.verifyemaillimit},
+	'verifyEmailUrl' : '<isprint value="${URLUtils.url('GRMiddleware-VerifyEmail')}" encoding="off"/>',
+	'billingEqualsShipping' : ${pdict.BillingEqualsShipping},
+	'billingEqualsShippingCheckbox' : '${pdict.CurrentForms.personinf.useAsBillingAddress.htmlName}',
+	'updateShippingPriceUrl' : '${URLUtils.url("COCart-SetShippingMethod")}',
+	'updateQtyUrl' : '${URLUtils.url("COCart-UpdateProductQty")}',
+	'subtotal-selector' : '.merchandiseTotal',
+	'shipping-price-selector' : '${"#"}totalshippingprice .value',
+	'total-price-selector' : '.order-totals .totalPrice, .ordertotalfinal .totalPrice'
+});
+//--></script>
+
+<isif condition="${(URLUtils.home().toString().indexOf('proactiv.qa.dw.grdev.com')!=-1  ||
+	 				URLUtils.home().toString().indexOf('proactiv.stg.dw.grdev.com')!=-1 ||
+	 				URLUtils.home().toString().indexOf('dev15')!=-1)}">
+<script type="text/javascript"><!--
+//@author:dsweeney
+//hack in _d parameter form autofill. hardcoded to only work in QA, stg, and dev18 servers 
+
+if (window.location.href.indexOf("_d=1")!=-1) {
+	jQuery("#dwfrm_cart").ready(function() {
+
+		jQuery(this).children('option[selected="selected"]').removeAttr("selected");
+		
+		jQuery("#dwfrm_personinf_contact_email, #dwfrm_personinf_contact_emailconfirm").attr("value","grcwebtest@guthy-renker.com");
+		jQuery("#daytimePhone").attr("value","555-555-5555");
+		jQuery("#eveningPhone").attr("value","666-666-6666");
+
+		jQuery("#billFirstName").attr("value","Betty");
+		jQuery("#billLastName").attr("value","Buyer");
+		jQuery("#billAddress").attr("value","123 Breakout Blvd.");
+		jQuery("#billAddress2").attr("value","Bill addr line supp");
+		jQuery("#billCity").attr("value","Billings");
+		jQuery("#billState").children('option[label="Montana"]').attr("selected","selected");
+		jQuery("#billZip").attr("value","59101");
+
+		jQuery("#shipFirstName").attr("value","Sally");
+		jQuery("#shipLastName").attr("value","Shipper");
+		jQuery("#shipAddress").attr("value","234 Sallow St.");
+		jQuery("#shipAddress2").attr("value","Ship addr line supp");
+		jQuery("#shipCity").attr("value","Salesville");
+		jQuery("#shipState").children('option[label="Ohio"]').attr("selected","selected");
+		jQuery("#shipZip").attr("value","43778");
+
+		jQuery("#paymentMethod").children('option[value="Visa"]').attr("selected","selected");
+		jQuery("#creditCardNumber").attr("value","4111111111111111");
+		jQuery("#creditCardMonth").children('option[value="11"]').attr("selected","selected");
+		jQuery("#creditCardYear").children('option[value="2011"]').attr("selected","selected");
+		jQuery("#dwfrm_personinf_agree").attr("checked","checked");
+	});
+}
+//--></script>
+</isif>

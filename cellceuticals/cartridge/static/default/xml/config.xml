@@ -1,0 +1,31 @@
+<config>
+<account>grenkercellceuticals</account>
+<debugTracking>true</debugTracking>
+<visitorNamespace>guthyrenker</visitorNamespace>
+<trackingServer>guthyrenker.112.2o7.net</trackingServer>
+<pageName>Brightcove Videos</pageName>
+<Media>
+<autoTrack>true</autoTrack>
+<trackMilestones>25,50,75,100</trackMilestones>
+<trackVars>events,eVar8,eVar54,eVar55</trackVars>
+<trackEvents>
+event38,event39,event40,event37
+</trackEvents>
+<segmentByMilestones>true</segmentByMilestones>
+<trackUsingContextData>true</trackUsingContextData>
+
+<contextDataMapping>
+<a.media.name>eVar8,prop8</a.media.name>
+<a.media.segment>eVar54</a.media.segment>
+<a.contentType>eVar55</a.contentType>
+<a.media.timePlayed>event39</a.media.timePlayed>
+<a.media.view>event37</a.media.view>
+<a.media.segmentView>event40</a.media.segmentView>
+<a.media.complete>event38</a.media.complete>
+<a.media.milestones>
+<item name="100">event38</item>
+</a.media.milestones>
+</contextDataMapping>
+
+</Media>
+</config>

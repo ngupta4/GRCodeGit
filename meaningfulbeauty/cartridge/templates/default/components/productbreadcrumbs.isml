@@ -1,0 +1,34 @@
+<iscomment>
+	This template renders the bread crumb navigation for the product detail page.
+</iscomment>
+<div id="breadcrumb" class="breadcrumb">
+
+	<iscomment>bread crumb home link</iscomment>
+	<a href="${URLUtils.httpHome()}">${Resource.msg('pagecomponents.breadcrumbs.home','pagecomponents',null)}</a>
+
+	<iscomment>
+		the category context is determined based on the product search
+		which was triggered or through the products primary category
+	</iscomment>
+	<isscript>
+		importScript("guthyrenker_businesslogic:productlist/ProductBreadCrumbs.ds");
+		var category : dw.catalog.Category = getProductCategory(pdict.ProductSearchResult, pdict.Product);
+	</isscript>
+   	<iscomment>if we have any category context, we show it</iscomment>
+  	<isif condition="${category != null && category.online}">
+
+		<isactivedatacontext category="${category}">
+		
+		<isscript>
+			var path = getBreadCrumbsPath(category);
+		</isscript>
+		
+		<iscomment>display the path</iscomment>
+		<isloop items="${path}" var="cat">
+			<span class="divider">&nbsp;/&nbsp;&nbsp;</span><a href="${dw.catalog.ProductSearchModel.urlForCategory('Search-Show',cat.ID)}">${cat.displayName}</a>
+		</isloop>
+
+		<iscomment>append product name</iscomment>
+		<span class="divider">&nbsp;/&nbsp;&nbsp;</span><isif condition = "${'catalogDisplayNameTwo' in pdict.Product.custom}"><isprint value="${pdict.Product.custom.catalogDisplayNameTwo}" encoding="off"/></isif>
+	</isif>
+</div>

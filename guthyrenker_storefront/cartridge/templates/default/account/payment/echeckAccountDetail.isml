@@ -1,0 +1,33 @@
+<iscomment>
+	Creates a eCheck card display.
+	If p_card is given the second parameter is ignored.
+
+	Parameter:
+	p_card	       : the PaymentInstrument object to display
+	p_cc_formfield : a Account number element
+</iscomment>
+<isscript>
+	var ccNumber : String;
+	p_cc_formfield : a Account Number formfield element
+
+	if( pdict.p_card != null )
+	{
+		ccType   = pdict.p_card.creditCardType;
+		ccNumber   =  pdict.p_card.maskedCreditCardNumber;
+	}
+	else
+	{
+	    ccNumber=pdict.p_cc_formfield.number.htmlValue;
+	}
+</isscript>
+<div class="minicreditcard">
+	<div>${Resource.msg('minibillinginfo.paymentmethod','checkout',null)}: <isprint value="${Resource.msg('payMethods.echeck.name', 'configuration', null)}"/></div>
+    <iscomment>
+    <isif condition="${null!=pdict.p_card.creditCardType}">
+	  <div class="type">${Resource.msg('account.AccountType','account',null)}&nbsp;<isprint value="${pdict.p_card.creditCardType}"/></div></div>
+	</isif>
+	</iscomment>
+	<isif condition="${null!=pdict.p_card.maskedCreditCardNumber}">
+	  <div class="type">${Resource.msg('account.AccountNumber','account',null)}&nbsp;<isprint value="${pdict.p_card.maskedCreditCardNumber}"/></div></div>
+	</isif>
+	

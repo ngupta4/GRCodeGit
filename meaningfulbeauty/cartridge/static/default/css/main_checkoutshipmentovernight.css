@@ -1,0 +1,91 @@
+/*#idMainWide{margin: 0;}*/
+#main{background: white url(../images/checkout/overnight/main-bg.png) left top repeat-x; width: 853px; padding: 0 15px;}
+
+#checkoutheader{margin-bottom: 10px;}
+#headercontent{background: url(../images/checkout/overnight/top-img.png) left top no-repeat; height: 57px;}
+#overnightheader{background: url(../images/checkout/overnight/overnight-header-bg.png) left top repeat-x; height: 43px; margin: 0 -15px; padding: 3px 15px; text-align: right;}
+#overnightheader a{text-decoration: underline;}
+/*
+#sideslots{float: left; width: 400px;}
+.sideslot{margin-bottom: 5px;}
+*/
+/*
+#cartcontent{margin-left: 410px;}
+#cartfooter{background: url(../images/checkout/overnight/border-bottom.png) left bottom repeat-x; padding-bottom: 20px; margin: 0 -15px 20px;}
+#cartfooterinner{margin: 0 15px;}
+*/
+
+#footertitle{background-color: #fbdee3; color: #0a6577; text-align: center; font-size: 24px; font-weight: bold; line-height: 40px;}
+#footercontent{background: url(../images/checkout/overnight/allegra.png) left top no-repeat; height: 195px;}
+#footerbottom{font-size: .75em;}
+
+#mainfooter{background: url(../images/checkout/overnight/footer-bg.png) left top repeat-x; min-height: 100px; margin: 0 -15px; text-align: center;}
+#footermenu{padding-top: 7px;}
+#footermenu ul{display: inline-block; zoom: 1; font-size: 12px;}
+#footermenu li{float: left; display: inline; margin-right: 4px; overflow: hidden; text-align: center; line-height: 18px; border-left: solid 1px white;}
+#footermenu li.first{border: none;}
+#footermenu li a{padding: 0 10px; color: #4f6b76; text-decoration: none;}
+
+#copyright{color: #ccc; font-size: .9em;}
+#footerlogo{background: url(../images/checkout/overnight/guthy-renker.png) center center no-repeat; height: 18px;}
+
+.rounded{border: solid 1px #ccc; border-radius: 12px; margin-bottom: 10px; background: white;}
+
+/* Cart */
+.checkoutform{display: table; width: 100%;}
+#cartcontent{width: 438px;}
+#selectyourshipment{background: url(../images/checkout/overnight/select-shipment.png) center top no-repeat; height: 28px; margin-bottom: 5px;}
+#selectyourshipment span{display: none;}
+
+#cartsection{}
+#carttable{margin: 5px;}
+#carttable .cartitems{width: 100%;}
+#carttable .cartitems td{vertical-align: top;}
+#carttable .cartitems .cellimage{padding-right: 5px; width: 100px; text-align: center;}
+#carttable .cartitems .cellimage img{max-width: 100px;}
+#carttable .cartitems .celldescription{font-size: .8em;}
+#carttable .cartitems .celldescription .name{}
+#carttable .cartitems .celldescription .shortDescription{line-height: 1.3em; margin-bottom: 1em;}
+#carttable .cartitems .celldescription .offerCode{}
+#carttable .cartitems .cellprice{width: 150px; text-align: center;}
+#shippingmethod{margin-top: 1em; background: #EEE; border-radius: 0 0 12px 12px; padding: 10px 0 5px;}
+#shippingmethod .shippingmethodslist{margin-left: 170px;}
+
+#personinfo{}
+#contact_info input, #personinfo .billing_shipping .value input, #personinfo .billing_shipping .value select{width: 151px;}
+#personinfoinner{margin: 5px;}
+#personinfo .checkout_box{border: none; background: none;}
+#personinfo h4{background: none; color: #78b0bd; border-bottom: solid 1px #78b0bd; padding: 5px 0;}
+#personinfo .checkout_box_inner{padding: 5px 0;}
+#contactinfo{height: 130px;}
+#contactinfo .contact_fieldset{width: 210px;}
+#contactinfo .clearfix{display: none;}
+
+#personinfo .billing_shipping{clear: both;}
+#personinfo .cb_billing{width: 210px;}
+#personinfo .cb_shipping{margin-left: 210px;}
+#personinfo .cb_shipping .checkbox{font-weight: normal; color: black; font-size: .9em;}
+/* Hide the content asset container for this template */
+#shipping_message_block{display: none;}
+
+#personinfo .payment_info{display: block;}
+#personinfo .payment_method{float: left; width: 120px; margin-right: 5px;}
+#personinfo .payment_method select{width: 100%;}
+#personinfo .card_details{}
+#personinfo .card_details .card_number{float: left; width: 120px; margin-right: 5px;}
+#personinfo .card_details .card_number .value{margin-top: 2px;}
+#personinfo .card_details .card_number input{width: 120px;}
+#personinfo .expiration_date{margin: 0; width: auto;}
+#personinfo .expiration_date select{width: 70px;}
+#personinfo .expiration_date .month{float: left;}
+
+#carttotals{border-top: solid 1px #78b0bd; padding-top: 10px;}
+#agreebox{float: left; width: 200px; margin-right: 5px;}
+#agree_box input{display: inline;}
+#agreebox .checkbox{font-weight: bold;}
+#agreebox p{margin-top: 1em; line-height: 2em;}
+#cartpricesummary{width: 200px; float: right;}
+#cartpricesummary table{width: 100%; border: none; border-collapse: collapse; margin-bottom: 1em;}
+#cartpricesummary tr.bold td{font-weight: bold;}
+#cartsummarycomments{width: 100%;}
+#paymentinfoerrors{clear: left;}

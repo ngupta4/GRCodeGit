@@ -1,0 +1,52 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<isinclude template="util/modules"/>
+<isset name="pagetitle" value="${Resource.msg('sitemap.pagetitle','common',null)}" encoding="off" scope="pdict">
+
+<isscript>
+    importScript('guthyrenker_core:common/libUtils.ds');
+
+    importPackage(dw.object);
+    importPackage(dw.catalog);
+    
+    var CCC : Object = pdict.CurrentCampaignConfig;
+    var campaignCode : String = CCC.campaignCode;
+    
+    var showHeader : boolean = CCC.showHeader;
+    var showFooter : boolean = CCC.showFooter;
+    var showNav : boolean = CCC.showNav;
+    var showOrderButton : boolean = CCC.showOrderButton;
+    
+    var category : dw.catalog.Category = CCC.getCampaignCategory();
+</isscript>
+<isset name="showOrderButton" value="${true}" scope="page" />
+<isset name="RootFolder" value="${dw.content.ContentMgr.getFolder('customercare')}" scope="page"/>
+
+<head>
+    <iscomment>Include all important information globally , e.g. meta-data, link information, and javascript.</iscomment>
+    <isinclude template="components/header/htmlhead"/>
+    <meta name="description" content="${Resource.msg('sitemap.description','common',null)}"/>
+    <meta name="keywords" content="${Resource.msg('sitemap.keywords','common',null)}"/>
+</head>
+<body>
+<isinclude template="components/header/header"/>
+<div id="container" class="pt_customerservice mainWide">
+	<div id="idMainWide" class="mainWide2 pageWidth">
+      <div id="main" class="sitemap-main">
+           <isreplace/>           
+           <iscomment>Let's stop null pointer exceptions</iscomment>
+           <isscript>
+           	if (typeof(CurrentFolder) == 'undefined') var CurrentFolder={'ID':''};
+           	if (typeof(CurrentContent) == 'undefined') var CurrentContent={'ID':''};
+           </isscript>
+      </div> <!-- END: main -->    
+	</div>
+	  <isif condition="${!pdict.CurrentCustomer.authenticated && !pdict.CurrentCustomer.registered || (pdict.CurrentRequest.httpCookies['rememberMe']==null)}">
+      <isslot id="right-bottom-orderCta" context="global" description="Right Bottom Order Module"/>
+	 </isif>
+</div>    
+<isinclude template="components/footer/footer"/>
+<isinclude template="components/footer/pixels"/>
+<isinclude template="common/google_analytics" />
+</body>
+</html>

@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<isinclude template="util/modules"/>
+<head>
+	<iscomment>Include all important information globally , e.g. meta-data, link information, and javascript.</iscomment>
+<isif condition="${'description' in pdict && !empty(pdict.description)}">	
+	<meta name="description" content="${pdict.description}"/>
+</isif>
+<isif condition="${'keywords' in pdict && !empty(pdict.keywords)}">
+	<meta name="keywords" content="${pdict.keywords}"/>
+</isif>
+	<isinclude template="components/header/htmlhead"/>
+	
+</head>
+<body>
+<isinclude template="common/mboxglobal"/>
+<div id="container" class="pt_account">
+	<isinclude template="components/header/header"/>
+	
+				<isreplace/>
+			
+	<isinclude template="components/footer/footer"/>
+	<isinclude template="components/footer/pixels"/>
+	
+</div><!-- END: container -->
+</body>
+</html>

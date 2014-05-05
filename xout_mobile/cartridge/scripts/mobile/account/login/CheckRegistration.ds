@@ -1,0 +1,48 @@
+/**
+* Demandware Script File
+* Verify the registration data, returns to form or continue
+*
+* @input RegistrationForm : dw.web.FormGroup The form definition representing the customer registration.
+* @output status : dw.system.Status
+* @output tmp : Object
+*
+*/
+importPackage( dw.system );
+importPackage(dw.web);
+importPackage(dw.util);
+
+function execute( pdict : PipelineDictionary ) : Number
+{
+	var registrationForm : FormGroup = pdict.RegistrationForm;
+	var status : Status = new Status();
+	
+	try{	
+		if(empty(registrationForm.customer.firstname.value)) status.addItem(new StatusItem(0,Resource.msg('registration.profile.firstname','locale',null)));
+		if(empty(registrationForm.customer.lastname.value)) status.addItem(new StatusItem(0,Resource.msg('registration.profile.lastname','locale',null)));
+
+		if(empty(registrationForm.customer.email.value)) status.addItem(new StatusItem(0,Resource.msg('registration.profile.emailrules','locale',null)));
+		if(empty(registrationForm.customer.emailconfirm.value)) status.addItem(new StatusItem(0,Resource.msg('registration.profile.emailconfirmrules','locale',null)));
+		if(registrationForm.customer.email.value != registrationForm.customer.emailconfirm.value) status.addItem(new StatusItem(0,Resource.msg('registration.profile.emailnomatch','locale',null)));
+		
+		if(empty(registrationForm.login.password.value)) status.addItem(new StatusItem(0,Resource.msg('registration.profile.passwordrules','locale',null)));
+		if(empty(registrationForm.login.passwordconfirm.value)) status.addItem(new StatusItem(0,Resource.msg('registration.profile.passwordconfirmrules','locale',null)));
+		if(registrationForm.login.password.value != registrationForm.login.passwordconfirm.value) status.addItem(new StatusItem(0,Resource.msg('registration.profile.passwordnomatch','locale',null)));
+		
+		
+		if(empty(registrationForm.login.question.value)) status.addItem(new StatusItem(0,Resource.msg('registration.profile.question','locale',null)));
+		if(empty(registrationForm.login.answer.value)) status.addItem(new StatusItem(0,Resource.msg('registration.profile.answer','locale',null)));
+		
+	} catch(e){
+		
+	}
+	
+	//if the number of entries in the Status object is greater than one, go back to the form
+	if(status.getItems().size() > 0){
+		pdict.status = status;
+		return PIPELET_ERROR;
+	} else {
+		return PIPELET_NEXT;
+	}
+
+    return PIPELET_NEXT;
+}

@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<form xmlns="http://www.demandware.com/xml/form/2008-04-19">
+	<group formid="optin">
+		<field formid="email" label="forms.emailsubscribe.optin.email.label" type="string" mandatory="true" regexp="(?i)^[a-z0-9!#$%&amp;&apos;*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&amp;&apos;*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+(?:[a-z]{2}|aero|arpa|asia|biz|cat|com|coop|edu|gov|info|int|jobs|mil|mobi|museum|name|net|org|pro|tel|travel)$" parse-error="forms.contactus.email.parse-error" max-length="50"/>
+		<action formid="subscribe" valid-form="true"/>
+	</group>
+	<group formid="optout">
+		<field formid="email" label="forms.emailsubscribe.optout.email.label" type="string" mandatory="true" regexp="(?i)^[a-z0-9!#$%&amp;&apos;*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&amp;&apos;*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+(?:[a-z]{2}|aero|arpa|asia|biz|cat|com|coop|edu|gov|info|int|jobs|mil|mobi|museum|name|net|org|pro|tel|travel)$" missing-error="profile.email.missingerror" parse-error="forms.contactus.email.parse-error" max-length="30"/>
+		<field formid="lastName" label="forms.emailsubscribe.optout.lastName.label" type="string" mandatory="true" regexp="^[a-zA-Z -]+$"  max-length="50" missing-error="profile.lastname.missingerror" parse-error="forms.profile.invalid.lastname"/>
+		<action formid="unsubscribe" valid-form="true"/>
+	</group>
+</form>

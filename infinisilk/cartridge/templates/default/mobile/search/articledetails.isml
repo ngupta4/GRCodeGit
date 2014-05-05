@@ -1,0 +1,28 @@
+<iscomment>Rendering template for article detail</iscomment>
+<isinclude template="util/modules"/>
+<isset name="DecoratorTemplate" value="search/pt_productsearchresult" scope="page"/>
+<isdecorate template="${DecoratorTemplate}">
+<div class="content" id="content">
+<div class="articledetail">
+	<isif condition="${!empty(pdict.ContentSearchResult.content)}">
+		<isloop items="${pdict.ContentSearchResult.content}" var="asset" status="loopstate">
+			<iscomment>append the search parameters to the article URL</iscomment>
+			<div class="article">
+				<div class="articlename">
+					<h1><isprint value="${asset.name}"/></h1>
+				</div>
+				<div class="description">
+					<iscontentasset aid="${asset.ID}"/>
+				</div>
+				<div class="r-panel"></div>
+				<div class="clear"><!-- FLOAT CLEAR --></div>
+			</div>
+		</isloop>
+		<div class="clear"><!-- FLOAT CLEAR --></div>
+	</isif>
+</div>
+</div>
+<iscomment>
+Create 2 Content asset/ Slot for promotions
+</iscomment>
+</isdecorate>

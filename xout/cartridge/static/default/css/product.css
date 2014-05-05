@@ -1,0 +1,489 @@
+/***************
+  adding new styles for SAS test (SP 2289) - dsweeney
+*/
+
+.pdpLeftBase {
+    font-family: Arial;
+    font-size:14px;
+    left: 60px;
+    line-height: 1.2;
+    position: absolute;
+    width: 230px;
+}
+.pdpRightBase {
+    font-family: Arial;
+    font-size:14px;
+    left: 40px;
+    line-height: 1.2;
+    position: absolute;
+    width: 230px;
+}
+.pdpHighlight {
+  color:#00aae6;
+  text-decoration:underline;
+  cursor:pointer;
+}
+.pdpSpecialOffer {
+	top:310px;
+	color: #9d008c;
+	font-type:italic;
+}
+.subscribeAndSave {
+	float:left;
+	clear:left;
+	font-size:14px;
+	padding-left:19px;
+	padding-top:5px;
+	width:350px;
+}
+.pdpBullet {
+  float:left;
+  padding-top:30px;
+  clear:left;
+  padding-right:5px;
+}
+.pdpText {
+  padding-top:30px;
+  float:left;
+  width:185px;
+}
+.pdpDesc {
+	padding-top:20px;
+	float:left;
+	width:220px;	
+}
+.pdpTag {
+	top:100px;
+}
+.pdpLineOne {
+	top:120px;
+}
+.pdpYouGet {
+	top:210px;
+}
+.pdpYouGet .pdpBullet {
+	padding-top:10px;	
+}
+.pdpYouGet .pdpDesc {
+	padding-top:10px;
+}
+.pdpFreeBonus {
+	top:200px;
+}
+.pdpFreeBonusLong {
+	top:280px;
+}
+.pdpFreeBonusLong .pdpBullet {
+	padding-top:20px;
+}
+.pdpFreeBonusLong .pdpDesc {
+	padding-top:20px;	
+}
+.productLink {
+	text-decoration:none;	
+}
+.popupClose {
+	float:right;
+	color:#00aae6;
+	font-size:12px;
+	cursor:pointer;
+	padding:5px;
+}
+.popupContainer {
+	position:absolute;
+	-moz-border-radius: 8px;
+	border-radius: 8px;
+	border: solid 1px #c0c0c0;
+	background-color:white;
+	z-index:100;	
+}
+.popupTitle {
+	float:left;
+	padding:5px;
+	font-size:12px;
+	width:190px;
+	background-color:#00aae6;
+	border-top-left-radius:8px;
+	-moz-border-top-left-radius:8px;
+	border-top-right-radius:8px;
+	-moz-border-top-right-radius:8px;
+	color:white;		
+}
+.popupDesc {
+	float:left;
+	padding:5px;
+	font-size:12px;
+	color:black;
+	background-color:white;	
+}
+.washInCommentBLeft {
+	top:30px;
+	left:200px;
+	width:200px;	
+}
+.washInCommentCLeft {
+	top:156px;
+	left:200px;
+	width:200px;	
+}
+
+.washInCommentRight {
+	top:30px;
+	left:200px;
+	width:200px;	
+}
+.washInCommentRightLong {
+	top:230px;
+	left:200px;
+	width:200px;	
+}
+.subscribeAndSaveOneLeft,.subscribeAndSaveOneRight {
+	top:40px;
+	left:190px;
+	width:200px;		
+}
+.subscribeAndSaveTwoLeft,.subscribeAndSaveTwoRight {
+	top:0px;
+	left:170px;
+	width:200px;		
+}
+.subscribeAndSave3Left,.subscribeAndSave3Right {
+	top:50px;
+	left:150px;
+	width:200px;		
+}
+.freeBonusCommentLeft {
+	top:50px;
+	left:190px;
+	width:200px;	
+}
+.freeBonusCommentRight {
+	top:30px;
+	left:200px;
+	width:200px;	
+}
+.freeBonusCommentRightLong {
+	top:300px;
+	left:200px;
+	width:200px;	
+}
+.otherOffersLeft {
+    left: 57px;
+    position: absolute;
+    top: 470px;
+}
+.otherOfferBLeft {
+    left: 57px;
+    position: absolute;
+    top: 470px;
+}
+.otherOfferCLeft {
+    left: 57px;
+    position: absolute;
+    top: 446px;
+}
+.otherOffersRight {
+  position:absolute;
+  top:470px;
+  left:40px;
+}
+.otherOfferBRight {
+  position:absolute;
+  top:470px;
+  left:40px;
+}
+.otherOfferCRight {
+  position:absolute;
+  top:446px;
+  left:40px;
+}
+.offerBorderLeft {
+  float:left;
+  width:360px;
+  padding:10px;
+  font-size:16px;
+  line-height:1.2;
+}
+.offerBorderRight {
+  float:left;
+  width:360px;
+  padding:10px;
+  font-size:16px;
+  line-height:1.2;
+}
+
+.offerBorder input {
+  float:left;
+  margin-top:2px;
+}
+.offerBestValue {
+    left: 243px;
+    position: absolute;
+    top: 59px;
+}
+.offerBySpecialLeftB {
+    color: #9D008C;
+    font-size: 15px;
+    font-style: italic;
+    font-weight: bold;
+    left: 104px;
+    position: absolute;
+    text-align: center;
+    top: 219px;
+    line-height:1.0;
+}
+.offerBySpecialRightB {
+    color: #9D008C;
+    font-size: 15px;
+    font-style: italic;
+    font-weight: bold;
+    left:83px;
+    position: absolute;
+    text-align: center;
+    top: 219px;
+    line-height:1.0;
+}
+.offerBySpecialLeftC {
+    color: #9D008C;
+    font-size: 15px;
+    font-style: italic;
+    font-weight: bold;
+    left: 104px;
+    position: absolute;
+    text-align: center;
+    top: 244px;
+    line-height:1.0;
+}
+.offerBySpecialRightC {
+    color: #9D008C;
+    font-size: 15px;
+    font-style: italic;
+    font-weight: bold;
+    left:83px;
+    position: absolute;
+    text-align: center;
+    top: 244px;
+    line-height:1.0;
+}
+.otherOffersText {
+  padding-left:5px;
+}
+.priceText {
+  float:left;
+  clear:left;
+  padding-left:23px;
+  color:black;
+}
+.selected {
+  border:solid 1px #00D2F3;
+  background-color: #E0F5FC;
+  -moz-border-radius: 8px;
+  border-radius: 8px;
+}
+.specialText1 {
+    color: #9D008C;
+    font-size: 15px;
+    font-style: italic;
+    font-weight: bold;
+    left: 0;
+    position: absolute;
+    top: 150px;
+}
+.specialText2 {
+    color: #9D008C;
+    font-size: 15px;
+    font-style: italic;
+    font-weight: bold;
+    left: 232px;
+    position: absolute;
+    top: 264px;
+}
+
+
+/********************
+ new styles sp 2289 - dsweeney 2/23/2012
+*/
+
+/********* left styles ***********/
+div.pdpLeftCopyContainer {
+	width:397px;
+	top:393px;
+	left:55px;
+	line-height:1.3;
+}
+div.pdpLeftCopyContainer span.bigHeadline, div.pdpLeftCopyContainer span.smallHeadline {
+	font-size:27.5px;
+	color: #9D008C; 
+	text-decoration:none;
+}
+div.pdpLeftCopyContainer span.smallHeadline {
+	font-size:20px;
+	font-weight:bold;
+	float:left;
+	margin-top:20px;
+}
+div.pdpLeftCopyContainer span.pdpDesc {
+	font-size:17.5px;
+	padding-top:0;
+	width:397px;
+}
+
+div.pdpLeftCopyContainer ul {
+	list-style-type:disc;
+}
+div.pdpLeftCopyContainer ul li {
+	font-size:17.5px;
+	margin-left:26px;
+	float:left;
+	width:100%;
+}
+div.otherOfferBLeft.feb2012 {
+	top:810px;
+	left:48px;
+}
+div.otherOfferBLeft.feb2012.testPanel {
+	top:1050px;
+}
+div.otherOfferCLeft.feb2012.testPanel {
+	top:1035px;
+}
+div.otherOfferBLeft.feb2012 div.offerBorderLeft {
+	width:397px;
+	font-size:18px;
+}
+div.otherOfferBLeft.feb2012 div.offerBorderLeft.selected {
+	padding:9px;
+} 
+div.otherOfferBLeft.feb2012 div.offerBorderLeft a.pdpHighlight {
+	font-size:12px;
+	font-weight:bold;
+}
+
+/********* right styles ***********/
+div.pdpRightCopyContainer {
+	width:397px;
+	top:393px;
+	left:35px;
+	line-height:1.3;
+}
+div.pdpRightCopyContainer span.bigHeadline, div.pdpRightCopyContainer span.smallHeadline {
+	font-size:27.5px;
+	color: #9D008C; 
+	text-decoration:none;
+}
+div.pdpRightCopyContainer span.smallHeadline {
+	font-size:20px;
+	font-weight:bold;
+	float:left;
+	margin-top:20px;
+}
+div.pdpRightCopyContainer span.pdpDesc {
+	font-size:17.5px;
+	padding-top:0;
+	width:397px;
+}
+
+div.pdpRightCopyContainer ul {
+	list-style-type:disc;
+
+}
+div.pdpRightCopyContainer ul li {
+	font-size:17.5px;
+	margin-left:26px;
+	float:left;
+	width:100%;
+	list-style-type:disc;
+}
+div.pdpRightCopyContainer ul li.mid {
+	margin-top:25px;
+	margin-bottom:25px;
+}
+div.otherOfferBRight.feb2012 {
+	top:810px;
+	left:29px;
+}
+div.otherOfferBRight.feb2012.testPanel {
+	top:1050px;
+}
+div.otherOfferCRight.feb2012.testPanel {
+	top:1035px;
+}
+div.otherOfferBRight.feb2012 div.offerBorderRight {
+	width:397px;
+	font-size:18px;
+}
+div.otherOfferBRight.feb2012 div.offerBorderRight.selected {
+	padding:9px;
+} 
+div.otherOfferBRight.feb2012 div.offerBorderRight a.pdpHighlight {
+	font-size:12px;
+	font-weight:bold;
+}
+
+/********** popup stylings via cchuang ************/
+.popupContainer {
+	-webkit-box-shadow: 0px 0px 10px rgba(50, 50, 50, 0.75);
+	-moz-box-shadow:    0px 0px 10px rgba(50, 50, 50, 0.75);
+	box-shadow:         0px 0px 10px rgba(50, 50, 50, 0.75);
+}
+.popupTitle {
+	background:url('../images/popupTitleBg.png') no-repeat scroll 0 0 transparent;
+}
+/********** new submit buttons ************/
+div.otherOfferBLeft a.leftSubmit { 
+	bottom: -101px;
+    height: 63px;
+    left: 57px;
+	position: absolute;
+	width: 299px;
+	background-image:url(../images/btn_order_basic_sprite.png);
+	background-position: 0 0;
+}
+div.otherOfferBLeft a.leftSubmit:hover {
+	background-position: 0 67px;
+}
+div.otherOfferBRight a.rightSubmit { 
+	bottom: -101px;
+    height: 63px;
+    left: 57px;
+	position: absolute;
+	width: 299px;
+	background-image:url(../images/btn_order_deluxe_sprite.png);
+	background-position: 0 0;
+}
+div.otherOfferBRight a.rightSubmit:hover {
+	background-position: 0 73px;
+}
+div.otherOfferCLeft a.leftSubmit { 
+	bottom: -78px;
+    height: 63px;
+    left: 57px;
+	position: absolute;
+	width: 299px;
+	background-image:url(../images/btn_order_basic_sprite.png);
+	background-position: 0 0;
+}
+div.otherOfferCLeft a.leftSubmit:hover {
+	background-position: 0 67px;
+}
+div.otherOfferCRight a.rightSubmit { 
+	bottom: -78px;
+    height: 63px;
+    left: 57px;
+	position: absolute;
+	width: 299px;
+	background-image:url(../images/btn_order_deluxe_sprite.png);
+	background-position: 0 0;
+}
+div.otherOfferCRight a.rightSubmit:hover {
+	background-position: 0 73px;
+}
+.toggleOneShotLeft a,
+.toggleOneShotRight a {
+	color: #00AAE6 !important;
+}
+.oneShotLeft,
+.oneShotRight {
+	display: none;
+}
+	

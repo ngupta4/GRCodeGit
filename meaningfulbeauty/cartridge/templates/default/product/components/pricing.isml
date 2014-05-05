@@ -1,0 +1,125 @@
+<iscomment>
+	If it is a master product without a price range, get its pricing from its first variant.	
+</iscomment>
+<isif condition="${pdict.Product.master && pdict.Product.variationModel.variants.size() > 0}"/>
+	<iscomment>Preserve current product instance</iscomment>
+	<isset name="OrgProduct" value="${pdict.Product}" scope="pdict"/>
+	<isset name="Product" value="${pdict.OrgProduct.variationModel.variants[0]}" scope="pdict"/>
+</isif>
+
+<iscomment>Get the price model for this product.</iscomment>
+<isset name="PriceModel" value="${pdict.Product.getPriceModel()}" scope="page"/>
+<isset name="PriceTable" value="${PriceModel.getPriceTable()}" scope="page"/>
+<isset name="SalesPrice" value="${PriceModel.getPrice()}" scope="page"/>
+<isset name="ShowStandardPrice" value="${StandardPrice.available && SalesPrice.available && StandardPrice.compareTo(SalesPrice) == 1}" scope="page"/>
+
+		<iscomment>
+			Check whether there are any active customer promotions for this product.  If so, then
+			display two prices:  crossed-out pricebook price and promotional price.
+		
+			Note:  we never display two crossed-out prices even if there is both a price-book
+			discount and a promotion.
+		</iscomment>
+
+		<isset name="promos" value="${dw.campaign.PromotionMgr.activeCustomerPromotions.getProductPromotions(pdict.Product)}" scope="page"/>
+		<isset name="PromotionalPrice" value="${dw.value.Money.NOT_AVAILABLE}" scope="page"/>
+		<isset name="isPromoPrice" value="${false}" scope="page"/>
+
+		<isif condition="${! empty(promos)}">
+			<isloop items="${promos}" var="promo">
+				<isif condition="${promo.getPromotionClass() != null && promo.getPromotionClass().equals(dw.campaign.Promotion.PROMOTION_CLASS_PRODUCT)}">
+					<isif condition="${pdict.Product.optionProduct}">
+						<isif condition="${pdict.CurrentOptionModel != null}">
+							<isset name="PromotionalPrice" value="${promo.getPromotionalPrice(pdict.Product, pdict.CurrentOptionModel)}" scope="page"/>
+						<iselse>
+							<isset name="PromotionalPrice" value="${promo.getPromotionalPrice(pdict.Product, pdict.Product.getOptionModel())}" scope="page"/>
+						</isif>
+					<iselse>
+						<isset name="PromotionalPrice" value="${promo.getPromotionalPrice(pdict.Product)}" scope="page"/>
+					</isif>
+				</isif>
+				<isbreak/>
+			</isloop>
+			<isif condition="${PromotionalPrice.available && SalesPrice.compareTo(PromotionalPrice) != 0}">
+				<isset name="ShowStandardPrice" value="${true}" scope="page"/>
+				<isset name="StandardPrice" value="${SalesPrice}" scope="page"/>
+				<isset name="SalesPrice" value="${PromotionalPrice}" scope="page"/>
+				<isset name="isPromoPrice" value="${true}" scope="page"/>
+			</isif>
+		</isif>
+
+		<div class="pricing">
+			<div class="price">	
+				<isif condition="${pdict.Product.productSet}">
+					<iscomment>Product set pricing</iscomment>
+					<div class="productsetprice">${Resource.msg('global.buyall','locale',null)}</div>
+					<iscomment>Product master price range depending on the variants</iscomment>
+					<iscomment><iselseif condition="${pdict.Product.master && pdict.Product.priceModel.isPriceRange()}"/>
+					<div class="range">		
+						<isprint value="${pdict.Product.priceModel.minPrice}"/> - <isprint value="${pdict.Product.priceModel.maxPrice}"/>
+					</div>
+					</iscomment>		
+				<iselse/>		
+					<div class="salesprice">
+						<iscomment>Displays price from Non Member price book.</iscomment>
+						<isif condition="${pdict.CurrentSession.sourceCodeInfo!=null && dw.object.CustomObjectMgr.getCustomObject('SourceCodeGroup_Pricebook_Mapping',pdict.CurrentSession.sourceCodeInfo.group.ID)!=null}">
+							<isset name="salePriceBookId" value="${dw.object.CustomObjectMgr.getCustomObject('SourceCodeGroup_Pricebook_Mapping',pdict.CurrentSession.sourceCodeInfo.group.ID).custom.PriceBookID}" scope="page" />
+							<isif condition="${PriceModel.getPriceBookPrice(salePriceBookId)!=dw.value.Money.NOT_AVAILABLE}">
+								<div class="regularprice ">
+									${Resource.msg('global.regularprice','locale',null)}
+									<span class="strikeout regularpricevalue"><isprint value="${PriceModel.getPriceBookPrice(dw.system.Site.current.preferences.custom.nonMemberPriceBook)}"/></span>
+								</div>
+								<div class="memberprice ">
+									${Resource.msg('global.memberprice','locale',null)}
+									<span class="strikeout memberpricevalue"><isprint value="${PriceModel.getPriceBookPrice(dw.system.Site.current.preferences.custom.memberPriceBook)}"/></span>
+									
+								</div>
+								<div class="salesprice blue-sale">
+									<p class="label">${Resource.msg('global.saleprice','locale',null)}</p>
+									<p class="salespricevalue price-value"><isprint value="${PriceModel.getPriceBookPrice(salePriceBookId)}"/></p>
+								</div>														
+							<iselse/>
+								<isif condition="${pdict.CurrentCustomer.authenticated && 'member' in  pdict.CurrentCustomer.profile.custom && pdict.CurrentCustomer.profile.custom.member || !empty(pdict.CurrentRequest.httpCookies['rememberMe'])}">
+									<div class="regularprice">
+										${Resource.msg('global.regularprice','locale',null)}
+										<span class="strikeout regularpricevalue"><isprint value="${PriceModel.getPriceBookPrice(dw.system.Site.current.preferences.custom.nonMemberPriceBook)}"/></span>
+									</div>
+								<iselse/>
+									<div class="regularprice">
+										${Resource.msg('global.regularprice','locale',null)}
+										<span class="regularpricevalue"><isprint value="${PriceModel.getPriceBookPrice(dw.system.Site.current.preferences.custom.nonMemberPriceBook)}"/></span>
+									</div>
+								</isif>									
+								<div class="memberprice">
+									${Resource.msg('global.memberprice','locale',null)}
+									<span class="memberpricevalue"><isprint value="${PriceModel.getPriceBookPrice(dw.system.Site.current.preferences.custom.memberPriceBook)}"/></span>
+								</div>								
+							</isif>	
+						<iselse/>
+							<isif condition="${pdict.CurrentCustomer.authenticated && 'member' in  pdict.CurrentCustomer.profile.custom && pdict.CurrentCustomer.profile.custom.member || !empty(pdict.CurrentRequest.httpCookies['rememberMe'])}">
+								<div class="regularprice">
+									${Resource.msg('global.regularprice','locale',null)}
+									<span class="strikeout regularpricevalue"><isprint value="${PriceModel.getPriceBookPrice(dw.system.Site.current.preferences.custom.nonMemberPriceBook)}"/></span>
+								</div>
+							<iselse/>
+								<div class="regularprice ">
+									${Resource.msg('global.regularprice','locale',null)}
+									<span class="regularpricevalue"><isprint value="${PriceModel.getPriceBookPrice(dw.system.Site.current.preferences.custom.nonMemberPriceBook)}"/></span>									
+								</div>
+							</isif>									
+							<div class="memberprice ">
+								${Resource.msg('global.memberprice','locale',null)}
+								<span class="memberpricevalue"><isprint value="${PriceModel.getPriceBookPrice(dw.system.Site.current.preferences.custom.memberPriceBook)}"/></span>
+					
+							</div>								
+						</isif>			
+					</div>
+				</isif>
+			</div>			
+		</div>		
+	
+		<isif condition="${!empty(pdict.OrgProduct)}">
+			<iscomment>Restore current product instance</iscomment>
+			<isset name="Product" value="${pdict.OrgProduct}" scope="pdict"/>
+			<isset name="OrgProduct" value="${null}" scope="pdict"/>
+		</isif>

@@ -1,0 +1,161 @@
+/**
+*
+*	 
+*	 @input httpParameterMap : dw.web.HttpParameterMap
+*   @output uciString : String
+*
+*/
+importPackage( dw.system );
+importPackage( dw.web ); 
+importPackage(dw.object );
+importPackage(dw.util );
+
+importScript('int_gutheyrenker:common/libUtils.ds'); 
+
+function execute( args : PipelineDictionary ) : Number
+{
+
+    var name:HttpParameterMap = args.httpParameterMap;
+    var uciVal : String = null;
+    if((Site.current.preferences.custom.UciUrlParameterName!=null)  ){
+   	 	var tempUciCode:HttpParameter =name.get(Site.current.preferences.custom.UciUrlParameterName);
+   	 	// Code to make uci parameter incasesensitive(RM defect ID 17352) 
+   	 	var paramSet:Set= name.getParameterNames();
+   	 	  var itrParam: Iterator=paramSet.iterator();
+   	 	   while(itrParam.hasNext())
+   	 	   {
+   	 	    var param:Object=itrParam.next();
+   	 	   	if(param.toString().equalsIgnoreCase(Site.current.preferences.custom.UciUrlParameterName))
+   	 	   	{
+   	 	   		tempUciCode=name.get(param);
+   	 	   		break;
+   	 	   	}
+   	 	   	else if(param.toString().equalsIgnoreCase("urlquery"))
+   	 	   	{
+   	 	   		var location : String = name.urlpath.value;
+				var queryPart : String = unescape(location).split('?')[1];
+				if(!empty(queryPart) && queryPart != null)
+				{
+				var paramArray : Array = queryPart.split("&");
+  	 	   	 	var uciName : String = null;
+   	 	   	 	var tempParam : String;
+	   	 	   	 for( var i=0, ii=paramArray.length; i<ii; i++ )
+   		 	   	  	{
+						tempParam = paramArray[i];
+	   	 	    		uciName = (tempParam.split("="))[0];
+						if(uciName.equalsIgnoreCase("UCI"))
+						{
+							uciVal = (tempParam.split("="))[1];
+						}	
+   	 		   	 	}
+				}
+   	 	   	}
+   	 	   }
+   	 	//Code Ends for RM defect ID 17352   
+    	var tempUciString:String;
+    	if(!(tempUciCode.empty)){
+    		 tempUciString = tempUciCode.getStringValue();
+    	}else if(!empty(name.get("uciCode")) && name.get("uciCode") != null && name.get("uciCode") != "null"){
+    		tempUciString = name.get("uciCode").getStringValue();
+    		tempUciCode=name.get("uciCode");
+    	} else {
+    		return PIPELET_ERROR;
+    	}
+    		
+    	if(tempUciString!=null){
+    		while(tempUciString.indexOf("-")>=0){
+    			tempUciString = tempUciString.replace("-","");
+    		}
+    		session.custom.uciCode = tempUciCode;
+    	}
+    }
+    if(null!=uciVal){
+    	trackCookieUCI(uciVal);
+    }else{
+    	trackCookieUCI(tempUciCode.value);
+    }
+    args.uciString = tempUciString;
+   return PIPELET_NEXT;
+}
+
+function trackCookieUCI( uci : String ) {
+	// Look in primary uci
+	var primaryUCI : Cookie = request.httpCookies['uci'];
+	var uci1 : String = null;
+	var uci2 : String = null;
+	
+	if( empty(primaryUCI) ) {
+		primaryUCI = new Cookie('uci', uci );
+		primaryUCI.setDomain(Site.getCurrent().getCustomPreferenceValue("GRCookiesDomain"));
+		primaryUCI.setPath("/");
+		primaryUCI.setMaxAge(2592000);
+		
+		request.addHttpCookie(primaryUCI);	
+	} else {
+		uci1 = primaryUCI.value;	
+		if( !empty(uci)) { 
+			primaryUCI.setValue (uci);
+			primaryUCI.setMaxAge(2592000);
+			primaryUCI.setPath('/');
+			primaryUCI.setDomain(Site.getCurrent().getCustomPreferenceValue("GRCookiesDomain"));
+			request.addHttpCookie(primaryUCI);
+		}	
+	}
+	if(uci != null){		
+		if( !empty(uci1) ) {
+		// if !empty, then
+			if( uci1 == uci ) { 
+			// if primary uci==uci
+				// then return
+				return;
+			}
+			
+			// Look in secondary
+			var secondaryUCI : Cookie = request.httpCookies['secondaryuci'];
+			if( empty(secondaryUCI) ) {
+				secondaryUCI = new Cookie('secondaryuci', uci1 );
+				secondaryUCI.setDomain(Site.getCurrent().getCustomPreferenceValue("GRCookiesDomain"));
+				secondaryUCI.setPath("/");
+				secondaryUCI.setMaxAge(2592000);
+				
+				request.addHttpCookie(secondaryUCI);
+			} else {
+				uci2 = secondaryUCI.value;	
+			}
+		
+			if( !empty(uci2) && uci2.indexOf(uci1+'|')!=0 && uci2!=uci1 ) {
+			// then if secondary doesn't begin with primary already
+				// then prepend primary->secondary
+				var uci2s : String = uci1+"|"+uci2, uci2array : Array;
+				
+				// Make sure to trim any but the last five
+				uci2array = uci2s.split('|');
+				if( uci2array.length > 5 ) {
+					uci2array = uci2array.slice(0,5);
+					uci2s = uci2array.join('|');
+				}
+				
+				secondaryUCI.setMaxAge(2592000);
+				secondaryUCI.setValue(uci2s);
+				secondaryUCI.setPath('/');
+				secondaryUCI.setDomain(Site.getCurrent().getCustomPreferenceValue("GRCookiesDomain"));
+				
+				request.addHttpCookie(secondaryUCI);
+			}
+		
+			// if !empty, then move current to start of secondary
+		}
+	
+	} else {
+		return;
+	}
+	// Set primary uci
+	/*  if( uci1 != uci) {
+		primaryUCI.setMaxAge(2592000);
+		primaryUCI.setValue(uci);
+		primaryUCI.setPath('/');
+		primaryUCI.setDomain(Site.getCurrent().getCustomPreferenceValue("GRCookiesDomain"));
+		request.addHttpCookie(primaryUCI);
+	}
+	*/
+}

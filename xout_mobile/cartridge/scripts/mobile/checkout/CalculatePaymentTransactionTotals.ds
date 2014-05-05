@@ -1,0 +1,71 @@
+/**
+ * This script calculates the total amount of an order that will be paid 
+ * for by gift certificate payment instruments. The remaining open amount  
+ * (if there is any) will be applied to the non-gift certificate payment 
+ * instrument (such as a credit card).
+ * Note, that this script assumes that only one non-gift certificate payment
+ * instrument is used for the payment.
+ *
+ * @input Basket : dw.order.Basket The basket to calculate the payment transaction totals for. 
+ */
+importPackage( dw.system );
+importPackage( dw.order );
+importPackage( dw.value );
+importPackage( dw.util );
+
+importScript("mobile/checkout/Utils.ds");
+
+function execute( pdict : PipelineDictionary ) : Number
+{
+    var basket : Basket = pdict.Basket;
+
+	// make sure, we have a basket at all
+    if( basket == null ) 
+    {
+    	return PIPELET_ERROR;
+    }
+
+    // get all payment instruments for the basket
+    var paymentInstruments : Collection = basket.getPaymentInstruments();
+    var iter : Iterator = paymentInstruments.iterator();
+    var paymentInstrument : OrderPaymentInstrument = null;
+	var nonGCPaymentInstrument : OrderPaymentInstrument = null;
+
+    // locate any non-gift certificate payment instrument
+    while( iter.hasNext() )
+    {
+    	paymentInstrument = iter.next();
+    	if( PaymentInstrument.METHOD_GIFT_CERTIFICATE.equals(paymentInstrument.paymentMethod) )
+    	{
+    		continue;
+    	}
+    	
+    	// we captured the non-gift certificate payment instrument
+    	nonGCPaymentInstrument = paymentInstrument;
+    	break;
+    }
+    
+    // if we haven't found any non-gift certificate payment 
+    // instrument we are done
+    if( nonGCPaymentInstrument == null )
+    {
+    	return PIPELET_NEXT;
+    }
+
+	// calculate the amount to be charged for the 
+	// non-gift certificate payment instrument
+	var amount : Money = calculateNonGiftCertificateAmount( basket );
+		
+    // now set the non-gift certificate payment instrument total.
+    if( amount.value <= 0.0 )
+    {
+   		var zero : Money = new Money( 0, amount.getCurrencyCode() );
+	    nonGCPaymentInstrument.paymentTransaction.setAmount( zero );
+    }
+    else
+    {
+        nonGCPaymentInstrument.paymentTransaction.setAmount( amount );
+    }
+	
+    return PIPELET_NEXT;
+}

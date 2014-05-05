@@ -1,0 +1,67 @@
+<isdecorate template="checkout/pt_orderconfirmation">
+<isinclude template="util/modules"/>
+<isinclude template="util/reporting/ReportOrder.isml"/>
+<iscomment>
+	This template visualizes the order confirmation page. Note, that it
+	uses a different decorator template.
+	It displays the order related information, such as the order number,
+	creation date, payment information, order totals and shipments of
+	the order.
+</iscomment>
+
+<div class="orderconfirmation"> 
+	<div class="thankyoumessage">
+		<h2>${Resource.msg('confirmation.thankyou','checkout',null)}</h2>
+		<div class="section-cont">
+		<div>${Resource.msg('confirmation.emailmessage','checkout',null)}</div>
+		<div>${Resource.msg('confirmation.message','checkout',null)}</div>
+		</div>
+		<iscomment><div class="orders"><a class="printpage">${Resource.msg('confirmation.print','checkout',null)}</a></div></iscomment>
+	</div><!-- END: thankyoumessage -->
+	<div class="orderconfirmationdetails">	
+		<isorderdetails order="${pdict.Order}"/>
+		<!-- div class="actions">
+			<a href="${URLUtils.https('CORtnOrderSummary-OrderDetails','orderID', pdict.Order.originalOrderNo)}">${Resource.msg('confirmation.itemdetails','checkout',null)}</a>
+		</div> -->
+	</div>
+</div><!-- END: orderconfirmation -->
+<isif condition="${null!=pdict.inqSalesProducts}">
+	<isset name="inqSalesProducts1" value="${pdict.inqSalesProducts}" scope="page"/>
+</isif>
+<isif condition="${null!=pdict.inqSalesPrices}">
+	<isset name="inqSalesPrices1" value="${pdict.inqSalesPrices}" scope="page"/>
+</isif>
+
+<isif condition="${null!=pdict.inqSalesQuantities}">
+	<isset name="inqSalesQuantities1" value="${pdict.inqSalesQuantities}" scope="page"/>
+</isif>
+<isif condition="${null!=pdict.inqClientOrderNum}">
+	<isset name="inqClientOrderNum1" value="${pdict.inqClientOrderNum}" scope="page"/>
+</isif>
+
+<script type="text/javascript"> var inqSiteID = 22205250; </script>    
+<script type="text/javascript">
+ 	if (null!=inqSalesProducts1)
+ 		var inqSalesProducts = ${inqSalesProducts1};
+ 	if (null!=inqSalesQuantities1)
+		var inqSalesQuantities = ${inqSalesQuantities1};
+	if (null!=inqSalesPrices1)
+		var inqSalesPrices = ${inqSalesPrices1};
+	if (null!=inqClientOrderNum1)
+		var inqClientOrderNum = ${inqClientOrderNum1};
+</script>
+
+<script type="text/javascript">
+jQuery(document).ready(function() {
+	jQuery("a.printpage").click(function() {
+		window.print();
+	});
+});
+</script>
+<isset name="OmniturePage" value="COConfirmation" scope="pdict">	
+  <iscomment>For displaying recommended products based on products in the cart
+  <div class="maywerecommend">
+    <isinclude url="${URLUtils.url('Product-GetCartRecommendation','orderID',pdict.Order.originalOrderNo)}"/>
+  </div>
+  </iscomment>
+</isdecorate>

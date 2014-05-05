@@ -1,0 +1,19 @@
+<isdecorate template="account/pt_account"/>
+<isinclude url="${URLUtils.url('KitCustomizer-RenderKitDetail')}"/>
+<input type="hidden" id="tagetPipeline" value="${pdict.TargetPipeline}"/>
+<input type="hidden" id="tagetParams" value="${pdict.TargetPipelineParams}"/>
+ <div id="idMainWide" class="mainWide">
+	  	<div class="clearfix" id="main">
+	  	   <div id="content">
+<isinclude template="util/modules"/>
+<div class="accountoverview">
+	<isslot id="account-banner" description="Banner for My Account pages" context="global" />
+	<isif condition = "${null!=pdict.genericError && !empty(pdict.genericError)}">
+		<span class="errormessage"><isprint value="${pdict.genericError}"></span>
+  	</isif>
+	<h1>${Resource.msg('account.header','account',null)}</h1>
+	<isset name="OmniturePage" value="MyAccountLandingPage" scope="pdict">	
+	<isinclude url="${URLUtils.url('DisplayDashboard-DashboardView')}"/>	 
+</div><!-- END: accountoverview -->
+</div></div></div>
+</isdecorate>

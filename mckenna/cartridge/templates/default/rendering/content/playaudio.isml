@@ -1,0 +1,10 @@
+<!--- TEMPLATENAME: playaudio.isml --->
+<isif condition="${pdict.CurrentRequest.httpUserAgent.indexOf('MSIE') > -1}">
+	<embed height="100" width="100" src="${URLUtils.httpStatic(URLUtils.CONTEXT_LIBRARY, null, "audio/SS_Tip" + pdict.CurrentHttpParameterMap.dayNumber.value + ".mp3")}" autoplay="false"  />
+<iselse/>
+	<audio controls="controls">
+		<source src="${URLUtils.httpStatic(URLUtils.CONTEXT_LIBRARY, null, "audio/SS_Tip" + pdict.CurrentHttpParameterMap.dayNumber.value + ".mp3")}" type="audio/mpeg" />
+		<source src="${URLUtils.httpStatic(URLUtils.CONTEXT_LIBRARY, null, "audio/SS_Tip" + pdict.CurrentHttpParameterMap.dayNumber.value + ".wav")}" type="audio/wav" />
+		Your browser does not support the audio element. Please try a different browser.
+	</audio>
+</isif>

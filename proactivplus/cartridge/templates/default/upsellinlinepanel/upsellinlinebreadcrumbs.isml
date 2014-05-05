@@ -1,0 +1,29 @@
+<!--- TEMPLATENAME: upsellinlinebreadcrumbs.isml --->
+<div class="breadcrumb <isif condition="${!isFrequencySection}">breadcrumbCore</isif> panelC">
+		<div class="refreshLogo"><a href="${URLUtils.httpHome()}" title="Proactiv Plus"><img src="${URLUtils.staticURL('images/proactivplus/proactivplus.png')}" alt="Proactiv Plus" /></a></div>
+		<ul>
+			<li class="step1 <isif condition="${orderStep == 1}"> active</isif>">
+				<a <isif condition="${orderStep > 1}"> href="${URLUtils.https('Page-Show','cid','order')}" <iselse> href="javascript:void(0)"  </isif>><span>01</span>
+				${Resource.msg('cart.breadcrumbs.selectsystem.label', 'rendering', null)}</a>
+			</li>
+			<li class="step2 <isif condition="${orderStep == 2}"> active</isif>">
+				<a <isif condition="${orderStep > 2}"> href="${URLUtils.http('Airline-Show','step','02','pid',pdict.CurrentSession.custom.pid1)}" <iselse> href="javascript:void(0)"  </isif>><span>02</span>
+				${Resource.msg('cart.breadcrumbs.selectfreegift.label', 'rendering', null)}</a>
+			</li>
+			<li class="step3 <isif condition="${orderStep == 3}"> active</isif>">
+				<a <isif condition="${orderStep > 3}"> href="${URLUtils.http('Airline-Show','step','03','pid',pdict.CurrentSession.custom.pid2)}" <iselse> href="javascript:void(0)"  </isif>><span>03</span>
+				${Resource.msg('cart.breadcrumbs.selectsupply.label', 'rendering', null)}</a>
+			</li>
+			<isif condition="${isFrequencySection}">
+				<li class="step4 <isif condition="${orderStep == 4}"> active</isif>">
+					<a href="javascript:void(0)" ><span>04</span>
+					${Resource.msg('cart.breadcrumbs.frequency.label', 'rendering', null)}</a>
+				</li>
+			</isif>
+			<li class="step5 <isif condition="${orderStep == 5}"> active</isif>">
+				<a href="javascript:void(0)" ><span>
+				<isif condition="${isFrequencySection}">05<iselse/>04</isif></span>
+				${Resource.msg('cart.breadcrumbs.checkout.label', 'rendering', null)}</a>
+			</li>
+		</ul>
+</div>

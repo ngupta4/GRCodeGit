@@ -1,0 +1,80 @@
+<isscript>
+  importPackage( dw.object );
+
+  var paaffURL = pdict.CurrentHttpParameterMap.paaff.stringValue;
+  
+ 	  var showLiveChatCampaign : CustomObject = CustomObjectMgr.getCustomObject("CampaignConfiguration", getCurrentCampaignCode());
+  	var showLiveChat : CustomObject = false;
+   if(showLiveChatCampaign != null){
+  		showLiveChat  = showLiveChatCampaign.custom.showLiveChat;
+  }
+ 
+  
+</isscript>
+
+<isinclude template="util/modules"/>
+<div id="footer">
+  <isif condition="${pdict.CurrentCustomer.authenticated || pdict.CurrentRequest.httpCookies['rememberMe']!=null}">		
+		<iscontentasset aid="footer-global-login"/>
+  <iselse/>	
+		<iscontentasset aid="footer-global"/>
+  </isif>
+</div>
+
+
+<iscomment>
+	Code Included For Merge or Persistant Cart. If user is authenticated and cookie is not set.
+</iscomment>
+<isinclude template="common/persistantcartdialog.isml"/>
+
+<iscomment>
+	Customer registration can happen everywhere in the page flow. As special tag in the pdict
+	is indicating it. So we have to check on every page, if we have to report this event for
+	the reporting engine.
+</iscomment>
+<isinclude template="util/reporting/ReportUserRegistration.isml"/>
+
+<isif condition="${dw.system.Site.getCurrent().getCustomPreferenceValue('enableLiveChat') == true}">
+    <!-- LIVE CHAT INCLUDE SCRIPT -->
+  <!--  Allow chat if chat_disable is not defined or 0 in session variable -->
+  <isif condition="${session.custom.chat_disable == null || session.custom.chat_disable == 0}">
+    <isif condition="${showLiveChat == true}">
+    <isif condition="${!empty(pdict.CheckoutStep) && 'confirmation' == pdict.CheckoutStep}">
+      <iscomment>Confirmation page, Add inq chat confirmation information, rm9084</iscomment>
+       <script type="text/javascript">
+        var inqSalesProducts = mainOfferCode;
+        var inqSalesQuantities = mainItemQty;
+        var inqSalesPrices = subTotal;
+        var inqClientOrderNum = orderID;
+        var inqCustomerName = <isprint value="${pdict.CurrentForms.personinf.billtoaddress.firstName.value}" encoding="off"> + " " + <isprint value="${pdict.CurrentForms.personinf.billtoaddress.lastName.value}" encoding="off">;
+        var inqOtherInfo = "TYP:Proactiv~CNF:" + <isprint value="${pdict.CurrentForms.personinf.billtoaddress.firstName.value}" encoding="off"> + "~CNL:" + <isprint value="${pdict.CurrentForms.personinf.billtoaddress.lastName.value}" encoding="off"> + "~CST:New~CMP:" + uci + "~OVO:" + orderTotal;
+     </script>
+    </isif>
+    </isif>
+   </isif>
+   <script type='text/javascript' src="${dw.system.Site.getCurrent().getCustomPreferenceValue('liveChatJSUrl')}"></script>
+</isif>
+
+
+
+
+
+<isinclude template="common/google_analytics" />
+<isif condition="${dw.system.Site.getCurrent().getCustomPreferenceValue('isForeseeIncluded') == true}">
+	<isinclude template="foresee-wen/foresee-trigger"/>
+</isif>
+<!---  Omniture tracking  --->
+<isinclude template="analytics/omniture/omniture"/>
+<div id="tracking">
+</div>
+<script type="text/javascript">
+jQuery('.facebook').click( function(e) {
+	s.linkTrackVars='prop33,eVar33';
+	s.prop33="us:Reclaim Botanical:facebook";
+    s.eVar33= "us:Reclaim Botanical:facebook";
+    s.events="";
+   // s.tl(this,'o',"facebook");
+ 
+});
+
+</script>

@@ -1,0 +1,54 @@
+/**
+* This script sets keycode to basket for updating in order.
+* It iterates over price adjustments to identify the promotion that is applied and sets the respective keycode in basket
+* otherwise sets the default member keycode from session.
+* @input basket: dw.order.Basket
+* @input currentSession: dw.system.Session
+*/
+importPackage( dw.system );
+
+function execute( args : PipelineDictionary ) : Number
+{
+ /*   var promo:dw.campaign.Promotion;
+  	for each(var priceAdjustment:dw.order.PriceAdjustment in args.basket.getPriceAdjustments()){
+   		promo = priceAdjustment.getPromotion();
+   		args.basket.getCustom().keyCode = promo.getCustom().keyCode;
+   	}*/
+   	
+   	for each(var couponLineItem:dw.order.CouponLineItem in args.basket.getCouponLineItems()){
+   		if(couponLineItem.applied){
+   			args.basket.getCustom().keyCode = couponLineItem.couponCode;
+   		}
+   	}
+   	
+   	if(args.basket.getCustom().keyCode==null)
+   	{
+   		args.basket.getCustom().keyCode = checkValidityOfKeyCode(args.currentSession.custom.keyCode);
+   	}   	
+   	
+    return PIPELET_NEXT;
+}
+
+// This function will pass default value of the specific Brand if The keycode in basket doesnt belongs to the brand
+function checkValidityOfKeyCode(keyCode : String){
+		
+	 var brandKeyCodes : String = Site.current.getCustomPreferenceValue("BrandSpecificKeyCodes");	 
+	 var brandKeyCodeArray : Array;	 
+	 var validKeyCode = Site.current.getCustomPreferenceValue("memberPriceBookKeyCode");
+	 
+	 if(brandKeyCodes != null && brandKeyCodes != ""){
+	 		brandKeyCodeArray = brandKeyCodes.split(",");
+		 	for each(var brandKey : String in brandKeyCodeArray){	 		 		 	 
+				 if( brandKey != null && brandKey != "" && brandKey.equals(keyCode)){
+			 		validKeyCode = keyCode;
+			 		break;
+			 	}
+	 		}	 		
+	 }	 
+	 else{
+	 		validKeyCode = keyCode;
+	 	
+	 }
+	 
+	return validKeyCode;
+}

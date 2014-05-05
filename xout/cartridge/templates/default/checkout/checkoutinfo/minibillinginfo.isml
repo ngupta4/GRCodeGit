@@ -1,0 +1,30 @@
+<iscomment>
+	This template renders the billing address and a list of all payment
+	methods (more precessively payment instruments) used for the payment
+	of the basket. It is displayed in the order summary at the right hand
+	side in the checkout process.
+</iscomment>
+<isset name="billingAddress" value="${pdict.Basket.billingAddress}" scope="page"/>
+
+<isif condition="${!empty(billingAddress)}">
+	<div class="checkout_box minibillingaddress">
+
+		<h4>			
+			<form action="${URLUtils.continueURL()}" method="post">
+				<button class="edit_btn" type="submit" value="${Resource.msg('global.edit','locale',null)}" name="${pdict.CurrentForms.orderreview.backtoinfo.htmlName}" >${Resource.msg('global.edit','locale',null)}</button>
+			</form>
+			<span>${Resource.msg('minibillinginfo.billingaddress','checkout',null)}</span>
+		</h4>
+
+		<div class="checkout_box_inner details">
+			<div><isprint value="${billingAddress.firstName}"/> <isprint value="${billingAddress.lastName}"/></div>
+			<div><isprint value="${billingAddress.address1}"/></div>
+			<isif condition="${!empty(billingAddress.address2)}">
+				<div><isprint value="${billingAddress.address2}"/></div>
+			</isif>
+			<div><isprint value="${billingAddress.city}"/>, <isprint value="${billingAddress.stateCode}"/> <isprint value="${billingAddress.postalCode}"/></div>
+			<div><isprint value="${billingAddress.countryCode}"/></div>
+		</div>
+
+	</div>
+</isif>

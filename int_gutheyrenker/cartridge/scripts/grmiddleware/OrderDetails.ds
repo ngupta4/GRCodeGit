@@ -1,0 +1,167 @@
+/**
+* Demandware Script File
+* To define input and output parameters, create entries of the form:
+*
+* @<paramUsageType> <paramName> : <paramDataType> [<paramComment>]
+*
+* where
+*   <paramUsageType> can be either 'input' or 'output'
+*   <paramName> can be any valid parameter name
+*   <paramDataType> identifies the type of the parameter
+*   <paramComment> is an optional comment
+*
+*   @input mwid : String
+*	@input link : String
+*	@output statusMessage : String
+*   @output ErrorContainer : Array
+*   @output orderDetailsList: 	dw.util.Iterator
+*/
+importPackage( dw.system );
+importPackage( dw.io );
+importPackage( dw.net );
+importPackage( dw.util );
+importPackage( dw.web );
+importPackage( dw.crypto );
+importPackage(dw.object);
+importScript( "grmiddleware/libGRMiddleware.ds" );
+importScript('common/libUtils.ds');
+
+function execute( args : PipelineDictionary ) : Number
+{
+   	// No XML which the serviceneeds to consume
+	
+	var errorContainer : Array = [];
+	var error = null;
+		
+	// Figure out service URL
+	var link= args.link;
+	var uid:String = getCustomerUID(request);
+  	var transactionID = getTransactionID();
+  	var brand = Site.current.getCustomPreferenceValue("GRMProductLine");
+  	var mwid= args.mwid;
+	var serviceURL : String = getOrderDetailsServiceURL(mwid, link, brand, uid,transactionID);
+	
+   //Order Details---Web service call
+   
+   	 // Call GR Service
+	var http : HTTPClient = new HTTPClient();
+    try {
+	    http.setRequestHeader('Content-Type','text/xml');
+	   // http.setRequestHeader('Authorization',oauthHeader);
+	    logDebug("Order Details URL :"+serviceURL);
+	  //  http.open('POST', serviceURL);
+	    // logInfo ("Order Details XML =" + shippFreqXML);
+	    // Send XML data
+	    // http.send(shippFreqXML);
+	    http = callMWAPI(http, "GET", serviceURL); 
+	}
+	catch (e)
+	{
+		Logger.error(e);
+	}
+   
+	var response : String = http.text;
+	var errorResponse : String = http.errorText;
+	var responseXML : XML = null;
+	var errorContainer : Array = [];
+	var error = null;
+	var status:String=null;
+	
+	logInfo("Order Details response = "+ response);
+    logInfo("Order Details errorResponse = "+ errorResponse);	
+
+	/****
+	* Handle error responses
+	* Empty response (no XML) or non-empty error response
+	****/
+	
+	if( !empty(errorResponse) ) {
+		response = errorResponse;
+	}
+	
+	if( !empty(response) ) {						
+	  response= response.replace("&", "&amp;");
+	  var realStart : Number = response.indexOf('<customerResponse>');
+	  responseXML = new XML(response.substring(realStart));
+	
+	 
+      status = responseXML.status; 
+      
+      if(status == 200){						
+			var detailsXML: XML =responseXML ;
+	        var ns1: Namespace = new Namespace(detailsXML.namespace());
+	        
+	        var orderDetailsList: ArrayList = new dw.util.ArrayList();
+	    
+	        for each(var orderXML: XML in detailsXML.ns1::responseData.ns1::orderDetails) {
+	         	var order: Object= new Object();
+	            order['id']=orderXML.ns1::orderId.toString();
+		        order['orderdate']=orderXML.ns1::orderDate.toString(); 
+		        var billingadd: Object= new Object();
+		        	billingadd['firstName']=orderXML.ns1::addresses.ns1::billingAddress.ns1::firstName.toString();
+		        	billingadd['lastName']=orderXML.ns1::addresses.ns1::billingAddress.ns1::lastName.toString();
+		        	billingadd['address']=orderXML.ns1::addresses.ns1::billingAddress.ns1::address.toString();
+		        	billingadd['city']=orderXML.ns1::addresses.ns1::billingAddress.ns1::city.toString();
+		        	billingadd['state']=orderXML.ns1::addresses.ns1::billingAddress.ns1::state.toString();
+		        	billingadd['postalCode']=orderXML.ns1::addresses.ns1::billingAddress.ns1::postalCode.toString();
+		        	billingadd['countryCode']=orderXML.ns1::addresses.ns1::billingAddress.ns1::countryCode.toString();
+		      
+		        order['billingaddress']=billingadd;
+		        
+		        var shippadd: Object= new Object();
+		        	shippadd['firstName']=orderXML.ns1::addresses.ns1::shippingAddress.ns1::firstName.toString();
+		        	shippadd['lastName']=orderXML.ns1::addresses.ns1::shippingAddress.ns1::lastName.toString();
+		        	shippadd['address']=orderXML.ns1::addresses.ns1::shippingAddress.ns1::address.toString();
+		        	shippadd['city']=orderXML.ns1::addresses.ns1::shippingAddress.ns1::city.toString();
+		        	shippadd['state']=orderXML.ns1::addresses.ns1::shippingAddress.ns1::state.toString();
+		        	shippadd['postalCode']=orderXML.ns1::addresses.ns1::shippingAddress.ns1::postalCode.toString();
+		        	shippadd['countryCode']=orderXML.ns1::addresses.ns1::shippingAddress.ns1::countryCode.toString();
+		      
+		        order['shippingAddress']=shippadd;
+		        
+	         	var prodList: ArrayList = new dw.util.ArrayList();
+	        	for each(var productsXML: XML in orderXML.ns1::products.ns1::product) {
+			      //  for each(var prodXML: XML in ratingFeedXML.ns1::product) {
+			            var prod: Object= new Object();
+						prod['productNum'] = productsXML.ns1 ::productNum.toString();
+						prod['quantity'] = productsXML.ns1 ::quantity.toString();
+						prod['price'] = productsXML.ns1::price.toString();
+						prod['title'] = productsXML.ns1::title.toString();
+						prod['status'] = productsXML.ns1::status.toString();
+						prod['statusDate'] = productsXML.ns1::statusDate.toString();
+						prod['orderDate'] = productsXML.ns1::orderDate.toString();
+						prod['linkId'] = productsXML.ns1::linkId.toString();
+			         //   id = orderXML.ns ::productNum.toString();
+			            prodList.add(prod);
+			         }
+	 		order['products']=prodList;
+	 		order['totalProductAmount']=orderXML.ns1::orderTotals.ns1::totalProductAmount.toString(); 
+	 		order['totalShippingAmount']=orderXML.ns1::orderTotals.ns1::totalShippingAmount.toString();
+	 		order['totalTaxAmount']=orderXML.ns1::orderTotals.ns1::totalTaxAmount.toString();
+	 		order['totalOrderAmount']=orderXML.ns1::orderTotals.ns1::totalOrderAmount.toString();
+	 		orderDetailsList.add(order);
+      }
+      }else {   
+	     getErrorResponse (responseXML);//Call for error handling
+	    	
+			/*var errorcode = responseXML.errorData.error.code;
+			var errormsg = responseXML.errorData.error.message+" :"+responseXML.errorData.error.field+" = "+responseXML.errorData.error.value;
+			error = {	"code":errorcode,
+						"message":errormsg						
+					};
+			errorContainer.push(error);*/
+		}
+      
+     }
+      
+     args.orderDetailsList = orderDetailsList.iterator(); 
+
+    return PIPELET_NEXT;
+}
+
+function getOrderDetailsServiceURL(mwid : String, link:String, brand : String, uid : String, trans: String) {
+    //baseURL="https://mw-web-dev3.grdev.com/customer/order-details/mwid/15/link/1020201001/brand/PA/uid/VHgNyZ/trans/12233445514";
+	var baseURL : String = Site.current.getCustomPreferenceValue("middlewareAPIURL");
+	baseURL=baseURL+"/customer/order-details/mwid/"+ mwid +"/link/"+ link+"/brand/"+ brand+"/uid/"+ uid +"/trans/"+trans;
+	return baseURL;
+}

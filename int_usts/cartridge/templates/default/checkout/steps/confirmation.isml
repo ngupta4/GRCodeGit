@@ -1,0 +1,120 @@
+<!--- TEMPLATENAME: complete.isml --->
+<isset name="ShowBrowsingOrderYourSystem" value="${false}" scope="pdict" />
+<isset name="ShowOtherWaysToPurchase" value="${false}" scope="pdict" />
+<isset name="ShowRelatedLinks" value="${false}" scope="pdict" />
+<isset name="ShowUpsells" value="${false}" scope="pdict" />
+<isset name="ShowGuarantee" value="${true}" scope="pdict" />
+<isset name="ShowCartPhone" value="${false}" scope="pdict" />
+<isset name="ShowCartQuestions" value="${false}" scope="pdict" />
+<isset name="LeftRailShowCheck" value="${false}" scope="pdict"/>
+<isset name="showOrderButton" value="${false}" scope="page" />
+<isset name="cookiesDomain" value="${dw.system.Site.current.getCustomPreferenceValue("GRCookiesDomain")}" scope="page"/>
+<isset name="primaryUCI" value="${pdict.CurrentRequest.httpCookies['uci'].value}" scope="page"/>
+<!-- Refer a friend -->
+<isset name="pageName" value="Confirmation" scope="page"/>
+
+<script type="text/javascript">
+	var orderIdinserted='<isprint value="${pdict.Order.orderNo}"/>';
+</script>
+
+<iscomment>including see why js & setting up initial variables</iscomment>
+<isinclude template="checkout/steps/initseewhy" />
+
+<iscookie name="campaign" path="/" value="${}" domain="${cookiesDomain}" maxAge="0" />
+<iscookie name="uci" path="/" value="${}" domain="${cookiesDomain}" maxAge="0" />
+<iscookie name="secondaryuci" path="/" value="${}" domain="${cookiesDomain}" maxAge="0" />
+<iscookie name="rememberMe" path="/" value="${}" domain="${cookiesDomain}" maxAge="0" />
+<iscookie name="loggedin" path="/" value="${}" domain="${cookiesDomain}" maxAge="0" />
+
+<iscomment>Clear out Order information that is no longer useful or required anymore</iscomment>
+<isscript>
+	delete pdict.CurrentSession.privacy.OrderNo;
+	delete pdict.CurrentSession.privacy.OrderNoDec;
+</isscript>
+
+<div class="orderConfimationContainer">
+<iscomment>'Thank you' section</iscomment>	
+<div class="thankyoumessage">
+	<h2><span>${Resource.msgf('cart.thankyou.label', 'rendering', null,pdict.Order.billingAddress.firstName)}</span></h2>
+	<div class="orderno"><isprint value="${Resource.msgf('cart.thankyou.orderno', 'rendering', null, pdict.ClientOrderID)}" encoding="off" /></div>
+	<div class="confirmemail"><isprint value="${Resource.msgf('cart.thankyou.confirmemail', 'rendering', null, pdict.CurrentForms.personinf.contact.email.value)}" encoding="off" /></div>
+	<div class="confirmNote"><isprint value="${Resource.msgf('cart.thankyou.note', 'rendering', null, pdict.Order.getTotalNetPrice().value)}" encoding="off" /><br>
+	<isprint value="${Resource.msgf('cart.thankyou.note2', 'rendering', null, pdict.Order.allProductLineItems[0].product.custom.kitPrice,pdict.Order.allProductLineItems[0].product.custom.kitFrequency.toLowerCase() )}" encoding="off" /></div>
+	<hr>
+</div>
+
+<div class="ordersummary">
+	<h3><isprint value="${Resource.msg('cart.ordersummary.label', 'rendering', null)}" encoding="off" /></h3>
+	
+	<isif condition="${pdict.Order}">
+		<isset value="${pdict.Order.getShipments()}" name="shipments" scope="page"/>
+	<iselseif condition="${pdict.Basket}">
+		<isset value="${pdict.Basket.getShipments()}" name="shipments" scope="page"/>
+	<iselse>
+		<isset value="${pdict.CurrentForms.cart.shipments}" name="shipments" scope="page"/>
+	</isif>
+	<iscomment>LOOP TO SEPARATE DIFFERENT SHIPMENTS ex: Gift Registry Shipments Etc.</iscomment>
+	<isloop items="${shipments}" var="Shipment" status="loopstate">
+		<iscomment>Put core offer first in new array</iscomment>						
+		<isif condition="${pdict.Order}">
+			<isset name="items" value="${Shipment.productLineItems}" scope="page"/>
+		<iselseif condition="${pdict.Basket}">
+			<isset name="items" value="${Shipment.productLineItems}" scope="page"/>
+		<iselse>
+			<isset name="items" value="${Shipment.items}" scope="page"/>
+		</isif>
+		<isloop items="${items}" alias="FormLi" status="loopstate">
+			<isif condition="${pdict.Order || pdict.Basket}">
+				<isset name="lineItem" value="${FormLi}" scope="page"/>
+			<iselse>
+				<isset name="lineItem" value="${FormLi.object}" scope="page"/>
+			</isif>
+			<iscomment>Product Area!</iscomment>
+			<isset name="productImage" value="${lineItem.product.getImage('small', 0)}" scope="page" />
+
+			<isif condition="${!empty(productImage)}">
+				<div class="productbox">
+					<iscomment>Try to get product image (of type "small")</iscomment>
+					<img src="${productImage.url}" alt="${productImage.alt}" title="${productImage.title}"/>
+				</div>
+				<div class="productInfo">
+					<div class="productDesc"><isprint value="${lineItem.product.shortDescription}"/> </div>
+					<div class="productName"><isprint value="${lineItem.productName}"/> </div>
+					<div class="orderTotal">
+						<isprint value="${Resource.msg('cart.ordertotal.label', 'rendering', null)}" encoding="off" />
+						<isprint value="${lineItem.getPrice()}"/></div>
+				</div>
+			</isif>
+		</isloop>
+	</isloop>
+	
+
+</div>
+
+<div class="phoneContainer">
+<p class="phoneTop"><isprint value="${Resource.msg('cart.confirm.phone.label', 'rendering', null)}" encoding="off" /></p>
+<p class="phoneNumber"><isinclude template="components/campaignphone"/></p>
+<p class="phoneBottom"><isprint value="${Resource.msg('cart.confirm.phone.call', 'rendering', null)}" encoding="off" /></p>
+</div>
+<div style="clear:both;"></div>
+</div>
+<iscomment>SeeWhy code</iscomment>
+<isif condition="${dw.system.Site.current.preferences.custom.seeWhyIncluded}">
+	<script type="text/javascript">
+		cy.USERID='${pdict.CurrentForms.personinf.contact.email.value}';
+		cy.CUSTOM1='${pdict.CurrentForms.personinf.billtoaddress.firstName.value}';
+		cy.CUSTOM2='${pdict.CurrentForms.personinf.billtoaddress.lastName.value}';
+		cy.CUSTOM3='${pdict.CurrentForms.cart.shipments[0].items[0].object.product.ID}';
+		cy.CUSTOM4='${addressObj.states.stateUS.htmlValue}';
+		cy.CUSTOM5="";
+		cy.FUNNELLEVEL='7';
+	</script>
+	
+	<isinclude template="seewhy/variables/setcheckoutvariables.isml"/>
+</isif>
+<iscomment>Media Pixel</iscomment>
+<isslot id="MediaPixelForConfirmation" context="global" description="MediaPixelForConfirmation" />
+ 
+<isif condition="${(!pdict.ServerError) && (pdict.originalCampaignCode == Resource.msg('campaign.code.core', 'configuration', 'core'))}">
+	<isslot id="confirmation-cross-sell" description="Cross-sell on confirmation page" context="global" />
+</isif>

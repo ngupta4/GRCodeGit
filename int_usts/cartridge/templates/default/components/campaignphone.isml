@@ -1,0 +1,23 @@
+<!--- TEMPLATENAME: campaignphone.isml --->
+
+<isscript>		
+	var CCC : Object = pdict.CurrentCampaignConfig;
+	//parse the phone number out for the page
+	var phone: String = CCC.phone;
+	var phoneNumbers = phone.split("|");
+</isscript>
+<isloop items="${phoneNumbers}" var="item" status="status">
+	<isscript>
+		var parts = item.split(":");
+		var class:String;
+		var phoneNumber:String;
+		if(parts.length < 2){
+			class = "default";
+			phoneNumber = item;
+		}else{
+			class = parts[0];
+			phoneNumber = parts[1];
+		}
+	</isscript>
+<span class="${class}">${phoneNumber}</span>
+</isloop>

@@ -1,0 +1,47 @@
+<iscomment>
+	This template renders the slot content of the bottom category landing slot
+	in case the slot content is of type Content Asset.
+	Note, only one content asset is rendered.
+</iscomment>
+<iscache type="relative" minute="30" varyby="price_promotion"/>
+<isinclude template="util/modules"/>
+<isif condition="${!empty(slotcontent) && !empty(slotcontent.content)}">
+
+		<isset name="caturl" value="" scope="page"></isset>
+		<isloop items="${slotcontent.content}" var="product" begin="0" end="2">
+		
+			<iscomment> Checks for removing outofstock, offline and not searchable products </iscomment>
+			<isif condition="${product.getAvailabilityModel().isInStock() && product.isSearchable()}">	
+				<isset name="Scene7assetID" value="" scope="page"/>
+				<isif condition = "${'sceneSevenAssetId' in product.custom}">		
+					<isset name="Scene7assetID" value="${product.custom.sceneSevenAssetId}" scope="page"/>
+				</isif>	
+				<iscomment>If image couldn't be determined, display a "no image" medium</iscomment>
+				<isif condition="${!empty(Scene7assetID)}">
+					<isset name="scene7_1" value="${Resource.msg('image.scene7url','common',null)}" scope="page">
+					<isset name="scene7_2" value="${Resource.msg('image.scene7.preset.categoryhover','common',null)}" scope="page">								
+					<isset name="thumbnailUrl" value="${scene7_1+Scene7assetID+scene7_2}" scope="page"/>						
+				<iselse/>
+					<isset name="thumbnailUrl" value="${URLUtils.staticURL('/images/noimagemedium.png')}" scope="page"/>
+				</isif>
+				<isif condition = "${'catalogDisplayNameTwo' in product.custom}">
+					<isset name="productName" value="${product.custom.catalogDisplayNameTwo}" scope="page"/>
+				</isif>
+				<isset name="thumbnailAlt" value="${productName}" scope="page"/>
+				
+				<div class="product"> <a href="${URLUtils.http('Product-Show', 'pid', product.ID)}"><img src="${thumbnailUrl}"  alt='<isprint value="${thumbnailAlt}" encoding="off"/>' width="140" height="80" /></a> <a href="${URLUtils.http('Product-Show', 'pid', product.ID)}"><isprint value="${productName}" encoding="off"/></a> </div>
+				<iscomment>
+				Below condition is to set url for click of see more. 
+				Presently 1st online category for 1st product will be returned.  
+				</iscomment>
+				<isif condition="${empty(caturl)}">
+					<isset name="catList" value="${product.onlineCategories}" scope="page"></isset> 
+					<isif condition="${ null != catList && catList.length > 0}">
+						<isset name="caturl" value="${URLUtils.http('Search-Show', 'cgid', catList[0].ID)}" scope="page"></isset>
+					</isif> 
+				</isif>
+			</isif>
+		</isloop>
+		
+</isif>			
+

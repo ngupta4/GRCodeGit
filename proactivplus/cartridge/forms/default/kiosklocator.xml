@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<form xmlns="http://www.demandware.com/xml/form/2008-04-19">
+	<field formid="zip" label="forms.kiosklocator.zip" type="string" mandatory="true" min-length="5" max-length="10" regexp="^(\d{5})(-\d{4})?$" binding="zip" missing-error="forms.addressinf.zip.missing" range-error="forms.testimony.range.zip" parse-error="forms.testimony.require.zip" />
+		
+	<field formid="radius" label="forms.kiosklocator.radius" type="number" mandatory="true">
+		<options>
+			<option optionid="25" value="25"/>
+			<option optionid="50" value="50"/>
+			<option optionid="150" value="150"/>
+			<option optionid="300" value="300"/>
+			<option optionid="500" value="500"/>
+		</options>
+	</field>
+	
+	<field formid="country" type="string" min-length="2" max-length="2" binding="country" label="forms.kiosklocator.countrycode" default-value="US"/>
+	
+	<action formid="find" valid-form="true"/>	
+</form>

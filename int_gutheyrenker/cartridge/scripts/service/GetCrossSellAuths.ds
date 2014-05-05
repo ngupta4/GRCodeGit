@@ -1,0 +1,173 @@
+/**
+* Demandware Script File
+* To define input and output parameters, create entries of the form:
+*
+* @<paramUsageType> <paramName> : <paramDataType> [<paramComment>]
+*
+* where
+*   <paramUsageType> can be either 'input' or 'output'
+*   <paramName> can be any valid parameter name
+*   <paramDataType> identifies the type of the parameter
+*   <paramComment> is an optional comment
+*
+* For example:
+*
+*   @input BaseUrl : String
+*   @input Customer : Object The current Logged in customers profile object
+*   @output CrossSellLink : String  The link to take the customer too
+*   @output ErrorCode : String  If we where unable to validate authcode error code returned here
+*   @output Success : Object  If we where unable to validate authcode error code returned here
+*
+*/
+importPackage( dw.system );
+importPackage( dw.customer );
+importPackage( dw.util );
+
+importScript('common/libEncoding.ds');
+importScript( "grmiddleware/libGRMiddleware.ds" );
+importScript( "common/libOAuth.ds" );
+importScript('common/libUtils.ds');
+
+function execute( args : PipelineDictionary ) : Number
+{
+	args.ErrorCode = null;
+	args.CrossSellLink = "";
+	var authCode = "";
+	var cust:Customer = args.Customer;
+	var baseUrl: String = args.BaseUrl;
+	
+	
+	//check to see if the values are in the users profile first
+	if(empty(cust.profile) ){//|| empty(cust.profile.custom.crossSellAuthCodes)
+		//user isn't logged in or system doesn't have attribute so return error
+		return PIPELET_ERROR;	
+	}
+	
+	var codes = cust.profile.custom.crossSellAuthCodes;
+	//interate through the values
+	for(var i = 0; i< codes.length;i++){
+		//split of formatted data:  {baseurl}|{authcode}|{active}
+		var items = codes[i].split('|');
+		//first item campaign, second  is authcode, third is active
+		var url = items[0];
+		var active = new Boolean(items[2]);
+		
+		//if the campaing exists in profile (we have an auth)
+		if(url == baseUrl){
+			authCode = items[1];
+			//if marked as burned
+			if(!active){
+				//return an error that it has been used\
+				args.ErrorCode = 3;
+				return PIPELET_ERROR;
+			}else{
+				//call middleware to check if it is valid - will do this later but could re-implement here
+				if(!checkAuthCode(authCode)){
+					//set the offer code a active as false...
+					codes[i] = baseUrl + "|" + authCode + "|" + "false";
+					args.ErrorCode = 4;
+					return PIPELET_ERROR;
+				}
+			}
+		}
+	}
+
+	//didn't find an authcode so create one and add to profile
+	if(empty(authCode)){
+		//then make a call to create an auth code	
+		var brand : String= Site.current.getCustomPreferenceValue("GRMProductLine");
+		var id:Number = new Number((new Number(cust.profile.customerNo) * 100) + codes.length  );//
+		authCode = createAuthCode(id);
+		//save in the users profile
+		var data:String = baseUrl + "|" + authCode + "|" + "true";
+		var a:Array = new Array();
+		for(var i=0;i<cust.profile.custom.crossSellAuthCodes.length;i++){
+			a.push(cust.profile.custom.crossSellAuthCodes[i]);
+		}
+		a.push(data);
+		cust.profile.custom.crossSellAuthCodes = a;
+	}
+	
+	//if all is good then create link to return to the user
+	var link:String = args.BaseUrl;
+	if(link.indexOf("?")==-1)
+		link += "?";
+	link += "auth=" + authCode;
+	args.CrossSellLink = link;
+	args.Success = {'success':true,'crossSellLink':link};
+	return PIPELET_NEXT;
+}
+function createAuthCode(identifier:Number) :String{
+	var orgPrefs : OrganizationPreferences = System.getPreferences();
+	var text : String = '';//
+	if( 'GRMXSellDescription' in orgPrefs.custom && !empty(orgPrefs.custom['GRMXSellDescription']) ) {
+		text = orgPrefs.custom['GRMXSellDescription'];
+	}
+	
+	var configXML : XML = new XML(text);
+		
+	var salt : String = configXML.salt[1].toString();
+	var codes : String = configXML.codes[1].toString();
+	var length : String = configXML.length[1].toString();
+	
+	var numCodes : Number = codes-0;
+	var codeLength : Number = length-0;
+	
+	var id = identifier %= numCodes;
+	
+	var dwgr = getGRUtils();
+	var pc = new dwgr.php.GR_Auth_Url_Code();
+	pc.setCodes(numCodes);
+	pc.setChars(codeLength);
+	pc.setKey(salt);
+	
+	var authKey : String = pc.getCode(id);
+	return authKey;
+}
+function checkAuthCode(AuthCode) : Boolean{
+    //var url = normalizeURL(pref("GRMAuthCodeURL", "http://staging.grdev.com/auth-code")) +  "/" + args.AuthCode;
+    var baseURL : String = Site.current.getCustomPreferenceValue("middlewareAPIURL");
+	
+	var brand : String= Site.current.getCustomPreferenceValue("GRMProductLine");
+	
+	var url= baseURL + "/customer/auth-code/code/"+ AuthCode +"/brand/"+brand+"/uid/"+ getCustomerUID(request) +"/trans/"+getTransactionID();	
+	
+    var client : HTTPClient = openOAuthUrl("GET", url);
+    
+    client.send();
+    
+    Logger.debug("AuthCode response: " + client.text || client.errorText);
+    Logger.debug("AuthCode responsed with " + client.statusCode + " - " + client.statusMessage + "; Response message is empty; Url is '"  + url + "'");
+    
+    
+    var success:Boolean = false;
+    var errorCode:String = "";
+    
+    if(client.statusCode == 200){
+        success = true;
+    }
+    else if(   client.statusCode == 404
+            || client.statusCode == 400)
+    {
+        if(!assertErrorCode(client, ["404.1", "400.3"], url)){
+            success = false;
+        }
+        errorCode = "INVALID";
+    }
+    else if (client.statusCode == 410)
+    {
+        success = false;
+        errorCode = "EXPIRED";
+    }
+    else
+    {
+        if(!empty(client.text || client.errorText)){
+            Logger.error(client.text || client.errorText);
+        }
+        Logger.error("AuthCode responsed with " + client.statusCode + " - " + client.statusMessage + "; Url is '"  + url + "'");
+        success = false;
+        errorCode = "UNKNOWN";
+    }
+    return success;
+	
+}

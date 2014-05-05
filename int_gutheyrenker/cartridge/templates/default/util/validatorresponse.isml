@@ -1,0 +1,23 @@
+<!--- TEMPLATENAME: validatorresponse.isml --->
+<h1>Middleware Response:</h1>
+<p>Status: ${pdict.Status}</p>
+<p>ResponseID: ${pdict.ResponseID}</p>
+<p>ClientTransactionID: ${pdict.ClientTransactionID}</p>
+<p>ClientOrderID: ${pdict.ClientOrderID}</p>
+<p>PreAuthID: ${pdict.PreAuthID}</p>
+<p>ValidationID: ${pdict.ValidationID}</p>
+<p>RequestURI: ${pdict.RequestURI}</p>
+<p>ValidationID: ${pdict.ValidationID}</p>
+
+<h2>Errors:</h2>
+${pdict.ErrorContainer.length}::
+<isloop items="${pdict.ErrorContainer}" var="Error">
+	<p>${Error.type}</p>
+	<isscript>
+		var outString = "";
+		for( x in Error ) {
+			outString += x+":"+Error[x]+"\n";
+		}
+	</isscript>
+	<pre>${outString}</pre>
+</isloop>

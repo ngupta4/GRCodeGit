@@ -1,0 +1,88 @@
+<!--- TEMPLATENAME: selectasystemsingle.isml --->
+<iscache status="off"/>
+
+<iscomment>
+	This template is created before the 'wrapper' template, so we can set
+	up the template configuration for the 'pt_selectasystem' template right here.
+</iscomment>
+
+
+<isdecorate template="rendering/folder/pt_selectasystem">
+
+	<isinclude template="util/modules"/>
+	<isscript>
+		importPackage(dw.util);
+		importPackage(dw.object);
+		importPackage(dw.catalog);
+		
+		var CCC : Object = pdict.CurrentCampaignConfig;
+		var campaignCode : String = CCC.campaignCode;
+		var showHeader : boolean = CCC.showHeader;
+		var showFooter : boolean = CCC.showFooter;
+		var showNav : boolean = CCC.showNav;
+		var showOrderButton : boolean = CCC.showOrderButton;
+		var containerClasses : String = CCC.getContainerClasses();
+		var category : dw.catalog.Category = CCC.getCampaignCategory();
+		var primaryOffer : Product = null;
+		var secondaryOffer : Product = null;
+		var tertiaryOffer : Product = null;
+		var offersList : ArrayList = new ArrayList();
+		var offerCodes : Array = null;
+		if( !empty(CCC) ) {
+			offerCodes = CCC.sasOfferCodes;
+			var aProduct : Product = null;
+			for( var i=0, ii=offerCodes.length; i<ii; i++ ) {
+				aProduct = ProductMgr.getProduct(offerCodes[i]);
+				if( !empty(aProduct) ) {
+					if(primaryOffer == null) {
+						primaryOffer = aProduct;
+					} else if(secondaryOffer == null) {
+						secondaryOffer = aProduct;
+					} else {
+						tertiaryOffer = aProduct;
+					}
+				}
+				
+			}
+		}
+	</isscript>
+	
+	<div class="content_box_outer_pdp">
+		<div class="content_box_inner_pdp">
+		
+			<div class="pdp_offers">
+				<table>
+					<tr>
+						<td class="cell-control-offer">
+							<div id="control-offer" class="pdp_offer_left">
+								<isinclude url="${URLUtils.url('Product-Offer','pid',primaryOffer.ID)}" />
+							</div>
+						</td>
+						<td>
+							<div id="alternate-offer" class="pdp_offer_right">
+								<isinclude url="${URLUtils.url('Product-Offer','pid',secondaryOffer.ID)}" />
+							</div>
+						</td>
+					</tr>
+					<tr>
+						<td colspan="2">
+							<div id="one-shot-offer" class="pdp_offer_bottom">
+								<isinclude url="${URLUtils.url('Product-Offer','pid',tertiaryOffer.ID,'layout','horizontal')}" />
+							</div>
+						</td>
+					</tr>
+				</table>
+			</div>
+		</div>			
+	</div>
+<iscomment>
+	<div class="moneyback_gurantee_image">
+	  <img src="${URLUtils.staticURL('../images/60-day-moneyback.png')}" />
+	  <span class="moneyback_gurantee_text">${Resource.msg('product.moneyback_text','product',encoding="off")}</span>
+	</div>
+</iscomment>	
+	
+	<isinclude template="components/pixels/gr-sas" />
+	<isset name="OmniturePage" value="Offerpage" scope="pdict">	
+	<isset name="pixel_content_asset" value="pixels_order_now" scope="request">
+</isdecorate>

@@ -1,0 +1,39 @@
+<!--- TEMPLATENAME: cartaddproductjson.isml --->
+<iscontent type="application/json" charset="UTF-8" compact="true">
+<isscript>
+	importPackage(dw.content);
+</isscript>
+<isset name="campaignId" value="${pdict.CurrentHttpParameterMap.campaignid.stringValue}" scope="page"/>
+{
+	<isif condition=${empty(pdict.ErrorStatus)}>
+	"success": true,
+	"update": {
+	<isloop items="${pdict.Basket.getAllProductLineItems()}" var="pli">
+		<isset name="productImage" value="${pli.product.getImage('small', 0)}" scope="page" />
+	    "productInfo" : {
+	    	"name": "<isprint value="${pli.productName}"/>",
+	        "shortDescription": "<isprint value="${pli.product.custom.cartDescription || pli.product.shortDescription}"/>",
+	        "offerCode": "${pli.product.ID}",
+	        "imageSrc": "<isprint value="${dw.content.ContentMgr.getContent('cart-product-' +campaignId+"-"+pli.product.ID).custom.body}"/>",
+	        "imageAlt": "cart-product- ${campaignId}-${pli.product.ID}",
+	        "priceContent": "<isprint value="${dw.content.ContentMgr.getContent('cart-price-' +campaignId+"-"+pli.product.ID).custom.body}"/>"
+	    },
+	</isloop>
+	    "merchandiseTotal" : {
+	        "stringValue": "<isprint value="${pdict.Basket.getAdjustedMerchandizeTotalPrice(false)}">",
+	        "number": <isprint value="${pdict.Basket.getAdjustedMerchandizeTotalPrice(false).value}" formatter="###0.00">
+	    },
+	    "shipping" : {
+	        "stringValue": "<isprint value="${pdict.Basket.getAdjustedShippingTotalPrice()}">",
+	        "number": <isprint value="${pdict.Basket.getAdjustedShippingTotalPrice().value}" formatter="###0.00">
+	    },
+	    "totalPrice" : {
+	        "stringValue": "<isprint value="${pdict.Basket.getTotalNetPrice()}">",
+	        "number": <isprint value="${pdict.Basket.getTotalNetPrice().value}" formatter="###0.00">
+	    }
+	}
+    <iselse/>
+		"success": false,
+		"error":"<isprint value="${pdict.ErrorCode}"/>"
+    </isif>
+} 

@@ -1,0 +1,52 @@
+/**
+* Demandware Script File to send the reCAPTCHA response back for verification. In case of a technical error the 
+* script exists as if the response would be correct as the user cannot do anything about it.
+*
+* @input Challenge         : String The value of "recaptcha_challenge_field" sent via the form
+* @input Response          : String The value of "recaptcha_response_field" sent via the form
+* @output CaptchaErrorCode : String The error code for the captcha
+*
+*/
+importPackage( dw.system );
+importPackage( dw.net );
+
+function execute( args : PipelineDictionary ) : Number
+{
+    var client : HTTPClient = new HTTPClient();
+    client.open("POST", "http://www.google.com/recaptcha/api/verify");
+    // construct parameters
+    var params =  {
+    	privatekey : Site.getCurrent().getCustomPreferenceValue("recaptchaPrivateKey"),
+    	remoteip : request.httpRemoteAddress,
+    	challenge : args.Challenge,
+    	response : args.Response
+    }
+    client.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+	client.send(objectToQueryString(params));
+	
+	if(client.statusCode == 200){
+		var resultArray : Array = client.text.split("\n");
+		if(resultArray[0] == 'true'){
+			args.CaptchaErrorCode = null;
+			return PIPELET_NEXT;
+		}else{
+			args.CaptchaErrorCode = resultArray[1];
+			return PIPELET_ERROR;
+		}
+	}else{
+		// in case of technical issues proceed
+		return PIPELET_NEXT;
+	}
+	
+
+    return PIPELET_NEXT;
+}
+
+function objectToQueryString(obj){
+	var result : String = "";
+	for(var i in obj){
+		if(result.length > 0) result += "&";
+		result+=i+'='+encodeURIComponent(obj[i]);
+	}
+	return result;
+}

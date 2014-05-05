@@ -1,0 +1,22 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<isinclude template="util/modules"/>
+<head>
+	<link rel="stylesheet" type="text/css" href="${URLUtils.staticURL('/css/mobile.css')}" />
+</head>
+<body class="home">
+	<div class="mobile-page">
+		<div class="mobile-container">
+			<div class="fullsite">To access full site, please <a href="${URLUtils.http('mHome-Show','showDesktop','true')}">click here</a>.</div>
+			<img src="${URLUtils.staticURL('../images/mobile-header.jpg')}" />
+			<div class="productname">Cold Plasma <br/> Sub-D</div>
+			<div class="tagline">Don't let your neck reveal your age.</div>
+			<div class="calltoorder"><a href="tel:18886515646">Call To Order ></a></div>
+		</div>
+	</div>
+	
+	<isset name="OmniturePage" value="mobileHomepage" scope="pdict">
+    <isinclude template="analytics/omniture/omniture_asset_include"/>	
+	
+</body>
+</html>

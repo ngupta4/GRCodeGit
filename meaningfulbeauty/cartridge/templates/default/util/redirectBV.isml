@@ -1,0 +1,19 @@
+<iscomment>ISREDIRECT must be before ISCACHE, because ISREDIRECT clears the response created so far</iscomment>
+
+<isif condition="${null!=dw.system.Site.getCurrent().getCustomPreferenceValue('bvSumbitURL1') && null!=dw.system.Site.getCurrent().getCustomPreferenceValue('bvSumbitURL2')}">
+	<isset name="url1" value="${dw.system.Site.getCurrent().getCustomPreferenceValue('bvSumbitURL1')}" scope="page"/>
+	<isset name="url2" value="${dw.system.Site.getCurrent().getCustomPreferenceValue('bvSumbitURL2')}" scope="page"/>
+<iselse>
+	<isset name="url1" value="${Resource.msg('bv.submit.url1','configuration',null)}" scope="page"/>
+	<isset name="url2" value="${Resource.msg('bv.submit.url2','configuration',null)}" scope="page"/>
+</isif>
+<isredirect location="${url1+pdict.CurrentRequest.httpHost+url2}" permanent="true"/>
+<iscache status="off"/>
+<html>
+<head>
+<title>${Resource.msg('redirect_permanent.title','common',null)}</title>
+</head>
+<body>
+	${Resource.msg('redirect_permanent.message','common',null)} <a href="${url1+pdict.CurrentRequest.httpHost+url2}" title="${Resource.msg('redirect_permanent.message','common',null)}">${url1+pdict.CurrentRequest.httpHost+url2}</a>
+</body>
+</html>

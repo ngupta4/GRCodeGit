@@ -1,0 +1,95 @@
+<head> 
+	<isif condition="${'pagetitle' in pdict}">
+	<title><isprint value="${pdict.pagetitle}" encoding="off" /></title>
+	</isif>
+	
+	<isif condition="${dw.system.System.getInstanceType() != dw.system.System.PRODUCTION_SYSTEM}">
+		<title>${pdict.CurrentPageMetaData.title} ${Resource.msg('revisioninfo.revisionnumber','revisioninfo',null)}</title>
+	<iselse>
+	  <title><isprint value="${pdict.CurrentPageMetaData.title}" encoding="off" /></title>
+	</isif>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	
+	<iscomment>Automatic generation for meta tags.</iscomment>
+	<isif condition="${!empty(pdict.CurrentPageMetaData.description)}"><meta name="description" content="${pdict.CurrentPageMetaData.description}"/></isif>
+	<isif condition="${!empty(pdict.CurrentPageMetaData.keywords)}"><meta name="keywords" content="${pdict.CurrentPageMetaData.keywords}"/></isif>
+
+	<meta name="viewport" content="width=device-width, initial-scale=1"> 
+	<meta name="apple-mobile-web-app-capable" content="yes" />
+		<script src="${URLUtils.staticURL('mobile/js/jquery-1.9.1.min.js')}"></script>
+		<script src="${URLUtils.staticURL('mobile/js/jquery.validate.min.js')}"></script>
+
+    <!-- Swipe Plugin -->
+	<script src="${URLUtils.staticURL('mobile/js/swipe.js')}"></script>
+	
+	<!-- Main Moblie js file -->
+	<script src="${URLUtils.staticURL('mobile/js/main.js')}"></script>
+	
+<iscomment>The follow snippet is executed to pass some Demandare URLs into the script</iscomment>
+<isscript>
+      var domain = dw.system.Site.getCurrent().getHttpHostName();
+</isscript>
+<script type="text/javascript"><!--
+	app.URLs.getProductUrl 				= "${URLUtils.url('Product-Show')}";
+	app.URLs.cartLogUrl                 = "${URLUtils.url('GRMiddleware-HTTPCartLog')}";
+	app.URLs.getVariants 				= "${URLUtils.url('Product-GetVariants')}";
+	app.URLs.getAvailability			= "${URLUtils.url('Product-GetAvailability')}";
+	app.URLs.accountShow				= "${URLUtils.https('Account-Show')}";
+	app.URLs.startRegistration			= "${URLUtils.https('Account-StartRegister')}";
+	app.URLs.loadingSmallImg 			= "${URLUtils.staticURL('/images/loading-small.gif')}";
+	app.URLs.productShow				= "${URLUtils.url('Product-Show')}";
+	app.URLs.formatMoney				= "${URLUtils.url('Product-FormatPrices')}";
+	app.URLs.visitorLog					= "${URLUtils.url('GRMiddleware-VisitorLog')}";
+	app.URLs.foreseeStaticURL			= "${URLUtils.staticURL('/foresee/')}";
+	app.URLs.baseURL					= "${domain}";
+	app.URLs.updateShippingPriceUrl 	= "${URLUtils.url("COCart-SetShippingMethod")}";
+	app.URLs.updateQtyUrl				= "${URLUtils.url("COCart-UpdateProductQty")}";
+	app.resources["CURRENCY_SYMBOL"]	= "${dw.util.Currency.getCurrency(dw.system.Site.getCurrent().currencyCode).symbol}";
+	app.resources["ADDPRODUCT_ERROR"]	= "${Resource.msg('kit.addproduct.maxproduct.error','errormessages',null)}";
+	app.resources["DELPRODUCT_ERROR"]	= "${Resource.msg('kit.delproduct.minproduct.error','errormessages',null)}";
+	app.resources["MISSINGVAL"] 		= "${Resource.msg('global.missingval','locale',null)}";
+	app.resources["SERVER_ERROR"] 		= "${Resource.msg('global.servererror','locale',null)}";
+	app.resources["MISSING_LIB"] 		= "${Resource.msg('global.missinglib','locale',null)}";
+	app.resources["BAD_RESPONSE"]		= "${Resource.msg('global.badresponse','locale',null)}";
+	app.resources["INVALID_PHONE"]		= "${Resource.msg('forms.contactinf.daytimephone.invalid','forms',null)}";
+	app.resources["INVALID_EMAIL"]		= "${Resource.msg('global.invalidemail','locale',null)}";
+	app.resources["INVALID_CCNUMBER"]   = "${Resource.msg('global.invalidccnumber','locale',null)}";
+	app.resources["INVALID_ZIP"]        = "${Resource.msg('global.invalidzip','locale',null)}";
+//--></script>
+
+	
+	<iscomment>Include Test & Target mBox Library globally</iscomment>
+	<script src="${URLUtils.staticURL('/js/testandtarget/mbox.js')}" type="text/javascript"></script>
+
+<isinclude template="components/header/visitorlogs"/>
+
+<iscomment>script for methods used for cart abandonment  solutions</iscomment>
+<script  src="${URLUtils.staticURL('/js/WebEvent.js')}" type="text/javascript"></script>
+
+<isscript>
+	var GoogleMapApiKey = request.isHttpSecure()?'GoogleMapApiKeySecure':'GoogleMapApiKey';
+</isscript>
+<iscomment>
+<script src="http://maps.google.com/maps?file=api&amp;v=2.61&amp;key=<isprint value="${dw.system.Site.getCurrent().getCustomPreferenceValue(GoogleMapApiKey)}" encoding="off"/>" type="text/javascript"></script>
+</iscomment>
+
+<isscript>
+  importScript('guthyrenker_core:common/libUtils.ds');
+  importPackage( dw.object );
+  var suppSeeWhy : CustomObject = CustomObjectMgr.getCustomObject("CampaignConfiguration", getCurrentCampaignCode()).custom.suppSeeWhy;
+</isscript>
+
+<!-- set suppSeeWhy variable to session -->
+<isif condition="${session.custom.suppCY == null || session.custom.suppCY == 0}">
+  <isif condition="${suppSeeWhy == true}">
+    <isset name="suppCY" value="${1}" scope="session">
+  <iselse> 
+    <isset name="suppCY" value="${0}" scope="session">
+
+    <script type="text/javascript">
+     cy.CUSTOMERCODE="${dw.system.Site.current.preferences.custom.seeWhyCustomerCode}";
+    </script>
+  </isif>
+ </isif>  
+	
+</head> 

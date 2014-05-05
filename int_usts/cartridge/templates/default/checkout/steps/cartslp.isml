@@ -1,0 +1,18 @@
+<!--- TEMPLATENAME: cartovernight.isml --->
+<isinclude template="util/modules" />
+<div class="cart">
+	<form action="${URLUtils.httpsContinue()}" method="post" id="${pdict.CurrentForms.cart.htmlName}" class="checkoutform">
+		<iscomment>Include a customer cart</iscomment>
+		<isinclude template="checkout/cart/cocart" />
+		<iscomment>Include a details form</iscomment>
+		<div id="sideslots">
+			<div class="sideslot" id="singlepage-cart-top">
+				<isslot id="singlepage-cart-top" description="singlepage cart top" context="category" context-object="${category}" />
+			</div>
+			<div class="sideslot" id="singlepage-cart-center">
+				<isslot id="singlepage-cart-center" description="singlepage cart center" context="category" context-object="${category}" />
+			</div>
+		</div>
+		<isinclude template="checkout/personinformation/personinformation" />		
+	</form>
+</div>

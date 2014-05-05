@@ -1,0 +1,19 @@
+<isdecorate template="account/pt_account"/>
+<isset name="pagetitle" value="${Resource.msg('your.account.title','locale',null)}" encoding="off" scope="pdict">
+<isinclude template="KitCustomizer/kitinclude"/>
+<div class="page-wrapper-retention">
+  
+  <div class="page-wrapper-retention-middle accountOverView">
+			<isinclude template="util/modules"/>
+			<div class="accountoverview">
+				<isslot id="account-banner" description="Banner for My Account pages" context="global" />
+				<isif condition = "${null!=pdict.genericError && !empty(pdict.genericError)}">
+					<span class="errormessage"><isprint value="${pdict.genericError}"></span>
+			  	</isif>
+				<h1>${Resource.msg('account.header','account',null)}</h1>
+				<isset name="OmniturePage" value="MyAccountLandingPage" scope="pdict">	
+				<isinclude url="${URLUtils.url('DisplayDashboard-DashboardView')}"/>	 
+			</div><!-- END: accountoverview -->
+		</div>
+	</div>
+</isdecorate>

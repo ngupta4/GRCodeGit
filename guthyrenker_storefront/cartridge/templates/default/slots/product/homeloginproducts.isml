@@ -1,0 +1,39 @@
+<iscomment>
+	This template renders the slot content of the bottom category landing slot
+	in case the slot content is of type Content Asset.
+	Note, only one content asset is rendered.
+</iscomment>
+<iscache type="relative" minute="30" varyby="price_promotion"/>
+<isif condition="${!empty(slotcontent) && !empty(slotcontent.content)}">
+	<div class="slider_home">
+	<div class="sliderheading">Over 100 Products Created with Acne-Prone Skin in </div>
+	
+	<ul id="slider2_home">
+		<isloop items="${slotcontent.content}" var="product" begin="0" end="${slotcontent.content.size()}">
+			<isset name="Scene7assetID" value="" scope="page"/>
+			<isif condition = "${'sceneSevenAssetId' in product.custom}">		
+				<isset name="Scene7assetID" value="${product.custom.sceneSevenAssetId}" scope="page"/>
+			</isif>	
+			<iscomment>If image couldn't be determined, display a "no image" medium</iscomment>
+			<isif condition="${!empty(Scene7assetID)}">
+				<isset name="scene7_1" value="${Resource.msg('image.scene7url','common',null)}" scope="page">
+				<isset name="scene7_2" value="?$kitHover$" scope="page">								
+				<isset name="thumbnailUrl" value="${scene7_1+Scene7assetID+scene7_2}" scope="page"/>						
+			<iselse/>
+				<isset name="thumbnailUrl" value="${URLUtils.staticURL('/images/noimagemedium.png')}" scope="page"/>
+			</isif>
+			<isif condition="${'catalogDisplayNameTwo' in product.custom}">
+				<isset name="thumbnailAlt" value="${product.custom.catalogDisplayNameTwo}" scope="page"/>
+				
+				<li class="product"><a href="${URLUtils.http('Product-Show', 'pid', product.ID)}"><img src="${thumbnailUrl}"  alt="${thumbnailAlt}"  /></a> 
+					<a href="${URLUtils.http('Product-Show', 'pid', product.ID)}">
+						<isprint value="${product.custom.catalogDisplayNameTwo}" encoding="off"/>
+					</a> 
+				</li>
+			</isif>	
+		</isloop>
+	</ul>
+	<div class="seemore"> <a href="${URLUtils.http('Search-Show', 'cgid', 'ALL')}">See More Products</a> </div>
+	</div>
+</isif>			
+

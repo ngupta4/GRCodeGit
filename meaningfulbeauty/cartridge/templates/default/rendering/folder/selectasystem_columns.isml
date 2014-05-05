@@ -1,0 +1,299 @@
+<!--- TEMPLATENAME: selectasystem.isml --->
+<isdecorate template="search/pt_selectasystem_full">
+<isinclude template="util/modules"/>
+
+<iscomment>create reporting event</iscomment>
+<isinclude template="util/reporting/ReportSearch.isml"/>
+
+<isset name="showHeader" value="${true}" scope="page" />
+<isset name="showFooter" value="${true}" scope="page" />
+<isset name="showNav" value="${true}" scope="page" />
+<isset name="showOrderButton" value="${false}" scope="page" />
+
+<isscript>
+	importPackage(dw.util);
+	importPackage(dw.catalog);
+	
+	var CCC : Object = pdict.CurrentCampaignConfig;
+
+	var offersList : ArrayList = new ArrayList();
+	var offerCodes : Array = null;
+	if( !empty(CCC) ) {
+		offerCodes = CCC.sasOfferCodes;
+		var aProduct : Product = null;
+		for( var i=0, ii=offerCodes.length; i<ii; i++ ) {
+			aProduct = ProductMgr.getProduct(offerCodes[i]);
+			if( !empty(aProduct) ) {
+				offersList.add1(aProduct);
+			}
+		}
+	}
+	var kitQtyClass = "";
+	var kitQty = 0;
+	if( !empty(offersList) ) {
+		kitQty = offersList.size();
+		switch(kitQty) {
+		case 1:
+			kitQtyClass="oneKit";
+			break;
+		case 2:
+			kitQtyClass="twoKits";
+			break;
+		case 3:
+			kitQtyClass="threeKits";
+			break;
+		case 4:
+			kitQtyClass="fourKits";
+			break;
+		case 5:
+			kitQtyClass="fiveKits";
+			break;
+		}
+	}
+</isscript> 
+
+<isset name="KitQtyClass" value="${kitQtyClass}" scope="page" />
+
+<div class="pageHead orderModuleContainer">
+	<h1>${Resource.msg('sas.pagetitle','checkout',null)}<iscomment>to show bv rating in the header.<isinclude template="bv/display/rr/reviewsummary" /></iscomment></h1>
+	<p class="guaranteeBadge">${Resource.msg('sas.mbguarantee','checkout',null)}</p>
+	
+ 	<div class="orderModule clearFix">
+
+		<div class="sys30Day_radio">
+			<ul class="kitselectionul">
+			<isloop items="${offersList}" var="offer" status="offers_status">		
+			   	<isif condition="${offers_status.count<=2}">
+				<isif condition="${offers_status.count==1}">
+		      	<li>
+			    	<div class="productimage">
+			      		<h3><isprint value="${offer.custom.tabDescription.markup}" encoding="off"/>
+			      			<strong><isprint value="${offer.custom.tabDetails.markup}" encoding="off"/></strong>
+			      		</h3>	
+						<img src="${offer.getImage('tab',0).url}" alt="Skin care products - Meaningful Beauty Basic Kit" />
+						<isif condition="${!empty(offer.custom.offerTabCallout)&&!empty(offer.custom.offerTabCallout.markup)}">
+							<isprint value="${offer.custom.offerTabCallout.markup}" encoding="off"/>							
+						</isif>								 		
+					</div>					
+			       	<h4>
+			       		<label>${Resource.msg('meaningfulbeauty.name','common',null)}&reg;</label> 
+			       		<isprint value="${offer.custom.tabDetails.markup}" encoding="off"/>
+			       	</h4>
+		       	</li>
+			    </isif>
+		  		<li class="slctOptions">
+		  	  		<label>
+		  	  			<input id="${offer.ID}" type="radio" name="kitgroup1" value='<isprint value="${kit1Name}" encoding="off"/>'  <isif condition="${offers_status.count%2!=0}">checked='checked'</isif>   class="kitselection" />
+						<isprint value="${offer.getName()}" encoding="off" />
+						<isif condition="${!empty(offer.custom.shippingLabel)}">
+				   		 	<span class="freeShip"><isprint value="${offer.custom.shippingLabel}" encoding="off"/></span>
+				   		<iselse>
+				       		<span class="priorShip">${Resource.msg('sas.priorShip','checkout',null)}</span>
+				   		</isif>
+					</label>
+					<div class="orderButtonB">
+						<isprint value="${offer.priceModel.getPriceBookPrice(dw.system.Site.current.preferences.custom.nonMemberPriceBook)}" /><a href="${URLUtils.https('COCart-AddProduct','pid',prodId)}">Order Basic System</a>
+					</div>
+			      	<h4 class="optionTitle">${Resource.msg('sas.optiontitle','checkout',null)}</h4>
+			       	<iscontentasset aid="Coupon-Graphic"/>
+			       	<ul class="kitdescriptionul">
+						<li>
+				      		<h3><isprint value="${offer.custom.tabDescription.markup}" encoding="off"/>
+				      			<strong><isprint value="${offer.custom.tabDetails.markup}" encoding="off"/></strong>
+				      		</h3>
+				      		<isprint value="${offer.getShortDescription()}" encoding="off" />
+				      	</li>
+				      	<li>
+				      		<isprint value="${offer.getLongDescription()}" />
+					       	<isset name="prodId" value="${offer.ID}" scope="page"/>
+					    </li>
+					</ul>
+			  	</li>
+			  	</isif>
+			</isloop>
+
+			<isif condition="${offers_status.count<=2}">
+		    <isif condition="${offers_status.count==1}">
+		      	<li>
+			      	<div class="productimage">
+			      		<h3><isprint value="${offer.custom.tabDescription.markup}" encoding="off"/>
+			      			<strong><isprint value="${offer.custom.tabDetails.markup}" encoding="off"/></strong>
+			      		</h3>	
+								 		
+						<img src="${offer.getImage('tab',0).url}" alt="Skin care products - Meaningful Beauty Basic Kit" />
+						<isif condition="${!empty(offer.custom.offerTabCallout)&&!empty(offer.custom.offerTabCallout.markup)}">
+							<isprint value="${offer.custom.offerTabCallout.markup}" encoding="off"/>							
+						</isif>								 		
+					</div>					
+			       <h4><label>${Resource.msg('meaningfulbeauty.name','common',null)}&reg;</label> <isprint value="${offer.custom.tabDetails.markup}" encoding="off"/></h4>
+			       <isprint value="${offer.getShortDescription()}" encoding="off" />
+		       </li>
+		       <li>
+			       <isprint value="${offer.getLongDescription()}" />
+			       <isset name="prodId" value="${offer.ID}" scope="page"/>
+			       <h4 class="optionTitle">${Resource.msg('sas.optiontitle','checkout',null)}</h4>
+			       <iscontentasset aid="Coupon-Graphic"/>
+		       </li>
+		      
+		      	
+		      </isif>
+		  	  <iscomment><li masterID="${offer.ID}" class="slctOptions"></iscomment>
+		  	  <li class="slctOptions">
+		  	  
+		    	<label><input id="${offer.ID}" type="radio" name="kitgroup1" value='<isprint value="${kit1Name}" encoding="off"/>'  <isif condition="${offers_status.count%2!=0}">checked='checked'</isif>   class="kitselection" />
+				<isprint value="${offer.getName()}" encoding="off" /></label>
+				<p>Only <strong><isprint value="${offer.priceModel.getPriceBookPrice(dw.system.Site.current.preferences.custom.nonMemberPriceBook)}" /></strong>
+			        <isif condition="${!empty(offer.custom.shippingLabel)}">
+				   		 plus <span class="freeShip"><isprint value="${offer.custom.shippingLabel}" encoding="off"/></span>
+				     <iselse>
+				        <span class="priorShip">${Resource.msg('sas.priorShip','checkout',null)}</span>
+				    </isif>
+				 </p>
+			  </li>		   
+		  </isif>
+			</ul>
+		</div>
+	 
+		<div class="sys90Day_radio">
+			<ul class="kitselectionul2">
+			<isloop items="${offersList}" var="offer" status="offers_status">			
+		      	<isif condition="${offers_status.count>2}">			   	 
+		   	 	<isif condition="${offers_status.count==3}">
+		   	 	<li>
+			    	<div class="productimage">
+			      		<h3><isprint value="${offer.custom.tabDescription.markup}" encoding="off"/>
+			      			<strong><isprint value="${offer.custom.tabDetails.markup}" encoding="off"/></strong>
+			      		</h3>	
+						<img src="${offer.getImage('tab',0).url}" alt="Skin care products - Meaningful Beauty Basic Kit" />
+						<isif condition="${!empty(offer.custom.offerTabCallout)&&!empty(offer.custom.offerTabCallout.markup)}">
+							<isprint value="${offer.custom.offerTabCallout.markup}" encoding="off"/>							
+						</isif>								 		
+					</div>					
+			       	<h4>
+			       		<label>${Resource.msg('meaningfulbeauty.name','common',null)}&reg;</label> 
+			       		<isprint value="${offer.custom.tabDetails.markup}" encoding="off"/>
+			       	</h4>
+			       	<iscomment><isprint value="${offer.getShortDescription()}" encoding="off" /></iscomment>
+		       	</li>
+			 	<iscomment><li>
+			       <isprint value="${offer.getLongDescription()}" />
+			       <isset name="prodId" value="${offer.ID}" scope="page"/>
+			       <h4 class="optionTitle">${Resource.msg('sas.optiontitle','checkout',null)}</h4>
+			       <iscontentasset aid="Coupon-Graphic"/>
+		       	</li></iscomment>
+		     	</isif>	
+		  	  	<iscomment><li masterID="${offer.ID}" class="slctOptions"></iscomment>
+			  	<li class="slctOptions">
+		  	  		<label>
+		  	  			<input id="${offer.ID}" type="radio" name="kitgroup2" value='<isprint value="${kit1Name}" encoding="off"/>'  <isif condition="${offers_status.count%2!=0}">checked='checked'</isif>   class="kitselection" />
+						<isprint value="${offer.getName()}" encoding="off" />
+						<isif condition="${!empty(offer.custom.shippingLabel)}">
+				   		 	<span class="freeShip"><isprint value="${offer.custom.shippingLabel}" encoding="off"/></span>
+				   		<iselse>
+				       		<span class="priorShip">${Resource.msg('sas.priorShip','checkout',null)}</span>
+				   		</isif>
+					</label>
+					<div class="orderButtonB">
+						<isprint value="${offer.priceModel.getPriceBookPrice(dw.system.Site.current.preferences.custom.nonMemberPriceBook)}" /><a href="${URLUtils.https('COCart-AddProduct','pid',prodId)}">Order Basic System</a>
+					</div>
+			  	</li>
+			  	<li>
+			       <h4 class="optionTitle">${Resource.msg('sas.optiontitle','checkout',null)}</h4>
+			       <iscontentasset aid="Coupon-Graphic"/>
+			    </li>
+			    <li>
+					<ul class="kitdescriptionul">
+						<li>
+				      		<h3><isprint value="${offer.custom.tabDescription.markup}" encoding="off"/>
+				      			<strong><isprint value="${offer.custom.tabDetails.markup}" encoding="off"/></strong>
+				      		</h3>
+				      		<isprint value="${offer.getShortDescription()}" encoding="off" />
+				      	</li>
+				      	<li>
+				      		<isprint value="${offer.getLongDescription()}" />
+					       	<isset name="prodId" value="${offer.ID}" scope="page"/>
+					    </li>
+					</ul>
+			    </li>
+			    <li class="slctOptions">
+		  	  		<label>
+		  	  			<input id="${offer.ID}" type="radio" name="kitgroup2" value='<isprint value="${kit1Name}" encoding="off"/>'  <isif condition="${offers_status.count%2!=0}">checked='checked'</isif>   class="kitselection" />
+						<isprint value="${offer.getName()}" encoding="off" />
+						<isif condition="${!empty(offer.custom.shippingLabel)}">
+				   		 	<span class="freeShip"><isprint value="${offer.custom.shippingLabel}" encoding="off"/></span>
+				   		<iselse>
+				       		<span class="priorShip">${Resource.msg('sas.priorShip','checkout',null)}</span>
+				   		</isif>
+					</label>
+					<div class="orderButtonB">
+						<isprint value="${offer.priceModel.getPriceBookPrice(dw.system.Site.current.preferences.custom.nonMemberPriceBook)}" /><a href="${URLUtils.https('COCart-AddProduct','pid',prodId)}">Order Basic System</a>
+					</div>
+			  	</li>
+			  	</isif>			  	  
+			</isloop> 
+	 		</ul>
+	 	</div>
+        
+			<iscomment><a href="http://newreviews.proactiv.com/0570pa/011114/writereview.htm?format=embedded&amp;campaignid=BV_RATING_SUMMARY&amp;return=http%3A%2F%2Fwww.proactiv.com%2Forder%2Fselect.php%3Ftt%3D1&amp;innerreturn=http%3A%2F%2Fnewreviews.proactiv.com%2F0570pa%2F011114%2Freviews.htm%3Fformat%3Dembedded%26sort%3Drating&amp;user=__USERID__&amp;submissionparams=__BVSUBMISSIONPARAMETERS__&amp;submissionurl=http%3A%2F%2Fwww.proactiv.com%2Fclubcatalog%2Freview-submit.php" onclick="bvShowContentOnReturnPRR('0570pa', '011114', 'BVRRWidgetID');" target="BVFrame" name="BV_TrackingTag_Rating_Summary_1_WriteReview_011114" title="Write a review">Write a review</a> <span class="BVRRRatingSummaryLinkWriteSuffix"></span>
+			</iscomment>
+
+		<br clear="all" />
+		<isset name="acqPage" value="${true}" scope="pdict" />
+		<div class="bazaarVoice">
+			<iscomment><a href="#" class="writeReviewLink">${Resource.msg('sas.writereviewlink','checkout',null)}</a><br /></iscomment>			
+			<isinclude template="bv/display/rr/reviews" />			
+				<isif condition="${null!=dw.system.Site.current.preferences.custom.Printable_reviews_url}">
+					<a href="${dw.system.Site.current.preferences.custom.Printable_reviews_url}" class="printReviewLink">${Resource.msg('sas.printreviewlink','checkout',null)}</a>
+				<iselse>
+		   			<a href="http://reviews.meaningfulbeauty.com/0570mb/AAM83U/reviews.htm" class="printReviewLink">${Resource.msg('sas.printreviewlink','checkout',null)}</a>
+				</isif>
+		</div>
+	</div>
+
+</div>
+
+
+
+<isset name="OmniturePage" value="Offerpage" scope="pdict" />
+
+  
+  <iscomment> SAS Page Pixels    </iscomment>
+     <iscontentasset aid="Atlas-Container-media-SAS_MB"/>
+     <iscontentasset aid="MediaGeeks-SAS_MB"/>
+
+
+
+
+<script type="text/javascript">
+
+<iscomment>
+// if the number tabs is equal to the number of gifts, this means only 1 gift will appear per tab
+// the following code adjusts the styles around the order button
+// it compensates for empty space when only 1 gift selection is available
+// also if only 2 gifts exist, additional style adjustments apply
+</iscomment>
+
+
+
+jQuery(".sys30Day_radio .kitselectionul input").each(function() {
+	  jQuery(this).click(function() 
+	  {  	 
+	      var kitId= jQuery(this).attr("id");
+	      var kitUrl= '${URLUtils.https("COCart-AddProduct","pid","")}';
+	      jQuery(".sys30Day_radio a").attr("href",kitUrl+kitId);
+	
+		 });
+   });
+
+jQuery(".sys90Day_radio .kitselectionul2 input").each(function() {
+	  jQuery(this).click(function() 
+	  {  	 
+	      var kitId= jQuery(this).attr("id");
+	      var kitUrl= '${URLUtils.https("COCart-AddProduct","pid","")}';
+	      jQuery(".sys90Day_radio a").attr("href",kitUrl+kitId);
+	    // console.log(kitId);
+	 
+		 });
+ });
+</script>
+</isdecorate>

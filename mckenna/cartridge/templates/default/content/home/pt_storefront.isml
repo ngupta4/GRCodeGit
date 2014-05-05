@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+
+<isinclude template="util/modules"/>
+
+<isscript>
+	importScript('guthyrenker_core:common/libUtils.ds');
+</isscript>
+
+<iscomment>This page must be cachable. It inherits the caching attributes by the decorated template.</iscomment>
+
+<head>
+	<iscomment>Include all important information globally , e.g. meta-data, link information, and javascript.</iscomment>
+	<isinclude template="components/header/htmlhead"/>
+
+	
+    <iscomment>Insert meta tag for the "Google-Verification" feature to verify that you are the owner of this site.</iscomment>
+    <isif condition="${'GoogleVerificationTag' in dw.system.Site.current.preferences.custom && dw.system.Site.current.preferences.custom.GoogleVerificationTag!=''}">
+        <meta name="google-site-verification" content="<isprint value="${dw.system.Site.current.preferences.custom.GoogleVerificationTag}"/>" />
+    </isif>
+    <isif condition="${'MSValidateTag' in dw.system.Site.current.preferences.custom && dw.system.Site.current.preferences.custom.MSValidateTag!=''}">
+    	<meta name="msvalidate.01" content="${dw.system.Site.current.preferences.custom.MSValidateTag}" />
+    </isif>
+</head>
+<body class="${bodyclass}">
+
+<iscomment>Cookies and Javascript enabled check</iscomment>
+<isinclude template="components/browsertoolscheck"/>
+
+<div id="container" class="pt_storefront <isif condition="${'Content' in pdict && !empty(pdict.Content)}"> ${pdict.Content.ID}</isif>${CCC.getContainerClasses()}">
+	<isinclude template="components/browsertoolscheck"/>	
+	
+	<div id="main">
+		<isif condition="${!CCC.isCampaignCodeValid}">
+		<div class="campaign_error">
+			<p>${Resource.msg('campaignerror.message','rendering',null)}</p>
+		</div>
+		</isif>
+  		<isreplace/>
+	</div><!-- END: main -->
+	
+	<isif condition="${CCC.showFooter}">
+		<isinclude template="components/footer/footer"/>
+	</isif>
+	<isinclude template="common/google_analytics" />
+</div><!-- END: container -->
+
+<div id="popupBG">&nbsp;</div>
+<isif condition="${shouldShowDebugInfo()}">
+	<iscomment>this is the template rendering the homepage</iscomment>
+	<pre><!-- +1.888.553.9216 --><!--This phone is a requirement to support existing Gomez monitor of SiteGenesis. Demadware customers can remove this.-->
+		
+	LandingTemplate: ${CCC.landingTemplate}
+	Campaign Code:${CCC.campaignCode}
+	Campaign Code Valid:${CCC.isCampaignCodeValid}
+	Campaign ID:${getCurrentCampaignCode()}
+	ShowHeader?:${CCC.showHeader}
+	ShowFooter?:${CCC.showFooter}
+	ShowNav?:${CCC.showNav}
+	ShowOrderButton?:${CCC.showOrderButton}
+	Phone:${CCC.phone}
+	
+	</pre>
+</isif>
+<!-- code to drive the banner rotation effect -->
+</body>
+</html>

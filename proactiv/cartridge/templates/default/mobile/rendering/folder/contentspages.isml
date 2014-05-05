@@ -1,0 +1,6 @@
+<isdecorate template="mobile/rendering/folder/pt_contentpage">
+	<isinclude template="mobile/content/content/htmlcontentasset" />
+	<iscomment>
+	<isslot id="MediaPixel" context="category" description="MediaPixel" context-object="${dw.catalog.CatalogMgr.getCategory(pdict.Content.custom.categoryName)}"/>
+	</iscomment>
+</isdecorate>

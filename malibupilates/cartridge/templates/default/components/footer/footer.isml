@@ -1,0 +1,31 @@
+<iscomment>
+	This is the footer for all pages. Be careful caching it if it contains
+	user dependent information. Cache its elements instead if necessary (do not forget
+	to change the isinclude into a pipeline include for that).
+</iscomment>
+<div id="footer">
+	<iscontentasset aid="mp-footer-links"/>
+	<div id="footer-copy"><iscontentasset aid="mp-footer-copy"/></div>
+</div><!-- END: footer -->
+
+<iscomment>
+	Customer registration can happen everywhere in the page flow. As special tag in the pdict
+	is indicating it. So we have to check on every page, if we have to report this event for
+	the reporting engine.
+</iscomment>
+<isinclude template="util/reporting/ReportUserRegistration.isml"/>
+
+<!---  Omniture tracking  --->
+<isinclude template="analytics/omniture/omniture"/>
+
+
+<iscomment> Pixels Include </iscomment>
+<isif condition="${request.custom.pixel_content_asset == null || request.custom.pixel_content_asset == ""}">
+  <isset name="pixel_content_asset" value="pixels_global" scope="request">
+</isif>
+
+<isif condition="${request.custom.pixel_content_asset != "none"}">
+  <iscontentasset aid="${request.custom.pixel_content_asset}"/>
+</isif>
+
+

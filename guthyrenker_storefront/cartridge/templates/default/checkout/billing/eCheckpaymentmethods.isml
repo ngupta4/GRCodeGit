@@ -1,0 +1,43 @@
+	
+		<!--  START: eCheck section -->
+          
+			<isset name="eCheckPaymentMethod" value="${dw.web.Resource.msg('payMethods.echeck.ID', 'configuration', null)}" scope="page"/>
+			<isif condition="${!empty(pdict.selectedPaymentID) && pdict.selectedPaymentID== eCheckPaymentMethod }">
+			<div id="PaymentMethod_${eCheckPaymentMethod}" class="paymentform eCheckPayment" style="display:block;">
+			<iselse/>
+			<div id="PaymentMethod_${eCheckPaymentMethod}" class="paymentform eCheckPayment" style="display:none;">
+			</isif>
+			<iscomment>
+	        <input type="hidden" name="bankAccountType" class="bankAccountTypeId" value="${pdict.CurrentForms.billing.paymentMethods.echeck.bankAccountType.value}" />
+			<div class="formfield clearfix eCheck_bankAccountType">
+		    		<div class="label">${Resource.msg(pdict.CurrentForms.billing.paymentMethods.echeck.bankAccountType.label, 'forms', null)} <span class="requiredindicator">*</span></div>
+		    		<isif condition="${!empty(pdict.CurrentForms.billing.paymentMethods.echeck.bankAccountType.options)}">
+				    <isset name="selectedBankName" value="${pdict.CurrentForms.billing.paymentMethods.echeck.bankAccountType.value}" scope="page"/>
+			        </isif>
+					<div class="value">
+						<isloop items="${pdict.CurrentForms.billing.paymentMethods.echeck.bankAccountType.options}" var="bankAccountType"  status="accType">
+							<label>
+								<input type="radio" id="bankAccountType_${bankAccountType.value}" name="${pdict.CurrentForms.billing.paymentMethods.echeck.bankAccountType.htmlName}"<isif condition="${(selectedBankName == bankAccountType.value) || (accType.first)}"> checked="checked"</isif> value="${bankAccountType.value}" />
+								${Resource.msg(bankAccountType.label, 'forms', null)}
+							</label>
+						</isloop>
+					</div>
+				</div>
+			</iscomment>	
+			
+			<div class="formfield clearfix eCheck_routing">
+		    	<isinputfield formfield="${pdict.CurrentForms.billing.paymentMethods.echeck.routing}" type="input" attribute1="autocomplete" value1="off"/>		    	
+			</div>
+			<div class="formfield clearfix eCheck_account">
+		    	<isinputfield formfield="${pdict.CurrentForms.billing.paymentMethods.echeck.account}" type="input" attribute1="autocomplete" value1="off"/>		    	
+			</div>
+			<div class="eCheckSample">
+		    	<iscontentasset aid="eCheck-sample" />
+		    </div>
+		    <div class="agree_box">
+				<isinputfield formfield="${pdict.CurrentForms.billing.paymentMethods.echeck.agree}" type="checkbox" attribute1="requiredmesage" value1="${Resource.msg('forms.checkout.agree.value-error','forms',null)}" attribute2="tabindex" value2="27"/>				
+				<iscontentasset aid="termsAndConditionBankAccount"/>
+			</div>	
+			
+			<!-- END: eCheck section -->
+			

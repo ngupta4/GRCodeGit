@@ -1,0 +1,22 @@
+<div class="celebrity-carousel-inner" id="celebrity-carousel-inner">
+	<table>
+		<tr>
+			<isloop items="${pdict.CelebritySearchResult.folder.content}" var="crouselContent">	
+				<isif condition="${'afterImgThumb' in crouselContent.custom && !empty(crouselContent.custom.afterImgThumb)}">
+					<isset name="thumbnailUrl" value="${crouselContent.custom.afterImgThumb.url}" scope="page"/>
+				<iselse/>
+					<isset name="thumbnailUrl" value="${URLUtils.staticURL('/images/noimagemedium.png')}" scope="page"/>
+				</isif>
+				<td>
+					<isset name="contentUrl" value="${URLUtils.http('Page-Show','cid',crouselContent.ID)}" scope="page"/>
+					<isif condition="${crouselContent.ID == pdict.Content.ID}">
+						<div class="carousel-image"> <a href="${contentUrl}"><img src="${thumbnailUrl}" class="active selected" /></a> <a href="${contentUrl}" class="bottom-link">${crouselContent.name}</a> </div>
+					<iselse/>
+						<div class="carousel-image"> <a href="${contentUrl}"><img src="${thumbnailUrl}" class="off" /></a> <a href="${contentUrl}" class="bottom-link">${crouselContent.name}</a> </div>
+					</isif>
+				</td>
+			</isloop>	
+		</tr>
+	</table>
+</div>
+						

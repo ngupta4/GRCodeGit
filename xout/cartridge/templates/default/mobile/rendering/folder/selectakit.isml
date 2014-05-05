@@ -1,0 +1,311 @@
+
+<isscript>
+	importPackage(dw.util);
+	importPackage(dw.catalog);
+	var CCC : Object = pdict.CurrentCampaignConfig;
+	//get the campaign code and append this
+	var sasCat:Category = CatalogMgr.getCategory('m-' + CCC.campaignCode + '-SAS');
+</isscript>
+
+<isset name="OmniturePage" value="Offerpage" scope="pdict" />
+
+<div class="context" data-role="content">
+<div id="tabs_container">	
+	<div class="segment-style">
+		<isslot id="m-sas-banner" context="category" description="SAS Banner (mobile)" context-object="${sasCat}"/>
+
+		<div data-role="navbar" id="tab">
+		  <ul>
+		  <isloop items="${sasCat.onlineSubCategories}" var="cat" status="page_status" >
+		     <isif condition="${!empty(cat.onlineProducts)}">
+				<isslot id="Tab" context="category" description="Tab Button" context-object="${cat}"/>
+		     </isif>
+		  </isloop>
+		  </ul>
+		</div>
+	</div>
+		<div class="tab-content">
+  			<isloop items="${sasCat.onlineSubCategories}" var="cat" status="page_status" >
+		    <isif condition="${!empty(cat.onlineProducts)}">
+		    <isif condition="${cat.onlineProducts.length > 1}">
+		    	<iscomment>Second gift defaultly selected</iscomment>
+		    	<isset name="offer" value="${cat.onlineProducts[1]}" scope="page"/>
+		    	<iscomment>Drop in some java script to handle all the swipe actions</iscomment>
+		    <iselse>
+		    	<iscomment>First gift selected and it is the only one</iscomment>
+		    	<isset name="offer" value="${cat.onlineProducts[0]}" scope="page"/>
+		    </isif>
+		    <isset name="num" value="${(page_status.index + 1).toFixed()}" scope="page"/>
+			<div class="tab${num} tabbednav <isif condition="${!page_status.first}">ui-screen-hidden</isif>" id="${offer.ID}">
+			
+				<isslot id="ProductTop" context="category" description="Top Product Info" context-object="${cat}"/>
+				
+				<isif condition="${cat.onlineProducts.length == 1}">
+				<!-- Swipe -->
+				<div class="ui-swipe-custom">
+					  <img class="go-left-${num}" src="${URLUtils.staticURL('mobile/images/go-left-alt.gif')}">
+				 	 <img class="go-right-${num}" src="${URLUtils.staticURL('mobile/images/go-right-alt.gif')}">
+
+					<div id='mySwipe${num}'  class='swipe'>
+					  <div class='swipe-wrap'>
+					  	<isloop items="${cat.onlineProducts}" var="gift" status="gift_status">
+					  	
+							<isscript>
+							if( !empty(gift) ) {			
+									var titleString = gift.getName();
+									var lastIndex = titleString.lastIndexOf(" ",24);
+									if( titleString.length>23 && lastIndex>0 ) {
+										titleString = titleString.substring(0,lastIndex);
+									}
+									var altSKUsString = gift.ID;
+									if( !empty(gift.custom.giftSelectSKUs) ) {
+										altSKUsString = gift.custom.giftSelectSKUs;
+									} 
+									var altSKUs = altSKUsString.split(',');
+									
+									var giftProducts : dw.util.ArrayList = new dw.util.ArrayList();
+									for( var i=0, ii=altSKUs.length; i<ii; i++ ) {
+										giftProducts.add1(dw.catalog.ProductMgr.getProduct(altSKUs[i]));
+									}/**/
+							}
+						</isscript>
+					
+					      <div>
+						      	     
+						      		<div  class="gift-switch orange containing-element center">	
+						      		<p class="section">Here's Your Free Gift</p></br>	      			
+						      			<a id="${gift.ID}" href="${dw.web.URLUtils.https('COCart-AddProduct','pid',gift.ID)}" rel="external" data-role="button" data-theme="a" data-inline="true"					      			  onclick="s.linkTrackVars='prop62';s.prop62='OrderNow:'+s.pageName+':btn1';s.tl(this,'o','OrderNow:'+s.pageName+':btn1');">${giftProducts[0].name}</a>
+										<p><span class="orange bold uppercase">Free!</span> <span class="black">With Your Order of the Introductory Kit</span><br /><span class="bold black">A $20 Value FREE!</span></p>
+						      		</div>
+						      		<img src="${gift.getImage('mobile',0).url}" alt="" class="blockimg">
+						 <p class="bold black uppercase">X Out&reg; Cleasning Body Bar <span class="orange">Free</span></p>     	
+					      </div>
+					     </isloop>
+					  </div>
+					</div>
+
+				 	
+
+				</div>
+				<!-- Swipe -->	
+				<div id="gift-num" class="center">
+					<isloop items="${cat.onlineProducts}" var="gift" status="gift_status">
+						<img data-value="${gift.ID}" id="sphere${num}-${(gift_status.index + 1).toFixed()}" src="${URLUtils.staticURL('mobile/images/' + (gift_status.index+1).toFixed() +'.png')}" width="" alt="">
+					</isloop>			
+				</div> 
+				<iselse><iscomment>Only one gift, no swipe needed</iscomment>
+					  	<isloop items="${cat.onlineProducts}" var="gift" status="gift_status">
+					      <div class="center">
+					      		<div  class="gift-switch orange containing-element center">			      			
+					      			<a id="${gift.ID}" class="cta_two" href="${dw.web.URLUtils.https('COCart-AddProduct','pid',gift.ID)}" rel="external" data-role="button" data-theme="a" data-inline="true">${gift.custom.altGiftName}</a>
+					      		</div>
+					      		<img class="center" src="${gift.getImage('large',0).url}" alt="">
+					      </div>
+					     </isloop>
+					<script>
+					$(function()
+					 {
+						var prevSelection = "tab1";
+					
+						$("#tab ul li").click(function()
+						{
+							$(this).children("a").attr("data-tab-class");
+							var newSelection = $(this).children("a").attr("data-tab-class");
+							$("."+prevSelection).addClass("ui-screen-hidden");
+							$("."+newSelection).removeClass("ui-screen-hidden");
+							prevSelection = newSelection;
+						});
+					});
+					</script>		
+				</isif>
+				<isslot id="ProductBottom" context="category" description="Bottom Product Info" context-object="${cat}"/>		
+			<div class="step3box">
+			<isset name="PriceModel" value="${offer.getPriceModel()}" scope="page"/>
+			  	<p class="section">Proceed to Checkout</p></br>	      			
+
+				<h2><span class="kicker">Introductory Kit Price:</span> <isprint value="${PriceModel.getPrice()}" /><br/>				
+				<isif condition="${!empty(offer.custom.shippingLabel)}">
+					<isprint value="${offer.custom.shippingLabel}" encoding="off"/>
+				</isif>
+				<p>+ <span class="purple bold uppercase"><strong>Free Shipping!</strong></span></p>
+				</h2>
+				<a id="sas-cto${num}" class="cta_three orderakitbtn" href="${dw.web.URLUtils.https('COCart-AddProduct','pid',offer.ID)}" rel="external" data-role="button" data-inline="true" >Order Kit Now</a>
+        		<div class="mbgbox"><div><img src="${URLUtils.staticURL('mobile/images/mbg.png')}" class="mbg"></div>60-day Money Back Guarantee (less S&amp;H) with every order.</div>  
+			</div>
+		</div>
+	</div>
+		</isif>
+		</isloop>
+	
+
+
+<script language="javascript">
+
+
+$( document ).ready(function(){
+	$(".orderakitbtn").unbind('click');
+	$(".orderakitbtn").removeAttr("href");
+	$(".orderakitbtn").bind('click',function(e){
+		e.preventDefault();
+		swapProducts($(this).parents(".tabbednav:first").attr("id"));
+		setTimeout(function(){
+			$("#tabs_container").hide();
+			$("#select5open").show();
+			window.scrollTo(0,0);
+		},500);
+		return false;
+	});
+
+	
+	jQuery(".orderakitbtn").click( function(e) {
+		s.linkTrackVars='prop56,eVar56';
+		s.prop56="Core:sas:orderkitbtn";
+	    s.eVar56= "Core:sas:orderkitbtn";
+	    s.tl(this,'o',"Core:sas:orderkitbtn");
+	 
+	});
+});
+
+function swapProducts(prodid){
+	jQuery.getJSON("${URLUtils.url('COCartJSN-JsonAddProduct')}", {'pid':prodid}, function(json){
+		$("#productName").html(json.update.productInfo.name);
+		$("#shortDescription").html(json.update.productInfo.shortDescription);
+		$("#productImage").attr("src",json.update.productInfo.imageSrc);
+		$("#productImage").attr("alt",json.update.productInfo.imageAlt);
+		$("#productImage").attr("title",json.update.productInfo.title);
+		$("#offerCode").html(json.update.productInfo.offerCode);
+		$('#coreOffer .coreid').attr("value",json.update.productInfo.offerCode);
+		$("#price_0 .value").html(json.update.merchandiseTotal.stringValue);
+		$("#subTotal").html(json.update.merchandiseTotal.stringValue);
+		//$("#subTotal").html(json.update.merchandiseTotal.stringValue);
+		//$("#shippingTotalPrice").html(json.update.shipping.stringValue);
+		//$("#basketTotalPrice").html(json.update.totalPrice.stringValue);
+		$("#orderTotal_1").html(json.update.totalPrice.stringValue);
+		$("#shipTotal").html(json.update.shipping.stringValue);
+		
+	});
+	return false;
+}
+
+</script>
+
+<script language="javascript">
+jQuery(document).ready(function(){
+	$("#sphere1-1").attr("src", "${URLUtils.staticURL('mobile/images/1-active.png')}");
+	$("#sphere2-1").attr("src", "${URLUtils.staticURL('mobile/images/1-active.png')}");
+	$("#sphere3-1").attr("src", "${URLUtils.staticURL('mobile/images/1-active.png')}");
+	$("#sphere4-1").attr("src", "${URLUtils.staticURL('mobile/images/1-active.png')}");
+		
+	$("#tab ul li").click(function()
+	{
+		$("#sphere1-1").attr("src", "${URLUtils.staticURL('mobile/images/1-active.png')}");
+		$("#sphere1-2").attr("src", "${URLUtils.staticURL('mobile/images/2.png')}");
+		$("#sphere1-3").attr("src", "${URLUtils.staticURL('mobile/images/3.png')}");
+		$("#sphere1-4").attr("src", "${URLUtils.staticURL('mobile/images/4.png')}");
+		
+		$("#sphere2-1").attr("src", "${URLUtils.staticURL('mobile/images/1-active.png')}");
+		$("#sphere2-2").attr("src", "${URLUtils.staticURL('mobile/images/2.png')}");
+		$("#sphere2-3").attr("src", "${URLUtils.staticURL('mobile/images/3.png')}");
+		$("#sphere2-4").attr("src", "${URLUtils.staticURL('mobile/images/4.png')}");
+		
+		$("#sphere3-1").attr("src", "${URLUtils.staticURL('mobile/images/1-active.png')}");
+		$("#sphere3-2").attr("src", "${URLUtils.staticURL('mobile/images/2.png')}");
+		$("#sphere3-3").attr("src", "${URLUtils.staticURL('mobile/images/3.png')}");
+		$("#sphere3-4").attr("src", "${URLUtils.staticURL('mobile/images/4.png')}");
+		
+		$("#sphere4-1").attr("src", "${URLUtils.staticURL('mobile/images/1-active.png')}");
+		$("#sphere4-2").attr("src", "${URLUtils.staticURL('mobile/images/2.png')}");
+		$("#sphere4-3").attr("src", "${URLUtils.staticURL('mobile/images/3.png')}");
+		$("#sphere4-4").attr("src", "${URLUtils.staticURL('mobile/images/4.png')}");
+
+		
+		var	offerID = $("#sphere1-2").attr("data-value");
+		if(offerID){
+			//update tab active state
+			document.getElementById("sas-cto1").href=document.getElementById("sas-cto1").href.replace(/pid=.*/,'pid=' + offerID);
+
+		}
+		offerID = $("#sphere2-2").attr("data-value");
+		if(offerID){
+			//update tab active state
+			document.getElementById("sas-cto2").href=document.getElementById("sas-cto2").href.replace(/pid=.*/,'pid=' + offerID);
+		}
+		var	offerID = $("#sphere3-2").attr("data-value");
+		if(offerID){
+			//update tab active state
+			document.getElementById("sas-cto1").href=document.getElementById("sas-cto1").href.replace(/pid=.*/,'pid=' + offerID);
+
+		}
+		var	offerID = $("#sphere4-2").attr("data-value");
+		if(offerID){
+			//update tab active state
+			document.getElementById("sas-cto1").href=document.getElementById("sas-cto1").href.replace(/pid=.*/,'pid=' + offerID);
+
+		}
+		
+		$("#tab ul li").find("img").each(function( key, value ) {if(value.src.indexOf('-active')>-1){value.src=value.src.replace('-active.png','.png')}else{value.src=value.src.replace('.png','-active.png')}})
+		
+	})
+});
+
+$(function(){
+
+	var prevSelection = "tab1";
+
+	/*window.mySwipe = new Swipe( document.getElementById( "mySwipe1" ), {
+		callback: function(index, elem) {
+			var thistabnum = 1;
+            $("#sphere"+thistabnum+"-1").attr("src", "${URLUtils.staticURL('mobile/images/1.png')}");
+            $("#sphere"+thistabnum+"-2").attr("src", "${URLUtils.staticURL('mobile/images/2.png')}");
+            $("#sphere"+thistabnum+"-3").attr("src", "${URLUtils.staticURL('mobile/images/3.png')}");
+            $("#sphere"+thistabnum+"-4").attr("src", "${URLUtils.staticURL('mobile/images/4.png')}");
+			var pos = index + 1;
+            var posAdjusted = pos > 4 && !isOriginal ? pos - 4 : pos;
+            var sphere = $("#sphere"+thistabnum+"-"+posAdjusted);
+            var scr = sphere.attr("src").replace(".png","-active.png");
+            sphere.attr("src", scr);
+			var offerID = sphere.attr("data-value");
+			$('#' + offerID).trigger('click');
+			var link = $("#sas-cto"+thistabnum).attr('href').replace(/pid=.*/,'pid=' + offerID);
+			$("#sas-cto"+thistabnum).attr('href',link);
+		}
+	} );*/
+     
+	$("#tab ul li").click(function()
+	{
+		$(this).children("a").attr("data-tab-class");
+		var newSelection = $(this).children("a").attr("data-tab-class");
+		$("."+prevSelection).addClass("ui-screen-hidden");
+		$("."+newSelection).removeClass("ui-screen-hidden");
+		prevSelection = newSelection;
+	});
+	
+	$("#tab ul li").click(function(){
+		var index = $("#tab ul li").index(this) + 1;
+		window.mySwipe = new Swipe( document.getElementById( 'mySwipe'+index ), {
+			callback: function(i, elem) {
+				var thistabnum = index;
+	            $("#sphere"+thistabnum+"-1").attr("src", "${URLUtils.staticURL('mobile/images/1.png')}");
+	            $("#sphere"+thistabnum+"-2").attr("src", "${URLUtils.staticURL('mobile/images/2.png')}");
+	            $("#sphere"+thistabnum+"-3").attr("src", "${URLUtils.staticURL('mobile/images/3.png')}");
+	            $("#sphere"+thistabnum+"-4").attr("src", "${URLUtils.staticURL('mobile/images/4.png')}");
+				var pos = i + 1;
+	            var posAdjusted = pos > 4 && !isOriginal ? pos - 4 : pos;
+	            var sphere = $("#sphere"+thistabnum+"-"+posAdjusted);
+	            var scr = sphere.attr("src").replace(".png","-active.png");
+	            sphere.attr("src", scr);
+				var offerID = sphere.attr("data-value");
+				$('#' + offerID).trigger('click');
+				var link = $('#sas-cto'+thistabnum).attr('href').replace(/pid=.*/,'pid=' + offerID);
+				$('#sas-cto'+thistabnum).attr('href',link);
+			}
+		} );
+	});
+});
+</script>
+
+	
+	</div>	
+    <iscomment> SAS Page Pixels</iscomment>
+   
+</div>

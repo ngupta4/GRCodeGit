@@ -1,0 +1,8 @@
+<isif condition="${CCC.isCartWinback!= null && CCC.isCartWinback}">
+	<div class="formfield phone evening">
+		 <isinputfield id="ukey" formfield="${pdict.CurrentForms.personinf.ukey}" type="input" attribute1="requiredmesage" value1="${Resource.msg('forms.checkout.ukey.missing-error','forms',null)}">
+	</div>
+	<isif condition="${!pdict.CurrentForms.personinf.ukey.valid}">
+		<span class="errormessage" style="float:right; margin-right:12px"><isprint value="${Resource.msg('forms.checkout.ukey.valid-error', 'forms', null)}"/></span>
+	</isif>
+</isif>

@@ -1,0 +1,28 @@
+/**
+*
+*   @input RequestID : String request id.
+*   @input Request   : Object contacy us object.
+*
+*/
+importPackage( dw.system );
+importPackage( dw.object );
+
+importScript( "grmiddleware/libGRMiddleware.ds" );
+
+function execute( args : PipelineDictionary ) : Number
+{
+
+try {	
+    var co:CustomObject = CustomObjectMgr.createCustomObject("ContactUs", args.RequestID);
+    var request:Request = args.Request;
+    
+    for (var prop:String in request)
+    {
+    	setValue(co, prop, request[prop]);
+    }
+} catch (e) {
+	Logger.debug(e.toString());
+	return PIPELET_ERROR;
+}
+    return PIPELET_NEXT;
+}

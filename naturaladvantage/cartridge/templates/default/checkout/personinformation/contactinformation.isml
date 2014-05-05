@@ -1,0 +1,25 @@
+<!--- TEMPLATENAME: contactinformation.isml --->
+<div class="checkout_box contact_info">
+	<h4>${Resource.msg('personinformation.contactinformation.label','rendering',null)}</h4>
+	<div class="checkout_box_inner">
+	
+		<div class="contact_fieldset">
+			<div class="formfield email">
+	    		<isinputfield formfield="${pdict.CurrentForms.personinf.contact.email}" type="input" attribute1="requiredmesage" value1="${Resource.msg('forms.contactinf.email.parse-error','forms',null)}" attribute2="tabindex" value2="1">
+	    	</div>
+	    	<div class="formfield phone">
+	    		<isinputfield formfield="${pdict.CurrentForms.personinf.contact.daytimephone}" type="input" attribute1="requiredmesage" value1="${Resource.msg('forms.contactinf.daytimephone.parse-error','forms',null)}" attribute2="tabindex" value2="3">	    		
+	    	</div>
+		</div>
+		
+		<div class="contact_fieldset">
+			<div class="formfield email_confirm">
+	    		<isinputfield formfield="${pdict.CurrentForms.personinf.contact.emailconfirm}" type="input" attribute1="requiredmesage" value1="${Resource.msg('forms.contactinf.email.parse-error','forms',null)}" attribute2="tabindex" value2="2">	   
+	    	</div>									
+			<div class="formfield phone">
+				 <isinputfield formfield="${pdict.CurrentForms.personinf.contact.eveningphone}" type="input" attribute1="tabindex" value1="4">
+			</div>
+		</div>
+		
+    </div>
+</div>

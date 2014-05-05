@@ -1,0 +1,61 @@
+<!--- TEMPLATENAME: customertestimonials.isml --->
+<isdecorate template="search/pt_customertestimonial">
+
+<isinclude template="util/modules"/>
+
+<isscript>
+	var customerTestimonialFolder = dw.content.ContentMgr.getFolder('before-and-after-gallery');
+	var testimonials = customerTestimonialFolder.onlineContent;
+	var beforeContent = null;
+	var afterContent = null;
+	var content = null;
+	
+	for( var i=0, ii=testimonials.length; i<ii; i++ ) {
+		content = testimonials[i];
+		if( content.ID == pdict.Content.ID ) {
+			if( i>0 ) {
+				beforeContent = testimonials[i-1];
+			}
+			if( i< (testimonials.length-1) ) {
+				afterContent = testimonials[i+1];
+			}
+		}
+	}
+</isscript>
+
+<h2>Real Stories</h2>
+<div class="pageHead">
+ 	<h1><isprint value="${pdict.Content.custom.title}" encoding="off" /></h1>
+ 	<p class="intro"><isprint value="${pdict.Content.description}" encoding="off" /></p>
+</div>
+
+<div class="contain">
+	<div class="multimedia">
+		<img alt="${pdict.Content.name.toLowerCase()} &ndash; Proactiv before/after image" src="${pdict.Content.custom.beforeAfterImg.url}" />
+		<isif condition="${!empty(pdict.Content.custom.video)}">
+			<div class="video addVideo" id="videoOne">
+				<a href="${URLUtils.staticURL('/swf/interface/video177x132.swf')}"></a>
+		
+				<a title="${pdict.Content.ID.replace('-','_')}_flv_177x132" href="${pdict.Content.custom.video}"></a>
+		
+				<div class="videoPlay"></div>
+				<img alt="" src="${URLUtils.staticURL('/swf/flv/img/177x132/realstories.jpg')}" />
+			</div>
+		</isif>
+	</div>
+	
+	<div class="primaryBody">
+		<isprint value="${pdict.Content.custom.body}" encoding="off" />
+	</div>
+</div>
+<div class="footerNav">
+	<a class="backToGallery" href="${URLUtils.url('Page-Show','cid','before-and-after-gallery')}">Back to gallery</a>
+	<isif condition="${!empty(beforeContent)}">
+		<a class="previous" href="${URLUtils.url('Page-Show','cid',beforeContent.ID)}">Previous Story</a>
+	</isif>
+	<isif condition="${!empty(afterContent)}">
+		<a class="next" href="${URLUtils.url('Page-Show','cid',afterContent.ID)}">Next Story</a>
+	</isif>
+</div>
+
+</isdecorate>

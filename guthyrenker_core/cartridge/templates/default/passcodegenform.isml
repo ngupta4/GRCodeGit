@@ -1,0 +1,11 @@
+<!--- TEMPLATENAME: passcodegenform.isml --->
+
+Enter comma separated list of PassCodes
+
+<isprint value="${pdict.Error}" encoding="off">
+
+<form action="${URLUtils.httpContinue()}" method="post">
+	Enter PassCodes :<input type="textarea" name="inputBox" value='<isprint value="${pdict.inputBox}" encoding="off">'/>
+	Encoded PassCodes : <input type="textarea" name="outputBox" value='<isprint value="${pdict.outputBox}" encoding="off">'/>
+	<input type="submit" value="Encode"/>
+</form>

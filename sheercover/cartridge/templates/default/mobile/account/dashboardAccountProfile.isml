@@ -1,0 +1,32 @@
+ <div class="innerTitle">
+ 	 <h2><isprint value="${Resource.msg('account.information','account',null)}"/></h2>
+  </div>
+  <div class="innerBox">
+   <div class="row">
+     <span>
+       <isprint value="${Resource.msg('account.name','account',null)}"/>
+     </span>
+     <span><isprint value="${pdict.CurrentCustomer.profile.firstName}"/> <isprint value="${pdict.CurrentCustomer.profile.lastName}"/></span>
+   </div>
+   <div class="row">
+     <span>
+       <isprint value="${Resource.msg('account.email','account',null)}"/>
+     </span>
+     <span><isprint value="${pdict.CurrentCustomer.profile.email}"/></span>
+   </div>
+   <div class="row">
+     <div class="password">
+       <span>
+         <isprint value="${Resource.msg('account.password','account',null)}"/>
+       </span>
+       <span><isprint value="${Resource.msg('account.aestrisick','account',null)}"/></span>
+     </div>
+     <div class="changePwd">
+     	<a href="${URLUtils.https('Account-ChangePassword','targetPipeline','Account-Show')}" title="" >
+     	  <isprint value="${Resource.msg('account.change.password','account',null)}"/>
+       </a>
+       </div>
+    </div>
+       <a href="${URLUtils.https('Account-EditProfile')}" title="" class="aButton"><isprint value="${Resource.msg('account.edit','account',null)}"/></a>
+</div>
+  

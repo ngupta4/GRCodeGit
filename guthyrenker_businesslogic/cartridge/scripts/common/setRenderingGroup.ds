@@ -1,0 +1,55 @@
+/**
+* SetRendingGroup Script File
+* To define input and output parameters, create entries of the form:
+*
+* For example:
+*
+*   @input renderingGroupID : String 
+*   @input uci : String 
+*
+*/
+importPackage( dw.system );
+importPackage( dw.customer );
+
+importScript('guthyrenker_businesslogic:common/libRenderingGroups.ds');
+importScript('guthyrenker_core:common/libUtils.ds');
+
+function execute( args : PipelineDictionary ) : Number
+{
+	var renderingGroup:CustomerGroup;
+	session.custom.renderingTemplatePath = "";
+	session.custom.renderingContentPrefix = "";
+	Logger.debug("args.renderingGroupID: " + args.renderingGroupID);
+	if(!empty(args.renderingGroupID)){
+		//lookup the customerGroup
+		renderingGroup = CustomerMgr.getCustomerGroup(args.renderingGroupID);
+		session.custom.renderingGroupOverride = args.renderingGroupID;
+		if(!renderingGroup)
+			throw new Error("Failed to lookup the renderingGroup Override: " + args.renderingGroupID);
+	}else{
+		//lookup the customer group from customer obj
+		renderingGroup = getRenderingGroup();
+		Logger.debug ("RenderingGroup: " + renderingGroup.ID);
+		if(!renderingGroup)
+			throw new Error("Failed to lookup the renderingGroup from the customer");
+	}
+	//set the session variable based on that
+	session.custom.renderingGroup = renderingGroup;
+	if(!empty(renderingGroup.custom)){
+		session.custom.renderingTemplatePath = renderingGroup.custom.renderingTemplatePath ? renderingGroup.custom.renderingTemplatePath:"";
+		session.custom.renderingContentPrefix = renderingGroup.custom.renderingContentPrefix ? renderingGroup.custom.renderingContentPrefix:"";
+		session.custom.renderingCampaignPrefix = renderingGroup.custom.renderingCampaignPrefix ? renderingGroup.custom.renderingCampaignPrefix:"";
+	}
+	var uci = !empty(args.uci)?args.uci:session.privacy.campaignUCIID;
+	
+	//update the phone number
+	Logger.debug ("setRenderingGroup session.privacy.campaignUCIID: " + session.privacy.campaignUCIID);
+	Logger.debug ("setRenderingGroup session.privacy.campaignID: " + session.privacy.campaignID);
+	Logger.debug ("setRenderingGroup getCurrentPhoneNumber(): " + getCurrentPhoneNumber());
+	Logger.debug ("uci: " + uci);
+	var phoneNumber = getPhoneNumberOverride(uci,session.privacy.campaignID,getCurrentPhoneNumber());
+	Logger.debug ("setRenderingGroup PhoneNumber: " + phoneNumber);
+	setCurrentPhoneNumber(phoneNumber);
+	
+   return PIPELET_NEXT;
+}

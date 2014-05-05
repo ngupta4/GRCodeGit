@@ -1,0 +1,75 @@
+<!--- TEMPLATENAME: reviews.isml
+Embeds the container that reviews are injected to and the javascript that accesses the review content.
+ ---> 
+<isscript>
+     importScript('int_bazaarvoice:libBazaarvoice.ds');
+     importPackage( dw.io );
+     
+     // Determine if we are rendering on a product or category page.
+     var bvSubject : Object = getBazaarVoiceHelper().getExternalSubjectForPage(pdict);
+     
+     // Obtain SmartSEO content      
+     var content : String = getBazaarVoiceHelper().getSmartSEOContent(pdict, "reviews", bvSubject, "");  
+</isscript>
+<iscomment>*****refactor***** Shouldn't use inline css at all, especially in core cartridge code.</iscomment>
+<div class="reviewsBg" id="Select300_Bazaar">
+
+	<div class="block">
+		<div class="blockTop"><div class="blockTopRight"></div></div>
+		<div class="blockContent">
+
+			<!-- Reviews Summary -->
+			<isinclude template="bv/display/rr/reviewsummary" />
+		
+			<!-- Reviews -->
+			<div id="BVReviewsContainer">
+			    <isif condition="${content}">
+			        "cartridge/templates/default/bv/display/rr/reviews.isml"
+			    </isif>
+			</div>
+			<script type="text/javascript" language="javascript">
+			    function getRRDisplayCode() {
+			        try {
+			            <isprint value="${dw.system.Site.getCurrent().getCustomPreferenceValue('bvRRDisplayCodeJavascript')}" encoding="off" />
+			        }catch(e){
+			            //The JS in the try-catch above is user-definable.  Catch and suppress any errors and just return a default.
+			        }
+			        return "${dw.system.Site.getCurrent().getCustomPreferenceValue('bvRRDefaultDisplayCode')}";
+			    }
+			    function getRRDisplayType() {
+			        try {
+			            <isprint value="${dw.system.Site.getCurrent().getCustomPreferenceValue('bvRRDisplayTypeJavascript')}" encoding="off" />
+			        } catch (e) {
+			            //The JS in the try-catch above is user-definable.  Catch and suppress any errors and just return a default.
+			        }
+			        return "";
+			    }
+			
+			    var configData = {};
+			    configData.displayCode = getRRDisplayCode();
+			    //Acquisition uses hard coded product id as compared to dynamic. So if is used below.
+			    var context = $('#pageContext').html();
+			    
+			    if(context){
+			    	configData.productId = "${dw.system.Site.getCurrent().getCustomPreferenceValue('bvRRProductId')}";
+			    }else{
+			    	configData.productId = "${bvSubject.bvExternalSubjectID}";
+			    }
+			    
+			    configData.summaryContainerDiv = "BVCustomerRatings";
+			    configData.contentContainerDiv = "BVReviewsContainer";
+			    configData.onEvent = function(json) {
+			        <isprint value="${dw.system.Site.getCurrent().getCustomPreferenceValue('bvRROnEventJavascript')}" encoding="off" >
+			    };
+			    if (getRRDisplayType() != "") {
+			        configData.displayType = getRRDisplayType();
+			    }
+			    if($BV != null){
+			    	$BV.ui("rr", "show_reviews", configData);
+			    }
+			</script>       
+			<!-- End Reviews -->
+		</div>
+		<div class="blockBottom"><div class="blockBottomRight"></div></div>
+	</div>
+</div>

@@ -1,0 +1,8 @@
+<iscache status="off"/> 
+<iscomment>Cookies and Javascript enabled check</iscomment>
+<iscomment>Check the htmlhead.isml for the server side tracking pixel</iscomment>
+<isif condition="${dw.system.Site.getCurrent().getCustomPreferenceValue('GRMVisitorLogPixelEnabled') == true}">
+	<img src="${URLUtils.url('GRMiddleware-VisitorLog', 'urlpath', request.httpPath, 'urlquery', request.httpQueryString)}" width="1" height="1"/>
+</isif>
+<isinclude template="components/browsertoolscheck"/>
+<iscontentasset aid="clearzone-header"/>

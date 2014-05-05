@@ -1,0 +1,310 @@
+<!--- TEMPLATENAME: upsellrecommendation.isml --->
+<isinclude template="util/modules"/>
+<iscomment>script file included for showing description from recommendations.</iscomment>
+<isscript>
+importScript("guthyrenker_businesslogic:common/libCampaingUpsell.ds");
+var coreProduct = getCoreOfferFromBasket(pdict.Basket);
+</isscript>
+<div class="block nav" id="valueUpsellSection">
+<div class="blockContent">
+<isif condition="${pdict.CurrentForms.recommend.recommendation.childCount > 0 || pdict.CurrentForms.advertise.recommendation.childCount > 0}">
+	<form action="${URLUtils.continueURL()}" method="post" id="${pdict.CurrentForms.recommend.htmlName}" onsubmit="$('#ExistingData').val($('form.checkoutform').serialize());return true;">
+		<input type="hidden" id="Existing_Data" name="Existing_Data" value="" />
+
+				<isset name="upsellLastID" value="${pdict.CurrentRequest.httpCookies['upsellLastID']}" scope="page" />
+				<isset name="upsellForHopUp" value="" scope="page" />
+				
+				<isloop items="${pdict.CurrentForms.recommend.recommendation}" alias="recommendation" status="loopstate">
+					<isset name="product" value="${recommendation.object}" scope="page"/>
+					<isif condition="${empty(upsellLastID) || (!empty(upsellLastID) && empty(upsellForHopUp))}">
+						<isset name="upsellForHopUp" value="${product}" scope="page" />
+					</isif>
+					
+					<isobject object="${product}" view="detail">
+						<div class="relatedProduct" id="upsell-${product.ID}">
+							<div class="productimage"><!-- Product Image -->
+								<isif condition="${product.master && pdict.CurrentVariationModel && CurrentVariationModel.variants.size() > 0}">
+									<isset name="imageProduct" value="${CurrentVariationModel.variants[0]}" scope="page"/>
+								<iselse/>
+									<isset name="imageProduct" value="${product}" scope="page"/>
+								</isif>
+							
+								<isif condition="${!empty(imageProduct.getImage('medium',0))}">
+									<isset name="imageUrl" value="${imageProduct.getImage('medium',0).url}" scope="page"/>
+									<isset name="imageAlt" value="${imageProduct.getImage('medium',0).alt}" scope="page"/>
+									<isset name="imageTitle" value="${imageProduct.getImage('medium',0).title}" scope="page"/>
+								<iselse/>
+									<isset name="imageUrl" value="${URLUtils.staticURL('/images/noimagesmall.png')}" scope="page"/>
+									<isset name="imageAlt" value="${product.name}" scope="page"/>
+									<isset name="imageTitle" value="${product.name}" scope="page"/>
+								</isif>
+								<img src="${imageUrl}" alt="${imageAlt}" title="${imageTitle}"/>
+								
+								<div class="upsellcontent">
+								<iscomment>Logic to get the recommendation object	
+									<isset name="upsellRecommendationCollection" value="${coreProduct.getOrderableRecommendations(5)}" scope="page"/>
+									
+									<isif condition="${!empty(upsellRecommendationCollection)}">
+										<isset name="upsellRecommendation" value="${upsellRecommendationCollection[0]}" scope="page"/>
+									<iselse/>
+										<isset name="upsellRecommendation" value="" scope="page"/>
+									</isif>
+									<isif condition="${!empty(upsellRecommendation)}">
+										<h4><isprint value="${upsellRecommendation.shortDescription}" encoding="off" /></h4>
+									<iselse/>
+										<h4><isprint value="${product.name}" encoding="off" /></h4>
+									</isif>
+									<a class="details_link" href="javascript:void(0);" class="${recommendation.details.htmlName}">${Resource.msg('global.details','locale',null)}</a>
+									<div class="upsell_details_content upsell_details_inactive">
+										<isif condition="${!empty(upsellRecommendation)}">
+											<isprint value="${upsellRecommendation.longDescription}" encoding="off" />
+										<iselse/>
+											<isprint value="${product.custom.cartDescription}" encoding="off" />
+										</isif>
+									</div>
+									</iscomment>
+									<div class="inBlock">
+										<button type="submit" value="${Resource.msg('cart.upsell.addtocart', 'rendering', null)}" name="${recommendation.addtocart.htmlName}" class="orngBtnBig"><span>${Resource.msg('cart.upsell.addtocart', 'rendering', null)}</span></button>
+									</div>									
+								</div>
+							</div><!-- productimage End -->
+							
+							
+						</div><!-- relatedProduct End -->
+						<script type="text/javascript">
+						<!--
+							jQuery('${"#"}upsell-${product.ID}' + ' .addtocartbtn').click(function(){
+					            appendUpsellProductToCookie('${product.ID}');
+					        });
+						-->
+						</script>
+					</isobject>
+				</isloop>
+	</form>
+
+	<form action="${URLUtils.continueURL()}" method="post" id="${pdict.CurrentForms.advertise.htmlName}" onsubmit="$('#ExistingData').val($('form.checkoutform').serialize());return true;">
+		<input type="hidden" id="ExistingData" name="ExistingData" value="" />
+
+				<isset name="upsellLastID" value="${pdict.CurrentRequest.httpCookies['upsellLastID']}" scope="page" />
+				<isset name="upsellForHopUp" value="" scope="page" />
+				
+				<isloop items="${pdict.CurrentForms.advertise.recommendation}" alias="recommendation" status="loopstate">
+					<isset name="product" value="${recommendation.object}" scope="page"/>
+					<isif condition="${empty(upsellLastID) || (!empty(upsellLastID) && empty(upsellForHopUp))}">
+						<isset name="upsellForHopUp" value="${product}" scope="page" />
+					</isif>
+					
+					<isobject object="${product}" view="detail">
+						<div class="relatedProduct" id="upsell-${product.ID}">
+							<div class="productimage"><!-- Product Image -->
+								<isif condition="${product.master && pdict.CurrentVariationModel && CurrentVariationModel.variants.size() > 0}">
+									<isset name="imageProduct" value="${CurrentVariationModel.variants[0]}" scope="page"/>
+								<iselse/>
+									<isset name="imageProduct" value="${product}" scope="page"/>
+								</isif>
+							
+								<isif condition="${!empty(imageProduct.getImage('small',0))}">
+									<isset name="imageUrl" value="${imageProduct.getImage('small',0).url}" scope="page"/>
+									<isset name="imageAlt" value="${imageProduct.getImage('small',0).alt}" scope="page"/>
+									<isset name="imageTitle" value="${imageProduct.getImage('small',0).title}" scope="page"/>
+								<iselse/>
+									<isset name="imageUrl" value="${URLUtils.staticURL('/images/noimagesmall.png')}" scope="page"/>
+									<isset name="imageAlt" value="${product.name}" scope="page"/>
+									<isset name="imageTitle" value="${product.name}" scope="page"/>
+								</isif>
+								<img src="${imageUrl}" alt="${imageAlt}" title="${imageTitle}"/>
+							</div>
+							
+							<div class="upsellcontent">
+								<h4><isprint value="${product.name}"/></h4> 
+		
+								<a class="details_link" href="javascript:void(0);" class="${recommendation.details.htmlName}">${Resource.msg('global.details','locale',null)}</a>
+								<div class="upsell_details_content upsell_details_inactive">
+									<isprint value="${upsellForHopUp.custom.cartDescription}" encoding="off" />
+								</div>
+								<button class="details" type="submit" name="${recommendation.details.htmlName}" style="display: none;"></button>
+								
+								<div class="upselldescription" style="display: none;" >
+									<isset name="imageAlt" value="${product.name}" scope="page"/>
+									<isset name="imageTitle" value="${product.name}" scope="page"/>
+									<isif condition = "${'catalogShortDescription' in product.custom}">	
+										<isprint value="${product.custom.catalogShortDescription}" encoding="off"/>
+									</isif>
+								</div><!-- END: shortDescription -->
+								
+								<div class="addtocart_btn">
+									<button type="submit" value="${Resource.msg('cart.upsell.addtocart', 'rendering', null)}" name="${recommendation.addtocart.htmlName}" class="addtocartbtn"><span>${Resource.msg('cart.upsell.addtocart', 'rendering', null)}</span></button>
+								</div>
+							</div>
+						</div>
+						<script type="text/javascript">
+						<!--
+							jQuery('${"#"}upsell-${product.ID}' + ' .addtocartbtn').click(function(){
+					            appendUpsellProductToCookie('${product.ID}');
+					        });
+						-->
+						</script>
+					</isobject>
+				</isloop>
+
+		
+		<isif condition="${typeof upsellForHopUp != 'undefined' && !empty(upsellForHopUp)}">		
+			<div id="popupOverlay"></div>			
+			<div class="hopup" id="upsellForHopUp">
+					
+					<isset name="hopUpImage" value="${upsellForHopUp.getImage('large', 0)}" scope="page" />
+					<isif condition="${empty(hopUpImage)}">
+						<isset name="hopUpImage" value="${URLUtils.staticURL('/images/noimagelarge.png')}" scope="page" />  
+					</isif>
+							
+					<div class="hopupbodyinner" style="background-image:url('${hopUpImage.url}'); height:575px;">
+					
+							<a href="#close" class="closebtn" title="${Resource.msg('cart.upsell.close', 'rendering', null)}"><span>${Resource.msg('cart.upsell.close', 'rendering', null)}</span></a>
+						    <div class="imagedic"><isprint value="${upsellForHopUp.title}" encoding="off" /></div>
+							<div class="hopuoptitleinner"><isprint value="${upsellForHopUp.custom.interstitialOfferTitle}" encoding="off" /></div>
+					
+			
+							
+					
+						<div class="hopupcontrols">
+							<div class="hopupdetails">
+								<isprint value="${upsellForHopUp.custom.interstitialOfferDescription}" encoding="off" />
+								<a href="#no-thanks" class="nothanksbtn" title="${Resource.msg('cart.upsell.acquisition.nothanks', 'rendering', null)}"><span>${Resource.msg('cart.upsell.acquisition.nothanks', 'rendering', null)}</span></a>
+							</div>
+							<button type="submit" class="addtocartbtn" title="${Resource.msg('cart.upsell.addtocart', 'rendering', null)}" value="upsell-${upsellForHopUp.ID}"><span>${Resource.msg('cart.upsell.addtocart', 'rendering', null)}</span></button>
+						</div>
+					</div>
+				
+			</div>
+		
+		</isif>
+	</form>
+	
+	<isif condition="${typeof upsellForHopUp != 'undefined'}">
+		<iscomment>If we don't have any upsells to show then we don't need a script for them</iscomment>
+	<script type="text/javascript">
+	<!--
+	jQuery(document).ready(function () {
+		
+		/*For showing/hiding description on click of details.*/
+		jQuery(".details_link").toggle(function(event){
+			event.preventDefault();
+			jQuery(this).siblings(".upsell_details_content").removeClass("upsell_details_inactive");
+		}, function(event){
+			event.preventDefault();
+			jQuery(this).siblings(".upsell_details_content").addClass("upsell_details_inactive");
+		});
+		
+		/* Details link click handler */
+		jQuery(".details_link").click(function(){
+			// Show or hide upsell description
+			jQuery(this).siblings(".upselldescription").toggle();
+	
+			return false;
+		});
+	
+		var hopUpID = '${"#"}upsellForHopUp';
+		var hopUpItemID = '${"#"}upsell-${upsellForHopUp.ID}';
+		var upsellSectionID = '${"#"}upsellSection';
+		var overlayID = '${"#"}popupOverlay';
+	
+		if (!jQuery('.relatedProduct:visible', upsellSectionID).size()) {
+			jQuery(upsellSectionID).hide();
+		}
+
+		/* Click on those must close the upsell hop-up */
+		jQuery(hopUpID).find('.closebtn, .nothanksbtn').add(overlayID).click(function() {
+			// Hide the hop-up
+			jQuery(hopUpID).add(overlayID).fadeOut('slow');
+			// Show the upsell block in the left panel
+			jQuery(hopUpItemID).add(upsellSectionID).fadeIn('slow');
+	
+			// If "No thanks" link was clicked then we need to set cookie
+			// which will indicate that we don't need to show this upsell next time
+            appendUpsellProductToCookie('${upsellForHopUp.ID}');
+	
+			return false;
+		});
+		
+		jQuery(hopUpID).find('.addtocartbtn').click(function() {
+			setCookie('upsellLastID', '${upsellForHopUp.ID}');
+			
+			// Add upsell to the shopping cart
+			jQuery(hopUpItemID + ' .addtocartbtn').click();
+	
+			return false;
+		});
+
+		<isif condition="${pdict.ShowRecommendationPopup != false}">
+		   jQuery(hopUpItemID).hide();
+		   
+			// Display upsell hop-up 2 seconds after page loads
+			setTimeout(function() {
+				var hopUp = jQuery(hopUpID);
+				var posLeft = jQuery(document).width() / 2 - hopUp.width();
+				
+				//hopUp.css({'left' : posLeft});
+				//hopUp.css({'left' : '230px'}); // IE is not calculating consistent widths
+	
+				jQuery(overlayID).css({opacity : 0}).show().animate({opacity : .5}, 'slow')
+				hopUp.add(overlayID).fadeIn('slow');
+			}, 4000);
+		</isif>
+	});
+
+	function appendUpsellProductToCookie(pid){
+		var upsellID = readCookie('upsellLastID') || "";
+		if(upsellID.indexOf("[" + pid + "]") == -1){
+			setCookie('upsellLastID', upsellID + "[" + pid + "],");
+		}
+	}
+
+	function readCookie(name) {
+		var nameEQ = name + "=";
+		var ca = document.cookie.split(';');
+		for(var i=0;i < ca.length;i++) {
+			var c = ca[i];
+			while (c.charAt(0)==' ') c = c.substring(1,c.length);
+			if (c.indexOf(nameEQ) == 0) return decodeURIComponent(c.substring(nameEQ.length,c.length));
+		}
+		
+		return null;
+	}
+	
+	function setCookie(name, value, props) {
+		props = props || {}
+		var exp = props.expires
+	
+		if (typeof exp == "number" && exp) {
+			var d = new Date()
+			d.setTime(d.getTime() + exp*1000)
+			exp = props.expires = d
+		}
+	
+		if(exp && exp.toUTCString) { props.expires = exp.toUTCString() }
+	
+		value = encodeURIComponent(value)
+		var updatedCookie = name + "=" + value
+	
+		for (var propName in props){
+			updatedCookie += "; " + propName
+			var propValue = props[propName]
+	
+			if(propValue !== true){ updatedCookie += "=" + propValue }
+		}
+		
+		document.cookie = updatedCookie
+	}
+	//-->
+	</script>
+	</isif>
+</isif>
+<iscomment>Display the "Cart Phone" section</iscomment>
+<isif condition="${pdict.ShowCartPhone !== false}">
+	<!-- Display the "Cart Phone" section -->
+	<isslot id="order-by-phone" context="category" description="Cart Phone Number Content Slot" context-object="${category}" />
+</isif>
+</div>
+</div>	
+
+

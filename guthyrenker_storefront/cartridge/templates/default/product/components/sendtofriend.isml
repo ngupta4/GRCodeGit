@@ -1,0 +1,11 @@
+<!--- TEMPLATENAME: sendtofriend.isml --->
+<div class="emailFriendFeature" style="display:none">
+    <p class="emailFriendHeader"><span class="underline">Share this great offer with your parent or friend</span> <span class="closeBtn"></span></p>
+    <form method="post" action="">
+        <label for="friendEmailAddress">TO:</label>
+        <input type="text" id="friendEmailAddress" onfocus="if(this.value==this.defaultValue) this.value='';" value="Their email address here" name="friendEmailAddress"><br>
+        <label for="emailAddress">FROM:</label>
+        <input type="text" id="emailAddress" onfocus="if(this.value==this.defaultValue) this.value='';" value="Your email address here" name="emailAddress"><br>
+        <input width="65" type="image" height="24" id="btn_send" alt="SEND" src="${URLUtils.staticURL('/images/emailform/btn_send.png')}" />
+    </form>
+</div>

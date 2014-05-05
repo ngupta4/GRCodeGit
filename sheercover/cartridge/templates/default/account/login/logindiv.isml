@@ -1,0 +1,19 @@
+<isinclude template="util/modules"/>
+<isinclude template="util/errordisplay"/>
+<body class="noBG">
+	<isinclude template="components/header/htmlhead"/>
+<div class="accountlogin box">
+	<isif condition = "${null!=pdict.genericError && !empty(pdict.genericError)}">
+		<span class="errormessage"><isprint value="${pdict.genericError}"></span>
+	</isif>
+
+	<iscomment><h2>${Resource.msg('accountlogin.header','account',null)}</h2></iscomment>
+	
+	
+<isinclude template="account/login/logininclude"/>
+
+</div><!-- END: accountlogin -->
+
+<isset name="OmniturePage" value="Loginpage" scope="pdict">
+</body>
+

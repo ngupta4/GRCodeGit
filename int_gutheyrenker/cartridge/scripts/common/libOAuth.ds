@@ -1,0 +1,86 @@
+importPackage( dw.system );
+importPackage(dw.util);
+importPackage(dw.net);
+
+importPackage( dw.crypto );
+
+importScript( "grmiddleware/libGRMiddleware.ds" );
+
+function getOAuthHeader(url : String, method : String, accessID:String, sharedSecret:String) {
+    
+    var errorText : String = "";
+    
+    var nonce : String = UUIDUtils.createUUID();
+    var timestamp : Number = (new Date().getTime()/1000).toFixed(0);
+    var methodName = method || 'POST';
+    
+    accessID     = accessID     || pref("middlewareAPIAccessID", null);
+    sharedSecret = sharedSecret || pref("middlewareAPISharedSecret",null);
+    
+    
+    //var url2 = url.replace('50.56.25.161','grws.grdev.com');
+    //1.    First collect the needed parameters
+    //2.    Percent-encode the parameters and sort them first by their name and then by their value. 
+    //3.    Concatenate the parameters into a string just the way you compute an application/x-www-form-urlencoded string. For this example, the value of this string is gr_access_key_id= AKIAJND7YR3VTASBTW7A&nonce=4d78bb5007f247.66366289&signature_method=HMAC-SHA256&signature_version=1.0&timestamp=1299764225
+    //4.    Compute a signature using the shared secret. For this example, the signature is 701a515f4f0242f11d3640f6a28b550d3a421b0f4ff0e6dc2ac5962c791938fb
+    //5.    Base64-encode the signature, and then percent-encode the resulting text. 
+   
+    var mac : Mac = new Mac(Mac.HMAC_SHA_1); 
+                 
+    var unencodedString = "oauth_consumer_key=" + accessID 
+                + "&oauth_nonce=" + nonce
+                + "&oauth_signature_method=HMAC-SHA1"
+                + "&oauth_timestamp=" + timestamp
+                + "&oauth_version=1.0";
+                
+    //if( contentType=='application/x-www-form-urlencoded' && !empty(args.MessageBody) ) {
+    //    unencodedString += "&"+body;
+    //}
+                                
+    var signatureString : String = methodName+"&"+Encoding.toURI(url)+"&"+Encoding.toURI(unencodedString);
+
+    var msg : Bytes = mac.digest(signatureString, encodeURIComponent(sharedSecret)+"&");
+    
+    var outString : String = Encoding.toBase64(msg);
+    outString = Encoding.toURI(outString); 
+
+    var msgHeaderString : String = "OAuth oauth_consumer_key=\""+ accessID  + "\""
+                + ", oauth_nonce=\"" + nonce + "\""
+                + ", oauth_signature_method=\"HMAC-SHA1\""
+                + ", oauth_timestamp=\"" + timestamp + "\""
+                + ", oauth_version=\"1.0\""
+                + ", oauth_signature=\"" + outString + "\"";
+                
+    var msgQueryString : String = Encoding.toBase64(mac.digest("POST&http%3A%2F%2Fgrws.grdev.com%2Fvalidator%2F123&oauth_consumer_key%3DAKIAJH5PY7QKS77ZBS4Q%26oauth_nonce%3DvJM5WSSS2HZ%26oauth_signature_method%3DHMAC-SHA1%26oauth_timestamp%3D1314991408%26oauth_version%3D1.0", encodeURIComponent(sharedSecret)+"&"));       
+    
+    return msgHeaderString;
+}
+
+function credentialsFromUrl(url:String):Object{
+    var match = url.match(/^(https?:\/\/)(.+):(.+)@(.*)$/);
+    if(match != null && match.length == 5){
+        return {url: match[1] + match[4], user:match[2], password: match[3]};
+    }
+    else
+    {
+        return null;
+    }
+}
+
+function openOAuthUrl(method:String, url:String):HTTPClient{
+    var client:HTTPClient = new HTTPClient();
+    
+    var credentials = credentialsFromUrl(url);
+    if(credentials != null){
+        url = credentials.url;
+        client.setRequestHeader('Authorization', getOAuthHeader(url, method, credentials.user, credentials.password));
+    }
+    else
+    {
+        client.setRequestHeader('Authorization', getOAuthHeader(url, method));
+    }
+    
+    client.open(method, url);
+    
+    return client;
+}

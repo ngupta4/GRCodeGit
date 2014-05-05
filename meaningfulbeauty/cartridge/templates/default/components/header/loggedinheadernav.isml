@@ -1,0 +1,5 @@
+<!--- TEMPLATENAME: headerNavigation.isml --->
+<iscache  type = "relative" hour = "24" varyby="price_promotion" >
+<isset name="loggedInFlag" value="${true}" scope="page"/>
+
+<isinclude template="components/header/headerNavigation"/>

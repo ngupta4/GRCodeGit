@@ -1,0 +1,33 @@
+<iscache type="relative" hour="24"/>
+<isinclude template="util/modules" />
+
+<iscontentasset aid="order-by-phone" />
+<iscontentasset aid="proactiv-365-sidebar" />
+<iscomment>
+
+<div class="block nav">
+	<div class="blockTop"><div class="blockTopRight"></div></div>
+	<div class="blockContent">
+		<div class="contentasset">
+			
+		</div>
+	</div>
+	<div class="blockBottom"><div class="blockBottomRight"></div></div>
+</div>
+
+
+It is supposed to be content slots, but FSD says assets in this paticular page
+<isscript>
+	importScript("guthyrenker_core:common/libUtils.ds")
+	
+	var loggedInCookie = pdict.CurrentRequest.httpCookies['loggedin'];
+	var loggedIn : boolean = (!empty(loggedInCookie) && loggedInCookie.value == '1');
+</isscript>
+<isif condition="${!loggedIn}">	
+	<isslot id="order-by-phone-anonymous" description="This is order by phone content slot" context="global"/>
+	<isslot id="proactiv-365-sidebar-anonymous" description="This is proactive 365" context="global"/>
+<iselse/>	
+	<isslot id="order-by-phone-loggedin" description="This is order by phone content slot" context="global"/>
+	<isslot id="proactiv-365-sidebar-loggedin" description="This is proactive 365" context="global"/>	
+</isif>
+</iscomment>

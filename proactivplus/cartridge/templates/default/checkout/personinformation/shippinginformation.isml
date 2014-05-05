@@ -1,0 +1,57 @@
+<!--- TEMPLATENAME: shippinginformation.isml --->
+<isif condition="${!empty(pdict.CurrentForms.personinf.shipptoaddress.error)}">
+	<div class="errorform">
+		${pdict.CurrentForms.personinf.shipptoaddress.error}
+	</div>
+</isif>
+
+<div class="formfield firstName"><isinputfield attribute2="tabindex" value2="17"	id="shipFirstName"
+	formfield="${pdict.CurrentForms.personinf.shipptoaddress.firstName}"
+	type="input" attribute1="requiredmesage"
+	value1="${Resource.msg('forms.addressinf.firstname.missing','forms',null)}">
+</div>
+
+<div class="formfield lastName"><isinputfield
+	id="shipLastName" attribute2="tabindex" value2="18"
+	formfield="${pdict.CurrentForms.personinf.shipptoaddress.lastName}"
+	type="input" attribute1="requiredmesage"
+	value1="${Resource.msg('forms.addressinf.lastname.missing','forms',null)}">
+</div>
+
+<div class="formfield first address"><isinputfield attribute2="tabindex" value2="19"
+	id="shipAddress"
+	formfield="${pdict.CurrentForms.personinf.shipptoaddress.address1}"
+	type="input" attribute1="requiredmesage"
+	value1="${Resource.msg('forms.addressinf.address1.missing','forms',null)}" XhtmlClass="errormessage-lang">
+</div>
+
+<div class="formfield second address"><isinputfield attribute2="tabindex" value2="20"
+	id="shipAddress2"
+	formfield="${pdict.CurrentForms.personinf.shipptoaddress.address2}"
+	type="input" XhtmlClass="errormessage-lang"></div>
+
+<div class="formfield city"><isinputfield attribute2="tabindex" value2="21"
+	id="shipCity"
+	formfield="${pdict.CurrentForms.personinf.shipptoaddress.city}"
+	type="input" attribute1="requiredmesage"
+	value1="${Resource.msg('forms.addressinf.city.missing','forms',null)}">
+</div>
+
+<div class="formfield statezip">
+	<div class="state"><isinputfield attribute2="tabindex" value2="22"
+		id="shipState"
+		formfield="${pdict.CurrentForms.personinf.shipptoaddress.states.stateUS}"
+		type="select" attribute1="requiredmesage"
+		value1="${Resource.msg('forms.addressinf.state.missing','forms',null)}">
+	</div>
+	<div class="zip"><isinputfield attribute2="tabindex" value2="23"
+		id="shipZip"
+		formfield="${pdict.CurrentForms.personinf.shipptoaddress.zip}"
+		type="input" attribute1="requiredmesage"
+		value1="${Resource.msg('forms.addressinf.zip.missing','forms',null)}">
+	</div>
+</div>
+
+<div style="display: none">
+	<input type="hidden" value="US" name="${pdict.CurrentForms.personinf.shipptoaddress.country.htmlName}">
+</div>

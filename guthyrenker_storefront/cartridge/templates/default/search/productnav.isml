@@ -1,0 +1,36 @@
+<isif condition="${!pdict.ProductPagingModel.empty}">
+	<isscript>
+		importscript("guthyrenker_businesslogic:productlist/ProductnavUrl.ds");
+		var retList = getProductNavUrl(pdict.ProductPagingModel, pdict.CurrentHttpParameterMap, pdict.ProductSearchResult);  
+	</isscript>
+	
+	 <isset name="prevProd" value="${retList[0]}" scope="page"/>
+      <isset name="prevProdUrls" value="${retList[1]}" scope="page"/>
+      <isset name="nextProd" value="${retList[2]}" scope="page"/>
+      <isset name="nextProdUrls" value="${retList[3]}" scope="page"/>
+	
+	<isif condition="${!empty(pdict.ProductSearchResult) && pdict.ProductSearchResult.count > 0 && !isQuickView}">	
+		<div id="pdpNav" class="productnav">
+			<isset name="backLinkText" value="${Resource.msgf('productnav.back','search',null, (!empty(pdict.ProductSearchResult.categoryID) ? pdict.ProductSearchResult.category.displayName: pdict.CurrentHttpParameterMap.q.stringValue))}" scope="page"/>
+			<a id="pdpContShopLink" href="${pdict.ProductSearchResult.url('Search-Show')}" title="${backLinkText}"><isprint value="${backLinkText}"/></a> 		
+			<div class="clear"><!-- FLOAT CLEAR --></div>
+			<div class="productnavigation">
+				<isif condition="${prevProd != null}">			
+					<div class="productprevious"><a href="${prevProdUrls.pUrl}" title="${prevProdUrls.imgTitle}"><span>${Resource.msg('global.previous','locale',null)} </span><img alt="${prevProdUrls.imgAlt}" title="${prevProdUrls.imgTitle}" src="${prevProdUrls.imgUrl}"/></a></div>
+				</isif>
+				<isif condition="${nextProd != null}">
+					<div class="productnext"><a href="${nextProdUrls.pUrl}" title="${nextProdUrls.imgTitle}"> <img alt="${nextProdUrls.imgAlt}" title="${nextProdUrls.imgTitle}" src="${nextProdUrls.imgUrl}" /> <span>${Resource.msg('global.next','locale',null)}</span></a></div>
+				</isif>
+			</div><!-- END: productnavigation -->			
+		<div class="clear"><!-- FLOAT CLEAR --></div>
+		</div><!-- END: productnav -->
+	</isif>
+</isif>
+
+
+
+
+
+
+
+

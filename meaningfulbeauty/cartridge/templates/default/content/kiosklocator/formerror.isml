@@ -1,0 +1,19 @@
+<isdecorate template="content/kiosklocator/pt_kiosklocator">
+	<div class="pageHead">
+		<h1>Find a Meaningful Beauty retailer near you.</h1>
+		<p class="intro">Below are the results for kiosks near your Zip Code and within the distance you specified.</p>
+	</div>
+	<div class="blockGrey">
+		<div class="block">
+			<div class="blockTop"><div class="blockTopRight"></div></div>
+
+			<div class="blockContent">
+				<h3>Kiosk locations within your zip code can not be found</h3>
+				<div class='phpGoogleStoreLocator_body'>
+				 	Due to incorect parameters we can you search kiosk, please provide valid zip code and <a href="${URLUtils.url('KioskLocator-Locate')}">Try Again</a>
+				</div>
+			</div>
+			<div class="blockBottom"><div class="blockBottomRight"></div></div>
+		</div>
+	</div>
+</isdecorate>

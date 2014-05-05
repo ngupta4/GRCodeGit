@@ -1,0 +1,27 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<iscomment>This page must never be cached!! This page tries to avoid having too much logic or includes to avoid any followup errors!!</iscomment>
+<head>
+	<iscomment>Include all important information globally , e.g. meta-data, link information, and javascript.</iscomment>
+	<isinclude template="components/header/htmlhead"/>
+</head>
+<body>
+<isinclude template="components/header/header"/>
+<div id="container" class="pt_error">
+	<div  class="container">
+      <div class="clearFix mainContainer" id="main">
+            <div id="primaryContent" class="clearfix">
+				<div id="primaryContent">
+					<isreplace/>
+				</div><!-- END: content -->
+	            <div id="secondaryContent" class="${CurrentFolder.ID}">
+	                <isinclude template="search/components/browsefoldersidebar"/>
+	            </div><!-- END: leftcolumn -->
+			</div>
+		</div><!-- END: main -->
+	</div><!-- END: container -->
+	<isinclude template="components/footer/footer"/>
+	<isinclude template="components/footer/pixels"/>
+</div>
+</body>
+</html>

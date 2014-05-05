@@ -1,0 +1,15 @@
+<iscomment>ISREDIRECT must be before ISCACHE, because ISREDIRECT clears the response created so far</iscomment>
+<isredirect location="${pdict.Location+(!empty(pdict.pactvid)?'?pactvid='+pdict.pactvid:'')}" permanent="true"/>
+<iscache status="off"/>
+
+<!DOCTYPE html>
+<html>
+<head>
+<title>${Resource.msg('redirect_permanent.title','common',null)}</title>
+<meta http-equiv="refresh" content="2;url=${pdict.Location+(!empty(pdict.pactvid)?'?pactvid='+pdict.pactvid:'')}">
+<meta http-equiv="Robots" content="noindex, nofollow" />
+</head>
+<body>
+	${Resource.msg('redirect_permanent.message','common',null)} <a href="${pdict.Location+(!empty(pdict.pactvid)?'?pactvid='+pdict.pactvid:'')}" title="${Resource.msg('redirect_permanent.message','common',null)} ${pdict.Location+(!empty(pdict.pactvid)?'?pactvid='+pdict.pactvid:'')}">${pdict.Location+(!empty(pdict.pactvid)?'?pactvid='+pdict.pactvid:'')}</a>
+</body>
+</html>

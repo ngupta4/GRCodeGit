@@ -1,0 +1,175 @@
+<isscript>
+var primaryUCI     : dw.web.Cookie = pdict.CurrentRequest.httpCookies['uci'];
+var omnCampaignUCI : String = !empty(primaryUCI)?primaryUCI.value: !empty(pdict.CurrentSession.privacy.campaignUCIID) ? pdict.CurrentSession.privacy.campaignUCIID : '';
+</isscript>
+<isif condition="${pdict.acquisitionstep == 'landingpage'}">
+
+<iscomment>Mobile Homepage:</iscomment>
+<!---Atlas--->
+<script>
+document.write('<s'+'cript language="JavaScript" src="http://view.atdmt.com/jaction/grkpro_ProactivPlusMobileUnsecureRtg_1"></s'+'cript>')</script>
+<noscript><iframe src="http://view.atdmt.com/iaction/grkpro_ProactivPlusMobileUnsecureRtg_1" width="1" height="1" frameborder="0" scrolling="No" marginheight="0" marginwidth="0" topmargin="0" leftmargin="0"></iframe></noscript>
+<!---MediaGeeks--->
+<script language="javascript" src="http://delivery.mgplatform.com/gr/m301planding.js"></script>
+</isif>
+
+<isif condition="${pdict.acquisitionstep != 'confirmation'}">
+
+<!-- TapAd -->
+<img width='1' height='1' src='http://pixel.tapad.com/tap/pxl.png?ta_property_id=946&ta_action_id=ProactivPlus_Retargeting' />
+
+</isif>
+
+
+
+<isif condition="${pdict.acquisitionstep == 'selectasystem'}">
+<iscomment>Mobile Select a System:</iscomment>
+<!---Atlas--->
+<script>document.write('<s'+'cript language="JavaScript" src="http://view.atdmt.com/jaction/grkpro_ProactivPlusMobileSAS_4"></s'+'cript>')</script>
+<noscript><iframe src="http://view.atdmt.com/iaction/grkpro_ProactivPlusMobileSAS_4" width="1" height="1" frameborder="0" scrolling="No" marginheight="0" marginwidth="0" topmargin="0" leftmargin="0"></iframe></noscript>
+<!---MediaGeeks--->
+<script language="javascript" src="http://delivery.mgplatform.com/gr/m301planding.js"></script>
+
+</isif>
+<isif condition="${pdict.acquisitionstep == 'cartinformation'}">
+<iscomment>Mobile Cart</iscomment>
+<!---Atlas--->
+<script>document.write('<s'+'cript language="JavaScript" src="https://view.atdmt.com/jaction/grkpro_ProactivPlusMobileShoppingCart_8"></s'+'cript>')</script>
+<noscript><iframe src="https://view.atdmt.com/iaction/grkpro_ProactivPlusMobileShoppingCart_8" width="1" height="1" frameborder="0" scrolling="No" marginheight="0" marginwidth="0" topmargin="0" leftmargin="0"></iframe></noscript>
+<!---MediaGeeks--->
+<script language="javascript" src="https://t4.mgplatform.com/gr/mproactivp_sr.js"></script>
+
+<script type="text/javascript">
+var fb_param = {};
+fb_param.pixel_id = '6013512493315';
+fb_param.value = subTotal;
+fb_param.currency = 'USD';
+(function(){
+  var fpw = document.createElement('script');
+  fpw.async = true;
+  fpw.src = '//connect.facebook.net/en_US/fp.js';
+  var ref = document.getElementsByTagName('script')[0];
+  ref.parentNode.insertBefore(fpw, ref);
+})();
+</script>
+<noscript><img height="1" width="1" alt="" style="display:none" src="https://www.facebook.com/offsite_event.php?id=6013512493315&amp;value=0&amp;currency=USD" /></noscript>
+
+
+
+</isif>
+<isif condition="${pdict.acquisitionstep == 'confirmation'}">
+<iscomment>Mobile Confirmation</iscomment>
+
+<!--- TapAd --->
+<script type="text/javascript"> 
+$(document).ready(function() 
+ {
+      var image = new Image;
+      image.src="http://pixel.tapad.com/tap/pxl.png?ta_property_id=946&ta_action_id=ProactivPlus_Conversion";
+      image.width="1";
+      image.height="1";
+ }); 
+</script>
+<!--- END TapAd --->
+
+<!--- Medialets --->
+<script type="text/javascript"> 
+    (function(a,b,d){var c="https://s-cdn-tag.medialytics.com/cp";window.medialetsCP=new function(a,b){this.spid=a;this.params=b}(b,d);"complete"===a.readyState?(b=a.createElement("script"),b.type="text/javascript",b.src=c,(a.getElementsByTagName("head")[0]||a.getElementsByTagName("body")[0]).appendChild(b)):a.write('<script type="text/javascript" src="'+c+'"><\/script>')})(
+	document, "f3e98ffee30c4fb294da3dcd02ac3151", {
+	action:"Checkout",
+	value:'${pdict.Order.totalGrossPrice.value}',
+	conversionID:'${pdict.Order.orderNo}'
+	});
+</script>
+<!--- END Medialets --->
+
+
+<!---Atlas--->
+<script>document.write('<s'+'cript language="JavaScript" src="https://view.atdmt.com/jaction/grkpro_ProactivPlusMobileConversion_7/v3/ato.${pdict.Order.orderNo}/[atm1.${pdict.Order.totalGrossPrice.value}/atc1.pa/atc2.${pdict.Order.getAllProductLineItems()[0].productID}/atc3.${omnCampaignUCI}]"></s'+'cript>')</script>
+<noscript><iframe src="https://view.atdmt.com/iaction/grkpro_ProactivPlusMobileConversion_7/v3/ato.${pdict.Order.orderNo}/[atm1.${pdict.Order.totalGrossPrice.value}/atc1.pa/atc2.${pdict.Order.getAllProductLineItems()[0].productID}/atc3.${omnCampaignUCI}]" width="1" height="1" frameborder="0" scrolling="No" marginheight="0" marginwidth="0" topmargin="0" leftmargin="0"></iframe></noscript>
+<!---MediaGeeks--->
+<script id="script301mp" src="https://t4.mgplatform.com/gr/mconfirm-proactivp.js?orderid=${pdict.Order.orderNo}"></script>
+
+
+<!--- Kenshoo pixel --->
+
+<script type="text/javascript">
+   var hostProtocol = (("https:" == document.location.protocol) ? "https" : "http");
+   document.write('<scr'+'ipt src="', hostProtocol+ '://506.xg4ken.com/media/getpx.php?cid=b710383b-943c-4ae4-8581-bd4083f2657d','" type="text/JavaScript"><\/scr'+'ipt>');
+</script>
+<script type="text/javascript">
+   var params = new Array();
+   params[0]='id=b710383b-943c-4ae4-8581-bd4083f2657d';
+   params[1]='type=conv';
+   params[2]='val=${pdict.Order.totalGrossPrice.value}';
+   params[3]='orderId=${pdict.Order.orderNo}';
+   params[4]='promoCode=';
+   params[5]='valueCurrency=USD';
+   params[6]='GCID='; //For Live Tracking only
+   params[7]='kw='; //For Live Tracking only
+   params[8]='product='; //For Live Tracking only
+   k_trackevent(params,'506');
+</script>
+
+<noscript>
+   <img src="https://506.xg4ken.com/media/redir.php?track=1&token=b710383b-943c-4ae4-8581-bd4083f2657d&type=conv&val=${pdict.Order.totalGrossPrice.value}&orderId=${pdict.Order.orderNo}&promoCode=&valueCurrency=USD&GCID=&kw=&product=" width="1" height="1">
+</noscript>
+
+
+<!--- End Kenshoo pixel --->
+
+<!-- Google Code for Order Conversion Page -->
+<script type="text/javascript">
+/* <![CDATA[ */
+var google_conversion_id = 1060518982;
+var google_conversion_language = "en";
+var google_conversion_format = "2";
+var google_conversion_color = "ffffff";
+var google_conversion_label = "Yk1vCKLDzwEQxvjY-QM";
+var google_conversion_value = "${pdict.Order.totalGrossPrice.value}";
+/* ]]> */
+</script>
+<script type="text/javascript" src="https://www.googleadservices.com/pagead/conversion.js">
+</script>
+<noscript>
+<div style="display:inline;">
+<img height="1" width="1" style="border-style:none;" alt="" src="https://www.googleadservices.com/pagead/conversion/1060518982/?value=${pdict.Order.totalGrossPrice.value}&amp;label=Yk1vCKLDzwEQxvjY-QM&amp;guid=ON&amp;script=0""/>
+</div>
+</noscript>
+
+<!-- Google Code for Order Conversion Page -->
+<script type="text/javascript">
+/* <![CDATA[ */
+var google_conversion_id = 967063606;
+var google_conversion_language = "en";
+var google_conversion_format = "2";
+var google_conversion_color = "ffffff";
+var google_conversion_label = "xAgxCPK46AMQtvCQzQM";
+var google_conversion_value = "${pdict.Order.totalGrossPrice.value}";
+var google_remarketing_only = false;
+/* ]]> */
+</script>
+<script type="text/javascript" src="//www.googleadservices.com/pagead/conversion.js">
+</script>
+<noscript>
+<div style="display:inline;">
+<img height="1" width="1" style="border-style:none;" alt="" src="//www.googleadservices.com/pagead/conversion/967063606/?value=0&amp;label=xAgxCPK46AMQtvCQzQM&amp;guid=ON&amp;script=0"/>
+</div>
+</noscript>
+
+<script type="text/javascript">
+var fb_param = {};
+fb_param.pixel_id = '6013512522115';
+fb_param.value = subTotal;
+fb_param.currency = 'USD';
+(function(){
+  var fpw = document.createElement('script');
+  fpw.async = true;
+  fpw.src = '//connect.facebook.net/en_US/fp.js';
+  var ref = document.getElementsByTagName('script')[0];
+  ref.parentNode.insertBefore(fpw, ref);
+})();
+</script>
+<noscript><img height="1" width="1" alt="" style="display:none" src="https://www.facebook.com/offsite_event.php?id=6013512522115&amp;value=0&amp;currency=USD" /></noscript>
+
+</isif>

@@ -1,0 +1,54 @@
+<iscache  type = "relative" hour = "24" varyby="price_promotion" >
+<iscomment>
+	This template displays a 3-level category tree as top navigation.
+	Only categories marked with showInMenu are shown.
+</iscomment>
+
+
+  <isscript>
+	// get the "sale" category
+	var saleCategory = dw.catalog.CatalogMgr.getCategory('Product-Type');
+</isscript>
+
+<div id="header-category">
+  <div class="wrapper">
+  <div id="shop-image"></div>
+<ul class="category-nav">
+	<isloop items="${saleCategory.getOnlineSubCategories()}" var="subCat">
+		<isif condition="${subCat.ID == dw.web.Resource.msg('search.solutionfinder','search',null)}">
+			<iscontinue/>
+		</isif>
+
+      <li id="${subCat.ID}">
+	     <a href="${URLUtils.http('Search-Show', 'cgid', subCat.getID())}"><isprint value="${subCat.getDisplayName()}"/></a>	     
+	    <div class="subnav">
+			 <isslot id="headerNavigation" context="category" description="Header Sub Navigation" context-object="${subCat}"/>
+			 <div class="seemore"> <a href="${URLUtils.http('Search-Show', 'cgid', subCat.ID)}"><img src="${URLUtils.absStatic('themes/demandwarestore/images/btn-seemore.jpg')}"  alt="See More"  /></a> </div>
+		</div>
+      </li>
+
+		<iscomment>
+			Category landing Banners
+			<isslot id="CategoryPromoBanner" context="category" description="Category Promo Banner" context-object="${subCat}"/>
+			<isslot id="PDPContent" context="category" description="Primary category specific content PDP" context-object="${subCat}"/>
+			<isslot id="QuickViewContent" context="category" description="Primary category specific content quick view" context-object="${subCat}"/>
+		</iscomment>      
+
+      </isloop>
+    </ul>
+    
+    <iscomment>
+    <div class="solutionbox">
+    <div class="solution"><a href="javascript:void(0)">SOLUTION FINDER</a>
+      <div class="subnav"> 
+              <isinclude template="components/header/solutionfinder"/>
+      </div>
+       </div>
+    </div>
+   </iscomment> 
+
+</div>
+</div>
+
+
+

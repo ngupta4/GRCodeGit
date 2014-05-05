@@ -1,0 +1,50 @@
+   <div class="top">
+            <h2>
+              <isprint value="${Resource.msg('account.aboutyou','account',null)}"/>
+            </h2>
+	           <a href="${URLUtils.https('DisplayDashboard-AboutYou')}" title="">
+	           <isprint value="${Resource.msg('account.edit','account',null)}"/>
+	            </a>
+            <div class="clear"></div>
+          </div>
+
+          <isif condition="${(pdict.CurrentCustomer.profile.gender.value!=0 && null!=pdict.CurrentCustomer.profile.gender.value) || (pdict.CurrentCustomer.profile.custom.age!=null && !empty(pdict.CurrentCustomer.profile.custom.age)) || ('null'!=pdict.CurrentCustomer.profile.custom.skinType.value && null!=pdict.CurrentCustomer.profile.custom.skinType.value) || ('null'!=pdict.CurrentCustomer.profile.custom.skinTone.value && null!=pdict.CurrentCustomer.profile.custom.skinTone.value) || ('null'!=pdict.CurrentCustomer.profile.custom.acneSeverity.value && null!=pdict.CurrentCustomer.profile.custom.acneSeverity.value)}">
+            <div class="inner-l">
+            	<isif condition="${pdict.CurrentCustomer.profile.custom.age!=null}">
+	              <div class="row">
+	                <label>${Resource.msg('account.age','account',null)}</label>
+	                <isprint value="${pdict.CurrentCustomer.profile.custom.age}" formatter="#"/>
+	              </div>
+              	</isif>
+              	<isif condition="${pdict.CurrentCustomer.profile.gender.value!=null && pdict.CurrentCustomer.profile.gender.value!=0}">
+	              <div class="row">
+	                <label>${Resource.msg('account.gender','account',null)}</label>
+	                <isprint value="${pdict.CurrentCustomer.profile.gender.displayValue}"/>
+	              </div>
+	             </isif>
+	          <isif condition="${pdict.CurrentCustomer.profile.custom.skinType.value!='null'}">
+	              <div class="row">
+	                <label>${Resource.msg('account.skintype','account',null)}</label>
+	                <isprint value="${pdict.CurrentCustomer.profile.custom.skinType.displayValue}"/>
+	              </div>
+              </isif>
+              <isif condition="${pdict.CurrentCustomer.profile.custom.skinTone.value!='null'}">
+	              <div class="row">
+	                <label>${Resource.msg('account.skintone','account',null)}</label>
+	                <isprint value="${pdict.CurrentCustomer.profile.custom.skinTone.displayValue}"/>
+	              </div>
+              </isif>
+              <isif condition="${pdict.CurrentCustomer.profile.custom.acneSeverity.value!='null'}">
+	              <div class="row">
+	                <label>${Resource.msg('account.acneseverity','account',null)}</label>
+	                <isprint value="${pdict.CurrentCustomer.profile.custom.acneSeverity.displayValue}"/>
+	              </div>
+              </isif>
+            </div>
+            <iselse>
+            <div class="inner-l"><a href="${URLUtils.https('DisplayDashboard-AboutYou')}" title="">
+            <isprint value="${Resource.msg('account.share.some.info','account',null)}"/>
+            </a>
+            <isprint value="${Resource.msg('account.about.your.skin','account',null)}"/><br/>
+            <isprint value="${Resource.msg('account.about.your.skin1','account',null)}"/></div>
+          </isif>

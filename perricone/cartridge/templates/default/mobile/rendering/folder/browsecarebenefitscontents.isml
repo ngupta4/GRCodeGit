@@ -1,0 +1,33 @@
+<isdecorate template="search/pt_browsecarebenefitscontents">
+	<isinclude template="util/modules"/>
+	
+	<isscript>
+		var rememberMeCookie = pdict.CurrentRequest.httpCookies['rememberMe'];
+		var loggedInCookie = pdict.CurrentRequest.httpCookies['loggedin'];
+		if(
+			(!empty(rememberMeCookie) && !empty(rememberMeCookie.value)) 
+			|| 
+			(!empty(loggedInCookie) && loggedInCookie.value == '1')
+		){
+			var loggedIn : boolean = 1;
+		} else {
+			var loggedIn : boolean = 0;
+		}
+	</isscript>
+
+	<iscomment>create reporting event</iscomment>
+	<isinclude template="util/reporting/ReportSearch.isml"/>
+
+	<div class="content365">
+		<isif condition="${loggedIn == 1}">
+			<iscontentasset aid="${'care-benefits-loggedin-hero'}" />
+			<iscontentasset aid="${'care-benefits-loggedin-content'}" />
+		<iselse/>
+			<iscontentasset aid="${'care-benefits-anonymous-hero'}" />
+			<iscontentasset aid="${'care-benefits-anonymous-content'}" />
+		</isif>
+	</div>
+	
+	<isset name="OmniturePage" value="StaticContent" scope="pdict">
+
+</isdecorate>

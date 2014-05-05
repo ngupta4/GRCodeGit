@@ -1,0 +1,77 @@
+<iscache status="off"/>
+
+<iscomment>
+	This template is created before the 'wrapper' template, so we can set
+	up the template configuration for the 'pt_storefront' template right here.
+</iscomment>
+
+
+<isdecorate template="mobile/content/home/pt_storefront">
+	<isinclude template="util/modules"/>
+	<isscript>
+		importPackage(dw.object);
+		importPackage(dw.catalog);
+		
+		var CCC : Object = pdict.CurrentCampaignConfig;
+	
+		var landingTemplate : String = CCC.landingTemplate;
+		var campaignCode : String = CCC.campaignCode;
+		
+		var showHeader : boolean = CCC.showHeader;
+		var showFooter : boolean = CCC.showFooter;
+		var showNav : boolean = CCC.showNav;
+		var showOrderButton : boolean = CCC.showOrderButton;
+		
+		var containerClasses : String = CCC.getContainerClasses();
+		
+		var category : dw.catalog.Category = CCC.getCampaignCategory();
+		var showsingup : boolean = false;
+		if('showsignup' in dw.system.Site.getCurrent().preferences.custom){
+			showsingup = dw.system.Site.getCurrent().preferences.custom.showsignup;
+		}
+	</isscript>
+	
+	<isif condition="${empty(landingTemplate) || landingTemplate=='T1'}">
+		<div class="mainBanner">
+		<isslot id="S1" context="category" description="Main Content Area" context-object="${category}"/>
+		</div>
+		<div id="secondary-content">
+			<isslot id="S2" context="category" description="Bottom ContentBox 1" context-object="${category}"/>
+			<isslot id="S3" context="category" description="Bottom ContentBox 2" context-object="${category}"/>
+			<isslot id="S4" context="category" description="Bottom ContentBox 3" context-object="${category}"/>
+		<div class="clear"></div>
+		</div>
+	<iselse/>
+		<isslot id="S5" context="category" description="Full Page Content Area" context-object="${category}"/>
+	</isif>
+	
+	<isset name="OmniturePage" value="Homepage" scope="pdict">	
+	<iscomment>
+		This section is used only for definition of all rendering slots 
+		which are used on the Site.
+		These slots are not used on the Home page but are used on other pages.
+	</iscomment>
+	<isif condition="${false}">
+		<isslot id="header-order-now" context="category" description="Order Now" context-object="${category}"/>
+		<isslot id="alternate-sas-offer-slot" context="category" description="Alternate Offer" context-object="${category}"/>    
+		<isslot id="offer-sidebar" context="category" description="Offer sidebar Area" context-object="${category}"/>
+		<isslot id="bonus-gifts" context="category" description="Bonus Gifts (Page How It Works)" context-object="${category}"/>
+		<isslot id="cart-phone-number" context="category" description="Cart Phone Number Content Slot" context-object="${category}"/>
+	</isif>
+
+	<isset name="OmniturePage" value="Homepage" scope="pdict">
+<isscript>
+var primaryUCI : Cookie = request.httpCookies['uci'];
+var primaryUCIValue : String = empty(primaryUCI)?'':primaryUCI.value;
+</isscript>
+<!-- Google+ Code -->
+<script type="text/javascript">
+window.___gcfg = {lang: 'en'};
+(function() {var po = document.createElement("script");
+po.type = "text/javascript"; po.async = true;po.src = "https://apis.google.com/js/plusone.js";
+var s = document.getElementsByTagName("script")[0];
+s.parentNode.insertBefore(po, s);
+})();</script>
+
+	
+</isdecorate>

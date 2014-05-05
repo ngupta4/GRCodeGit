@@ -1,0 +1,50 @@
+/**
+* This script finds if the entered address by user is existing address or not, if not then return the new addressID 
+*
+* 	@input Customer : dw.customer.Customer
+*	@input profileForm : dw.web.Form
+* 	@input City : String
+*   @output addressID : String
+*   @output isDuplicateAddress : Boolean
+*
+*/
+importPackage( dw.system );
+importScript( "account/Utils.ds" );
+
+function execute( args : PipelineDictionary ) : Number
+{
+	var customer : Customer = args.Customer;
+	var addressBook : AddressBook = customer.profile.addressBook;
+	var newAddressID : String;	
+	var firstName : String =args.profileForm.address.firstname.value;
+	var lastName : String =args.profileForm.address.lastname.value;
+	var address1 : String =args.profileForm.address.address1.value;
+	var address2 : String =args.profileForm.address.address2.value;
+	var city : String = args.profileForm.address.city.value;
+	
+	var address : CustomerAddress = null;
+	for each(address in addressBook.addresses)
+	{		
+		if(address.firstName == firstName && address.lastName == lastName)
+		{
+			 if(!empty(address.address1) && null!=address.address1 && !empty(address.address2) && null!=address.address2)
+			 {
+			 	if((address.address1==address1) && (address.address2 == address2) && (address.city == city))
+			 	{
+			 		args.isDuplicateAddress = true;
+			 		break;
+			 	}
+			 }
+	
+		}
+	}
+	
+	
+	if(args.isDuplicateAddress != true){
+		newAddressID = determineUniqueAddressID(args.profileForm.address.city.value,addressBook);
+		args.isDuplicateAddress  = false;
+	}
+	args.addressID= newAddressID;
+    
+    return PIPELET_NEXT;
+}

@@ -1,0 +1,187 @@
+/**
+*	 @input profileForm : dw.web.Form
+*    @input Request : dw.system.Request
+*	 @input sessionId : String
+*	 @input ipAddress : String
+*	 @input mwid : String
+*    @output status : String 
+*/
+importPackage( dw.io );
+importPackage( dw.web );
+importPackage( dw.system );
+importPackage( dw.net );
+
+importScript('int_gutheyrenker:grmiddleware/libGRMiddleware.ds');
+importScript('int_gutheyrenker:common/libUtils.ds');
+
+function execute( args : PipelineDictionary ) : Number
+{	
+	try{
+	var profileForm : Form = args.profileForm;
+
+ 	/********************************Request****************************************/
+	var xmlWriter : StringWriter = new StringWriter();
+	createRequestXML(xmlWriter, profileForm, args.sessionId, args.ipAddress);
+	var updateProfileXML : String = xmlWriter.toString();  
+	logInfo("Request XML: "+updateProfileXML	);
+	// Create Service URL
+    var request:Request = args.Request;
+    var uid:String = getCustomerUID(request);
+    var transactionID = getTransactionID();
+	var serviceURL : String = getServiceURL(args.mwid,uid, transactionID);
+	
+	// Call GR Service
+	 var http : HTTPClient = new HTTPClient();
+	http.setRequestHeader('Content-Type','text/xml');
+    http = callMWAPI(http, "PUT", serviceURL, updateProfileXML);	
+
+	 /********************************Response***********************************/
+	var response : String = http.text;
+	var errorResponse : String = http.errorText;
+	var responseXML : XML = null;
+	
+	if( !empty(errorResponse) ) {
+		response = errorResponse;
+	}
+	responseXML = new XML(response);
+	
+	if( !empty(responseXML) ) 
+	{
+		var status = responseXML.status.toString();
+		args.status = status;
+		if(status == '200'){
+			//success			
+		}else {
+			getErrorResponse(responseXML);
+		}
+	}else {
+			getErrorResponse(responseXML);
+	}
+	logInfo ("Exiting  UpdateProfile.ds");
+   return PIPELET_NEXT;
+   }catch(e){
+		logError (e);
+		return PIPELET_ERROR;
+	}
+}
+
+function getServiceURL(mwid :String,uid : String, trans: String) {
+	//https://grws.grdev.com/customer/profile/mwid/<mwid>/brand/<brandId>/uid/<uid>/trans/<transactionID>
+	var baseURL : String = Site.current.getCustomPreferenceValue("middlewareAPIURL");
+	var brandID= Site.current.getCustomPreferenceValue("GRMProductLine");
+	baseURL= baseURL + "/customer/profile/mwid/"+mwid+"/brand/"+brandID+"/uid/"+uid+"/trans/"+trans ;	
+	return baseURL
+}
+
+
+function createRequestXML (xmlWriter : Writer, profileForm : Form, sessionId:String, ipAddress : String) {
+
+	logInfo ("Entering  createRequestXML function");
+	
+	var dayphone : String = profileForm.customer.phone.value;
+	if(null != profileForm.customer.phone.value){
+		var v1= dayphone.substr(0,3);
+		var v2= dayphone.substr(3,3);
+		var v3= dayphone.substr(6,4);	
+		dayphone = v1 + '-' + v2 + '-' + v3;
+	}
+	// Write XML header to file
+	xmlWriter.write('<?xml version="1.0" encoding="UTF-8"?>\n');
+	xmlWriter.write('<customerRequest xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="customerProfileRequest_0-1.xsd"> \n');
+	xmlWriter.write('	<clientId>Demandware</clientId>\n');
+	xmlWriter.write('	<sessionData>\n');
+	xmlWriter.write('		<sessionId><![CDATA['+sessionId+']]></sessionId>\n');
+	xmlWriter.write('		<ipAddress><![CDATA['+ipAddress+']]></ipAddress>\n');
+	xmlWriter.write('	</sessionData>\n');
+	xmlWriter.write('	<profile>\n');
+	if(null != profileForm.customer.firstname.value){
+		xmlWriter.write('		<firstName><![CDATA['+profileForm.customer.firstname.value+']]></firstName>\n');
+	}
+	if(null != profileForm.customer.lastname.value){
+		xmlWriter.write('      	<lastName><![CDATA['+profileForm.customer.lastname.value+']]></lastName>\n');
+	}
+	if(null != profileForm.customer.email.value){
+		xmlWriter.write('      	<email><![CDATA['+profileForm.customer.email.value+']]></email>\n');
+	}
+	/*if(null!=profileForm.customer.billingZipCode.value){
+		xmlWriter.write('      	<billingPostalCode><![CDATA['+profileForm.customer.billingZipCode.value+']]></billingPostalCode>\n');
+	}*/
+	if(null != profileForm.customer.phone.value && !empty(profileForm.customer.phone.value)){
+		xmlWriter.write('		<phones>\n');
+			xmlWriter.write('      		<dayPhone><![CDATA['+dayphone+']]></dayPhone>\n');
+		xmlWriter.write('		</phones>\n');
+	}
+	
+	//create user attributes
+	createUserAttributeXML( xmlWriter, profileForm);
+	
+	xmlWriter.write('	</profile>');
+	xmlWriter.write('</customerRequest>\n');
+	
+	logInfo ("Exiting  createRequestXML function");
+}
+
+
+//function to create xml related to user attributes
+function createUserAttributeXML(xmlWriter : Writer, profileForm : Form){
+
+	var userAttributes:String="";	
+	
+	if(null != profileForm.customer.age.value && (profileForm.customer.age.value != 'null') && !empty(profileForm.customer.age.value)){
+		userAttributes = userAttributes + '      		<userAttribute>\n';
+		userAttributes = userAttributes + '      			<fieldName>age</fieldName>\n';
+		userAttributes = userAttributes + '      			<fieldValue><![CDATA['+profileForm.customer.age.value+']]></fieldValue>\n';
+		userAttributes = userAttributes + '      		</userAttribute>\n';
+		}
+		if(null != profileForm.customer.gender.value && (profileForm.customer.gender.value != 'null') && !empty(profileForm.customer.gender.value) && (profileForm.customer.gender.value != '0') && (profileForm.customer.gender.value != 0)){
+		userAttributes = userAttributes + '      		<userAttribute>\n';
+		userAttributes = userAttributes + '      			<fieldName>gender</fieldName>\n';
+			if(profileForm.customer.gender.value==1){
+				userAttributes = userAttributes + '      			<fieldValue>male</fieldValue>\n';
+			}else if(profileForm.customer.gender.value==2){
+				userAttributes = userAttributes + '      			<fieldValue>female</fieldValue>\n';
+			}
+		userAttributes = userAttributes + '      		</userAttribute>\n';
+		}
+		//Birthday
+		if((null !=profileForm.customer.month && (profileForm.customer.month.value !='null') && !empty(profileForm.customer.month.value))&&(null !=profileForm.customer.date && (profileForm.customer.date.value != 'null') && !empty(profileForm.customer.date.value))){
+		userAttributes = userAttributes + '      		<userAttribute>\n';
+		userAttributes = userAttributes + '      			<fieldName>birthday</fieldName>\n';
+		userAttributes = userAttributes + '      			<fieldValue><![CDATA['+profileForm.customer.month.value.toLocaleLowerCase()+'/'+profileForm.customer.date.value.toLocaleLowerCase()+'/1900'+']]></fieldValue>\n';
+		userAttributes = userAttributes + '      		</userAttribute>\n';
+		}
+		
+		if((null !=profileForm.customer.hairLength.value && profileForm.customer.hairLength.value !='null') && !empty(profileForm.customer.hairLength.value)){
+		userAttributes = userAttributes + '      		<userAttribute>\n';
+		userAttributes = userAttributes + '      			<fieldName>hairLength</fieldName>\n';
+		userAttributes = userAttributes + '      			<fieldValue><![CDATA['+profileForm.customer.hairLength.value.toLocaleLowerCase()+']]></fieldValue>\n';
+		userAttributes = userAttributes + '      		</userAttribute>\n';
+		}
+		if(null != profileForm.customer.hairType.value && profileForm.customer.hairType.value !='null' && !empty(profileForm.customer.hairType.value)){
+		userAttributes = userAttributes + '      		<userAttribute>\n';
+		userAttributes = userAttributes + '      			<fieldName>hairType</fieldName>\n';
+		userAttributes = userAttributes + '      			<fieldValue><![CDATA['+profileForm.customer.hairType.value.toLocaleLowerCase()+']]></fieldValue>\n';
+		userAttributes = userAttributes + '      		</userAttribute>\n';
+		}
+		if(null != profileForm.customer.hairTexture.value && profileForm.customer.hairTexture.value !='null' && !empty(profileForm.customer.hairTexture.value)){
+		userAttributes = userAttributes + '      		<userAttribute>\n';
+		userAttributes = userAttributes + '      			<fieldName>hairTexture</fieldName>\n';
+		userAttributes = userAttributes + '      			<fieldValue><![CDATA['+profileForm.customer.hairTexture.value.toLocaleLowerCase()+']]></fieldValue>\n';
+		userAttributes = userAttributes + '      		</userAttribute>\n';
+		}
+		if(null != profileForm.customer.hairVolume.value && profileForm.customer.hairVolume.value !='null' && !empty(profileForm.customer.hairVolume.value)){
+		userAttributes = userAttributes + '      		<userAttribute>\n';
+		userAttributes = userAttributes + '      			<fieldName>hairVolume</fieldName>\n';
+		userAttributes = userAttributes + '      			<fieldValue><![CDATA['+profileForm.customer.hairVolume.value.toLocaleLowerCase()+']]></fieldValue>\n';
+		userAttributes = userAttributes + '      		</userAttribute>\n';
+		}
+		
+		//If any user attribute exists then only outer tags will be created. 
+		if( !userAttributes.equals("")){
+			xmlWriter.write('      	<userAttributes>\n');
+			xmlWriter.write(userAttributes);		
+			xmlWriter.write('      	</userAttributes>\n');
+		}	
+		
+		
+}

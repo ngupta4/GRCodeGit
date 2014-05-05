@@ -1,0 +1,32 @@
+<isinclude template="util/modules"/>
+
+<iscomment>memorize some locale variables for reuse</iscomment>
+<isset name="SearchModel" value="${pdict.searchmodel}" scope="page"/>
+
+
+
+<isscript>
+    importScript("guthyrenker_businesslogic:productRefinement.ds" );
+	var categoryID : dw.util.ArrayList = new dw.util.ArrayList();
+	categoryID =getCategoryID(SearchModel);		
+	var iter : Iterator = categoryID.iterator();
+</isscript>
+
+
+
+<isif condition="${SearchModel != null}">
+	<iscomment>
+		This is Product Search Model Where Product's categories are been rendered as click able links at
+		the bread crumbs of the Search Tabular Page. 
+	</iscomment>
+	<ul>
+	<li class="active"><a href="${URLUtils.http('Search-Show','q', pdict.CurrentHttpParameterMap.q,'cgid','Retention')}">${Resource.msg('searchrefinebar.viewall','search',null)}</a></li>
+	<iscomment>[DE686]: Moved pipeline symbol to starting instead of end</iscomment>
+	<isif condition="${!empty(categoryID)}">
+		<isloop iterator="${iter}" alias="cid">
+			<li><span>|</span><a title="${cid}" href="${URLUtils.http('Search-Show','q', pdict.CurrentHttpParameterMap.q,'cgid',cid)}"><isprint value="${dw.catalog.CatalogMgr.getCategory(cid).getDisplayName()}"/></a></li>
+		</isloop>
+		
+	</isif>
+</ul>
+</isif>

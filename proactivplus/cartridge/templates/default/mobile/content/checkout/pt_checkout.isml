@@ -1,0 +1,85 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<isinclude template="util/modules"/>
+<isset name="bodyclass" value="${''}" scope="page" />
+<isset name="pagetitle" value="Proactiv Plus - Your Shopping Cart" scope="pdict">
+<isscript>
+	importScript('guthyrenker_core:common/libUtils.ds');
+
+	importPackage(dw.object);
+	importPackage(dw.catalog);
+	
+	var CCC : Object = pdict.CurrentCampaignConfig;
+	var campaignCode : String = CCC.campaignCode;
+	
+	var showFooter : boolean = CCC.showFooter;
+	var showHeader : boolean = CCC.showHeader;
+	var showNav : boolean = CCC.showNav;
+	var showOrderButton : boolean = CCC.showOrderButton;
+	
+	var category : dw.catalog.Category = CCC.getCampaignCategory();
+</isscript>
+
+<iscomment>This page must be cachable. It inherits the caching attributes by the decorated template.</iscomment>
+
+<head>
+	<isset name="noBackground" value="true" scope="page"/>
+	
+	<iscomment>Include all important information globally , e.g. meta-data, link information, and javascript.</iscomment>
+	<isinclude template="mobile/components/header/htmlhead"/>
+
+	<!-- <link href="${URLUtils.staticURL('/css/main_checkout.css')}" type="text/css" rel="stylesheet" /> -->
+	
+    <iscomment>Insert meta tag for the "Google-Verification" feature to verify that you are the owner of this site.</iscomment>
+    <isif condition="${'GoogleVerificationTag' in dw.system.Site.current.preferences.custom && dw.system.Site.current.preferences.custom.GoogleVerificationTag!=''}">
+        <meta name="google-site-verification" content="<isprint value="${dw.system.Site.current.preferences.custom.GoogleVerificationTag}"/>" />
+    </isif>
+    
+    <script type="text/javascript" src="${URLUtils.staticURL('js/proactiv.js')}"></script>
+    
+    <meta name="ROBOTS" content="NOINDEX,NOFOLLOW" />
+</head>
+<body> 
+<isset name="acquisitionstep" value="confirmation" scope="pdict"/>
+<isinclude template="mobile/components/header/header"/>
+<isinclude template="mobile/common/mboxglobal"/>
+<isif condition="${'confirmation' == pdict.CheckoutStep}">
+<div data-role="page" id="checkout-confirmation" data-theme="d">
+<iselse>
+<div data-role="page" id="checkout-one" data-theme="d">
+</isif>
+	<isreplace/>
+	<isinclude template="mobile/components/footer/footer"/>
+</div>
+	<isinclude template="components/footer/pixels"/>
+	<isinclude template="common/google_analytics" />
+
+<isif condition="${shouldShowDebugInfo()}">
+	<iscomment>this is the template rendering the checkout pages
+	<pre><!-- +1.888.553.9216 --><!--This phone is a requirement to support existing Gomez monitor of SiteGenesis. Demadware customers can remove this.-->
+		
+	LandingTemplate: ${CCC.landingTemplate}
+	Campaign Code:${CCC.campaignCode}
+	Campaign ID:${getCurrentCampaignCode()}
+	ShowHeader?:${CCC.showHeader}
+	ShowFooter?:${CCC.showFooter}
+	ShowNav?:${CCC.showNav}
+	ShowOrderButton?:${CCC.showOrderButton}
+	Phone:${CCC.phone}
+	
+	</pre></iscomment>
+</isif>
+<script type="text/javascript">
+jQuery(document).ready(function () {
+	jQuery("a.details").bind("click", function(event){
+		event.preventDefault();
+		//jQuery("button.details").click();
+		return false;
+	});
+
+	// Initialize the Checkout API
+	app.proactiv.checkout.init();
+});
+</script>
+</body>
+</html>

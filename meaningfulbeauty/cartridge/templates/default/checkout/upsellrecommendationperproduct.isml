@@ -1,0 +1,250 @@
+<!--- TEMPLATENAME: upsellrecommendationperproduct.isml --->
+
+<isinclude template="util/modules"/>
+<isif condition="${!empty(pdict.ExplicitRecommendation)}">
+	<iscomment>
+		selected product is combo or a kit product then only this isml should be rendered
+		Now recommendation will be shown if product has recommendation of type 7 and no other condition.
+	</iscomment>
+	<isset name="isComoboProduct" value="${true}" scope="page"/>
+	<isset name="isKitProduct" value="${false}" scope="page"/>
+	<isset name="ProductTemp" value="${pdict.Product}" scope="page"/>
+	<isif condition="${isComoboProduct || isKitProduct}">
+		<input type="hidden" id="ExistingData" name="ExistingData" value="" />
+		<div class="header-wraper">
+			<div class="heading">
+				<isif condition="${isKitProduct}">
+					${Resource.msg('upsell.addtokit.header','rendering',null)}
+				<iselseif condition="${isComoboProduct}">
+					${Resource.msg('upsell.header','rendering',null)}
+				</isif>
+			</div>
+				<div class="g-text">
+					<isset name="recommendedProduct" value="${pdict.ExplicitRecommendation}" scope="page"/>
+					<iscomment>show list of product in combo if available.</iscomment>
+		            <isscript>
+		            	importScript("guthyrenker_businesslogic:productlist/GetProductListOfCombo.ds" );
+		            </isscript>	
+		            <isif condition="${isKitProduct}">
+						${Resource.msg('cart.upsell.buyaskitdtl','rendering', null)}
+						<isscript>
+							var productList: dw.util.Collection = getProductForPids(pdict.pids);
+						</isscript>	
+					<iselseif condition="${isComoboProduct}">
+						<isscript>
+							var productList: dw.util.Collection = getProductsInCombo(recommendedProduct);
+						</isscript>
+					</isif>
+					<isif condition="${!isKitProduct &&  isComoboProduct}">
+	            		<isset name="priceDiff" value="${recommendedProduct.getPriceModel().getPriceBookPrice(dw.system.Site.current.preferences.custom.memberPriceBook) - ProductTemp.getPriceModel().getPriceBookPrice(dw.system.Site.current.preferences.custom.memberPriceBook)}" scope="page"/>
+		            	${Resource.msg('upsell.subheader1','rendering',null)} <span><isprint value="${dw.util.Currency.getCurrency(dw.system.Site.getCurrent().currencyCode).symbol}"/><isprint value="${priceDiff}" formatter="#.00"/></span> ${Resource.msg('upsell.subheader2','rendering',null)} <isif condition="${(productList != null) && !empty(productList)}"/><isprint value="${productList.size() - 1}" formatter="#"><iselse/>${Resource.msg('upsell.subheader3','rendering',null)}</isif> ${Resource.msg('upsell.subheader4','rendering',null)}
+	            	</isif>
+            	</div>
+		</div>
+		<div class="block nav" id="valueUpsellSection">
+				<!-- Source Product details -->
+			<!-- Source Product Image -->
+			<div class="upsell-l-section upsellblock">
+				<div class="upsell-title">${Resource.msg('original.selection','rendering',null)}</div>
+					<div class="p-img-wraper">
+							<div class="productimage">
+								<isset name="Scene7assetID" value="${pdict.Product.custom.sceneSevenAssetId}" scope="page"/>
+								<iscomment>If image couldn't be determined, display a "no image" medium</iscomment>
+								<isif condition="${!empty(Scene7assetID)}">
+									<isset name="scene7_1" value="${Resource.msg('image.scene7url','common',null)}" scope="page">
+									<isset name="scene7_2" value="${Resource.msg('image.scene7.preset.matthumb','common',null)}" scope="page">								
+									<isset name="srcImageUrl" value="${scene7_1+Scene7assetID+scene7_2}" scope="page"/>						
+								<iselse/>
+									<isset name="srcImageUrl" value="${URLUtils.staticURL('/images/noimagemedium.png')}" scope="page"/>
+								</isif>
+								<isif condition = "${'catalogDisplayNameTwo' in pdict.Product.custom}">	
+									<isset name="srcImageAlt" value="${pdict.Product.custom.catalogDisplayNameTwo}" scope="page"/>
+									<isset name="srcImageTitle" value="${pdict.Product.custom.catalogDisplayNameTwo}" scope="page"/>
+								</isif>
+								<img src="${srcImageUrl}" alt='<isprint value="${srcImageAlt}" encoding="off"/>' title='<isprint value="${srcImageTitle}" encoding="off"/>'/>
+							</div>
+						
+							<!-- Source Product Image end-->
+							<isif condition = "${'catalogDisplayNameTwo' in pdict.Product.custom}">	
+								<h4><isprint value="${pdict.Product.custom.catalogDisplayNameTwo}" encoding="off"/></h4>
+							</isif>
+							
+							<isif condition="${pdict.CurrentCustomer.authenticated && 'member' in  pdict.CurrentCustomer.profile.custom && pdict.CurrentCustomer.profile.custom.member}">
+								<div class="regularprice">
+									${Resource.msg('global.regularprice','locale',null)}
+									<span class="strikeout regularpricevalue"><isprint value="${pdict.Product.priceModel.getPriceBookPrice(dw.system.Site.current.preferences.custom.nonMemberPriceBook)}"/></span>
+								</div>
+							<iselse/>
+								<div class="regularprice">
+									${Resource.msg('global.regularprice','locale',null)}
+									<span class="regularpricevalue"><isprint value="${pdict.Product.priceModel.getPriceBookPrice(dw.system.Site.current.preferences.custom.nonMemberPriceBook)}"/></span>
+								</div>
+							</isif>									
+							<div class="memberprice">
+								${Resource.msg('global.memberprice','locale',null)}
+								<span class="memberpricevalue"><isprint value="${pdict.Product.priceModel.getPriceBookPrice(dw.system.Site.current.preferences.custom.memberPriceBook)}"/></span>
+							</div>		
+					</div>
+			</div>
+			<iscomment>
+			<div id="boxTitle">
+				<isif condition="${isKitProduct}">
+					<h1>${Resource.msg('cart.upsell.buyascombo','rendering',null)}</h1>
+					${Resource.msg('cart.upsell.buyascombodtl','rendering',null)}
+				<iselseif condition="${isComoboProduct}">
+					<h1>${Resource.msg('cart.upsell.buyaskit','rendering',null)}</h1>
+					${Resource.msg('cart.upsell.buyaskitdtl','rendering',null)}
+				</isif>	
+			</div>
+			</iscomment>
+			<div class="arrow"></div>
+			<div class="upsell-r-section upsellblock">
+				<div class="upsell-title">
+					<isif condition="${isKitProduct}">
+						${Resource.msg('available.kit','rendering',null)}
+					<iselseif condition="${isComoboProduct}">
+						${Resource.msg('available.combo','rendering',null)}
+					</isif>
+				</div>
+            	<div class="combo-desc">
+					<div class="blockContent">
+							<isobject object="${recommendedProduct}" view="detail">
+									<div class="l-combo">
+										<div class="productimage"><!-- Product Image -->
+												<isset name="imageProduct" value="${recommendedProduct}" scope="page"/>
+												<isset name="Scene7assetID" value="${imageProduct.custom.sceneSevenAssetId}" scope="page"/>
+												<iscomment>If image couldn't be determined, display a "no image" medium</iscomment>
+												<isif condition="${!empty(Scene7assetID)}">
+													<isset name="scene7_1" value="${Resource.msg('image.scene7url','common',null)}" scope="page">
+													<isset name="scene7_2" value="${Resource.msg('image.scene7.preset.matthumb','common',null)}" scope="page">								
+													<isset name="imageUrl" value="${scene7_1+Scene7assetID+scene7_2}" scope="page"/>						
+												<iselse/>
+													<isset name="imageUrl" value="${URLUtils.staticURL('/images/noimagemedium.png')}" scope="page"/>
+												</isif>
+												<isif condition = "${'catalogDisplayNameTwo' in imageProduct.custom}">	
+													<isset name="imageAlt" value="${imageProduct.custom.catalogDisplayNameTwo}" scope="page"/>
+													<isset name="imageAlt" value="${imageProduct.custom.catalogDisplayNameTwo}" scope="page"/>
+												</isif>	
+											<img src="${imageUrl}" alt='<isprint value="${imageAlt}" encoding="off"/>' title='<isprint value="${imageTitle}" encoding="off"/>'/>
+										</div>
+										<isif condition = "${'catalogDisplayNameTwo' in recommendedProduct.custom}">	
+											<h4><isprint value="${recommendedProduct.custom.catalogDisplayNameTwo}" encoding="off"/></h4>
+										</isif>	
+										<isif condition="${isComoboProduct && !isKitProduct}">
+											<isif condition="${pdict.CurrentCustomer.authenticated && 'member' in  pdict.CurrentCustomer.profile.custom && pdict.CurrentCustomer.profile.custom.member}">
+												<div class="regularprice">
+													${Resource.msg('global.regularprice','locale',null)}
+													<span class="strikeout regularpricevalue"><isprint value="${recommendedProduct.priceModel.getPriceBookPrice(dw.system.Site.current.preferences.custom.nonMemberPriceBook)}"/></span>
+												</div>
+											<iselse/>
+												<div class="regularprice">
+													${Resource.msg('global.regularprice','locale',null)}
+													<span class="regularpricevalue"><isprint value="${recommendedProduct.priceModel.getPriceBookPrice(dw.system.Site.current.preferences.custom.nonMemberPriceBook)}"/></span>
+												</div>
+											</isif>									
+											<div class="memberprice">
+												${Resource.msg('global.memberprice','locale',null)}
+												<span class="memberpricevalue"><isprint value="${recommendedProduct.priceModel.getPriceBookPrice(dw.system.Site.current.preferences.custom.memberPriceBook)}"/></span>
+											</div>	
+							        	</isif>
+									</div>
+									
+									
+									<div class="upsellcontent">
+										<div>
+											<isif condition="${isKitProduct}">
+												${Resource.msg('cart.upsell.kitincludes','rendering', null)}
+											<iselseif condition="${isComoboProduct}">
+												${Resource.msg('cart.upsell.comboincludes','rendering', null)}
+											</isif>
+									   </div>
+									   <div class="combo-links">
+									      	<isif condition="${(productList != null) && !empty(productList)}">
+								            	<isloop items="${productList}" var="productItem" status="loopstatus">
+								            		<isif condition = "${'catalogDisplayNameTwo' in productItem.custom}">	
+														<li><a href="${URLUtils.url('Product-Show','pid', productItem.ID)}" title='<isprint value="${productItem.custom.catalogDisplayNameTwo}" encoding="off"/>'><isprint value="${productItem.custom.catalogDisplayNameTwo}" encoding="off"/></a></li>
+													</isif>	
+								            	</isloop>
+								            	<a href="${URLUtils.url('Product-Show','pid', recommendedProduct.ID)}" <isif condition = "${'catalogDisplayNameTwo' in recommendedProduct.custom}">title='<isprint value="${recommendedProduct.custom.catalogDisplayNameTwo}" encoding="off"/>'</isif> class="gy-btn-a"><span class="grey-button"></span><span>More Details</span></a>
+							           		 </isif>
+							           		 <div class="clear"></div>
+						              </div>
+						              <iscomment>
+								         <isif condition="${isKitProduct}">
+									         <div class="kit">
+								                  <div class="kitprice">${Resource.msg('global.addtokit','locale',null)}
+								                    <isprint value="${dw.util.Currency.getCurrency(dw.system.Site.getCurrent().currencyCode).symbol}"/>
+								                    <isprint value="${pdict.Product.getAttributeModel().getDisplayValue(pdict.Product.getAttributeModel().getAttributeDefinition('kitPrice'))}"/>
+								                  </div>
+								             </div>
+							             </isif>
+						             </iscomment>
+								          
+										<isset name="recommendedPID" value="${recommendedProduct.ID}" scope="pdict"></isset>
+										
+									</div>
+									<div class="clear"></div>
+							</isobject>
+							 <isset name="Product" value="${ProductTemp}" scope="pdict"/>
+					</div>
+				</div>
+			</div>
+			<div class="clear"></div>
+		</div>
+	</isif>
+					
+	<div class="upsell-footer-wraper">
+		<iscomment>Setting up the quantity which will be added if user clicks continue</iscomment>
+		<isif condition="${empty(pdict.CurrentHttpParameterMap.quantity)}">
+			<isset name="quantity" value="${1}" scope="page"></isset>
+		<iselse/>
+			<isset name="quantity" value="${pdict.CurrentHttpParameterMap.quantity.stringValue}" scope="page"></isset>
+		</isif>
+		<div class="button-row"><label>${Resource.msg('cart.upsell.nothanks', 'rendering', null)}</label>
+					<button class="gy-btn addtocartbuttonupsell createupsellcookie" type="button" value="${Resource.msg('cart.upsell.continue', 'rendering', null)}"  onclick="javascript:app.minicart.addUpsellProduct('${ProductTemp.ID}', '${ProductTemp.getAvailabilityModel().isInStock()}', '${quantity}')">
+						<span class="grey-button"></span>
+						<span>${Resource.msg('cart.upsell.continue', 'rendering', null)}</span>
+					</button>
+		</div>
+		<div class="button-row">
+				<isif condition="${isKitProduct}">
+					<label>${Resource.msg('cart.upsell.upgradekitlbl', 'rendering', null)} <isprint value="${dw.util.Currency.getCurrency(dw.system.Site.getCurrent().currencyCode).symbol}"/> <isprint value="${recommendedProduct.custom.kitPrice}" formatter="#.00"/></label> 										 			
+					<button class="gr-btn addtocartbuttonupsell createupsellcookie upgradetokit upgrade" type="button" value="${Resource.msg('cart.upsell.upgrade', 'rendering', null)}">
+					<span class="lc"></span>
+					<span>${Resource.msg('cart.upsell.addtokit.upgrade', 'rendering', null)}</span>
+					</button>
+				<iselseif condition="${isComoboProduct}">
+					<label>${Resource.msg('cart.upsell.upgradecmblbl1', 'rendering', null)} <isprint value="${dw.util.Currency.getCurrency(dw.system.Site.getCurrent().currencyCode).symbol}"/><isprint value="${priceDiff}" formatter="#.00"/> ${Resource.msg('cart.upsell.upgradecmblbl2', 'rendering', null)}</label>
+					<button class="gr-btn addtocartbuttonupsell createupsellcookie upgrade" type="button" value="${Resource.msg('cart.upsell.upgrade', 'rendering', null)}" onclick="javascript:app.minicart.addUpsellProduct('${recommendedProduct.ID}', '${recommendedProduct.getAvailabilityModel().isInStock()}','${1}')">
+					<span class="lc"></span>
+					<span>${Resource.msg('cart.upsell.upgrade', 'rendering', null)}</span>
+					</button>
+				</isif>	
+					
+		</div>
+		<div class="footer-note">
+			<div class="footer-note-inner"><input type="checkbox" id="dontshowupsell"/><span>${Resource.msg('cart.upsell.dontshow','rendering', null)}</span>
+			<div class="clear"></div>
+			</div>
+		</div>
+	</div>
+</isif>
+<script type="text/javascript">
+$(document).ready(function(){
+if($.browser.mozilla){
+	$('button span').css('margin-top','-1px')
+}
+})
+</script>
+<script type="text/javascript">
+	jQuery('.upgradetokit').click(function() {
+		addProduct('${recommendedProduct.ID}');
+		app.minicart.closeUpsellDialog();
+	});
+	
+	jQuery('.createupsellcookie').click(function() {
+	if($('#dontshowupsell').is(':checked')){
+		createCookie('dontshowupsell','dontshowupsell',1);
+		}
+	});
+</script>

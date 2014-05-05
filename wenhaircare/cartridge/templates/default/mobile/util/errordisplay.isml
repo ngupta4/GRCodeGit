@@ -1,0 +1,27 @@
+<!--- TEMPLATENAME: errorDisplay.isml --->
+
+<isif condition="${pdict.CurrentSession.custom.errorResponse !=null && pdict.CurrentSession.custom.errorResponse.size()>0 && pdict.CurrentSession.custom.errorResponse[0]!=null && pdict.CurrentSession.custom.errorResponse[0]!="200"}">
+	
+	<!--You have encountered Error <strong>${pdict.CurrentSession.custom.errorResponse[0]}-->	
+	<div class="errormessage"><strong>${Resource.msg('error.header.message', 'errormessages', null)}</strong></div>
+	<isif condition="${pdict.CurrentSession.custom.errorResponse[0]==''}">
+		<div class="errormessage"><isprint value="${Resource.msg('error.empty.response', 'errormessages', null)}"/></div>
+	<iselseif condition="${pdict.CurrentSession.custom.errorResponse[0]=='500'}">
+		<div class="errormessage"><isprint value="${Resource.msg('error.500.response', 'errormessages', null)}"/></div>
+	<iselseif condition="${pdict.CurrentSession.custom.errorResponse[0]=='ScriptError'}">
+		<div class="errormessage"><isprint value="${Resource.msg('error.script', 'errormessages', null)}"/></div>
+	<iselse>
+		<isloop items = "${pdict.CurrentSession.custom.errorResponse}" var = "errorAttribute" begin = "1" status = "index">
+			<isif condition="${index.isEven()}">
+				<div class="errormessage">${Resource.msg(thisErrorCode,'errormessages',errorAttribute)}.</div>
+			<iselse>
+				<!--<strong>${errorAttribute} : </strong>  -->			
+				<isset name = "thisErrorCode" value = "${errorAttribute}" scope = "page"/>
+			</isif>
+		</isloop>
+	</isif>
+	<isscript>
+		pdict.CurrentSession.custom.errorResponse = null;
+	</isscript>
+
+</isif>						

@@ -1,0 +1,22 @@
+/**
+ * Iterate through online subcategories. If subcategory is present it will be assigned to cgid.
+ * Otherwise incoming cgid will be sent back to output.
+ * @input cgidinput  : String
+ * @output cgidoutput  : String
+ */
+importPackage( dw.system );
+
+function execute( args : PipelineDictionary ) : Number
+{
+	var cgid : String = args.cgidinput;
+	if(cgid!=null){
+		var Category: dw.util.Iterator = dw.catalog.CatalogMgr.getCategory(cgid).onlineSubCategories.iterator();
+		if(Category.hasNext()){
+			args.cgidoutput=Category.next().ID;
+			return PIPELET_NEXT;
+		}else{
+			args.cgidoutput=cgid;
+		}
+	}
+   return PIPELET_NEXT;
+}

@@ -1,0 +1,129 @@
+<isinclude template="util/modules.isml"/>
+<div class="account_addresses">
+
+<iscomment><isset name="instantAccess" value="${pdict.CurrentSession.custom.instantAccess}" scope="page"/></iscomment>
+<isset name="instantAccess" value=false scope="page"/>
+<div class="top-label"><span>${Resource.msg('change.note','account',null)}</span><br>${Resource.msg('chnge.note','account',null)}</div>
+  <isif condition="${!empty(pdict.CurrentCustomer.profile.addressBook.addresses)}">
+    <iscomment>addresses are sorted, preferred first, than alphabetic </iscomment>
+    <isif condition="${pdict.Status != null && pdict.Status.isError()}"> 
+	    <!--- Use the error code value to build an appropriate error message ---> 
+	    <span class="error">
+	    <isprint value="${Resource.msg('addressdetails.' + pdict.Status.code, 'account',null)}"/>
+	    </span>
+    </isif>
+    <iscomment>Display the Proactiv Shipping And Billing Address</iscomment>
+    <isloop items="${pdict.CurrentCustomer.profile.addressBook.addresses}" var="address">
+      <isif condition="${address.custom.shippingAddress==true}">
+        <div class="default">
+          <div class="accountaddress white-bg widthwhite-bg">
+            <div class="top-l-corner"></div>
+            <div class="top-r-corner"></div>
+            <div class="bot-l-corner"></div>
+            <div class="bot-r-corner"></div>
+            <div class="accountaddress-inner">
+              <div class="top-heading">
+                <div class="row">
+                <isif condition="${null!=pdict.CurrentCustomer.profile.custom.member && pdict.CurrentCustomer.profile.custom.member == true}">
+                	${Resource.msg('proactiv.shipping.label','account',null)}
+                <iselse>
+                	${Resource.msg('default.shipping.label','account',null)}
+                </isif>
+                </div>
+                
+                <div class="clear"><!-- FLOAT CLEAR --></div>
+              </div>
+              <isminiaddress p_address="${address}"/>
+              <isif condition="${null != instantAccess && instantAccess != 'true'}">
+	                  <div class="actions"> <a href ="${URLUtils.https('Address-EditShippingAddress','AddressID',address.ID)}" title="${Resource.msg('account.edit','account',null)}" class="gr-btn gr-btn-a"><span class="lc"></span><span>${Resource.msg('addressinclude.edittitle','account',null)}</span></a> </div>
+                </isif>
+              <div class="clear"><!-- FLOAT CLEAR --></div>
+            </div>
+          </div>
+        </div>
+      </isif>
+      </isloop>
+      <isloop items="${pdict.CurrentCustomer.profile.addressBook.addresses}" var="address">
+      <isif condition="${address.custom.billingAddress==true}">
+       	<div class="default">
+          <div class="accountaddress white-bg widthwhite-bg">
+            <div class="top-l-corner"></div>
+            <div class="top-r-corner"></div>
+            <div class="bot-l-corner"></div>
+            <div class="bot-r-corner"></div>
+            <div class="accountaddress-inner">
+              <div class="top-heading">
+                <div class="row">
+                <isif condition="${null!=pdict.CurrentCustomer.profile.custom.member && pdict.CurrentCustomer.profile.custom.member == true}">
+                	${Resource.msg('proactiv.billing.label','account',null)}
+                <iselse>
+                	${Resource.msg('default.billing.label','account',null)}
+                </isif>
+                </div>
+               
+                <div class="clear"><!-- FLOAT CLEAR --></div>
+              </div>
+              <isminiaddress p_address="${address}"/>
+              <isif condition="${null != instantAccess && instantAccess != 'true'}">	               
+	                  <div class="actions"> <a href ="${URLUtils.https('Address-EditBillingAddress','AddressID',address.ID)}" title="${Resource.msg('addressinclude.edittitle','account',null)}" class="gr-btn gr-btn-a"><span class="lc"></span><span>${Resource.msg('addressinclude.edittitle','account',null)}</span></a> </div>
+	                  <!-- END: actions -->	            
+                </isif>
+              <div class="clear"><!-- FLOAT CLEAR --></div>
+            </div>
+          </div>
+        </div>
+      </isif>
+    </isloop>
+     <div class="clear"><!-- FLOAT CLEAR --></div>
+
+	<isloop items="${pdict.CurrentCustomer.profile.addressBook.addresses}" var="address">
+		<isif condition="${address.custom.shippingAddress!=true && address.custom.billingAddress!=true}">
+			<isset name="showHeading" value=${true} scope="page"/>
+			<isbreak>
+		</isif>
+	</isloop>
+	
+	<isif condition="${showHeading}">
+	<h4>Your Saved Addresses</h4>
+	</isif>
+    <iscomment>Display the list of Addresses which are not Proactiv Addresses</iscomment>
+    <isloop items="${pdict.CurrentCustomer.profile.addressBook.addresses}" var="address">
+		<isif condition="${address.custom.shippingAddress!=true && address.custom.billingAddress!=true}">
+          <div class="default">
+            <div class="accountaddress white-bg widthwhite-bg">
+              <div class="top-l-corner"></div>
+              <div class="top-r-corner"></div>
+              <div class="bot-l-corner"></div>
+              <div class="bot-r-corner"></div>
+              <div class="accountaddress-inner">
+              <isminiaddress p_address="${address}"/>
+                <!-- END: actions -->
+                <div class="actions"><a href ="${URLUtils.https('Address-Edit','AddressID',address.ID)}" class="black-btn black-btn-a" title="${Resource.msg('account.edit','account',null)}"><span class="blk"></span><span>${Resource.msg('account.edit','account',null)}</span></a> <a class="deletelink gy-btn gy-btn-a" title="${Resource.msg('addressinclude.delete','account',null)}" name="${address.ID}"><span class="grey-button"></span><span>${Resource.msg('addressinclude.delete','account',null)}</span></a> </div>	                  <!-- END: actions -->
+                
+                <div class="clear"><!-- FLOAT CLEAR --></div>
+              </div>
+            </div>
+            <!-- END: account_address --> 
+          </div>
+        </isif>
+      </isloop>
+  </isif>
+</div>
+<!-- END: account_addresses --> 
+<script type="text/javascript"><!--
+
+	jQuery(document).ready(function() {
+		jQuery(".selectDefault").click(function() {
+			var setDefaultURL = app.util.appendParamToURL("${URLUtils.url('Address-SetDefault')}", "AddressID", this.value);
+			window.location.href = setDefaultURL;
+		});
+
+		jQuery(".deletelink").click(function() {
+			var accepted = confirm("${Resource.msg('forms.customeraddress.deleteaddressconfirm','forms',null)}");		
+			if( accepted ) {
+	   			var deleteURL = app.util.appendParamToURL("${URLUtils.url('Address-Delete')}", "AddressID", jQuery(this).attr('name'));
+				window.location.href = deleteURL;
+			}			
+		});
+	});
+//--></script>

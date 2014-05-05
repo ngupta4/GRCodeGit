@@ -1,0 +1,84 @@
+<isscript>
+var primaryUCI     : dw.web.Cookie = pdict.CurrentRequest.httpCookies['uci'];
+var omnCampaignUCI : String = !empty(primaryUCI)?primaryUCI.value: !empty(pdict.CurrentSession.privacy.campaignUCIID) ? pdict.CurrentSession.privacy.campaignUCIID : '';
+</isscript>
+<isif condition="${pdict.acquisitionstep == '1'}">
+
+<iscomment>Mobile Homepage:</iscomment>
+<!---Atlas--->
+<script>
+document.write('<s'+'cript language="JavaScript" src="http://view.atdmt.com/jaction/grkper_PerriconeMobileUnsecureRTG_1"></s'+'cript>')</script>
+<noscript><iframe src="http://view.atdmt.com/iaction/grkper_PerriconeMobileUnsecureRTG_1" width="1" height="1" frameborder="0" scrolling="No" marginheight="0" marginwidth="0" topmargin="0" leftmargin="0"></iframe></noscript>
+<!---MediaGeeks--->
+<script language="javascript" src="http://delivery.mgplatform.com/gr/m315landing.js"></script>
+</isif>
+<isif condition="${pdict.acquisitionstep == '2'}">
+<iscomment>Mobile Select a System:</iscomment>
+<!---Atlas--->
+<script>document.write('<s'+'cript language="JavaScript" src="http://view.atdmt.com/jaction/grkper_PerriconeMobileSAS_4"></s'+'cript>')</script>
+<noscript><iframe src="http://view.atdmt.com/iaction/grkper_PerriconeMobileSAS_4" width="1" height="1" frameborder="0" scrolling="No" marginheight="0" marginwidth="0" topmargin="0" leftmargin="0"></iframe></noscript>
+<!---MediaGeeks--->
+<script language="javascript" src="http://delivery.mgplatform.com/gr/m315landing.js"></script>
+
+</isif>
+<isif condition="${pdict.acquisitionstep == '3'}">
+<iscomment>Mobile Cart</iscomment>
+<!---Atlas--->
+<script>document.write('<s'+'cript language="JavaScript" src="https://view.atdmt.com/jaction/grkper_PerriconeMobileCart_8"></s'+'cript>')</script>
+<noscript><iframe src="https://view.atdmt.com/iaction/grkper_PerriconeMobileCart_8" width="1" height="1" frameborder="0" scrolling="No" marginheight="0" marginwidth="0" topmargin="0" leftmargin="0"></iframe></noscript>
+<!---MediaGeeks--->
+<script language="javascript" src="https://t4.mgplatform.com/gr/mperricone_sr.js"></script>
+</isif>
+<isif condition="${pdict.acquisitionstep == '4'}">
+<iscomment>Mobile Confirmation</iscomment>
+<!---Atlas--->
+<script>document.write('<s'+'cript language="JavaScript" src="https://view.atdmt.com/jaction/grkper_PerriconeMobileConfirmation_7/v3/ato.${pdict.Order.orderNo}/[atm1.${pdict.Order.totalGrossPrice.value}/atc1.CP/atc2.${pdict.Order.getAllProductLineItems()[0].productID}/atc3.${omnCampaignUCI}]"></s'+'cript>')</script>
+<noscript><iframe src="https://view.atdmt.com/iaction/grkper_PerriconeMobileConfirmation_7/v3/ato.${pdict.Order.orderNo}/[atm1.${pdict.Order.totalGrossPrice.value}/atc1.CP/atc2.${pdict.Order.getAllProductLineItems()[0].productID}/atc3.${omnCampaignUCI}]" width="1" height="1" frameborder="0" scrolling="No" marginheight="0" marginwidth="0" topmargin="0" leftmargin="0"></iframe></noscript>
+<!---MediaGeeks--->
+<script id="script315m" src="https://t4.mgplatform.com/gr/mconfirm-perricone.js?orderid=${pdict.Order.orderNo}&pid=${pdict.Order.getAllProductLineItems()[0].productID}"></script>
+
+<!--- Kenshoo pixel --->
+<script type=text/javascript>
+
+   var hostProtocol = (("https:" == document.location.protocol) ? "https" : "http");
+   document.write('<scr'+'ipt src="', hostProtocol+ '://506.xg4ken.com/media/getpx.php?cid=42afeab7-e60f-4ffb-8725-c13d74aa69a0','" type="text/JavaScript"><\/scr'+'ipt>');
+</script>
+<script type=text/javascript>
+   var params = new Array();
+   params[0]='id=42afeab7-e60f-4ffb-8725-c13d74aa69a0';
+   params[1]='type=conv';
+   params[2]='val=${pdict.Order.totalGrossPrice.value}';
+   params[3]='orderId=${pdict.Order.orderNo}';
+   params[4]='promoCode=';
+   params[5]='valueCurrency=USD';
+   params[6]='GCID='; //For Live Tracking only
+   params[7]='kw='; //For Live Tracking only
+   params[8]='product='; //For Live Tracking only
+   k_trackevent(params,'506');
+</script>
+
+<noscript>
+   <img src="https://506.xg4ken.com/media/redir.php?track=1&token=42afeab7-e60f-4ffb-8725-c13d74aa69a0&type=conv&val=${pdict.Order.totalGrossPrice.value}&orderId=${pdict.Order.orderNo}&promoCode=&valueCurrency=USD&GCID=&kw=&product=" width="1" height="1">
+</noscript>
+
+<!--- End Kenshoo pixel --->
+<!--- Google Code for Order Conversion Page --->
+<script type="text/javascript">
+/* <![CDATA[ */
+var google_conversion_id = 998386910;
+var google_conversion_language = "en";
+var google_conversion_format = "2";
+var google_conversion_color = "ffffff";
+var google_conversion_label = "NCdzCIrMygMQ3tmI3AM";
+var google_conversion_value = "${pdict.Order.totalGrossPrice.value}"";
+/* ]]> */
+</script>
+<script type="text/javascript" src="https://www.googleadservices.com/pagead/conversion.js">
+</script>
+<noscript>
+<div style="display:inline;">
+<img height="1" width="1" style="border-style:none;" alt="" src="https://www.googleadservices.com/pagead/conversion/998386910/?value=${pdict.Order.totalGrossPrice.value}&amp;label=NCdzCIrMygMQ3tmI3AM&amp;guid=ON&amp;script=0"/>
+</div>
+</noscript>
+
+</isif>

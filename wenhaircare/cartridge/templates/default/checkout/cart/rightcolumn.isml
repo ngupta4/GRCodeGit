@@ -1,0 +1,139 @@
+<iscomment>
+	Renders the right column on cart page. 	
+	Requires: Basket
+</iscomment>
+
+<div class="gr-bg-wraper">
+	<div class="white-bg">
+    	<div class="top-l-corner"></div>
+        <div class="top-r-corner"></div>
+        <div class="bot-l-corner"></div>
+        <div class="bot-r-corner"></div>
+		
+		<h2>${Resource.msg('cart.ordersummary','checkout',null)}</h2>
+		
+		<div class="blockcontent">
+			<div class="row-carttotal">
+				<isif condition="${pdict.Basket.getProductQuantityTotal()==1}">
+					${Resource.msgf( 'ordersummary.count', 'checkout', null, pdict.Basket.getProductQuantityTotal())}
+				<iselse/>
+					${Resource.msgf( 'ordersummary.counts', 'checkout', null, pdict.Basket.getProductQuantityTotal())}
+				</isif>
+			</div>
+			
+			<isordertotals p_lineitemctnr="${pdict.Basket}" p_subtotallabel="Sub Total:" p_totallabel="Estimated Total:"/>
+			<div class="italic">${Resource.msg('ordersummary.note','checkout',null)}</div>
+		</div>
+	</div>
+</div>
+
+<iscomment>
+	<div class="cartordertotals">
+		<div class="formactions">
+			<button type="submit" value="${Resource.msg('global.updatecart', 'locale',null)}" name="${pdict.CurrentForms.cart.updateCart.htmlName}">
+				<span>${Resource.msg('global.updatecart','locale',null)}</span>
+			</button>
+		</div>
+		<isordertotals p_lineitemctnr="${pdict.Basket}" p_totallabel="Estimated Total:"/>
+	</div><!-- END: cartordertotals -->
+</iscomment>
+
+<iscomment>Coupon Code</iscomment>
+<div class="gr-bg-wraper">
+	<div class="white-bg">
+		<div class="top-l-corner"></div>
+		<div class="top-r-corner"></div>
+		<div class="bot-l-corner"></div>
+		<div class="bot-r-corner"></div>
+    		
+		<h2>
+			${Resource.msg('cart.entercouponcode','checkout',null)}
+			<a class="tooltip">
+				<span class="helpicon box-toggle"></span>
+				<div style="display:none" class="tooltip-body">
+		                          <iscontentasset aid="coupon-code"/>
+			    				</div>
+			</a>
+		</h2>
+		<div class="blockcontent box-toggle-inner">		
+			<input type="text" class="couponinput" autocomplete="off" id="m-10" name="${pdict.CurrentForms.cart.couponCode.htmlName}" alt="${Resource.msg('cart.entercouponcode','checkout',null)}"/>
+			<button class="gy-btn" id="m-10" type="submit" value="${Resource.msg('cart.apply','checkout',null)}" name="${pdict.CurrentForms.cart.addCoupon.htmlName}">
+				<span class="grey-button"></span><span>${Resource.msg('cart.apply','checkout',null)}</span>
+			</button>
+			<div class="clear"></div>
+			<isif condition="${pdict.CouponStatus != null && pdict.CouponStatus.error}">
+				<div class="errormessage">
+					<span class="couponcode">${Resource.msgf('cart.' + pdict.CouponStatus.code,'checkout', null, pdict.CurrentForms.cart.couponCode.htmlValue)}</span>
+				</div><!-- END: couponerror -->
+			</isif>
+		</div>
+	</div>
+</div>
+
+<!-- Additional Info block -->
+<iscontentasset aid="cart-additional-links"/>
+<!-- END: Additional Info block -->
+
+<iscomment>
+	<isset name="enableCheckout" value="${pdict.EnableCheckout}" scope="page"/>
+		<isif condition="${!(pdict.Basket == null || (empty(pdict.Basket.productLineItems) && empty(pdict.Basket.giftCertificateLineItems)))}">			
+		
+		<!--Cart Login Column-->
+		<div class="cartlogin">
+			<isif condition="${!pdict.CurrentCustomer.authenticated}">
+				<h1>${Resource.msg('pt_cart.checkoutheader','checkout',null)}</h1>
+				<div class="cartloginpanel">
+					<isinclude template="account/login/logininclude"/>
+				</div><!-- END: cartloginpanel -->
+				<h3>${Resource.msg('pt_cart.newcustomer','checkout',null)}</h3>			
+				<div class="cartnewcustomer">
+					<p>${Resource.msg('pt_cart.signup','checkout',null)}</p>
+					<!--login/create account/guest checkout actions go to cart pipeline for 
+					continuation purpose i.e. users lands back on the cart page after these action.
+		  			so moved the form definiton at the top of the div it is non-secure url-->
+					<form action="${URLUtils.httpsContinue()}" method="post" id="${pdict.CurrentForms.cart.dynamicHtmlName}" class="cartcontinue">
+						<fieldset>
+							<!--cancel class is required by client side validation plugin to bypass validation for this action-->					
+							<button type="submit" value="${Resource.msg('global.createbutton','locale',null)}" name="${pdict.CurrentForms.cart.register.htmlName}"><span>${Resource.msg('global.createbutton','locale',null)}</span></button>							
+						</fieldset>
+					</form>
+				</div><!-- END: cartnewcustomer -->
+				<isif condition="${!pdict.CurrentCustomer.registered}">
+					<h3>${Resource.msg('pt_cart.guestcheckout','checkout',null)}</h3>			
+					<div class="cartguest">
+						<p>${Resource.msg('pt_cart.guestcheckouttext','checkout',null)}</p>
+						<!--login/create account/guest checkout actions go to cart pipeline for 
+						continuation purpose i.e. users lands back on the cart page after these action.
+						so moved the form definiton at the top of the div it is a secure url-->
+						<form action="${URLUtils.httpsContinue()}" method="post" id="${pdict.CurrentForms.cart.dynamicHtmlName}" class="cartcontinue">
+							<fieldset>
+								<!--cancel class is required by client side validation plugin to bypass validation for this action-->
+								<isif condition="${enableCheckout}">	
+									<button type="submit" value="${Resource.msg('pt_cart.guestcheckoutbutton','checkout',null)}" name="${pdict.CurrentForms.cart.unregistered.htmlName}"><span>${Resource.msg('pt_cart.guestcheckoutbutton','checkout',null)}</span></button>
+								<iselse/>
+									<button type="submit" disabled="disabled" value="${Resource.msg('pt_cart.guestcheckoutbutton','checkout',null)}" name="${pdict.CurrentForms.cart.unregistered.htmlName}"><span>${Resource.msg('pt_cart.guestcheckoutbutton','checkout',null)}</span></button>
+								</isif>
+							</fieldset>
+						</form>
+					</div><!-- END: cartguest -->
+				</isif>
+			<iselse/>
+				<!--  form action="${URLUtils.httpsContinue()}" method="post" id="${pdict.CurrentForms.cart.dynamicHtmlName}"-->
+				<div class="accountwelcome">
+					<div class="welcomemessage">
+						${Resource.msg('pt_cart.userwelcome','checkout',null)} <isprint value="${pdict.CurrentCustomer.profile.firstName}"/>${Resource.msg('pt_cart.userwelcome2','checkout',null)}
+					</div><!-- END: welcomemessage -->
+					<div class="notuser">
+						<form action="${URLUtils.httpContinue()}" method="post" id="${pdict.CurrentForms.cart.dynamicHtmlName}" class="cartcontinue">
+							<fieldset>
+								${Resource.msg('pt_cart.usernot','checkout',null)} <span class="username"><isprint value="${pdict.CurrentCustomer.profile.firstName}"/>&nbsp;<isprint value="${pdict.CurrentCustomer.profile.lastName}"/></span>? (<button class="textbutton" type="submit" value="${Resource.msg('global.logout','locale',null)}" name="${pdict.CurrentForms.cart.logout.htmlName}"><span>${Resource.msg('global.logout','locale',null)}</span></button>)
+							</fieldset>
+						</form>
+					</div><!-- END: notuser -->
+				</div><!-- END: accountwelcome -->
+				<isinclude url="${URLUtils.url('Product-IncludeLastVisited')}"/>
+			</isif>
+		</div><!-- END: cartlogin -->			
+	</isif>
+</iscomment>
+

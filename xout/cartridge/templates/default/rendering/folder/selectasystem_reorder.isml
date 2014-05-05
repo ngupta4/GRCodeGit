@@ -1,0 +1,173 @@
+<!--- TEMPLATENAME: selectasystemsingle.isml --->
+<iscache status="off"/>
+
+<iscomment>
+	This template is created before the 'wrapper' template, so we can set
+	up the template configuration for the 'pt_selectasystem' template right here.
+</iscomment>
+
+<isdecorate template="content/home/pt_storefront">
+	<isinclude template="util/modules"/>
+	<isscript>
+		importPackage(dw.util);
+		importPackage(dw.object);
+		importPackage(dw.catalog);
+		
+		var CCC : Object = pdict.CurrentCampaignConfig;
+		var campaignCode : String = CCC.campaignCode;
+		var showHeader : boolean = CCC.showHeader;
+		var showFooter : boolean = CCC.showFooter;
+		var showNav : boolean = CCC.showNav;
+		var showOrderButton : boolean = CCC.showOrderButton;
+		var containerClasses : String = CCC.getContainerClasses();
+		var primaryOffer : Product = null;
+		var offersList : ArrayList = new ArrayList();
+		var offerCodes : Array = null;
+		if( !empty(CCC) ) {
+			offerCodes = CCC.sasOfferCodes;
+			var aProduct : Product = null;
+			for( var i=0, ii=offerCodes.length; i<ii; i++ ) {
+				aProduct = ProductMgr.getProduct(offerCodes[i]);
+				if( !empty(aProduct) ) {
+					 primaryOffer = aProduct;
+					 break;
+				}
+			}
+		}		
+		var category : dw.catalog.Category = CatalogMgr.getCategory(campaignCode + '-selectasystem');
+		var alternateProduct : String = '';
+		if (pdict.CurrentHttpParameterMap.offer == 'B') {
+			primaryOffer = ProductMgr.getProduct(dw.system.Site.getCurrent().preferences.custom.offerBProducts[0]);
+			alternateProductId = dw.system.Site.getCurrent().preferences.custom.offerBProducts[1]
+		} else if (pdict.CurrentHttpParameterMap.offer == 'C') {
+			primaryOffer = ProductMgr.getProduct(dw.system.Site.getCurrent().preferences.custom.offerCProducts[0]);
+			alternateProductId = dw.system.Site.getCurrent().preferences.custom.offerCProducts[1]		
+		}
+	</isscript>
+<script type="text/javascript">
+
+jQuery(document).ready(function () {
+	var imageUrl = jQuery('.navOrder').hide();
+	jQuery.extend(jQuery.validator.messages, {
+	    required: "This field is required.",
+	    email: "Please enter a valid email address."
+	});
+
+	
+	jQuery('#emailAParent').click(function() {
+		var emailFriendDialog = jQuery('#emailAParentContainer').dialog({
+			modal:true,
+			width:658,
+			resizable:false,
+			autoOpen:false,
+			title:'',
+			closeOnEscape:true,
+	        open: function() {
+	            jQuery(".ui-dialog-titlebar").hide();
+	    		jQuery('.eapContainer').show();
+	    		jQuery('.eapThanks').hide();	             
+	            jQuery('#name').focus();
+	        }
+		});
+		emailFriendDialog.dialog('open');	
+	});
+
+	var offerParam = '${pdict.CurrentHttpParameterMap.offer}';
+	if (offerParam == '') {
+		offerParam = 'A';
+	}
+	
+	jQuery('.emailParentPost').click(function() {
+		jQuery('#emailAParentForm').validate();
+		if (jQuery('#emailAParentForm').valid()) {
+			var url = '${URLUtils.url("EmailSubscription-Post")}';
+			url += '?name=' + escape(jQuery('#name').val());
+			url += '&email=' + escape(jQuery('#email').val());
+			url += '&parent=' + escape(jQuery('#parent').val());
+			url += '&subject=' + escape(jQuery('#subject').val());
+			url += '&message=' + escape(jQuery('#message').val());
+			url += '&optin=' + jQuery('#optin').is(':checked');
+			url += '&offer=' + offerParam; 
+			jQuery.post(url, function(data) {
+				var ret = eval('('+data+')');
+				if (ret.success == false) {
+					alert(ret.error);
+				} else {
+					jQuery('.eapContainer').hide();
+					jQuery('.eapThanks').show();
+				}
+			});
+		}		
+		return false;
+	});	
+});
+</script>	
+	<div class="pdp_breadcrumb">
+		${Resource.msg('order.now.breadcrumb','rendering',null)}
+	</div>
+	
+	<div class="pdp_header">
+		<isslot id="pdp-header" context="category" description="PDP Header" context-object="${category}"/>
+	</div>
+
+	<div class="content_box_outer_pdp">
+		<div class="content_box_inner_pdp">
+			<link href="${URLUtils.staticURL('/css/product.css')}" type="text/css" rel="stylesheet" />
+			<iscontentasset aid="reorder-sas" />
+		</div>			
+	</div>	
+	
+	<div class="pdp_footer">
+		<isslot id="pdp-footer" context="category" description="PDP Footer" context-object="${category}"/>
+	</div>
+	
+	<isset name="OmniturePage" value="Offerpage" scope="pdict">	
+	
+	<div id="emailAParentContainer" style="display:none;">
+		<div class="eapThanks" style="display:none;">
+			<a onclick="jQuery('#emailAParentContainer').dialog('close');">
+				<img width="646px" height="609px" src="${URLUtils.staticURL('/images/thankYou.png')}"/>
+			</a>
+		</div>
+		<style type="text/css">
+			textarea.error { border: 1px dotted red; }
+		</style>
+		<div class="eapContainer">
+		<div class="eapClose"><a href="#" onclick="jQuery('#emailAParentContainer').dialog('close');">${Resource.msg('eap.close','rendering',null)}</a></div>
+		<form id="emailAParentForm">
+		<div class="eapRequired">${Resource.msg('eap.required','rendering',null)}</div>
+		<div class="eapLabel">${Resource.msg('eap.name','rendering',null)}</div>
+		<div class="eapValue"><input type="text" id="name" size="35px" name="name" class="required"/></div>
+		<div class="eapLabel">${Resource.msg('eap.email','rendering',null)}</div>
+		<div class="eapValue"><input type="text" id="email" size="35px" name="email" class="required email"/></div>
+		<div class="eapLabel">${Resource.msg('eap.parent','rendering',null)}</div>
+		<div class="eapValue"><input type="text" id="parent" size="35px" name="parent" class="required email"/></div>
+		<div class="eapLabel">${Resource.msg('eap.subject','rendering',null)}</div>
+		<div class="eapValue"><input type="text" id="subject" size="35px" name="subject"/></div>
+		<div class="eapLabel">${Resource.msg('eap.message','rendering',null)}</div>
+		<div class="eapValue"><textarea rows="10" cols="32" id="message" name="message" class="required"></textarea></div>
+		<div class="eapOptIn">
+			<input type="checkbox" id="optin" value="true"/>&nbsp;
+			<span class="eapOptInText">
+				${Resource.msg('eap.optin','rendering',null)}
+			</span>
+		</div>
+		</form>
+		<div class="eapSend">
+			<a href="#" class="emailParentPost">
+				<img src="${URLUtils.staticURL('/images/sendButton.png')}"/>
+			</a>
+		</div>
+		</div>
+	</div>
+<!--  Media Geeks -->
+<script language="javascript" src="http://delivery.mgplatform.com/gr/307landing.js"></script>
+<!--  End Media Geeks -->
+<isscript>
+var primaryUCI : Cookie = request.httpCookies['uci'];
+</isscript>
+<!--  Atlas -->
+<script language="JavaScript" src="http://view.atdmt.com/jaction/grkout_XOUTUnsecureRTG_1"></script>
+<noscript><iframe src="http://view.atdmt.com/iaction/grkout_XOUTUnsecureRTG_1" width="1" height="1" frameborder="0" scrolling="No" marginheight="0" marginwidth="0" topmargin="0" leftmargin="0"></iframe></noscript>
+<!--  End Atlas -->
+</isdecorate>

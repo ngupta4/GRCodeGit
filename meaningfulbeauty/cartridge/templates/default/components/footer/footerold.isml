@@ -1,0 +1,73 @@
+<isscript>
+  importPackage( dw.object );
+
+  var paaffURL = pdict.CurrentHttpParameterMap.paaff.stringValue;
+  var showLiveChat : CustomObject = CustomObjectMgr.getCustomObject("CampaignConfiguration", getCurrentCampaignCode()).custom.showLiveChat;
+</isscript>
+
+<iscomment>
+	This is the footer for all pages. Be careful caching it if it contains
+	user dependent information. Cache its elements instead if necessary (do not forget
+	to change the isinclude into a pipeline include for that).
+</iscomment>
+
+<div id="footer">
+<iscomment>For Test & Target test (RM 16367).  If campaign is "refreshB", use new header.</iscomment>
+	<isscript>var campaignPanel = pdict.CurrentSession.privacy.campaignID</isscript>
+	<isif condition = "${campaignPanel == 'refreshB-campaign'}">
+		<isif condition="${pdict.CurrentRequest.httpPath.indexOf('COCart') < 0}">
+			<iscontentasset aid="footer-refresh"/>
+		<iselse>
+			<iscomment>Do not show social links in new footer when on checkout or confirmation pages</iscomment>
+			<script type="text/javascript">
+				jQuery('#footer').css('background-image','none');
+			</script>
+		</isif>
+	<iselse>
+		<iscontentasset aid="footer"/>
+	</isif>
+	
+		<isif condition = "${campaignPanel == 'refreshB-campaign'}">
+			<iscomment><iscontentasset aid="footer-customerservice"/></iscomment>			
+			<iscomment> REFACTOR - commenting this email signup out until it can be fixed; it fails because it sends the brand "PA" in the Dictionary Input variable ProductLine (EmailOptIn.ds)
+			<div class="footer-customerservice">
+				<div class="emailsignup">
+					<isinclude template="components/emailsubscribe"/>
+				</div>
+			</div></iscomment>
+			<iscontentasset aid="footer-bottomlinks-nonmember"/>
+		</isif>
+	
+</div><!-- END: footer -->
+<script type="text/javascript">
+jQuery('.facebook').click( function(e) {
+	s.linkTrackVars='prop33,eVar33';
+	s.prop33="us:mb:facebook";
+    s.eVar33= "us:mb:facebook";
+ //   s.tl(this,'o',"facebook");
+ 
+});
+jQuery('.youtube').click( function(e) {
+	s.linkTrackVars='prop33,eVar33';
+	s.prop33="us:mb:youtube";
+    s.eVar33= "us:mb:youtube";
+//    s.tl(this,'o',"youtube");
+ 
+});
+jQuery('.googleplus').click( function(e) {
+	s.linkTrackVars='prop33,eVar33';
+	s.prop33="us:mb:googleplus";
+    s.eVar33= "us:mb:googleplus";
+  //  s.tl(this,'o',"googleplus");
+ 
+});
+
+jQuery('.twitter').click( function(e) {
+	s.linkTrackVars='prop33,eVar33';
+	s.prop33="us:mb:twitter";
+    s.eVar33= "us:mb:twitter";
+//    s.tl(this,'o',"twitter");
+ 
+});
+
+</script>

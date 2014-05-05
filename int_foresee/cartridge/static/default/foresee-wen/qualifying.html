@@ -1,0 +1,129 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<HTML>
+    <HEAD>
+        <TITLE>Foresee Survey</TITLE>
+        <meta http-equiv="Content-Type" content= "text/html; charset=utf-8">
+        <link rel="stylesheet" href="foresee-qualifier.css" type="text/css" />
+        <script type="text/javascript" src="foresee-qualifier.js"></script>
+        <script type="text/javascript">
+            function gebid(){
+                if (arguments.length == 1) 
+                    return document.getElementById(arguments[0]);
+                else {
+                    var ids = Array();
+                    for (var i = 0; i < arguments.length; i++) {
+                        ids.push(document.getElementById(argument[i]));
+                    }
+                    return ids;
+                }
+            }
+            
+            function show(id){
+                var d = gebid(id);
+                d.style.display = "block";
+            }
+            
+            function hide(id){
+                var d = gebid(id);
+                d.style.display = "none";
+            }
+            
+            function Q2(q, f){
+                if (q.selectedIndex == 1) {
+                    show('Q3');
+                }
+                else {
+                	hide('Q3');
+                }
+            }
+
+            function qualify(f){
+                if (!validate(f)) {
+                    return false;
+                }
+                if (cancel(f)) {
+                    FSR.cancel();
+                }
+                FSR.qualified();
+                
+                return true;
+            }
+            
+            function cancel(f){
+                if (f.question3.selectedIndex == 2) {
+                    return true;
+                }
+                
+                return false;
+            }
+
+            function validate(f){
+                var val = true;
+                if (!(f.question1[0].checked || f.question1[1].checked)) {
+                    val = false;
+                }
+                if (val) {
+                    if (f.question1[0].checked) {
+                        FSR.CPPS.set('cpp1', 'a11');
+                        FSR.qualify("q11");
+                    }
+                    else {
+                        FSR.CPPS.set('cpp1', 'a12');
+                        FSR.qualify("q12");
+                    }
+                }
+                else {
+                    alert('Please answer all the questions before proceeding!');
+                }
+                return val;
+            }
+        </script>
+    </HEAD>
+    <BODY>
+        <form name="fsrform" style="margin: 0pt;" onsubmit="return false;">
+            <div id="fsrqualifier">
+                <div id="fsrcontainer">
+                    <div class="fsrq_top_ul">
+                        <img class="siteLogo" src="sitelogo.gif" alt="Site Logo">
+                    </div>
+                    <div class="fsrq_top_ur">
+                        <img class="fsrLogo" src="fsrlogo.gif" alt="Site Logo">
+                    </div>
+                </div>
+				<div class="fsrq_body">
+                    <b>Thank you for agreeing to share your opinions with us.</b>
+                    <br>
+                    <br>
+                    Your comments will help us improve our website. Please continue browsing the site and when finished, simply return here and click on 
+                     "Start Survey" when you wish to begin the survey.
+                    <br>
+                    <br>
+					<br>
+					<br>
+					<br>
+					<br>
+                    <div style='margin: 0 0 0 25px'>
+                        <div class="fsrq_footer">
+                            <input type='button' value='Start Survey' onclick='FSR.qualified();'>
+                        </div>
+                    </div>
+                    <div>
+                    </div>
+					<br>
+					<div align="center">
+                    Copyright 
+                    <script type="text/javascript">
+                        var today = new Date();
+                        document.write(today.getFullYear());
+                    </script>
+                    - all rights reserved
+                    <br>
+                    <a href="//www.foreseeresults.com" TARGET="_blank">ForeSee</a>
+                    &nbsp;<a href="//www.foreseeresults.com/Privacy.html" TARGET="_blank">Privacy</a>
+                    &nbsp;<a href="//www.foreseeresults.com/ContactUs.html" TARGET="_blank">Technical Support</a>
+                </div>
+            </div>
+            </div>
+        </form>
+    </BODY>
+</HTML>

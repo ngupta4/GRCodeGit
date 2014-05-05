@@ -1,0 +1,67 @@
+<div class="billing-and-shipping-info">
+	<h5>Your Information</h5>
+	
+	<div class="buyerInfo">
+		<isif condition="${pdict.Basket != null}"><isprint value="${pdict.Basket.billingAddress.firstName}" /><iselse/><isprint value="${pdict.Order.billingAddress.firstName}" /></isif>
+		<isif condition="${pdict.Basket != null}"><isprint value="${pdict.Basket.billingAddress.lastName}" /><iselse/><isprint value="${pdict.Order.billingAddress.lastName}" /></isif>
+		<br/>
+		<isif condition="${pdict.Basket != null}"><isprint value="${pdict.Basket.getCustomerEmail()}" /><iselse/><isprint value="${pdict.Order.getCustomerEmail()}" /></isif>
+	</div>
+	
+	<div class="linespace"></div>
+	<br/>
+	<isset name="opi" value="${pdict.Order.getPaymentInstruments().iterator().next()}" scope="page" />
+	
+	<table>
+		<tr>
+			<th class="upper grey">Payment Method</th>
+			<th class="upper grey">Billing Information</th>
+			<th class="upper grey">Shipping Information</th>
+		</tr>
+		<tr>
+			<td><isprint value="${opi.getCreditCardType()}" />: <isprint value="${opi.getCreditCardNumber()}" /></td>
+			<td>
+				<isif condition="${pdict.Basket != null}"><isprint value="${pdict.Basket.billingAddress.firstName}" /><iselse/><isprint value="${pdict.Order.billingAddress.firstName}" /></isif> 
+				<isif condition="${pdict.Basket != null}"><isprint value="${pdict.Basket.billingAddress.lastName}" /><iselse/><isprint value="${pdict.Order.billingAddress.lastName}" /></isif>
+			</td>
+			<td>
+				<isif condition="${pdict.Basket != null}"><isprint value="${pdict.Basket.getDefaultShipment().shippingAddress.firstName}" /><iselse/><isprint value="${pdict.Order.getDefaultShipment().shippingAddress.firstName}" /></isif> 
+				<isif condition="${pdict.Basket != null}"><isprint value="${pdict.Basket.getDefaultShipment().shippingAddress.lastName}" /><iselse/><isprint value="${pdict.Order.getDefaultShipment().shippingAddress.lastName}" /></isif>
+			</td>
+		</tr>
+		<tr>
+			<td>Expires: <isprint value="${opi.getCreditCardExpirationMonth().toFixed()}" />/<isprint value="${opi.getCreditCardExpirationYear().toFixed()}" /></td>
+			<td>
+				<isif condition="${pdict.Basket != null}"><isprint value="${pdict.Basket.billingAddress.address1}" /><iselse/><isprint value="${pdict.Order.billingAddress.address1}" /></isif> 
+				<isif condition="${pdict.Basket != null}"><isprint value="${pdict.Basket.billingAddress.address2}" /><iselse/><isprint value="${pdict.Order.billingAddress.address2}" /></isif>
+			</td>
+			<td>
+				<isif condition="${pdict.Basket != null}"><isprint value="${pdict.Basket.getDefaultShipment().shippingAddress.address1}" /><iselse/><isprint value="${pdict.Order.getDefaultShipment().shippingAddress.address1}" /></isif> 
+				<isif condition="${pdict.Basket != null}"><isprint value="${pdict.Basket.getDefaultShipment().shippingAddress.address2}" /><iselse/><isprint value="${pdict.Order.getDefaultShipment().shippingAddress.address2}" /></isif>
+			</td>
+		</tr>
+		<tr>
+			<td></td>
+			<td>
+				<isif condition="${pdict.Basket != null}"><isprint value="${pdict.Basket.billingAddress.city}" /><iselse/><isprint value="${pdict.Order.billingAddress.city}" /></isif> 
+				<isif condition="${pdict.Basket != null}"><isprint value="${pdict.Basket.billingAddress.stateCode}" /><iselse/><isprint value="${pdict.Order.billingAddress.stateCode}" /></isif> 
+				<isif condition="${pdict.Basket != null}"><isprint value="${pdict.Basket.billingAddress.postalCode}" /><iselse/><isprint value="${pdict.Order.billingAddress.postalCode}" /></isif>
+			</td>
+			<td>
+				<isif condition="${pdict.Basket != null}"><isprint value="${pdict.Basket.getDefaultShipment().shippingAddress.city}" /><iselse/><isprint value="${pdict.Order.getDefaultShipment().shippingAddress.city}" /></isif> 
+				<isif condition="${pdict.Basket != null}"><isprint value="${pdict.Basket.getDefaultShipment().shippingAddress.stateCode}" /><iselse/><isprint value="${pdict.Order.getDefaultShipment().shippingAddress.stateCode}" /></isif>
+				<isif condition="${pdict.Basket != null}"><isprint value="${pdict.Basket.getDefaultShipment().shippingAddress.postalCode}" /><iselse/><isprint value="${pdict.Order.getDefaultShipment().shippingAddress.postalCode}" /></isif>
+			</td>
+		</tr>
+		<tr>
+			<td></td>
+			<td><isif condition="${pdict.Basket != null}"><isprint value="${pdict.Basket.billingAddress.countryCode}" /><iselse/><isprint value="${pdict.Order.billingAddress.countryCode}" /></isif></td>
+			<td><isif condition="${pdict.Basket != null}"><isprint value="${pdict.Basket.getDefaultShipment().shippingAddress.countryCode}" /><iselse/><isprint value="${pdict.Order.getDefaultShipment().shippingAddress.countryCode}" /></isif></td>
+		</tr>
+				<tr>
+			<td></td>
+			<td>Phone: <isif condition="${pdict.Basket != null}"><isprint value="${pdict.Basket.billingAddress.phone}" /><iselse/><isprint value="${pdict.Order.billingAddress.phone}" /></isif></td>
+			<td></td>
+		</tr>
+	</table>
+</div>	

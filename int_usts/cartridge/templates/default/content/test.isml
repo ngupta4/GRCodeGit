@@ -1,0 +1,51 @@
+<!--- TEMPLATENAME: test.isml --->
+<isscript>
+importPackage( dw.system );
+importPackage( dw.crypto );
+importPackage( dw.util );
+importPackage( dw.net );
+
+importScript('int_usts:common/libEcom.ds'); 
+
+	 var message : String;
+	 var date = new Date("Thu, 17 Jan 2013 00:15:51 GMT");
+try{
+	// Make an http 
+	 var httpClient : HTTPClient = new HTTPClient();
+
+	 var resp_headers: HashMap;
+
+	 
+	 /*  */
+	 
+	 httpClient.setRequestHeader("Date", date.toString());
+	 var auth = createAuth(date);
+	 
+	 httpClient.setRequestHeader("Authorization",auth );
+	 
+	 httpClient.open('POST', 'http://dev25.ecom.gr.demandware.net/on/demandware.store/Sites-UsTechSupport-Site/default/Page-Show?cid=test');
+	 httpClient.send();
+	
+	 if (httpClient.statusCode == 200)
+	 {
+	      message = httpClient.text;
+	      resp_headers = httpClient.getAllResponseHeaders();
+	 }
+	 else
+	 {
+	     // error handling
+	     message="An error occured with status code "+httpClient.statusCode;
+	 }
+}catch(ex){
+	message = "Failed!: " + ex;
+}
+
+</isscript>
+Date:${date}</br>
+Formatted Date:${date.toUTCString()}</br>
+Auth:${auth}</br>
+Expected<br>
+Auth:CDEF ZGVtYW5kd2FyZTozMDlmZTM5ZWZjZDcwOTNlMWE3NmU4ZTFkZWE2YWQxYzU3MzYzNmM1Y2Y2Y2JkNTcyZjRhYTI1MDQwOWU1NThk
+<br>
+Test page: <isprint encoding="off" value="${message}"/>
+

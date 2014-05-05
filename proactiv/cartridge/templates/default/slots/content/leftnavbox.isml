@@ -1,0 +1,49 @@
+<!--- TEMPLATENAME: leftnavbox.isml --->
+
+<iscomment>make sure we have content at all</iscomment>
+<isif condition="${slotcontent != null}">
+	<isif condition="${!empty(slotcontent.content)}">
+		<isloop items="${slotcontent.content}" var="contentAsset" status="ca_status">
+			<isset name="c" value="${dw.content.ContentMgr.getContent(session.custom.renderingContentPrefix + contentAsset.ID)}" scope="page"/>
+			<isif condition="${!empty(c)}">
+				<isset name="contentAsset" value="${c}" scope="page"/>
+			</isif>
+			<div id="${contentAsset.ID}" class="block nav linksLoaded">
+				<div class="blockTop"><div class="blockTopRight"></div></div>
+				<div class="blockContent">
+			  	<div class="contentasset"><!-- dwMarker="content" dwContentID="${contentAsset.ID}" -->
+				  	<isif condition="${!empty(contentAsset.custom.body)}">
+				  		<isprint value="${contentAsset.custom.body}" encoding="off"/>
+						<iselseif condition="${shouldShowDebugInfo()}"/>
+							The content asset "${contentAsset.ID}" is empty.  It is referenced by content slot "${slotcontent.slotID}" for campaign "${campaignCode}".
+				  	</isif>
+					</div>
+				</div>
+			  <div class="blockBottom"><div class="blockBottomRight"></div></div>
+			</div><!-- end block -->
+		</isloop>
+	<iselseif condition="${shouldShowDebugInfo()}"/>
+		<div id="asset1" class="block nav no-content-asset">
+			<div class="blockTop"><div class="blockTopRight"></div></div>
+			<div class="blockContent">
+			  <h5 class="sidebarTitle altimg">No ContentAssets!</h5>
+			  <p>
+					The content slot "${slotcontent.slotID}" has no configured ContentAssets. 
+				</p>
+			</div>
+		  <div class="blockBottom"><div class="blockBottomRight"></div></div>
+		</div><!-- end block -->
+	</isif>
+<iselseif condition="${shouldShowDebugInfo()}"/>
+	<div id="asset1" class="block nav no-slot-config">
+		<div class="blockTop"><div class="blockTopRight"></div></div>
+		<div class="blockContent">
+		  <h5 class="sidebarTitle altimg">Unconfigured slot</h5>
+		  <p>
+				The content slot "${slotID}" needs to be configured in the BM or will not render on the live site. 
+			</p>
+		</div>
+	  <div class="blockBottom"><div class="blockBottomRight"></div></div>
+	</div><!-- end block -->
+</isif>
+

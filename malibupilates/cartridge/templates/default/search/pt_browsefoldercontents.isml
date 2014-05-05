@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html>
+<isinclude template="util/modules"/>
+
+<iscomment>This page must be cachable. It inherits the caching attributes by the decorated template.</iscomment>
+
+<isscript>
+	importPackage(dw.content);
+	importPackage(dw.util);
+	importPackage(dw.catalog);
+	
+	importScript('guthyrenker_core:common/libUtils.ds');
+	
+	var CurrentFolder : Folder = null;
+	var CurrentContent : Content = null;
+	
+	if( "fdid" in pdict.CurrentHttpParameterMap && !empty(pdict.CurrentHttpParameterMap.fdid.value) ) {
+		CurrentFolder = ContentMgr.getFolder(pdict.CurrentHttpParameterMap.fdid.stringValue);
+	}
+	
+	if( "cid" in pdict.CurrentHttpParameterMap && !empty(pdict.CurrentHttpParameterMap.cid.value) ) {
+		CurrentContent = ContentMgr.getContent(pdict.CurrentHttpParameterMap.cid.stringValue);
+	}
+	
+	if( empty(CurrentContent) && !empty(CurrentFolder) && !empty(CurrentFolder.onlineContent) ) {
+		CurrentContent = CurrentFolder.onlineContent[0];
+	}
+	if( empty(CurrentFolder) && !empty(CurrentContent) && !empty(CurrentContent.classificationFolder) ) {
+		CurrentFolder = CurrentContent.classificationFolder;
+	}
+	if( empty(CurrentFolder) && !empty(CurrentContent) && !empty(CurrentContent.folders) ) {
+		CurrentFolder = CurrentContent.folders[0];
+	}
+	
+	var CurrentFolderPath : String = CurrentContent.ID;
+	var RootFolder = CurrentFolder;
+	while( !empty(RootFolder.parent) && RootFolder.parent.ID!='primary-navigation') {
+		CurrentFolderPath += " "+RootFolder.ID;
+		RootFolder = RootFolder.parent;
+	}
+	CurrentFolderPath += " body_"+RootFolder.ID+" "+RootFolder.ID;
+	
+	var PageID : String = "page_";
+	var bodyclass : String = "body_";
+	
+	if( empty(CurrentContent) ) {
+		PageID += CurrentFolder.ID;
+	} else {
+		PageID += CurrentContent.ID;
+	}
+	
+	var headerContent : Content = dw.content.ContentMgr.getContent(CurrentContent.ID+"-header");
+</isscript>
+
+
+<iscomment>
+<isset name="showHeader" value="${true}" scope="page" />
+<isset name="showFooter" value="${true}" scope="page" />
+<isset name="showNav" value="${true}" scope="page" />
+</iscomment>
+
+<isset name="showBottomCTA" value="${true}" scope="page" />
+
+<head>
+
+	<isinclude template="components/header/htmlhead"/>
+	
+	<isif condition="${!empty(RootFolder)}">
+		<link href="${URLUtils.staticURL('/css/main_'+RootFolder.ID+'.css')}" type="text/css" rel="stylesheet" />
+	</isif>
+
+</head>
+<body id="${PageID}" class="${CurrentFolderPath} ${bodyclass}">
+	<div id="container" class="pt_browsefoldercontents ${CCC.getContainerClasses()}">
+		<isinclude template="components/header/header"/>
+		<div id="main">
+			<div id="content" class="contentPage">
+				<div class="${CurrentContent.ID}">
+					<isslot id="mp-rightSideBar" context="global" description="Offer Sidebar Right Content Slot"/>
+					<div class="contentBody">
+						<iscontentasset aid="${CurrentContent.ID}" />
+						<iscontentasset aid="${CurrentContent.ID + '-body'}" />
+						<isif condition="${showBottomCTA}">
+							<isslot id="mp-bottomCTA" context="global" description="Offer Content Page Bottom Content Slot"/>
+						</isif>
+					</div>
+				</div>
+				
+			</div>
+		</div><!-- END main -->
+			
+		<isinclude template="components/footer/footer"/>
+		
+	</div><!-- END container -->
+	<div id="popupBG">&nbsp;</div>
+	<isif condition="${shouldShowDebugInfo()}">
+		<iscomment>this is the template rendering the homepage</iscomment>
+		<pre><!-- +1.888.553.9216 --><!--This phone is a requirement to support existing Gomez monitor of SiteGenesis. Demadware customers can remove this.-->
+			
+		LandingTemplate: ${CCC.landingTemplate}
+		Campaign Code:${CCC.campaignCode}
+		Campaign ID:${getCurrentCampaignCode()}
+		ShowHeader?:${CCC.showHeader}
+		ShowFooter?:${CCC.showFooter}
+		ShowNav?:${CCC.showNav}
+		ShowOrderButton?:${CCC.showOrderButton}
+		Phone:${CCC.phone}
+		
+		</pre>
+	</isif>
+	
+	<isinclude template="common/google_analytics" />
+</body>
+</html>

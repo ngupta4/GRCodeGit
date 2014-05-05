@@ -1,0 +1,52 @@
+<!--- TEMPLATENAME: contentcommunitypage.isml --->
+<isscript>
+    importPackage(dw.content);
+    importPackage(dw.util);
+    importPackage(dw.catalog);
+    
+    importScript('guthyrenker_core:common/libUtils.ds');
+    
+    var contentInfo    = getCurrentContentInfo(pdict.CurrentHttpParameterMap);
+    var folderPathInfo = getFolderPathInfo(contentInfo);
+    
+    var CurrentFolder  : Folder = contentInfo.folder;
+    var CurrentContent : Content = contentInfo.content;
+    
+    var CurrentFolderPath : String = folderPathInfo.folderPath;
+    var RootFolder        : Folder = folderPathInfo.rootFolder;
+    
+    
+</isscript>
+
+<isset name="ShowProactiv365Sidebar"  value="false"            scope="pdict"/>
+<isset name="ShowRelatedLinks"        value="false"            scope="pdict"/>
+<isset name="ShowOptionalMenu"        value="false"            scope="pdict"/>
+<isset name="FolderNavigationClass"   value="foldernavigation" scope="pdict"/>
+<isset name="LeftNavRenderSubFolder"  value="true"             scope="pdict"/>
+
+<isdecorate template="search/pt_browsefoldercontents">
+
+<isinclude template="util/modules"/>
+
+<iscomment>create reporting event</iscomment>
+<isinclude template="util/reporting/ReportSearch.isml"/>
+
+<isinclude template="content/content/htmlcontentasset" />
+<isset name="OmniturePage" value="StaticContent" scope="pdict">
+<isscript>
+pdict["bvSubmissionURL"] = dw.system.Site.current.preferences.custom.bvAASubmissionURL;
+</isscript>
+
+<iscomment><isinclude template="bv/display/qa/questionsummary"/></iscomment>
+<isinclude template="bv/display/qa/questions"/>
+<script type="text/javascript">
+
+    jQuery(function(){
+        app.accordion.init("#secondaryContent .foldernavigation", ">li>a");
+        //app.accordion.expandAccordion(jQuery(".foldernavigation .selected:last"));
+        app.accordion.expandAccordion(jQuery(".foldernavigation .grbv11d20110517"));
+        
+    });
+</script>
+
+</isdecorate>

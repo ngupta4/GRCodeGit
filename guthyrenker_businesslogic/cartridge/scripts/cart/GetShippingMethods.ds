@@ -1,0 +1,111 @@
+/**
+ * GetShippingMethods.ds
+ *
+ * This script returns all active shipping methods and 
+ * a shipping cost price map.
+ * Shipping cost are calculated based on the specified
+ * 'Shipment'.  
+ * 
+ * @input CampaignConfig : Object
+ * @input  Shipment : dw.order.Shipment
+ * @output ShippingMethods : dw.util.ArrayList
+ * @output PriceMap : dw.util.Map
+ */
+
+
+ importPackage( dw.system );
+ importPackage( dw.web );
+ importPackage( dw.value );
+ importPackage( dw.util );
+ importPackage( dw.order ); 
+ importPackage( dw.campaign ); 
+ importPackage( dw.catalog ); 
+ importPackage( dw.customer );
+
+/**
+ * Function: execute
+ *
+ * Main function of the calculation script. 
+ */
+function execute( args : PipelineDictionary ) : Number
+{
+	// input parameters
+	var shipment : Shipment = args.Shipment;
+	var cartID : String = args.CampaignConfig['cartID'];
+	var allShippingMethods : Collection = ShippingMgr.getAllShippingMethods();
+
+	var availableShippingMethods : ArrayList = new ArrayList();
+	var shippingCostMap : Map = new LinkedHashMap();
+	var shippingModel : ShipmentShippingModel = ShippingMgr.getShipmentShippingModel(shipment);
+	var productShippingModel : ProductShippingModel = null;
+	var shippingMethodsIt : Iterator = shippingModel.getApplicableShippingMethods().iterator();
+	var productLineItemIt : Iterator = null;
+	
+	var shippingMethod : ShippingMethod = null;
+	var shipmentShippingCost : ShipmentShippingCost = null;
+	var productShippingCost : ProductShippingCost = null;
+	var totalShippingCost : Money = new Money(0.0,Site.current.currencyCode);
+
+	var pli : ProductLineItem = null;
+	var coreOffer : Product = null;
+
+	while(shippingMethodsIt.hasNext()) {
+		shippingMethod = shippingMethodsIt.next();
+		
+		/*if(!shippingMethod.isDefaultMethod() && ((!('cartID' in shippingMethod.custom) && args.CampaignConfig["campaignCode"] != "core") || ('cartID' in shippingMethod.custom && !empty(shippingMethod.custom['cartID']) &&  shippingMethod.custom['cartID'] != cartID)) ) {
+			continue;
+		}*/
+		
+		//totalShippingCost = new Money(0.0,Site.current.currencyCode);
+		totalShippingCost = shippingModel.getShippingCost(shippingMethod).getAmount();
+		
+		/*if (shipmentShippingCost!=null)
+		{
+			 totalShippingCost = totalShippingCost.add(shipmentShippingCost.getAmount());
+		}*/
+		
+		/* If this is a default method then get it's price from offer data */
+		//if (shippingMethod.isDefaultMethod()) {
+			productLineItemIt = shipment.productLineItems.iterator();
+			var pliCost : Number = 0, 
+			totalCost : Number = 0;
+			
+			totalCost += totalShippingCost.value;
+			
+			// calculate product level shipping cost i.e. fixed cost etc.
+			while (productLineItemIt.hasNext()) {
+				pli = productLineItemIt.next();
+				
+				var psc : ProductShippingCost = ShippingMgr.getProductShippingModel(pli.product).getShippingCost(shippingMethod);
+				pliCost = psc == null ? 0: psc.getAmount().value;
+				totalCost += pliCost;
+				//totalShippingCost.add(psc.getAmount());
+				/*if ("coreItem" in pli.product.custom && pli.product.custom["coreItem"] && !empty(pli.product.custom['shippingCost'])) {
+					totalShippingCost = new Money(pli.product.custom['shippingCost'], Site.current.currencyCode);
+				}*/
+			}
+		//}
+		
+		// Adding in pli fixed price values
+		/*productLineItemIt = shipment.productLineItems.iterator();
+		while( productLineItemIt.hasNext() ) {
+			pli = productLineItemIt.next();
+			
+			productShippingModel = ShippingMgr.getProductShippingModel(pli.product);
+			productShippingCost = productShippingModel.getShippingCost(shippingMethod);	
+			if (productShippingCost!=null)
+			{
+				totalShippingCost = totalShippingCost.add(productShippingCost.getAmount());
+			}
+		}*/
+		shippingCostMap.put(shippingMethod, new Money(totalCost, Site.current.currencyCode));
+		availableShippingMethods.add(shippingMethod);
+	}
+	
+	args["PriceMap"] = shippingCostMap;
+	args.ShippingMethods = availableShippingMethods;
+	
+	return PIPELET_NEXT;
+}
+
+

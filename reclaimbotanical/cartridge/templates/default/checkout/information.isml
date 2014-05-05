@@ -1,0 +1,47 @@
+<!--- TEMPLATENAME: simplecheckout.isml --->
+<isdecorate template="content/checkout/pt_checkout">
+	<isdecorate template="${pdict.CartTemplate}">
+		<iscomment>
+			This template is created before the 'wrapper' template, so we can set
+			up the template configuration for the 'pt_storefront' template right here.
+		</iscomment>
+		
+		<isscript>
+			importPackage(dw.object);
+			importPackage(dw.catalog);
+			
+			var CCC : Object = pdict.CurrentCampaignConfig;
+			var campaignCode : String = CCC.campaignCode;
+			
+			var showHeader : boolean = CCC.showHeader;
+			var showFooter : boolean = CCC.showFooter;
+			var showNav : boolean = CCC.showNav;
+			var showOrderButton : boolean = CCC.showOrderButton;
+			
+			var category : dw.catalog.Category = CCC.getCampaignCategory();
+		</isscript>
+		
+		<isinclude template="util/modules"/>
+		<isinclude template="util/reporting/ReportBasket.isml"/>
+		
+		<div class="checkout_header">
+			<iscontentasset aid="cart-header-text-billing-details" />
+		</div>
+		
+		<ischeckoutbreadcrumbs type="multi" step="details" />
+		
+		<div class="content_box_outer_pdp">
+			<div class="content_box_inner_sp">
+				<isif condition="${pdict.BasketIsEmpty}">
+					<iscomment>Display message if cart is empty</iscomment>
+					<isset name="CartEmptyTemplateWithoutDecorator" value="${true}" scope="pdict" />
+					<isinclude template="checkout/cart/cartempty" />
+				<iselse>
+					<isinclude template="checkout/personinformation/personinformation"/>
+				</isif>
+			</div>
+		</div>		
+			
+		<isset name="OmniturePage" value="CheckoutInformation" scope="pdict">
+	</isdecorate>
+</isdecorate>

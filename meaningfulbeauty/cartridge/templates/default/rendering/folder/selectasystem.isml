@@ -1,0 +1,180 @@
+<!--- TEMPLATENAME: selectasystem.isml --->
+<isdecorate template="search/pt_selectasystem">
+<isinclude template="util/modules"/>
+
+<iscomment>create reporting event</iscomment>
+<isinclude template="util/reporting/ReportSearch.isml"/>
+
+<isscript>
+	importPackage(dw.util);
+	importPackage(dw.catalog);
+	
+	var CCC : Object = pdict.CurrentCampaignConfig;
+
+	var offersList : ArrayList = new ArrayList();
+	var offerCodes : Array = null;
+	if( !empty(CCC) ) {
+		offerCodes = CCC.sasOfferCodes;
+		var aProduct : Product = null;
+		for( var i=0, ii=offerCodes.length; i<ii; i++ ) {
+			aProduct = ProductMgr.getProduct(offerCodes[i]);
+			if( !empty(aProduct) ) {
+				offersList.add1(aProduct);
+			}
+		}
+	}
+	var kitsQtyClass = "";
+	var kitsQty = 0;
+	if( !empty(offersList) ) {
+		kitQty = offersList.size();
+		switch(kitQty) {
+		case 2:
+			kitQtyClass="twoKits";
+			break;
+		case 3:
+			kitQtyClass="threeKits";
+			break;
+		case 4:
+			kitQtyClass="fourKits";
+			break;
+		case 5:
+			kitQtyClass="fiveKits";
+			break;
+		}
+	}
+</isscript>
+
+	<div class="Select300">
+		<h2>
+			Order Your Systm
+		</h2>
+		<div class="pageHead">
+			<h3>
+				Select a Proactiv System
+			</h3>
+			<div class="introContain">
+				<p class="intro">
+					Select your custom kit. All kits include our powerful,<br>
+					acne-fighting 3-Step System of Proactiv Solution products.
+				</p>
+			</div>
+		</div>
+		<div style="position: absolute; right: 5px; top: 165px; width: 500px;" id="Select300_InlineRating">
+			<a href="#reviews"></a>
+			<div style="border: none; float: right;" id="bvinline-wrap">
+				<div id="bvinline-average">
+					Average Rating &nbsp;
+				</div>
+				<div id="stars">
+					<img align="absmiddle" title="4 stars out of 5 average rating" alt="4 stars out of 5 average rating" src="${URLUtils.staticURL('/images/star-ratings/4_0.gif')}"> 4
+				</div>
+				<div style="border-left: 1px solid #CCCCCC; padding-left: 3px;" id="bvinline-average">
+					Average Rating from 1 Votes
+				</div>
+			</div>
+		</div>
+		<div style="position: absolute; top: 10px; right: 13px; width: 122px; height: 122px;">
+			<img class="sasBadge" src="${URLUtils.staticURL('/images/order/select300/burst.png')}" />
+		</div>
+		<div style="background-color: #FFFFFF; margin-top: -5px;" class="tabBlock">
+			<div class="Select300Menu">
+				<a onclick="javascript: SelectKitDetail(1,'select300_2tab_30day3step'); return false;" href="#tab1"><img border="0" onmouseout="javascript: document.getElementById('Select300Item1').src='${URLUtils.staticURL('/images/order/select300/select300_2tab_30day3step.jpg')}';" onmouseover="javascript: document.getElementById('Select300Item1').src='${URLUtils.staticURL('/images/order/select300/select300_2tab_30day3step_over.jpg')}';" src="${URLUtils.staticURL('/images/order/select300/select300_2tab_30day3step_over.jpg')}" style="top: 0px; left: 0px;" class="Select300Item" id="Select300Item1" name="Select300Item1"></a>
+				<a onclick="javascript: SelectKitDetail(2,'select300_2tab_5piece'); return false;" href="#tab2"><img border="0" onmouseout="javascript: document.getElementById('Select300Item2').src='${URLUtils.staticURL('/images/order/select300/select300_2tab_5piece.jpg')}';" onmouseover="javascript: document.getElementById('Select300Item2').src='${URLUtils.staticURL('/images/order/select300/select300_2tab_5piece_over.jpg')}';" src="${URLUtils.staticURL('/images/order/select300/select300_2tab_5piece.jpg')}" style="top: 0px; left: 336px;" class="Select300Item" id="Select300Item2" name="Select300Item2"></a>
+			</div>
+			<div id="Select300Detail" style="display: block;">
+				<div style="background: url('${URLUtils.staticURL('/images/order/select300/select300_detail_3step30day.jpg')}') no-repeat scroll 0% 0% transparent; display: block;" id="Select300Detail_Obj1" class="Select300DetailObj">
+					<div class="OrderNowButton">
+						<a title="Add Proactiv Solution product to cart" href="${URLUtils.url('Cart-AddProduct','pid','ABC123')}"><img border="0" src="${URLUtils.staticURL('/images/order/select300/OrderNowButton.gif')}"></a>
+					</div>
+					<div class="PriceTag">
+						$5.99
+					</div>
+					<div class="PriceTag_SubText">
+						<!--Per month for a two-month supply plus 5.99 S/H-->
+					</div>
+					<div class="DetailDescription">
+						<div class="left">
+							<span>Our basic Proactiv 3-step clear skin system helps you achieve and maintain clean skin!</span><br>
+							<ul style="margin-top: 5px;" class="productList">
+								<li class="green">
+									<a onclick="return false;" href="${URLUtils.url('Page-Show','cid','popup_renewing_trial')}" class="openOverlay">Renewing Cleanser</a>
+								</li>
+								<li class="green">
+									<a onclick="return false;" href="${URLUtils.url('Page-Show','cid','popup_revitalizing_trial')}" class="openOverlay">Revitalizing Toner</a>
+								</li>
+								<li class="green">
+									<a onclick="return false;" href="${URLUtils.url('Page-Show','cid','popup_repairing_trial')}" class="openOverlay">Repairing Treatment</a>
+								</li>
+							</ul>
+						</div>
+						<div class="right">
+							And FREE Bonuses!<br>
+							<ul class="productList">
+								<li class="brown">
+									<a onclick="return false;" href="${URLUtils.url('Page-Show','cid','popup_travel')}" class="openOverlay">Travel Kit &amp; Surprise Gift</a> or <a onclick="return false;" href="${URLUtils.url('Page-Show','cid','popup_greentea')}" class="openOverlay">Green Tea Moisturizer</a> or <a onclick="return false;" href="${URLUtils.url('Page-Show','cid','popup_refining')}" class="openOverlay">Refining Mask</a> or <a onclick="return false;" href="${URLUtils.url('Page-Show','cid','popup_dcw')}" class="openOverlay">Deep Cleansing Wash</a>
+								</li>
+								<li class="navy">
+									<a onclick="return false;" href="${URLUtils.url('Page-Show','cid','popup_facefacts')}" class="openOverlay">Clean Skin Tips Booklet</a>
+								</li>
+								<li class="navy">
+									<a onclick="return false;" href="${URLUtils.url('Page-Show','cid','popup_cscmembership')}" class="openOverlay">Clear Skin Club Membership</a>
+								</li>
+							</ul>
+						</div>
+					</div>
+				</div>
+				<div style="background: url('${URLUtils.staticURL('/images/order/select300/select300_detail_5piece_no50.jpg')}') no-repeat scroll 0% 0% transparent; display: none;" id="Select300Detail_Obj2" class="Select300DetailObj">
+					<!-- select300_detail_3step90day.jpg -->
+					<div class="OrderNowButton">
+						<a title="Add Proactiv Solution product to cart" href="${URLUtils.url('Cart-AddProduct','pid','XYZ789')}"><img border="0" src="${URLUtils.staticURL('/order/select300/OrderNowButton.gif')}"></a>
+					</div>
+					<div class="PriceTag">
+						$14.99
+					</div>
+					<div class="PriceTag_SubText">
+						<!--Per month for a three-month supply plus 5.99 S/H-->
+					</div>
+					<div class="DetailDescription">
+						<div class="left">
+							<span>Our basic Proactiv 3-step System, plus Daily Oil Control and Oil-Free Moisture with SPF 15.</span>
+							<ul style="margin-top: 5px;" class="productList">
+								<li class="green">
+									<a onclick="return false;" href="${URLUtils.url('Page-Show','cid','popup_renewing_trial')}" class="openOverlay">Renewing Cleanser</a>
+								</li>
+								<li class="green">
+									<a onclick="return false;" href="${URLUtils.url('Page-Show','cid','popup_revitalizing_trial')}" class="openOverlay">Revitalizing Toner</a>
+								</li>
+								<li class="green">
+									<a onclick="return false;" href="${URLUtils.url('Page-Show','cid','popup_repairing_trial')}" class="openOverlay">Repairing Treatment</a>
+								</li>
+								<li class="blue">
+									<a onclick="return false;" href="${URLUtils.url('Page-Show','cid','popup_oilfree')}" class="openOverlay">Oil-Free Moisture with SPF 15</a>
+								</li>
+								<li class="orange">
+									<a onclick="return false;" href="${URLUtils.url('Page-Show','cid','popup_oilcontrol')}" class="openOverlay">Daily Oil Control</a>
+								</li>
+							</ul>
+						</div>
+						<div class="right">
+							And FREE Bonuses!<br>
+							<ul class="productList">
+								<li class="brown">
+									<a onclick="return false;" href="${URLUtils.url('Page-Show','cid','popup_travel')}" class="openOverlay">Travel Kit &amp; Surprise Gift</a> or <a onclick="return false;" href="${URLUtils.url('Page-Show','cid','popup_greentea')}" class="openOverlay">Green Tea Moisturizer</a> or <a onclick="return false;" href="${URLUtils.url('Page-Show','cid','popup_refining')}" class="openOverlay">Refining Mask</a> or <a onclick="return false;" href="${URLUtils.url('Page-Show','cid','popup_dcw')}" class="openOverlay">Deep Cleansing Wash</a>
+								</li>
+								<li class="navy">
+									<a onclick="return false;" href="${URLUtils.url('Page-Show','cid','popup_facefacts')}" class="openOverlay">Clean Skin Tips Booklet</a>
+								</li>
+								<li class="navy">
+									<a onclick="return false;" href="${URLUtils.url('Page-Show','cid','popup_cscmembership')}" class="openOverlay">Clear Skin Club Membership</a>
+								</li>
+							</ul>
+
+						</div><!-- end right -->
+					</div><!-- end Detail Description -->
+				</div><!-- end Select300DetailObj -->
+			</div><!-- end Select300Detail -->
+		</div><!-- end tabBlock -->
+	</div><!-- end Select300 -->
+
+	<isset name="OmniturePage" value="Offerpage" scope="pdict" />
+</isdecorate>

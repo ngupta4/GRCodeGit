@@ -1,0 +1,35 @@
+<isset name="pagetitle" value="${Resource.msg('pagetitle.login','account',null)}" scope="pdict"/>
+<isdecorate template="account/pt_account">
+
+ <div class="pageWrapper accountContainer">	  
+<isinclude template="util/modules"/>
+<div class="messageContainer">
+<isinclude template="util/errordisplay"/>
+<isif condition = "${null!=pdict.genericError && !empty(pdict.genericError)}">
+		 <span class="errormessage"><isprint value="${pdict.genericError}"></span>
+</isif>
+</div>
+<div class="accountLogin">
+	<h2 class="formTitle">${Resource.msg('accountlogin.header','account',null)}</h2>
+	<isinclude template="account/login/logininclude"/>	
+	<div class="loginCreate">		
+		<div class="createAccount">
+			<iscontentasset aid="login-create-account"/>
+		<div class="Registration">
+			<form action="${URLUtils.httpsContinue()}" method="post" id="${pdict.CurrentForms.login.htmlName}_register">
+				<fieldset>
+						<div class="createaccountbutton">
+						<button class="aButton" id = "createAccount" type="submit" value="${Resource.msg('global.createbutton','locale',null)}" name="${pdict.CurrentForms.login.register.htmlName}">
+				     		${Resource.msg('button.createaccount','account',null)}
+				     	</button>
+					</div>
+					<input type="hidden" name="${pdict.CurrentForms.login.secureKeyHtmlName}" value="${pdict.CurrentForms.login.secureKeyValue}"/>
+				</fieldset>
+			</form>
+			</div>
+		</div>
+	</div><!-- END: logincreate -->
+</div><!-- END: accountlogin -->
+<isset name="OmniturePage" value="Loginpage" scope="pdict">
+</div>
+</isdecorate>

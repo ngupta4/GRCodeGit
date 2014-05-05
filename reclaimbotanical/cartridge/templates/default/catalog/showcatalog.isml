@@ -1,0 +1,35 @@
+<isdecorate template="search/pt_searchcontents">
+	
+<isscript>
+	// get root category of current site's navigation catalog
+	var siteCatalog = dw.catalog.CatalogMgr.getSiteCatalog();
+	var root = null;
+	if(siteCatalog!=null) {root = siteCatalog.getRoot();}
+
+	// get the "sale" category
+	var saleCategory = dw.catalog.CatalogMgr.getCategory('Product-Type');
+</isscript>
+<!-- <link href="${URLUtils.staticURL('/css/product_grid.css')}" type="text/css" rel="stylesheet" media="print" /> --> 
+	
+<ul class="productGrid" style="list-style:none; overflow:hidden;">
+	<isloop items="${saleCategory.getOnlineSubCategories()}" var="subCat">
+		<iscomment><li><a href="${URLUtils.http('Search-Show', 'cgid', subCat.getID())}"><isprint value="${subCat.getDisplayName()}"/></a></li></iscomment>
+		<li style="display:block; float:left; border:1px #CCC solid; width:20%; margin:0 10px 10px 0; padding:5px; min-height:140px; height:auto!important; height:140px;">
+			<a href="${URLUtils.http('Search-Show', 'cgid', subCat.getID())}" title="${subCat.ID}">
+				<h4 class="catheading" style="margin-bottom:5px;"><isprint value="${subCat.getDisplayName()}"/></h4>
+					<iscomment>Render the thumbnail</iscomment>
+						<iscomment>If image couldn't be determined, display a "no image" medium</iscomment>
+						<isif condition="${!empty(subCat.thumbnail)}">
+							<isset name="thumbnailUrl" value="${subCat.thumbnail.url}" scope="page"/>
+						<iselse/>
+							<isset name="thumbnailUrl" value="${URLUtils.staticURL('/images/noimagemedium.png')}" scope="page"/>
+						</isif>
+							<img src="${thumbnailUrl}" title="${thumbnailTitle}" class="productImage" style="max-width:120px;" />
+				<div class="catdescription">
+					<isprint value="${subCat.getDescription()}"/>
+				</div>
+			</a>
+		</li>
+	</isloop>
+</ul>
+</isdecorate>

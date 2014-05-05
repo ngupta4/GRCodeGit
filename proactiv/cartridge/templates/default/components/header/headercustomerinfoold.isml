@@ -1,0 +1,118 @@
+<iscache status="off"/>
+
+<iscomment>
+	This template displays a 3-level category tree as top navigation.
+	Only categories marked with showInMenu are shown.
+</iscomment>
+
+<isscript>
+	importScript('int_gutheyrenker:common/libEncoding.ds');
+	
+	var sessionID = null;
+	
+	if( !empty(pdict.CurrentHttpParameterMap.pactvid) && !empty(pdict.CurrentHttpParameterMap.pactvid.stringValue) ) {
+		sessionID = pdict.CurrentHttpParameterMap.pactvid.stringValue;
+	}
+</isscript>
+
+<isset name="RememberMe" value="${pdict.CurrentRequest.httpCookies['rememberMe']}" scope="page" />
+<isset name="SharedSession" value="${pdict.CurrentRequest.httpCookies['sharedsession']}" scope="page" />
+<isset name="LoggedIn" value="${pdict.CurrentRequest.httpCookies['loggedin']}" scope="page" />
+
+<isset name="PHPSESSID" value="${!empty(pdict.CurrentRequest.httpCookies['PHPSESSID']) ? pdict.CurrentRequest.httpCookies['PHPSESSID'].value : (!empty(sessionID)?sessionID:'')}" scope="page" />
+
+<isset name="RememberUserFirstName" value="${''}" scope="page" />
+<isset name="RememberUserLastName" value="${''}" scope="page" />
+<isset name="RememberUserEmail" value="${''}" scope="page" />
+
+<isif condition="${!empty(SharedSession) && !empty(SharedSession.value)}">
+	<isset name="Parts" value="${JSON.parse(decodeURIComponent(SharedSession.value))}" scope="page"/>
+	<isset name="RememberUserFirstName" value="${Parts['firstName']}" scope="page" />
+	<isset name="RememberUserLastName" value="${Parts['lastName']}" scope="page" />
+	<isset name="RememberUserEmail" value="${Parts['email']}" scope="page" />
+</isif>
+
+<isif condition="${!(!empty(LoggedIn) && LoggedIn.value == '1') || empty(RememberMe)}">	
+	<a href="#sign-in" id="signInTrigger"></a>
+	<div style="top: -75px;" class="loggedout loginDrawer" id="infopanel_loggedout">
+	
+		<!--start header notlogged in content-->
+		<form id="formHeadLogin" method="post" action="${URLUtils.https('Account-LoginHover')}">
+			<script type="text/javascript">
+			$(document).ready( function(){
+				$("#login_email").focus( function() {
+					$('[for="login_email"]').addClass("focused");
+				});
+				$("#login_email").blur( function() {
+					if($(this).attr("value") == "") {
+						$('[for="login_email"]').removeClass("focused");
+					}
+				});
+				$("#login_password").focus( function() {
+					$('[for="login_password"]').addClass("focused");
+				});
+				$("#login_password").blur( function() {
+					if($(this).attr("value") == "") {
+						$('[for="login_password"]').removeClass("focused");
+					}
+				});
+			} );
+			</script>
+			<div id="emailGroup">
+				<span>
+					<label for="login_email">email</label>
+					
+					<isif condition="${!empty(RememberMe)}">
+						<input type="text" class="required" name="email" id="login_email" value="${RememberUserEmail}" />
+					<iselse/>
+						<input type="text" class="required" name="email" id="login_email" />
+					</isif>
+			
+				</span>
+			</div>
+			<div id="passwordGroup">
+				<span>
+					<label for="login_password">password</label>
+					
+					<input type="password" class="required" name="passwd" id="login_password" />
+		
+				</span>
+			</div>
+			<div id="signInBtn">
+				<button alt="Sign In" name="sign_in" type="submit" class="btnHeadLogin"></button>
+			</div>
+			<div id="rememberGroup">
+		  	<a class="iconInfo" title="What's this?" href="javascript:void(0);">What's this?</a>
+				<input type="checkbox" checked="checked" name="remember_me" id="login_remember_me" /> 
+				<div>
+					<label for="login_remember_me">Remember me</label>
+					<!--(<a class="openOverlay" href="/remember/index.php" id="overlayRemember" onClick="return false;">What's This?</a>)-->
+				</div>
+			</div> 
+			<div id="forgotGroup">
+				<a class="iconInfo" title="What's this?" href="javascript:void(0);">What's this?</a>
+		    <a href="${URLUtils.https('Account-PasswordResetDialog')}" id="PasswordReset" title="${Resource.msg('logininclude.forgotpassword','account',null)}">Forgot password?</a>
+			</div>
+		  <div id="registerGroup">
+				<a class="iconInfo" title="What's this?" href="javascript:void(0);">What's this?</a>
+		    <a class="btnRegister" href="${URLUtils.https('Account-StartRegister')}">Register</a>
+			</div>
+		</form>
+		<!--//end header notlogged in content-->
+	</div>
+</isif>
+<iscomment>
+<div id="member-login">
+    <isif condition="${pdict.CurrentCustomer.registered}">
+        <span class="welcomemessage">${Resource.msg('headercustomerinfo.welcome','components',null)}</span>
+        <a href="${URLUtils.https('Account-Show')}" title="${Resource.msg('global.accountlink','locale',null)} ${pdict.CurrentCustomer.profile.firstName} ${pdict.CurrentCustomer.profile.lastName}" class="username"><span class="username"><isprint value="${pdict.CurrentCustomer.profile.firstName}"/>&nbsp;<isprint value="${pdict.CurrentCustomer.profile.lastName}"/></span></a>
+         <isif condition="${!pdict.CurrentCustomer.authenticated}">
+            <span class="unauthenticated">(<a title="${Resource.msg('global.login','locale',null)}${pdict.CurrentCustomer.profile.firstName} ${pdict.CurrentCustomer.profile.lastName}" href="${URLUtils.https('Account-Show')}" class="userlogin">${Resource.msg('headercustomerinfo.pleaselogin','components',null)}</a>)</span>
+        </isif>
+        <span class="divider">|</span>
+        (<a title="${Resource.msg('headercustomerinfo.not','components',null)} ${pdict.CurrentCustomer.profile.firstName} ${pdict.CurrentCustomer.profile.lastName}" href="${URLUtils.url('Login-Logout')}" class="usernot">${Resource.msg('headercustomerinfo.not','components',null)} ${pdict.CurrentCustomer.profile.firstName}</a>?)	
+    <iselse>
+    	Already a Home Delivery Member?<strong>&nbsp;<a class="underlink" href="${URLUtils.https('Account-Show')}">Log In</a> &gt;&gt;&nbsp;&nbsp;</strong>
+    </isif>
+</div><!-- END: headercustomerinfo -->
+</iscomment>

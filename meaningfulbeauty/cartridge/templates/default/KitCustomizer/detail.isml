@@ -1,0 +1,181 @@
+<!--- TEMPLATENAME: detail.isml --->
+<iscache type="relative" minute="60" varyby="price_promotion" />
+<isset name="maxProducts" value="${9}" scope="page"/>
+<isset name="status" value="member" scope="page"/>
+<isset name="weeksFreq" value="${4}" scope="page"/>
+<isif condition="${pdict.CurrentCustomer.authenticated}">
+	<isif condition="${!empty(pdict.CurrentCustomer.profile.custom.customerStatus) && pdict.CurrentCustomer.profile.custom.customerStatus != null}">
+		<isset name="status" value="${pdict.CurrentCustomer.profile.custom.customerStatus}" scope="page"/>
+	</isif>
+	<isif condition="${!empty(pdict.CurrentCustomer.profile.custom.weeksBetweenShipments) && pdict.CurrentCustomer.profile.custom.weeksBetweenShipments != null}">
+		<isset name="weeksFreq" value="${pdict.CurrentCustomer.profile.custom.weeksBetweenShipments}" scope="page"/>
+	</isif>
+	<isset name="maxProducts" value="${pdict.CurrentCustomer.profile.custom.maxKitSize.toString()}" scope="page"/>
+<iselseif condition="${pdict.rememberCustomer != null && 'profile' in pdict.rememberCustomer && pdict.rememberCustomer.profile != null && 'custom' in pdict.rememberCustomer.profile && pdict.rememberCustomer.profile.custom != null}">
+	<isif condition="${!empty(pdict.rememberCustomer.profile.custom.customerStatus) && pdict.rememberCustomer.profile.custom.customerStatus != null}">
+		<isset name="status" value="${pdict.rememberCustomer.profile.custom.customerStatus}" scope="page"/>
+	</isif>
+	<isif condition="${!empty(pdict.rememberCustomer.profile.custom.weeksBetweenShipments) && pdict.rememberCustomer.profile.custom.weeksBetweenShipments != null}">
+		<isset name="weeksFreq" value="${pdict.rememberCustomer.profile.custom.weeksBetweenShipments}" scope="page"/>
+	</isif>
+	<isset name="maxProducts" value="${pdict.rememberCustomer.profile.custom.maxKitSize.toString()}" scope="page"/>
+</isif>
+<isif condition="${!empty(status) && status == 'instantaccess'}">
+	<isset name="kitAvailable" value="false" scope="page"/>
+<iselse>
+	<isset name="kitAvailable" value="true" scope="page"/>
+</isif>
+<div id="customizerwrapper">
+	<div id="customizerHolder">
+		<div id="kitWidget">
+			<div id="MyWidget">
+				<div id="overlays" style="display:none;"></div>
+				<div id="widgetHeader">
+					<div id="questionmark"></div>
+					<div id="whiteborder"></div>
+				</div>
+				<div class="widget_customize_button">
+					<img id="widget_customize_button" src="${URLUtils.staticURL('/images/kit/customize_button_layer.png')}">
+				</div>
+				<div id="widget_customize_background">
+					<div id="proactive_logo"><img src="${URLUtils.staticURL('/images/kit/proactive_logo.png')}"></div>
+					<div id="itemaddwindow">
+						<div id="itemaddedbox"></div>
+						<div id="kitData"></div>
+					</div>
+					<div id="bottomnav">
+						<div id="bottomtextholder"><isprint value="${Resource.msg('kit.member.offer','account',null)}"/></div> <br/>
+						<div id="kitshippingnav">
+							<span class="lastshipmenttext"><isprint value="${Resource.msg('kit.last.shipment','account',null)}"/></span>
+							<span class="lastshipmentvalue"></span>
+							<span id="trackpackagebtn"></span>
+							<span class="nextshipmenttext"><isprint value="${Resource.msg('kit.next.shipment','account',null)}"/></span>
+							<span class="nextshipmentvalue"></span>
+							<isif condition="${kitAvailable!= null && kitAvailable=='true'}">
+								<span id="shipnowbtn" onclick="javascript:shipNowButtonClicked();"></span>
+							<iselse>
+								<span id="shipnowbtndisabled"></span>
+							</isif>
+							<span class="adjustfrequencytext"><isprint value="${Resource.msg('kit.adjust.frequency.title','account',null)}"/></span>
+							<isif condition="${kitAvailable!= null && kitAvailable=='true'}">
+								<span id="adjustnowbtn" onclick="javascript:adjustNowClicked();"></span>
+							<iselse>
+								<span id="adjustnowbtndisabled"></span>
+							</isif>
+						</div>
+					</div>
+				</div>
+				<div class="widget_customize_close">
+					<img id="widget_customize_close" src="${URLUtils.staticURL('/images/kit/close_btn.png')}">
+				</div>
+			</div>
+		</div>
+		<div id="adjustfrequencymain">
+			<div id="text_adjust_frequency_title"><isprint value="${Resource.msg('kit.adjust.frequency.title','account',null)}"/></div>
+			<div id="text_adjust_frequency_main">
+				<isprint value="${Resource.msg('kit.adjust.frequency.main','account',null)}"/>
+			</div>
+			<div id="text_adjust_frequency_helper">
+				<isprint value="${Resource.msg('kit.adjust.frequency.helper','account',null)}"/>
+			</div>
+			<div id="frequencyselectbox">
+				<select name="frequency" id="frequencyselect" class="selectborder">
+					<isif condition="${!empty(dw.system.Site.current.preferences.custom.changeFrequency) && dw.system.Site.current.preferences.custom.changeFrequency!=null}">
+					  	<isloop items="${dw.system.Site.getCurrent().preferences.custom.changeFrequency}" alias="frequency">
+							<option value="${frequency.getDisplayValue()}"
+								<isif condition="${weeksFreq==frequency.getValue()}">selected="selected"</isif>>
+								<isprint value="${frequency.getDisplayValue()}">&nbsp;<isprint value="${Resource.msg('account.order.weeks','account',null)}"/>
+							</option>
+						</isloop>	
+					</isif>
+				</select>
+			</div>
+			<div id="frequencysavebtn"></div>
+			<div id="frequencycancelbtn"></div>
+		</div>
+		<div id="adjustfrequencyconfirm">
+			<div id="text_adjust_frequency_confirm_title"><isprint value="${Resource.msg('kit.adjust.frequency.confirm.title','account',null)}"/></div>
+			<div id="text_adjust_frequency_confirm_main">
+				<isprint value="${Resource.msg('kit.adjust.frequency.confirm.main.one','account',null)}"/><br/>
+				<isprint value="${Resource.msg('kit.adjust.frequency.confirm.main.two','account',null)}"/><br/>
+				<isprint value="${Resource.msg('kit.adjust.frequency.confirm.main.three','account',null)}"/>
+			</div>
+			<div id="frequencyclosebtn"></div>
+		</div>
+		<div id="learnmorewindow">
+			<div id="learnmoretext"><isprint value="${Resource.msg('kit.learnmore.modal.main','account', null)}"/></div>
+			<div id="learnmorebtn"><a class="gr-btn"><span class="lc"></span><span><isprint value="${Resource.msg('kit.learnmore.button','account', null)}"/></span></a></div>
+			<div id="learnmoreokbtn"><a class="gy-btn gy-btn-a"><span class="grey-button"></span><span><isprint value="${Resource.msg('global.ok','common', null)}"/></span></a></div>
+		</div>
+		<div id="doctorsadvice">
+			<div id="doctorsadviceimage"><img src="${URLUtils.staticURL('/images/kit/doctors_advice_pop.jpg')}"/></div>
+			<div id="doctorsadvicetext">
+				<div id="text_doctors_advice_title"><isprint value="${Resource.msg('kit.doctors.advice.title','account', null)}"/></div>
+				<div id="text_doctors_advice_main">
+					<isprint value="${Resource.msg('kit.doctors.advice.main','account', null)}"/>
+				</div>
+				<div id="text_doctors_advice_products">
+					<a href="${URLUtils.url('Product-Show','pid','LPA34U')}"><isprint value="${Resource.msg('kit.doctors.advice.products.Cleanser','account', null)}"/></a><br/>
+					<a href="${URLUtils.url('Product-Show','pid','LPA34N')}"><isprint value="${Resource.msg('kit.doctors.advice.products.toner','account', null)}"/></a><br/>
+					<a href="${URLUtils.url('Product-Show','pid','LPA34P')}"><isprint value="${Resource.msg('kit.doctors.advice.products.acne','account', null)}"/></a><br/>
+				</div>
+				<div id="doctorsadviceokbtn"></div>
+			</div>
+		</div>
+		<div id="limitedsupplywindow">
+			<div id="text_limited_supply_title"><isprint value="${Resource.msg('kit.limited.supply.title','account', null)}"/></div>
+			<div id="text_limited_supply_main">
+				<isprint value="${Resource.msg('kit.limited.supply.main','account', null)}"/>
+			</div>
+			<div id="limitedsupplyremove"></div>
+			<div id="limitedsupplyclosebtn"></div>
+		</div>
+		<div id="howtoaddwindow">
+			<div id="text_how_to_add_main">
+				<isprint value="${Resource.msg('kit.how.to.add.main','account', null)}"/>
+			</div>
+			<div id="howtoaddmoreinfobtn"><a class="gr-btn"><span class="lc"></span><span><isprint value="${Resource.msg('kit.moreinfo.button','account', null)}"/></span></a></div>
+			<div id="howtoaddokbtn"><a class="gy-btn gy-btn-a"><span class="grey-button"></span><span><isprint value="${Resource.msg('global.ok','common', null)}"/></span></a></div>
+		</div>
+		<div id="shippingwindow">
+			<div id="shippingheader"><isprint value="${Resource.msg('kit.shipping.modal.title','account', null)}"/> </div>
+			<div id="shippingtext">
+				<isprint value="${Resource.msg('kit.shipping.modal.main','account', null)}"/><br/>
+			</div>
+			<div id="shippingcost"></div>
+			<div id="shippingokbtn"></div>
+		</div>
+		<div id="errormessagewindow">
+			<div id="errortext"></div>
+			<div id="errorokbtn"></div>
+		</div>
+		<div id="shipnowerrormessagewindow">
+			<div id="shipnowerrortext"></div>
+			<div id="shipnowerrorokbtn"></div>
+		</div>
+		<div id="kitfullmessagewindow">
+			<div id="kitfulltexttitle"><isprint value="${Resource.msg('kit.addproduct.maxproduct.error.title','errormessages',null)}"/></div>
+			<div id="kitfulltextbody">
+				<isprint value="${Resource.msg('kit.addproduct.maxproduct.error.one','errormessages',null)}"/>
+				<isprint value="${Resource.msg(maxProducts+'.word','common',null)}"/>
+				<isprint value="${Resource.msg('kit.addproduct.maxproduct.error.two','errormessages',null)}"/><br/>
+				<isprint value="${Resource.msg('kit.addproduct.maxproduct.error.three','errormessages',null)}"/>
+			</div>
+			<div id="kitfullokbtn"></div>
+		</div>
+		<div id="confirmwindow">
+			<div id="confirmtext"><isprint value="${Resource.msg('kit.delproduct.confirm.messaage','errormessages',null)}"/></div>
+			<div id="confirmokbtn"><a class="gy-btn gy-btn-a"><span class="grey-button"></span><span><isprint value="${Resource.msg('global.confirm','common', null)}"/></span></a></div>
+			<div id="confirmcancelbtn"><a class="gr-btn"><span class="lc"></span><span><isprint value="${Resource.msg('global.cancel','common', null)}"/></span></a></div>
+		</div>
+	</div>
+	<div id="previewwindow">
+		<div id="previewImage"></div>
+		<div id="previewProdName"></div>
+		<div id="previewVariant">
+			<span id="variantType"></span><isprint value="${Resource.msg('symbol.colon','common',null)}"/>&nbsp;
+			<span id="variantValue"></span>
+		</div>
+	</div>
+	<input type="hidden" id="instantaccess" value="${kitAvailable}"/>
+</div>

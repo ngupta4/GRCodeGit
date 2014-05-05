@@ -1,0 +1,131 @@
+<!--- TEMPLATENAME: ordertotal.isml --->
+<div class="order-totals shippingTotal"> 
+	<iscomment>Sub Total block "Not Needed"
+	<div class="sub_total">
+		<p>
+			<span class="cocart-container">
+				<div id="subTotal" class="merchandiseTotal cocartPrice">					
+					<isprint value="${pdict.Basket.getAdjustedMerchandizeTotalPrice(false)}"/>
+				</div>
+				<span class="cocartLabel">
+					${Resource.msg('cart.ordersubtotal.label', 'rendering', null)}&nbsp;
+				</span>
+			</span>
+		</p>
+	</div>
+	</iscomment>
+	
+	<iscomment>tax amount "Not Needeed"
+	<isif condition="${pdict.Basket.totalTax.available && (pdict.Basket.totalTax.value > 0.0)}">
+		<div class="sub_total">
+			<p>
+				<span class="cocart-container">
+					<span class="taxamount cocartPrice">					
+						<isprint value="${pdict.Basket.totalTax}"/>
+					</span>
+					<span class="cocartLabel">
+						${Resource.msg('ordersummary.ordertax', 'components', null)}&nbsp;
+					</span>	
+				</span>
+			</p>
+		</div>
+	</isif>
+	</iscomment>
+	
+	<iscomment>Shipping Total block</iscomment>
+	<div class="shippingprice">
+	<div class="shipping_total">
+	    <div class="rush_shipping">${Resource.msg('cart.select.shipping','rendering',null)}</div> 	
+		<iscomment>
+		Hide "recalculate" link
+		<a id="recalculate" href="${URLUtils.httpContinue()}">${Resource.msg('cart.recalculate.label','rendering',null)}</a>
+		</iscomment>
+		
+		<iscomment>Shipping Method block</iscomment>
+		<isscript>
+			var i = 1;
+			var select = false;
+		</isscript>
+		<isif condition="${pdict.ShippingMethodsMap.size() > 0}">
+			<div class="shippingmethodslist">
+			<select id="${pdict.CurrentForms.cart.shippingMethodID.htmlName}" name="${pdict.CurrentForms.cart.shippingMethodID.htmlName}" class="shipList">
+					<isloop items="${pdict.ShippingMethodsMap.keySet()}" var="shippingMethod" status="shippingState">
+						<isscript>
+						var shippingCost = pdict.ShippingMethodsMap.get(shippingMethod);
+						var isSelected = !empty(pdict.DefaultShipment) && (shippingMethod.ID == pdict.DefaultShipment.shippingMethodID);
+						
+						// Using the last sorted available shipping method so we can support multiple default shipping methods for now... this might be redesigned with more detailed business requirements
+						
+						//if (pdict.CurrentForms.cart.shippingMethodID.value)
+						//{
+						//	isSelected = shippingMethod.ID == pdict.CurrentForms.cart.shippingMethodID.value;
+						//}
+						
+						if (isSelected){
+						select=true;
+						}
+										
+						if (!select && i == pdict.ShippingMethodsMap.size()) {
+							isSelected = true;
+						}
+						i++;
+						</isscript>
+						<div class="labelwrapper ${shippingMethod.ID.toLowerCase().replace(/\W/,'_')}">
+							<div class="shippinglabel"></div>					
+							<option value="${shippingMethod.ID}"<isif condition="${isSelected}"> selected="selected"</isif>><isprint value="${shippingMethod.displayName}"/> <span class="shipmentprice">$<isprint value="${shippingCost.value}" style="MONEY_LONG" /></span></option>				
+						</div>
+					</isloop>
+				</select>
+				<script type="text/javascript">
+					jQuery(function(){
+						var margin = 5;
+						jQuery('.shippingmethodslist').find('.seedetails>a').hover(function(e){
+							var jqTooltip = jQuery(this).find('.shippingdetailspopup');
+							//if we have no space in top of link show down
+							if(jqTooltip.height()+jQuery(this).height() > e.clientY){
+								jqTooltip.css({
+									top: jQuery(this).height()+margin,
+									display: 'block'
+								});
+							}else{
+								jqTooltip.css({
+									top: -(jqTooltip.height()+jQuery(this).height()),
+									display: 'block'
+								});
+							}							
+						},function(){
+							jQuery(this).find('.shippingdetailspopup').removeAttr('style');
+						});						
+					});
+				</script>
+			</div>
+		</isif>
+	</div>	
+		<table id="totalshippingprice">
+		  <tr>
+		    <td class="totalShipping">${Resource.msg('cart.ordershippingtotal.label', 'rendering', null)}&nbsp;</td>
+			<td class="value" id="shipTotal"><isif condition="${pdict.Basket.shippingTotalPrice.available}"><isprint value="${pdict.Basket.shippingTotalPrice}"/><iselse/>&nbsp;</isif></td>
+		  </tr>
+		</table>
+	</div>	
+    <div class="clearfix"></div>
+	
+			
+	<iscomment>order total</iscomment>
+	<div class="shippingTotalCont">
+	<div class="orderTotal">
+		<div class="cocartContainer">
+			<span class="cocartLabel">
+				${Resource.msg('cart.ordertotal.label', 'rendering', null)}&nbsp;
+			</span>
+			<span class="totalPrice cocartPrice" id="orderTotal_1">					
+				<isprint value="${pdict.Basket.getTotalNetPrice()}"/>
+			</span>	
+		</div>
+	</div>		
+	
+	<div class="ordertotaldisclaimer">
+		<iscontentasset aid="cart-tax-disclaimer"/>
+	</div>
+	</div>
+</div>

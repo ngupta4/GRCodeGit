@@ -1,0 +1,18 @@
+/**
+*
+*   @input Username : String
+*   @input Password: String 
+*   @output Status : String
+*
+*/
+importPackage( dw.system );
+
+function execute( args : PipelineDictionary ) : Number
+{
+	
+	// Code for MW web service call to verify the user
+	args.Status = dw.web.Resource.msg('login.status','middleware',null);
+  
+
+   return PIPELET_NEXT;
+}

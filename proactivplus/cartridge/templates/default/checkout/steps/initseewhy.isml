@@ -1,0 +1,21 @@
+<!--- TEMPLATENAME: triggerseewhy.isml --->
+
+<script  src="${URLUtils.staticURL('/js/WebEvent.js')}" type="text/javascript"></script>
+<isscript>
+  importPackage( dw.object );
+  importScript('guthyrenker_core:common/libUtils.ds');
+  var suppSeeWhy : CustomObject = CustomObjectMgr.getCustomObject("CampaignConfiguration", getCurrentCampaignCode()).custom.suppSeeWhy;
+</isscript>
+
+<!-- set suppSeeWhy variable to session -->
+<isif condition="${session.custom.suppCY == null || session.custom.suppCY == 0}">
+  <isif condition="${suppSeeWhy == true}">
+    <isset name="suppCY" value="${1}" scope="session">
+  <iselse> 
+    <isset name="suppCY" value="${0}" scope="session">
+
+    <script type="text/javascript">
+     cy.CUSTOMERCODE="${dw.system.Site.current.preferences.custom.seeWhyCustomerCode}";    
+    </script>
+  </isif>
+ </isif>  

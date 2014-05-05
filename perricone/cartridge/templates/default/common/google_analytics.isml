@@ -1,0 +1,79 @@
+<!--- TEMPLATENAME: google_analytics.isml --->
+
+<iscomment>
+Google Analytics:
+	1. Template for all pages except Order Confirmation page
+	2. Template for Order Confirmation page when order contains one item
+	3. Template for Order Confirmation page when order contains multiple items
+</iscomment>
+
+<isset name="GoogleAnalyticsID" value="${dw.system.Site.getCurrent().getCustomPreferenceValue('googleAnalyticsId')}" scope="page" />
+<isset name="GoogleDomainName" value="${dw.system.Site.getCurrent().getCustomPreferenceValue('googleDomainName')}" scope="page" />
+
+<isif condition="${!empty(GoogleAnalyticsID) && !empty(GoogleDomainName)}">
+	<!-- Start Google Analytics Code --> 
+	<script type="text/javascript"> 
+	var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+	document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+	</script>
+	
+	<script type="text/javascript"> 
+	try {
+		var pageTracker = _gat._getTracker("${GoogleAnalyticsID}");
+	
+		pageTracker._setDomainName("${GoogleDomainName}");
+		pageTracker._trackPageview();
+	
+		<iscomment>If this is a Confirmation page, then we need to add order information</iscomment>
+		<isif condition="${!empty(pdict.Order)}">
+		<iscomment>
+		Call the _addTrans to track the order. Arguments:
+			lastOrder.OrderNumber : order ID - required
+			'' : affiliation or store name
+			lastOrder.NetTotal : total - required
+			lastOrder.Tax : tax
+			lastOrder.Shipping : shipping
+			'' : city
+			'' : state or province
+			'' : country
+		</iscomment>
+		pageTracker._addTrans(
+			"${pdict.Order.orderNo}",
+			"",
+			"${pdict.Order.totalNetPrice}",
+			"${pdict.Order.totalTax}",
+			"${pdict.Order.shippingTotalPrice}",
+			"",
+			"",
+			""
+		);
+	
+		<iscomment>
+		Loop through order products and add _addItem section.
+		Several arguments should be passed to _addItem:
+			lastOrder.OrderNumber : order ID - necessary to associate item with transaction
+			lastOrder.SKU : SKU/code - required
+			lastOrder.ProductName : product name
+			'' : category or variation
+			lastOrder.UnitPrice : unit price - required
+			lastOrder.Quantity : quantity - required
+			lastOrder.GiftBoxSelected : Yes/No – required
+		</iscomment>
+		<isloop items="${pdict.Order.productLineItems}" var="pli">
+		pageTracker._addItem(
+			"${pdict.Order.orderNo}",
+			"${pli.productID}",
+			"${pli.productName}",
+			"",
+			"${pli.adjustedNetPrice.value}",
+			"${pli.quantity.value}",
+			"${pli.gift ? 'Yes' : 'No'}"
+		);
+		</isloop>
+	
+		pageTracker._trackTrans(); //submits transaction to the Analytics servers
+		</isif>
+	} catch(err) {}
+	</script> 
+	<!-- End Google Analytics Code -->
+</isif>

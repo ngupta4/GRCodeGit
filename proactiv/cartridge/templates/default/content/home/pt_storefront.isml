@@ -1,0 +1,291 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<isinclude template="util/modules"/>
+	<isscript>
+	importScript('guthyrenker_core:common/libUtils.ds');
+	
+	var CCC : Object = pdict.CurrentCampaignConfig;
+	</isscript>
+
+	<iscomment>This page must be cachable. It inherits the caching attributes by the decorated template.</iscomment>
+
+<head>
+	<link rel="canonical" href="http://www.proactiv.com" />
+	<meta name="viewport" content="width=device-width">
+	<iscomment>Include all important information globally , e.g. meta-data, link information, and javascript.</iscomment>
+	<isinclude template="components/header/htmlhead"/>
+
+	<iscomment>Add page specific header information here.</iscomment>
+
+	<isif condition="${!empty(CCC) && !empty(CCC.cssStyle)}">
+		<link rel="stylesheet" type="text/css" href="${URLUtils.staticURL(URLUtils.CONTEXT_LIBRARY,null,CCC.cssStyle)}" />
+	</isif>
+	
+    <iscomment>Insert meta tag for the "Google-Verification" feature to verify that you are the owner of this site.</iscomment>
+    <isif condition="${'GoogleVerificationTag' in dw.system.Site.current.preferences.custom && dw.system.Site.current.preferences.custom.GoogleVerificationTag!=''}">
+        <meta name="google-site-verification" content="<isprint value="${dw.system.Site.current.preferences.custom.GoogleVerificationTag}"/>" />
+    </isif>
+    <isif condition="${'MSValidateTag' in dw.system.Site.current.preferences.custom && dw.system.Site.current.preferences.custom.MSValidateTag!=''}">
+    	<meta name="msvalidate.01" content="${dw.system.Site.current.preferences.custom.MSValidateTag}" />
+    </isif>
+    <script type="text/javascript">
+    	var CCCphone = "${CCC.phone}";
+    	var CCCorderURL = "${URLUtils.url('COCart-AddProduct','pid',CCC.sasOfferCodes[0])}";
+	</script>
+	<isif condition="${null!=CCC.disableRememberCookie && CCC.disableRememberCookie == true}"> 
+	 <meta name="ROBOTS" content="NOINDEX,NOFOLLOW" />
+	 </isif>
+</head>
+<body id="page_index3g_homepage" class="body_homepage3g home">
+<isinclude template="common/mboxglobal"/>
+<iscomment>Proactiv Homepage Redirect mBox</iscomment>
+<div class="mboxDefault"></div>
+<script type="text/javascript">mboxCreate('PA_Homepage', 'pageName=' + "${mboxPageName}",'pageUCI=' + "${mboxUCI}",'profile.myReferrer='+document.referrer,'renderingExperience=' +"${session.custom.renderingGroup.ID}",'deviceGroup=' +"${session.custom.deviceCategory}",'device=' +"${session.custom.device}");</script>
+<div class="mboxDefault"></div>
+<script type="text/javascript">mboxCreate('PA_Espanol', 'pageName=' + "${mboxPageName}",'pageUCI=' + "${mboxUCI}",'profile.myReferrer='+document.referrer,'renderingExperience=' +"${session.custom.renderingGroup.ID}",'deviceGroup=' +"${session.custom.deviceCategory}",'device=' +"${session.custom.device}");</script>
+
+
+<iscomment>Cookies and Javascript enabled check</iscomment>
+<isinclude template="components/browsertoolscheck"/>
+<isif condition="${CCC.showHeader}">
+		<isinclude template="components/header/header"/>
+	</isif>	
+<div id="container" class="pt_storefront ${CCC.getContainerClasses()}">
+
+	<div id="idMainWide" class="mainWide">
+		<div class="clearfix" id="main">
+			<isreplace/>
+			
+			<isscript>
+				importPackage(dw.content);
+				importScript('guthyrenker_core:common/libUtils.ds');
+				var contentInfo    = getCurrentContentInfo(pdict.CurrentHttpParameterMap);
+				var CurrentContent : Content = contentInfo.content;
+			</isscript>
+			
+			
+		</div>
+
+	</div><!-- END: main -->
+	<a href="${pdict.CurrentRequest.httpHost}${pdict.CurrentRequest.httpPath}" id="currentURL"></a>
+	
+	<isif condition="${CCC.showFooter}">
+
+		<isinclude template="components/footer/footer"/>
+	<iselse>
+		<iscomment>REFACTOR:  We need to refactor the footer to have this logic to include omniture/pixels regardless if it is shown</iscomment>
+		<!---  Omniture tracking  --->
+	  	<isinclude template="analytics/omniture/omniture"/>
+	  	<iscomponent pipeline ="Tealium-FooterInclude"
+pid=${pdict.CurrentHttpParameterMap.pid.stringValue}
+searchterm=${pdict.CurrentHttpParameterMap.q.stringValue}
+searchresultscount=${pdict.ProductSearchResult.count+''}
+orderno=${pdict.OrderNo}
+contentsearchresultscount=${pdict.ContentSearchResult.count+''}
+pagecgid=${pdict.CurrentHttpParameterMap.cgid.stringValue} />
+	</isif>
+	<isinclude template="components/footer/pixels"/>
+	<isinclude template="common/google_analytics" />
+
+</div><!-- END: container -->
+
+<div id="popupBG">&nbsp;</div>
+<isif condition="${shouldShowDebugInfo()}">
+	<iscomment>this is the template rendering the homepage</iscomment>
+<iscomment>
+	<pre><!-- +1.888.553.9216 --><!--This phone is a requirement to support existing Gomez monitor of SiteGenesis. Demadware customers can remove this.-->
+		
+	LandingTemplate: ${CCC.landingTemplate}
+	Campaign Code:${CCC.campaignCode}
+	Campaign ID:${getCurrentCampaignCode()}
+	ShowHeader?:${CCC.showHeader}
+	ShowFooter?:${CCC.showFooter}
+	ShowNav?:${CCC.showNav}
+	ShowOrderButton?:${CCC.showOrderButton}
+	Phone:${CCC.phone}
+	Auth:${pdict.AuthError}
+	
+	</pre>
+</iscomment>	
+</isif>
+<!-- code to drive the banner rotation effect -->
+
+<script type="text/javascript">
+		var rotCntObj = {
+			botA : 0,
+			ba : 0
+		}
+		function rotNav(inc, sel, i, speed) {
+			rotCntObj[i] += inc;
+			sel.hide(speed);
+			rotCntObj[i] >= sel.length ? rotCntObj[i] = 0 : "" ;
+			rotCntObj[i] <= -1 ? rotCntObj[i] = sel.length - 1 : "" ;
+			sel.eq(rotCntObj[i]).show(speed);
+			return false;
+		}
+
+		function makePop(thePop) {
+			var container = jQuery('#container');
+			$("#popupBG").css({
+			width: $(document).width() + "px",
+			height: $(document).height() + "px",
+			opacity: "0.6"
+			});
+			//center popup
+			$(thePop).css("top", (container.height() - $(thePop).height()) / 4);
+			$(thePop).css("left", (container.width() - $(thePop).width()) / 2);
+			$(thePop).fadeIn("slow", function() {
+			$("#popupBG").fadeIn("fast");
+			$(thePop).dropShadow({left: 6, top: 6, blur: 3, opacity: 0.6});
+			$(".dropShadow").css("zIndex", "49");
+			$(thePop).css("zIndex", "50");
+			});
+			return false;
+		}
+		function fadePop(thePop) {
+			$("#popupBG").fadeOut("fast");
+			$(".popup").fadeOut("fast");
+			$(".popup").removeShadow();
+		}
+
+	var numBanners;
+	var rotationTimer;
+	var currentAward;
+	var rotateaward;
+	function rotateBillboard(){
+		var lastBoard="banner"+numBanners;
+		if(jQuery(".active").attr("id")==lastBoard){
+			jQuery("#bannerNav a").eq(0).click()
+		} else {
+			jQuery(".activeBoard").next("a").click()
+		}
+		rotationTimer=setTimeout("rotateBillboard()",2700)
+	}
+	function billboard(){
+		numBanners=jQuery(".billboard").size();
+		if(numBanners>1){
+			var theLinks="";
+			for(var i=1; i<=numBanners; i++){
+				theLinks=theLinks+'<a href="#" rel="banner'+i+'"></a>'
+			}
+			theLinks=theLinks+'<br clear="all"/>';
+			jQuery("#bannerNav").html(theLinks);
+			jQuery("#bannerNav a").eq(0).addClass("activeBoard");
+			var navWidth=numBanners*26;
+			navWidth=navWidth+"px";
+			jQuery("#bannerNav").css({width:navWidth})
+		}
+		jQuery("#bannerNav a").click(function(){
+			var loadBanner="#"+jQuery(this).attr("rel");
+			if(jQuery(loadBanner).hasClass("active")){
+				return false
+			} else {
+				jQuery(".active").fadeOut("fast",function(){
+					jQuery(".active").removeClass("active");
+					jQuery(loadBanner).addClass("active").fadeIn("fast")
+				});
+				jQuery(".activeBoard").removeClass("activeBoard");
+				jQuery(this).addClass("activeBoard");
+				clearTimeout(rotationTimer);
+				
+				return false
+			}
+		});
+		rotationTimer=setTimeout("rotateBillboard()",2700)
+	}
+	function showAward(){
+		var rotationTime=6000;
+		var numOfAwards=jQuery(".anAward").length;
+		if(numOfAwards>0){
+			var activeAward=jQuery("li.activated");
+			var currentAward=jQuery("#award_ticker li").index(jQuery("li.activated"));
+			nextAward=currentAward+1;
+			if(nextAward==numOfAwards){
+				nextAward=0
+			}
+			jQuery(".anAward.activated div").eq(0).fadeOut(200,function(){
+				jQuery(this).next("div").fadeOut(200,function(){
+					jQuery(this).next("div").fadeOut(200,function(){
+						jQuery(".anAward.activated").removeClass("activated");
+						jQuery(".anAward").eq(nextAward).addClass("activated").children("div").eq(0).fadeIn(500,function(){
+							jQuery(this).next("div").fadeIn(500,function(){
+								jQuery(this).next("div").fadeIn(500,function(){
+									rotateaward=setTimeout("showAward()",rotationTime)
+								})
+							})
+						})
+					})
+				})
+			})
+		}
+	}
+	
+	jQuery(document).ready(function($){
+		billboard();
+		showAward();
+
+		//$("a").attr("title","Click Here");
+		$("#beforeAfterPics img").hide();
+		$("#beforeAfterPics img:first").show("fast");
+		$("#bottomA .rotatingAd").hide();
+		$("#bottomA .rotatingAd:first").show("fast");
+		//$("#bottomA .rotatingAd").css("opacity","0.6");
+		//$("#bottomA .rotatingAd object").css("backgroundColor","transparent");
+		setInterval("rotNav(1, $('#bottomA .rotatingAd'), 'botA')", 10000);
+		//$(".debug").html($(document).width() + "x" + $("#mainCtn").height());
+		$(".popup").hide();
+		$("#popupBG").hide();
+		
+		$('.popupLink').click(function(){
+			var href = this.href.split('${"#"}');
+			if( href.length<2 ) return false;
+			
+			var thePopup = $("${'#'}"+href[1]);
+			return makePop(thePopup);
+		});
+
+		/*-------------------------------------
+		 * Inject offers from campaign config
+		 * into radio buttons for DM LP's
+		 *-------------------------------------*/
+		if ("${CCC.voidKeyType}" == "Promo") {
+			var offers = "${CCC.sasOfferCodes.toString()}";
+			offers = offers.split(',');
+		    var buttons = $("input[name=pid]");
+		    
+		    var count = (buttons.length > offers.length) ? buttons.length : offers.length; 
+
+		    if (count) {
+				for (var i=0; i < count; i++) {
+					$(buttons).eq(i).attr("value",offers[i]);
+				}
+		    }
+		}
+		
+	});
+	
+</script>
+
+<isif condition="${pdict.AuthError}">
+<script type="text/javascript">
+jQuery(document).ready(function() {
+	if (!document.getElementById("promoSubmitErr") && document.getElementById("systemSelect")) {
+		var err = document.createElement("div");
+		jQuery(err).css({
+			position:"absolute",
+			top:"81px",
+			fontWeight:"bold",
+			fontSize:"12px",
+			color:"red",
+			marginLeft:"8px"
+		});
+		err.id = "promoSubmitErr";
+		err.innerHTML = "The code entered is not valid, please try again.";
+		jQuery("#systemSelect").after(err);
+	}
+});
+</script>
+</isif>
+
+</body>
+</html>

@@ -1,0 +1,473 @@
+/**
+* Demandware Script File
+* Guhty-Renker Omniture integration library functions:
+*
+* Usage: importScript( "analytics/omniture/libOmniture.ds" );
+*
+*
+*/
+
+importPackage( dw.order );
+importPackage( dw.system );
+importPackage( dw.util );
+importPackage( dw.value );
+importPackage( dw.net );
+var SCRIPT : String = "omniture/libOmniture.ds";
+
+//SET THE PROTOCALL
+var strprotocall : String;
+strprotocall = request.httpProtocol;
+
+
+
+/**
+ * OrderStatus helper containing convenience methods.
+ */
+function OmnitureHelper()
+{	
+	this.getOmnitureTrackingUrl = function() : String 
+	{
+
+		if (strprotocall == "https") {
+			return Site.getCurrent().getCustomPreferenceValue("omnitureTrackingUrlSSL");
+		}
+		else {
+			return Site.getCurrent().getCustomPreferenceValue("omnitureTrackingUrl");
+		}
+
+	};	
+}
+
+// Local instance of OOmnitureHelper
+var _omnitureHelper = new OmnitureHelper();
+
+/**
+ * Get the Omniture helper
+ */
+function getOmnitureHelper()
+{
+	return _omnitureHelper;
+}
+
+
+//************************************************************************************/
+// getSearchResultCount
+//  		
+//************************************************************************************/
+function getSearchResultCount(productPagingModel : ProductPagingModel) : String {
+	var searchCount = "";
+	if(!empty(productPagingModel)){
+		searchCount = productPagingModel.count;
+	}
+	else
+	{
+		searchCount = String(0);
+	}
+
+	return searchCount;
+}
+
+
+//************************************************************************************/
+// getPageNumber
+//  
+//************************************************************************************/
+function getPageNumber(productPagingModel : ProductPagingModel)  : String {
+	var pageNumber = "";
+	if (!empty(productPagingModel)){
+		pageNumber = (productPagingModel.currentPage + 1).toFixed();
+	} else {
+		pageNumber = String(0);
+	}
+	return pageNumber;
+}
+
+
+
+//************************************************************************************/
+// generatePageNumberString
+//  
+//************************************************************************************/
+function generatePageNumberString(searchResultCount : String, pageNumber : String, isViewAll : String)  : String {
+	var pageNumberString = "";
+	if (empty(searchResultCount) || searchResultCount == 0) {
+		pageNumberString = "No Results";
+	} else {
+		if (isViewAll) {
+			pageNumberString = "View All";
+		} else {
+			pageNumberString = "Page " + pageNumber;
+		}
+	}
+	return pageNumberString;
+}
+
+
+
+//************************************************************************************/
+// generatePagename
+//   		
+//************************************************************************************/
+function generatePagename(cgid : String, cid : String, fdid : String, q : String)  : String {
+	var spagename = "";
+	
+	if (cgid!=null) {
+		spagename+=cgid;
+	}
+	if (cid!=null) {
+		spagename+=cid;
+	}
+	if (fdid!=null) {
+		spagename+=fdid;
+	}
+	if (q!=null) {
+		spagename="Search Results";
+	}
+	
+	return spagename;
+}
+
+//************************************************************************************/
+// getProductIDFromDictionary
+//   		
+//************************************************************************************/
+function getProductIDFromDictionary(product : dw.catalog.Product)  : String {
+ 	
+	var productID = "";
+	if(product != null){
+		productID = product.getID();
+	}
+	return productID;
+}
+
+
+
+//************************************************************************************/
+// getCrossSellSourceID
+//   		
+//************************************************************************************/
+function getCrossSellSourceID(omnitureSourceProductID : String)  : String {
+ 
+	var sourceID = omnitureSourceProductID;
+	if(sourceID == null){
+	   sourceID = "";
+	}
+	return sourceID;
+}
+
+//************************************************************************************/
+// getOrderNumber
+//   		
+//************************************************************************************/
+function getOrderNumber(order : dw.order.Order)  : String {
+   var orderNumber = "";
+   if(order != null){
+      orderNumber = order.getOrderNo();
+   }
+  return orderNumber;
+}
+
+
+//************************************************************************************/
+// getOrderTotal
+//   		
+//************************************************************************************/
+function getOrderTotal(order : dw.order.Order)  : String {
+   var orderTotal = "";
+   if(order != null){
+      orderTotal = order.totalGrossPrice;
+   }
+  return orderTotal;
+}
+
+
+//************************************************************************************/
+// getCheckoutCategoryString
+//   		
+//************************************************************************************/
+function getCheckoutCategoryString(basket:dw.order.Basket)  : String {
+
+    var channelString = "";
+    if(basket != null){
+       var prodLineItems = basket.getProductLineItems().iterator();
+       while(prodLineItems.hasNext()){
+          var pLineItem = prodLineItems.next();
+          var product = pLineItem.getProduct();
+          if(product != null){
+             channelString = ";"+pLineItem.getCategoryID();
+          }
+       }   
+    
+    }
+  return channelString;
+}
+
+
+
+//************************************************************************************/
+// getPromotionsStringFromBasket
+//   		
+//************************************************************************************/
+function getPromotionsStringFromBasket(basket:dw.order.Basket)  : String {
+
+    var promoString = "";
+    if(basket != null){
+    
+       var priceAdjustments = basket.getPriceAdjustments();
+       var shipPriceAdjustments = basket.getShippingPriceAdjustments();
+       priceAdjustments.addAll(shipPriceAdjustments);
+       var priceAdjustmentsIt : Iterator = priceAdjustments.iterator();
+       while(priceAdjustmentsIt.hasNext()){
+          var priceAdjustment = priceAdjustmentsIt.next();
+          var promoID = priceAdjustment.getPromotionID();
+          if(promoString != null && (promoString.indexOf(promoID) == -1)){
+             promoString += promoID + ";";
+          }
+       }
+    }  
+    return promoString;    
+}
+
+
+//************************************************************************************/
+// getProductsStringFromURL
+//   		
+//************************************************************************************/
+function getProductsStringFromURL(pid : String)  : String {
+    var productString = "";
+    var product = null;
+    if(!empty(pid)){
+       product = dw.catalog.ProductMgr.getProduct(pid);
+       if(product != null){
+          productString = formatProductName(product);
+       }
+    }
+    
+    return productString;
+ }
+ 
+ 
+//************************************************************************************/
+// formatProductName
+//    		
+//************************************************************************************/
+function formatProductName(product : dw.catalog.Product)  : String {
+   var productNameString = "";
+   if(product != null){
+      productNameString = product.getID();
+   }
+   return productNameString;
+}
+
+
+//************************************************************************************/
+// get Category names
+//    		
+//************************************************************************************/
+function getCategoryName(cgid : String)  : String {
+	var categoryName = "";
+	if (cgid != null) {
+		var category : dw.catalog.Category = dw.catalog.CatalogMgr.getCategory(cgid);
+		while (category.ID != "root") {
+			//categoryName = category.ID;
+			categoryName = category.ID  + " : " + categoryName;
+			category = category.parent;
+		}
+		categoryName = categoryName.substring(0,categoryName.length-3);
+	}
+	return categoryName;
+}
+
+//************************************************************************************/
+// get Primary Category name
+//    		
+//************************************************************************************/
+function getPrimaryCategoryName(cgid : String)  : String {
+	var categoryName = "";
+	if (cgid != null) {
+		var category : dw.catalog.Category = dw.catalog.CatalogMgr.getCategory(cgid);
+		categoryName += cgid;
+		while (category.parent.ID != "root") {
+			category = category.parent;
+		}
+		categoryName = category.ID;
+	}
+	return categoryName;
+}
+
+//************************************************************************************/
+// get Path to the Product detail page
+//    		
+//************************************************************************************/
+function getPathToProduct(category : dw.catalog.Category)  : String {
+
+	var productPath = "";
+	if (category != null) {
+		while( category.parent != null )
+		{
+			if( category.online ) {
+				productPath = category.ID + " : " + productPath;
+			}
+			category = category.parent; 
+		}
+	}
+	return productPath;
+}
+
+//************************************************************************************/
+// get Primary Category for Product detail page
+//    		
+//************************************************************************************/
+function getPrimaryCategoryForProduct(category : dw.catalog.Category)  : String {
+
+	var categoryName = "";
+	if (category != null) {
+		while( category.parent != null )
+		{
+			if( category.online ) {
+				categoryName = category.ID;
+			}
+			category = category.parent; 
+		}
+	}
+	return categoryName;
+}
+
+
+//************************************************************************************/
+// get product compare list
+//    		
+//************************************************************************************/
+function getProductCompareList(compareList : dw.util.LinkedHashSet)  : String {
+
+	var productList = ";";
+	var productsItr : Iterator = compareList.iterator();
+	while (productsItr.hasNext()) {
+		productList = productList + productsItr.next() + ';';
+	}
+	return productList;
+}
+
+//************************************************************************************/
+// provideVariationData
+//   		
+//************************************************************************************/
+function provideVariationData(productLineItem : dw.order.ProductLineItem)   : String {
+	var variationData = "";
+	if (!empty(productLineItem)) {
+		var product = productLineItem.product;
+		var variationModel = product.variationModel;
+		var variationAttributes = variationModel.getProductVariationAttributes();
+		var levels = product.availabilityModel.getAvailabilityLevels(productLineItem.quantityValue);
+		var size = null;
+		var width = null;
+		var color = null;
+		for each (var attr in variationAttributes) {
+			if (attr.ID == "variantSize") {
+				size = variationModel.getSelectedValue(attr);
+			} else if (attr.ID == "variantWidth") {
+				width = variationModel.getSelectedValue(attr);
+			} else if (attr.ID == "variantColor") {
+				color = variationModel.getSelectedValue(attr);
+			}
+		}
+		variationData += "size=";
+		if (!empty(size) && !empty(size.displayValue)) {
+			variationData += size.displayValue;
+		}
+		variationData += ";width=";
+		if (!empty(width) && !empty(width.displayValue)) {
+			variationData += width.displayValue;
+		}
+		variationData += ";color=";
+		if (!empty(color) && !empty(color.displayValue)) {
+			variationData += color.displayValue;
+		}
+		variationData += ";pre-order=";
+		if (!empty(product.custom.preOrderDate) || (levels.preorder.value > 0 && (levels.preorder.value + levels.inStock.value == quantity))) {
+			variationData += "true";
+		} else {
+			variationData += "false";
+		}
+	}
+	return variationData;
+}
+
+
+
+//************************************************************************************/
+// getPageTitlePrefix
+//  
+//  		
+//************************************************************************************/
+function getPageTitlePrefix()  : String {
+
+	var pageTitlePrefix : String = dw.system.Site.getCurrent().getCustomPreferenceValue("SEODefaultPageTitlePrefix");
+
+	if(pageTitlePrefix == null){
+	   pageTitlePrefix = "";
+	}
+
+	return pageTitlePrefix;
+}
+
+
+//************************************************************************************/
+// getProductsStringFromOrder
+//  
+//  		
+//************************************************************************************/
+function getProductsStringFromOrder(order : dw.order.Order)  : String {
+	if (order!=null)
+	{
+		return getProductsStringFromLineItems(order.getProductLineItems().iterator(), true);
+	}
+}
+
+
+//************************************************************************************/
+// getProductsStringFromBasket
+//  
+//  		
+//************************************************************************************/
+function getProductsStringFromBasket(basket : dw.order.Basket)  : String {
+	if (basket!=null)
+	{
+		return getProductsStringFromLineItems(basket.getProductLineItems().iterator(), false);
+	}
+}
+
+
+//************************************************************************************/
+// getProductsStringFromLineItems
+//    		
+//************************************************************************************/
+function getProductsStringFromLineItems(prodLineItems : dw.util.Iterator, isOrder : Boolean)  : String {
+    
+    var productString = "";
+    if(prodLineItems != null){
+       while(prodLineItems.hasNext()){
+       
+          var pLineItem = prodLineItems.next();
+          var product = pLineItem.getProduct();
+          var prodLineItemCategory = pLineItem.getCategory();
+          var categoryName = "";
+          if(prodLineItemCategory != null){
+          	categoryName = prodLineItemCategory.getDisplayName();
+          }
+          if(product != null && product.isVariant()){
+            if(isOrder){
+               productString += categoryName + ";" + formatProductName(product.getMasterProduct()) + ";" + pLineItem.getQuantityValue() + ";" + pLineItem.getAdjustedPrice() + ",";  
+            }else{
+               productString += categoryName + ";" + formatProductName(product.getMasterProduct()) + ",";
+            }
+          }
+       } 
+    }
+    
+    if(productString != null){
+    	productString = productString.slice(0,productString.length);
+    }
+    
+    return productString; 
+}

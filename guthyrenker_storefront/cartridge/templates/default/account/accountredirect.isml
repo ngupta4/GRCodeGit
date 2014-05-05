@@ -1,0 +1,15 @@
+<isredirect location="${URLUtils.https('Home-Show')}"/>
+
+<iscomment>a page with a meta refresh in case the browser doesn't follow the redirect</iscomment>
+<!DOCTYPE html>
+<html>
+
+<head>
+<title>${Resource.msg('accountredirect.title','account',null)}</title>
+<meta http-equiv="refresh" content="2;url=${pdict.Location}">
+<meta http-equiv="Robots" content="noindex, nofollow" />
+</head>
+<body>
+	${Resource.msg('accountredirect.permanent','account',null)}  <a href="${URLUtils.https('Account-Show')}" title="${Resource.msg('accountredirect.accountlogin','account',null)}">${Resource.msg('accountredirect.accountlogin','account',null)}</a>
+</body>
+</html>

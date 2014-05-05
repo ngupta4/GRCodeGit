@@ -1,0 +1,20 @@
+importPackage(dw.system);
+function ProdConfig() {
+	return {
+		"security": {
+			"bvpasskey" :{
+				"passkey": "mc73k99lqpae8y2jmtm995vg6"
+			},
+			"default": {}
+		},
+		"services": {
+			"BazaarvoiceAPI" : {
+				"url" : "http://newreviews.proactiv.com/data/",
+				"timeout" : 10000,
+				"retries": 0,
+				"apiversion": 5.1,
+				"securityKey": "bvpasskey"
+			}
+		}
+	};
+};

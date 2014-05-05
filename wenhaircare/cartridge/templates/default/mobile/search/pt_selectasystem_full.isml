@@ -1,0 +1,20 @@
+<!DOCTYPE html> 
+<html> 
+<isinclude template="util/modules"/>
+<isinclude template="mobile/components/header/htmlhead"/></head> 
+<body> 
+<isslot id="m-sasheader" description="SAS page Header Top" context="global" />
+<isinclude template="mobile/common/mboxglobal"/>
+<div class="mboxDefault"></div>
+<script type="text/javascript">
+var g_mboxUCIcode = "${dwUCI}";
+mboxCreate("Mobile_SC_SAS_Tracker",'sasCampaign=' + '${CCC.campaignCode}','sasUCI=' + g_mboxUCIcode,'renderingExperience=' +"${session.custom.renderingGroup.ID}",'deviceGroup=' +"${session.custom.deviceCategory}",'device=' +"${session.custom.device}");
+</script>
+<div data-role="page" id="system" data-theme="d">
+	<isreplace/>
+		
+</div>
+<isinclude template="mobile/components/footer/footer"/>
+<isinclude template="mobile/common/google_analytics" />
+</body>
+</html>

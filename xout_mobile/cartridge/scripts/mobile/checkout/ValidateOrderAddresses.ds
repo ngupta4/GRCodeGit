@@ -1,0 +1,58 @@
+/**
+ * ValidateOrderAddresses.ds
+ *
+ * This script will check that the billing address and shipping address (if applicable)
+ * are set for the basket.
+ *
+ * @input  Basket : dw.order.Basket
+ */
+
+ importPackage( dw.system );
+ importPackage( dw.web );
+ importPackage( dw.value );
+ importPackage( dw.util );
+ importPackage( dw.order );  
+ importPackage( dw.catalog ); 
+
+/**
+ * Function: execute
+ *
+ * Main function of the validation script. 
+ */
+function execute( pdict : PipelineDictionary ) : Number
+{
+    // ===================================================
+	// =====     	PROCESS INPUT PARAMETERS 		 ===== 
+    // ===================================================
+
+	var basket : Basket = pdict.Basket;
+	
+    // ===================================================
+	// =====       VALIDATE SHIPPING ADDRESS         ===== 
+    // ===================================================
+	// check for product line items, if there are any check
+	// for the default shipping address
+	if (basket.getProductLineItems().length > 0)
+	{
+		if (basket.getDefaultShipment() == null)
+		{
+			return PIPELET_ERROR;
+		}
+	}
+	
+    // ===================================================
+	// =====       VALIDATE BILLING ADDRESS          ===== 
+    // ===================================================
+	// check for billing address
+	if(basket.getBillingAddress() == null)
+	{
+		return PIPELET_ERROR;
+	}
+    
+    // ===================================================
+	// =====            DONE                         =====
+    // ===================================================
+	
+    return PIPELET_NEXT;
+}
+

@@ -1,0 +1,110 @@
+<!--- TEMPLATENAME: upsellrecommendation.isml --->
+<isinclude template="util/modules"/>
+<div class="productSelection">
+<div class="sasProduct">
+<isloop items="${offersList}" var="product" status="offers_status">
+	<isscript>
+		importScript('getdepend:product/GetProductMap.ds');
+		importPackage(dw.util);
+		importPackage(dw.catalog);
+		
+		if( !empty(product) ) {
+			var upsellProductsMale : dw.util.ArrayList = getProductDetails(product.ID,"Gender","male");
+			var upsellProductsFemale : dw.util.ArrayList = getProductDetails(product.ID,"Gender","female");
+			var arrAssets : Array =product.custom.altAssetID.split(",");
+			var sizeChartFemale:String="";
+			var sizeChartMale:String="";
+			if(arrAssets.length>1)
+			{
+				sizeChartFemale=arrAssets[0];
+				sizeChartMale=arrAssets[1];
+			}	
+		}	  
+		
+		</isscript>
+ 		<isscript> 		
+			var index:Number=1;
+			var genderIndex:Number=1;
+			var titleIndex:Number=1;
+		</isscript>
+		
+		<isloop items="${upsellProductsMale}" var="offer" status="product_status">
+			<isset name="male" value="${offer.custom.Gender}" scope="page" />	
+		</isloop>
+		<isloop items="${upsellProductsFemale}" var="offer" status="product_status">
+			<isset name="female" value="${offer.custom.Gender}" scope="page" />	
+		</isloop>
+		<div class="genderSelection" id="system${offers_status.count}genderSelection">
+			<h2 class="pageTitle">${Resource.msg('gender.title','locale',null)}</h2>
+			<ul class="gender">
+			<isif condition="${null!=upsellProductsFemale && !empty(upsellProductsFemale)}">
+				<li id="system${offers_status.count}subsys${genderIndex.toFixed()}female" class="${upsellProductsFemale.get(0).ID} updatecartbtn female"><a href="javascript:void(0);" class="female"><isprint value="${female}" encoding="off" /></a></li>
+			<isscript>  genderIndex++; </isscript>
+			</isif>
+			<isif condition="${null!=upsellProductsMale && !empty(upsellProductsMale)}">
+				<li id="system${offers_status.count}subsys${genderIndex.toFixed()}male" class="${upsellProductsMale.get(0).ID} updatecartbtn male"><a href="javascript:void(0);" class="male" ><isprint value="${male}" encoding="off" /></a></li>				
+			</isif>
+			</ul>
+		</div>
+		
+		
+		<div ID="system${offers_status.count}genderBox" class="gender-size-box">
+		<h2 class="pageTitle">${Resource.msg('select.your.size.title','locale',null)}</h2>
+		<isif condition="${null!=upsellProductsFemale && !empty(upsellProductsFemale)}">
+		<div id="system${offers_status.count}subsys${index.toFixed()}Product"	class="${product.ID} system${offers_status.count}subsys${index.toFixed()}femaleProduct female genderSelectionProduct">
+			
+			<ul>
+				<isloop items="${upsellProductsFemale}" var="offer"	status="product_status">
+				<li	id="system${offers_status.count}subsys${index.toFixed()}Product${product_status.count}"	class="${offer.ID} ${offer.custom.size} updatecartbtn"><a
+					href="javascript:void(0);" class="${offer.custom.size}"> ${offer.custom.size} </a></li>
+				</isloop>
+			</ul>
+			
+			<isscript> index++; </isscript>
+		</div>
+		<isif condition="${!empty(sizeChartFemale)}">
+			<div  id="system${offers_status.count}genderSelectionfemalesizeTable" class="sizeChartTable female">
+					<iscontentasset aid="${sizeChartFemale}">
+		 	</div>
+		 	<iselse>
+		 	<div  id="system${offers_status.count}genderSelectionfemalesizeTable" class="sizeChartTable female">
+					<iscontentasset aid="${product.custom.altAssetID}">
+		 	</div>
+		 	
+		</isif>
+		
+		</isif>
+		<isif condition="${null!=upsellProductsMale && !empty(upsellProductsMale)}">
+
+		<div id="system${offers_status.count}subsys${index.toFixed()}Product" class="${product.ID} system${offers_status.count}subsys${index.toFixed()}maleProduct male genderSelectionProduct" style="display: none;">
+			
+			<ul>
+				<isloop items="${upsellProductsMale}" var="offer"
+					status="product_status">
+				<li	id="system${offers_status.count}subsys${index.toFixed()}Product${product_status.count}" class="${offer.ID} ${offer.custom.size} updatecartbtn">
+				
+					<a href="javascript:void(0);" class="${offer.custom.size}"> ${offer.custom.size} </a></li>
+				</isloop>
+			</ul>
+		</div>
+		
+			<isif condition="${!empty(sizeChartMale)}">
+				<div  id="system${offers_status.count}genderSelectionmalesizeTable" class="sizeChartTable male">
+						
+						<iscontentasset aid="${sizeChartMale}">
+			 	</div>
+			 <iselse>
+			 	<div  id="system${offers_status.count}genderSelectionmalesizeTable" class="sizeChartTable male">
+						<iscontentasset aid="${product.custom.altAssetID}">
+			 	</div>
+			</isif>
+		</isif>
+		</div>
+	
+</isloop>
+
+</div>
+<div class="bottomPanel">
+			<a href="#Step3" class="medOrngBtn" id="step3">${Resource.msg('next.select','locale',null)}</a>
+</div>
+</div>

@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html>
+<isinclude template="util/modules"/>
+
+<isscript>
+	importScript('guthyrenker_core:common/libUtils.ds');
+</isscript>
+
+<iscomment>This page must be cachable. It inherits the caching attributes by the decorated template.</iscomment>
+
+<head>
+	<isset name="noBackground" value="true" scope="page"/>
+	<iscomment>Include all important information globally , e.g. meta-data, link information, and javascript.</iscomment>
+	<isinclude template="components/header/htmlhead"/>
+
+	<link href="${URLUtils.staticURL('/css/checkout.css')}" type="text/css" rel="stylesheet" />
+	
+    <iscomment>Insert meta tag for the "Google-Verification" feature to verify that you are the owner of this site.</iscomment>
+    <isif condition="${'GoogleVerificationTag' in dw.system.Site.current.preferences.custom && dw.system.Site.current.preferences.custom.GoogleVerificationTag!=''}">
+        <meta name="google-site-verification" content="<isprint value="${dw.system.Site.current.preferences.custom.GoogleVerificationTag}"/>" />
+    </isif>
+</head>
+<body class="${bodyclass}">
+
+<iscomment>Cookies and Javascript enabled check</iscomment>
+<isinclude template="components/browsertoolscheck"/>
+
+<isset name="multiCheckout" value="${pdict.multiCheckout}" scope="page"/>
+<isif condition="${multiCheckout}">
+	<isset name="checkoutHeader" value="${Resource.msg('cart3steps.header','rendering',null)}" scope="page"/>
+	<isset name="checkoutClass" value="cart_multiple" scope="page"/>
+<iselse>	
+	<isset name="checkoutHeader" value="${Resource.msg('cart2steps.header','rendering',null)}" scope="page"/>
+	<isset name="checkoutClass" value="cart_single" scope="page"/>
+</isif>
+
+<div id="container" class="pt_storefront ${CCC.getContainerClasses()}">
+
+	<isinclude template="components/header/header"/>
+		
+	<div id="main">
+	
+	<div class="content_checkout">
+
+		<div class="offer_sidebar_left">
+			<div class="content_box_outer_pdp">
+				<div class="content_box_inner_sp">				
+						<isslot id="mp-cart-amazing-results" context="global" description="Cart Amazing Results Content Slot" />					
+				</div>
+			</div>
+			
+			<div class="content_box_outer_pdp">
+								
+				<isslot id="cart-phone-number" context="category" description="Cart Phone Number Content Slot" context-object="${category}"/>									
+				
+			</div>
+
+			
+
+		</div>
+		
+		<div class="checkout_right ${checkoutClass}">
+		
+			<div class="checkout_header">
+				<iscomment><h1>${checkoutHeader}</h1></iscomment>				
+			</div>
+		
+	  		<isreplace/>
+	  		
+	  		
+	  		<iscomment>Place upsell recommendations if checkout page 1
+	  		<div>
+				<isif condition="${!empty(pdict.showWideUpsells) && (pdict.showWideUpsells == true)}">
+					<isinclude url="${URLUtils.url('COCart-ShowRecommendation')}"/>
+				</isif>
+			</div>
+			</iscomment>
+			
+			<iscomment>
+	  		<div class="content_box_outer_pdp">
+				<div class="content_box_inner_sp">				
+					<div style="float:left;">
+						<img src="${URLUtils.staticURL('images/superUpsellImg.jpg')}" width="258" height="209" alt="Super upsell" />
+					</div>
+					<div style="height:217px">
+						<h2>Super Upsell</h2>
+						<p>?????????????????????????????</p>
+						<a class="btnAddToCart" href="/"></a>
+					</div>			
+				</div>
+			</div>
+			<div class="content_box_outer_pdp">
+				<div class="content_box_inner_sp">				
+					<div style="float:left;">
+						<img src="${URLUtils.staticURL('images/acceleratedResultsImg.jpg')}" width="258" height="209" alt="Accelerated Results" />
+					</div>
+					<div style="height:217px">
+						<h2>Accelerated Results</h2>
+						<p>Get the Malibu Pilates® PRO Accelerated Results package for just six additional monthly payments of $15 plus S&H charged to the card you provide today. Along with your Trial Offer you order today, the Malibu Pilates® PRO Accelerated Results package includes the Sculpting Handles and 2 DVD workouts: Malibu Core, Buns & Thighs Makeover and Malibu Total Body Workout, featuring super-sculpting signature Malibu Pilates® exercises. Get the Malibu Pilates® PRO Accelerated Results Package and Trial Offer today!</p>
+						<a class="btnAddToCart" href="/"></a>
+					</div>			
+				</div>
+			</div>
+			<div class="content_box_outer_pdp">
+				<div class="content_box_inner_sp">				
+					<div style="float:left;">
+						<img src="${URLUtils.staticURL('images/vitaImg.jpg')}" width="258" height="209" alt="Vitamins" />
+					</div>
+					<div style="height:217px">
+						<h2>Endless Youth Vitamins 30-day Free Intro</h2>
+						<p>Special FREE offer for new Malibu Pilates® customers. Uniquely
+formulated to enhance your Malibu Pilates routine and promote beautiful healthy skin, we recommend Endless Youth supplements. After your
+introductory FREE month you’ll receive a new 90-day supply of supplements replenished every three months and you’ll pay only $29.95 plus $2.99 shipping and handling per month. There is no minimum to buy, and you may cancel at any time. Endless Youth’s high quality ingredients include all of your daily nutrients to help keep your body strong and healthy. We
+recommend Endless Youth as a perfect complement to Malibu Pilates.</p>
+						<a class="btnAddToCart" href="/"></a>
+					</div>			
+				</div>
+				
+				
+				
+			</div>
+			</iscomment>
+		
+	  		
+	  		<div class="mcafee_logo">
+				<iscontentasset aid="cart-comfort-copy" />		
+			</div>		
+		
+		</div><!-- END: checkout_right -->
+
+	</div><!-- END: content_checkout -->
+  	
+	</div><!-- END: main -->
+	
+	<isif condition="${CCC.showFooter}">
+		<isinclude template="components/footer/footer"/>
+	</isif>
+	<isinclude template="common/google_analytics" />
+</div><!-- END: container -->
+
+<div id="popupBG">&nbsp;</div>
+<isif condition="${shouldShowDebugInfo()}">
+	<iscomment>this is the template rendering the checkout pages</iscomment>
+	<pre><!-- +1.888.553.9216 --><!--This phone is a requirement to support existing Gomez monitor of SiteGenesis. Demadware customers can remove this.-->
+		
+	LandingTemplate: ${CCC.landingTemplate}
+	Campaign Code:${CCC.campaignCode}
+	Campaign ID:${getCurrentCampaignCode()}
+	ShowHeader?:${CCC.showHeader}
+	ShowFooter?:${CCC.showFooter}
+	ShowNav?:${CCC.showNav}
+	ShowOrderButton?:${CCC.showOrderButton}
+	Phone:${CCC.phone}
+	
+	</pre>
+</isif>
+<script type="text/javascript">
+jQuery(document).ready(function () {
+	jQuery("a.details").bind("click", function(event){
+		event.preventDefault();
+		//jQuery("button.details").click();
+		return false;
+	});
+	
+});
+</script>
+</body>
+</html>

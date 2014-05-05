@@ -1,0 +1,112 @@
+
+
+<isscript>
+	importPackage(dw.object);
+	importPackage(dw.catalog);
+	
+	var CCC : Object = pdict.CurrentCampaignConfig;
+	var campaignCode : String = CCC.campaignCode;
+	
+	var showHeader : boolean = CCC.showHeader;
+	var showFooter : boolean = CCC.showFooter;
+	var showNav : boolean = CCC.showNav;
+	var showOrderButton : boolean = CCC.showOrderButton;
+	var sasPageFlag :boolean = pdict.CurrentSession.custom.omnSasPage;
+	var category : dw.catalog.Category = CCC.getCampaignCategory();
+	
+	var decoratorTemplate = (empty(pdict.CheckoutStep) || 'cartinformation' == pdict.CheckoutStep) ? 'content/checkout/pt_checkoutsingle' : 'content/checkout/pt_checkout';
+</isscript>
+ 
+    
+<isdecorate template="${decoratorTemplate}">
+
+
+
+<script type="text/javascript">
+	var sasPageFlag ='<isprint value="${sasPageFlag}"/>';
+</script>
+<!--- TEMPLATENAME: cart1.isml --->
+<isinclude template="util/modules" />
+	<isset name="multiCheckout" value="${false}" scope="pdict" />
+    <script type="text/javascript">
+        app.proactiv.resources.set("GRMSubmissionStatus", "PREPAYMENT")
+    </script>
+
+	<isif condition="${empty(pdict.CheckoutStep) || 'cartinformation' == pdict.CheckoutStep}">
+<isset name="pagetitle" value="${Resource.msg('shopping.cart.title','rendering',null)}" scope="pdict">
+		<iscomment>Disable checkout button for cart. We don't need it at this step</iscomment>
+		<isset name="EnableCheckout" value="${false}" scope="pdict" />
+
+		<div class="checkoutHeader">
+			<iscontentasset aid="cart-header-text-billing-details" />
+		</div>
+		
+		<ischeckoutbreadcrumbs type="simple" />
+		
+		<isinclude template="checkout/components/errors" />
+		
+		<isinclude template="checkout/steps/cartinformation" />
+		<iscomment>Media Pixel</iscomment>
+		<isslot id="MediaPixelForCart" context="global" description="MediaPixelForCart" />
+		<isset name="OmniturePage" value="SimpleCheckout" scope="pdict">
+	<iselseif condition="${'review' == pdict.CheckoutStep}">
+	 
+
+
+		<ischeckoutbreadcrumbs type="simple" step="review" paypal="${true}" />
+		
+		<isinclude template="checkout/steps/review" />
+		<isset name="OmniturePage" value="CheckoutInformation" scope="pdict">
+	<iselseif condition="${'confirmation' == pdict.CheckoutStep}">
+	 
+		<isset name="pagetitle" value="${Resource.msg('shopping.cnfirmation.title','rendering',null)}" scope="pdict">
+		<isif condition="${ ! pdict.IsPaypalPayment}">
+			<div class="checkoutHeader">
+				<iscontentasset aid="cart-header-text-billing-details" />
+			</div>
+		</isif>
+		<ischeckoutbreadcrumbs type="simple" step="confirm" paypal="${pdict.IsPaypalPayment}" />
+		 <script type="text/javascript">
+		   $('.breadcrumb .pageWrapper').remove();
+		</script>
+		<isinclude template="checkout/components/errors" />
+		
+		<isinclude template="checkout/steps/confirmation" />
+		<isset name="OmniturePage" value="COConfirmationAcq" scope="pdict">
+	<iselseif condition="${'cartempty' == pdict.CheckoutStep}">
+		  <iscomment>
+				<ischeckoutbreadcrumbs type="simple" step="" paypal="${pdict.IsPaypalPayment}" />
+		  </iscomment>
+
+		<isset name="ShowCartPhone" value="${false}" scope="pdict" />
+		<isinclude template="checkout/components/errors" />
+		
+		<isinclude template="checkout/steps/cartempty" />
+		<isset name="OmniturePage" value="SimpleCheckout" scope="pdict">
+	</isif>
+
+ 
+<isinclude template="common/mediaPixelsInit.isml"/>
+<isif condition="${empty(pdict.CheckoutStep) || 'cartinformation' == pdict.CheckoutStep}">
+  
+  <div class="mboxDefault"></div>
+  <script type="text/javascript">mboxCreate("sc_dw_cart");</script>
+
+<iselseif condition="${'review' == pdict.CheckoutStep}">
+
+  <iscomment>In Preview Page</iscomment>
+
+<iselseif condition="${'confirmation' == pdict.CheckoutStep}">
+
+<script>
+    dataLayer.push({'conversionValue' : subTotal});
+    dataLayer.push({'orderID' : orderID});
+	dataLayer.push({'event' : 'OrderConfirmationPage'});
+</script>
+
+	<div class="mboxDefault"></div>
+  <script type="text/javascript">mboxCreate('sc_dw_orderconfirm','productPurchasedId=' + offerArray.join(), 'orderTotal=' + subTotal, 'orderId=' + orderID);</script>
+</isif>
+
+</isdecorate>
+

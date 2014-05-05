@@ -1,0 +1,23 @@
+<!--- TEMPLATENAME: contactus-confirm.isml --->
+<isset name="CurrentFolder"  value="${dw.content.ContentMgr.getFolder('contact-us')}" scope="page"/>
+<isset name="CurrentContent" value="${dw.content.ContentMgr.getFolder('contact-us')}" scope="page"/>
+
+<isdecorate template="account/pt_account">
+<isinclude template="util/modules"/>
+<div class="mainWide">
+		<div id="content" class="contactUs">
+			<div class="leftsection">
+		        <h1>${Resource.msg('contactus.mb','locale',null)}</h1>
+		       	<div class="col2">
+		       		<p><strong>${Resource.msg('forms.contactus.messagesent','forms',null)}</strong><br />
+		       		${Resource.msg('forms.contactus.messagerequires','forms',null)}</p>
+		    	</div>
+		   	</div><!-- END: leftsection -->
+	
+		   	<div class="rightsection">
+				<iscomment><iscontentasset aid="contact-us-Livechat"/></iscomment>
+				<iscontentasset aid="guarantee-module-sidebar"/>
+			</div><!-- END: rightsection -->	    	
+		</div>
+</div> 
+</isdecorate>

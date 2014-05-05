@@ -1,0 +1,22 @@
+<!--- TEMPLATENAME: emailsubscribe.isml --->
+<isdecorate template="components/pt_unsubscribe">
+<isset name="OmniturePage" value="emailUnsubscribe" scope="pdict" />
+<isinclude template="util/modules"/>
+<div class="dialogContainer dialog unsubscribe" id="popup_optout-body">
+   <div class="unsubscribeMain">
+   <isif condition="${pdict.unsubscribeBrandID=='GR'}">
+   	<iscontentasset aid="unsubscribeGR"/>
+   <iselse>
+	<iscontentasset aid="unsubscribe"/>
+   </isif>
+	<p><strong>${Resource.msg('unsubscribe.address','rendering',null)} <em><isprint value="${pdict.unsubscribeEmail}" encoding="off"/></em></strong></p>
+	<form name="unsubform" id="unsubform" action="${URLUtils.httpContinue()}" method="POST">
+		<label for="subOption"><input type="radio" name="subOption" value="1" checked="checked" id="subOption" /><span>Please remove me from your email list</span></label>
+		<label for="subOption2"><input type="radio" name="subOption" value="2" id="subOption2"/><span>On second thought, please keep me on your email list</span></label>
+		<button name="optionSelected" type ="submit" value="Submit" class="input-button btnColorB aButton emailsubscribe">Submit</button>
+	</form>
+	
+	<div class="proactiv_popBkd"> </div>
+  </div>
+</div>
+</isdecorate>

@@ -1,0 +1,35 @@
+<!--- TEMPLATENAME: browsecelebrityspotlight.isml --->
+<isdecorate template="search/pt_browsecelebrityspotlightlanding">
+	<isinclude template="util/modules"/>
+	
+	<iscomment>create reporting event</iscomment>
+	<isinclude template="util/reporting/ReportSearch.isml"/>
+	
+	<isinclude template="content/content/htmlcontentasset" />
+	<isset name="OmniturePage" value="StaticContent" scope="pdict">
+	
+	
+	
+	<script type="text/javascript">
+	jQuery(function() {
+		jQuery('.toggler .link a').click(function() {
+			jQuery('.short, .full', '.toggler').toggle();
+
+			return false;
+		});
+		
+		jQuery('.c-video a').fancybox({
+			'width'				: 641,
+			'height'			: 500,
+			'autoScale'			: false,
+			'transitionIn'		: 'fade',
+			'transitionOut'		: 'fade',
+			'type'				: 'iframe',
+			'padding'			: 0,
+			'margin'            : 0,
+			'overlayColor'		: '#222',
+			'overlayOpacity'	: 0.5
+		});			
+	});		
+	</script>
+</isdecorate>

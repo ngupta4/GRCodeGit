@@ -1,0 +1,42 @@
+<div class="logincustomers">
+	
+	
+	<div class="returningcustomers">
+		<h3>${Resource.msg('logininclude.customersheader','account',null)}</h3>
+		<form action="${URLUtils.httpsContinue()}" method="post" id="${pdict.CurrentForms.login.htmlName}">
+			<iscomment>Login Unsuccessful Error Message</iscomment>
+			<isif condition="${!pdict.CurrentForms.login.loginsucceeded.valid}">
+				<div class="errorform">${Resource.msg('logininclude.loginerror','account',null)}</div>
+			</isif>
+			<fieldset>
+				<div class="formfield username">
+					<isinputfield formfield="${pdict.CurrentForms.login.username}" type="input" attribute1="requiredmesage" value1="${Resource.msg('profile.email.missingerror','forms',null)}"/>
+					<div class="clear"><!-- FLOAT CLEAR --></div>
+				</div>
+				<div class="formfield password">
+					<isinputfield formfield="${pdict.CurrentForms.login.password}" type="password" attribute1="requiredmesage" value1="${Resource.msg('profile.password.missingerror','forms',null)}"/>
+					<div class="clear"><!-- FLOAT CLEAR --></div>
+				</div> 				
+				<div class="formfield rememberme">
+					<isinputfield formfield="${pdict.CurrentForms.login.rememberme}" type="checkbox" attribute1="checked" value1="checked"/>
+				<div class="clear"><!-- FLOAT CLEAR --></div>
+				</div>	
+				<div class="clear"><!-- FLOAT CLEAR --></div>			
+				<div class="formactions">
+					<button class="blue-btn margin0" type="submit" value="${Resource.msg('global.login','locale',null)}" name="${pdict.CurrentForms.login.login.htmlName}">
+					<span class="blc"></span>
+					<span>${Resource.msg('button.signin','account',null)}</span></button>
+				<div class="clear"><!-- FLOAT CLEAR --></div>
+				</div><!-- END: returningcustomers_button -->
+				<div class="forgotpassword">
+					<a href="${URLUtils.https('Account-PasswordResetDialog')}" id="PasswordReset" title="${Resource.msg('logininclude.forgotpassword','account',null)}" target="_top">${Resource.msg('logininclude.forgotpassword','account',null)}</a>
+				</div><!-- END: forgotpassword -->
+				<input type="hidden" name="${pdict.CurrentForms.login.secureKeyHtmlName}" value="${pdict.CurrentForms.login.secureKeyValue}"/>
+			
+			
+			</fieldset>
+		</form>
+		<div class="clear"><!-- FLOAT CLEAR --></div>
+	</div><!-- END: returningcustomers -->
+	<div class="clear"><!-- FLOAT CLEAR --></div>
+</div><!-- END: logincustomers -->

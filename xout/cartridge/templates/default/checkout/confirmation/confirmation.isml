@@ -1,0 +1,135 @@
+<!--- TEMPLATENAME: confirmation.isml --->
+<iscache type="relative" minute="30" varyby="price_promotion"/>
+
+<iscomment>
+	This template is created before the 'wrapper' template, so we can set
+	up the template configuration for the 'pt_storefront' template right here.
+</iscomment>
+
+<isdecorate template="content/home/pt_storefront">
+	<isset name="noBackground" value="true" scope="page"/>
+	<link href="${URLUtils.staticURL('/css/checkout.css')}" type="text/css" rel="stylesheet" />
+	<isinclude template="util/modules"/>
+	<isinclude template="util/reporting/ReportOrder.isml"/>
+	<isscript>
+		importPackage(dw.object);
+		importPackage(dw.catalog);
+		
+		var CCC : Object = pdict.CurrentCampaignConfig;
+		var campaignCode : String = CCC.campaignCode;
+		
+		var showHeader : boolean = CCC.showHeader;
+		var showFooter : boolean = CCC.showFooter;
+		var showNav : boolean = CCC.showNav;
+		var showOrderButton : boolean = CCC.showOrderButton;
+		
+		var category : dw.catalog.Category = CCC.getCampaignCategory();
+		var cat : dw.catalog.Category = CatalogMgr.getCategory(campaignCode + '-confirmation');
+		
+	</isscript>
+
+<script language="javascript">
+	var orderPhone = '';
+</script>
+
+<iscomment>
+	This template visualizes the order confirmation page. Note, that it
+	uses a different decorator template.
+	It displays the order related information, such as the order number,
+	creation date, payment information, order totals and shipments of
+	the order.
+</iscomment>
+
+<div class="content_checkout">
+	<isslot id="confirmationleft" context="category" description="Confirmation Checkout Left" context-object="${cat}"/>
+	<isslot id="confirmationtop" context="category" description="Confirmation Checkout Top" context-object="${cat}"/>
+	<div class="checkout_right cart_single">
+	
+		<isif condition=${pdict.multiCheckout}>
+			<ischeckoutbreadcrumbs type="multi" step="3" />
+		<iselse>
+			<ischeckoutbreadcrumbs type="simple" step="2" />
+		</isif>
+		
+		<div class="content_box_outer_pdp">
+			<div class="content_box_inner_sp">
+				<isif condition="${(!empty(pdict.AVSError) && pdict.AVSError) ||!empty(pdict.PlaceOrderError)}">
+					<div class="errorform">${Resource.msg('global.unable.to.process','locale',null)}</div>
+				</isif>
+				
+				<div class="confirmation_header">
+					<h2>${Resource.msg('confirmation.thankyou','checkout',null)}</h2>
+					<p>${Resource.msg('orderdetails.ordernumber','rendering',null)} <isprint value="${pdict.Order.orderNo}"/></p>
+					<p>${Resource.msg('orderdetails.ship.text','rendering',null)}</p>
+					<p>${Resource.msgf('orderdetails.email.text','rendering',null)}</p> 
+				</div>
+				
+				<isorderdetails order="${pdict.Order}"/>
+				
+			</div>
+		</div>
+		
+		<div class="mcafee_logo">
+			<iscontentasset aid="cart-comfort-copy" />
+		</div>		
+		
+	</div><!-- END: checkout_right -->
+	
+</div><!-- END: content_checkout -->
+<script type="text/javascript">
+jQuery(document).ready(function () {
+	var imageUrl = jQuery('.navMenu').hide();
+	if (orderPhone == 'null') {
+		orderPhone = '${CCC.phone}';		 
+	}
+	jQuery('.orderPhone').html(orderPhone);	
+});
+</script>
+
+	<isset name="OmniturePage" value="COConfirmation" scope="pdict">
+
+<isscript>
+  var orderId = pdict.Order.orderNo;
+  var quantity = 0;
+  var iter = pdict.Order.getAllProductLineItems().iterator();
+  var brand = 'xout';
+  var kit = '';
+  var productName = '';
+  while (iter.hasNext()) {
+    var pli = iter.next();
+  	quantity = quantity + pli.quantityValue;
+  	brand = pli.product.brand;
+  	kit = pli.product.ID;
+  	productName= pli.product.name;
+  }
+  var revenue = 0;
+  if (pdict.Order.totalGrossPrice.available) {
+  	revenue = pdict.Order.totalGrossPrice.value;
+  } else {
+  	revenue = pdict.Order.getAdjustedMerchandizeTotalPrice(true).value + pdict.Order.giftCertificateTotalPrice.value + pdict.Order.totalTax + pdict.Order.shippingTotalPrice;
+  }
+  var primaryUCI : Cookie = request.httpCookies['uci'];
+</isscript>
+
+
+<isinclude template="common/mediaPixelsInit.isml"/>
+<isslot id="MediaPixelForConfirmation" context="global" description="MediaPixelForConfirmation" />
+
+
+<iscomment>SeeWhy code, if not allowed in campaign level, then don't display here</iscomment>
+<isif condition="${session.custom.suppCY == null || session.custom.suppCY == 0}">
+  <isif condition="${dw.system.Site.current.preferences.custom.seeWhyIncluded}">
+	<script type="text/javascript">
+		cy.USERID='${pdict.CurrentForms.personinf.contact.email.value}';
+		cy.CUSTOM1='${pdict.CurrentForms.personinf.billtoaddress.firstName.value}';
+		cy.CUSTOM2='${pdict.CurrentForms.personinf.billtoaddress.lastName.value}';
+		cy.CUSTOM3='${pdict.CurrentForms.cart.shipments[0].items[0].object.product.ID}';
+		cy.CUSTOM4='${addressObj.states.stateUS.htmlValue}';
+		cy.CUSTOM5="";
+		cy.FUNNELLEVEL='7';
+	</script>
+	
+	<isinclude template="seewhy/variables/setcheckoutvariables.isml"/>
+  </isif>
+</isif>
+</isdecorate>

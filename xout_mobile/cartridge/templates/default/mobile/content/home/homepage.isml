@@ -1,0 +1,65 @@
+<iscache status="off"/>
+<isdecorate template="mobile/pt_mobilehome">
+
+<a href="${URLUtils.http('mHowItWorks-Show')}" id="btnHIW">
+	<img src="${URLUtils.staticURL('/themes/xout_mobile/images/button/btn_HIW.png')}"/>
+</a>
+
+<a href="${URLUtils.http('mProof-Show')}" id="btnProof">
+	<img src="${URLUtils.staticURL('/themes/xout_mobile/images/button/btn_Proof.png')}"/>
+</a>
+
+<iscomment>
+	<isinclude template="mobile/search/simplesearch"/>
+</iscomment>
+<isslot id="mobile-home-main" description="Mobile homepage main banner" context="global" />
+
+<isscript>
+	// get root category of current site's navigation catalog
+	var siteCatalog = dw.catalog.CatalogMgr.getSiteCatalog();
+	var root = null;
+	if(siteCatalog!=null) {root = siteCatalog.getRoot();}
+
+	// get the "sale" category
+	var saleCategory = dw.catalog.CatalogMgr.getCategory('sale');
+	
+	var primaryUCI : Cookie = request.httpCookies['uci'];
+	var primaryUCIValue : String = empty(primaryUCI)?'':primaryUCI.value;
+	
+</isscript>
+
+<div class="categorymenu">
+	<isloop items="${root.getOnlineSubCategories()}" var="topCat">
+		<isif condition="${('showInMenu' in topCat.custom) && topCat.custom.showInMenu.valueOf()}">
+			<a href="${URLUtils.http('mSearch-Show', 'cgid', topCat.getID())}" class="linkbar"><span><isprint value="${topCat.getDisplayName()}"/></span></a>
+		</isif>
+	</isloop>
+	
+	<isif condition="${saleCategory != null && saleCategory.online}">
+		<a href="${URLUtils.http('mSearch-Show','cgid',saleCategory.ID)}" class="linkbar"><isprint value="${saleCategory.displayName}"/></a>
+	</isif>	
+	
+	<iscomment>
+		<a href="${URLUtils.http('mStores-Find')}" class="linkbar">${Resource.msg('global.storelocator','locale',null)}</a>
+	</iscomment>
+</div>
+
+<isscript>
+	var encodedStr : String = encodeURI("You hate zits. I hate zits. I suspect that’s why we’re friends. Have you heard about this new stuff called X Out™? It's from the same people who make Proactiv®, and apparently, it kills zits without all those annoying steps. I guess it actually works because there’s a bunch of videos here of kids who already used it and seem to have liked it.  Here are the videos: http://XOut.com/proof?rdir=sharemob.  Here's how much it is: http://XOut.com/order?rdir=sharemob");
+</isscript>
+
+<a href="${URLUtils.url('mOrder-ShowBuyNow')}" id="btnShare">
+	<img src="${URLUtils.staticURL('/themes/xout_mobile/images/button/btn_Share.png')}"/>
+</a>
+
+<isset name="OmniturePage" value="Homepage" scope="pdict">
+
+<!--  Media Geeks -->
+<script language="javascript" src="http://delivery.mgplatform.com/gr/m307landing.js"></script>
+<!--  End Media Geeks -->
+
+<!--  Atlas -->
+<script>document.write('<s'+'cript language="JavaScript" src="http://view.atdmt.com/jaction/grkout_XOUTUnsecureRTGMobile_1"></s'+'cript>')</script><noscript><iframe src="http://view.atdmt.com/iaction/grkout_XOUTUnsecureRTGMobile_1" width="1" height="1" frameborder="0" scrolling="No" marginheight="0" marginwidth="0" topmargin="0" leftmargin="0"></iframe></noscript>
+<!--  End Atlas -->
+
+</isdecorate>

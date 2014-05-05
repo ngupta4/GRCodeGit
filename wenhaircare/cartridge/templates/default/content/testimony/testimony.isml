@@ -1,0 +1,316 @@
+<isdecorate template="rendering/folder/pt_contentpage">
+<!--  decorator file -->
+<isinclude template="util/modules"/>
+<isset name="OmniturePage" value="testimony" scope="pdict">
+	<iscomment>content/testimony/testimony.isml</iscomment> 
+	
+<div class="mainWide">
+	<div id="testimonialbox" class="pageWidth formStyle1">
+			<iscontentasset aid="CATestimonialPromotion" />				
+			
+			<div class="formWraper">
+				<h2><isprint value="${Resource.msg('testimony.submit.header','rendering',null)}" encoding="off"/></h2>
+				<p class="promotion"><isprint value="${Resource.msg('testimony.submit.promotion','rendering',null)}" encoding="off"/></p>
+				<p class="note"><isprint value="${Resource.msg('testimony.submit.form.note','rendering',null)}" encoding="off"/></p>		
+				<div class="blockContent">
+					<isif condition="${!empty(pdict.UploadError)}">
+						<div class="error sizeErr">
+							<isprint value="${pdict.UploadError}" />
+						</div>
+					</isif>
+					<div class="note">
+						<isprint value="${Resource.msg('testimony.submit.form.anotation','rendering',null)}" encoding="off"/>
+					</div>
+					<form class="testimonial-form" action="${URLUtils.url('Testimony-Send')}" 
+							enctype="multipart/form-data" method="post" id="testimonialForm" >
+					
+						<div class="form-column">
+							<div class="personal-details">						
+								<div class="formfield">
+									<div class="first-name">
+										<isinputfield formfield="${pdict.CurrentForms.testimonials.firstname}" type="input" 
+														attribute1="requiredmesage" 
+														value1="${Resource.msg('address.firstname.missingerror','forms',null)}"/>
+									</div>
+									<div class="last-name">
+										<isinputfield formfield="${pdict.CurrentForms.testimonials.lastname}" type="input" 
+														attribute1="requiredmesage" 
+														value1="${Resource.msg('address.lastname.missingerror','forms',null)}"/>
+									</div>
+								</div>		
+								<div class="addressGroup">
+									<div class="mailAddress">						
+										<div class="formfield">
+												<isinputfield formfield="${pdict.CurrentForms.testimonials.email}" type="input" 
+															attribute1="requiredmesage" 
+															value1="${Resource.msg('forms.login.missing','forms',null)}"/>
+										</div>								
+										<div class="formfield verifyMail">
+												<isinputfield formfield="${pdict.CurrentForms.testimonials.retypeemail}" type="input" 
+											    			attribute1="requiredmesage" 
+											    			value1="${Resource.msg('forms.testimony.email.match','forms',null)}"
+											                attribute2="equalTo" 
+											                value2="${'#'+pdict.CurrentForms.testimonials.email.htmlName}"
+											                attribute3="equaltomessage" 
+											                value3="${Resource.msg('forms.testimony.email.match', 'forms', null)}"/>
+										</div>
+									</div>
+									<div class="generalAddress">
+										<div class="formfield">
+											<div>
+												<isinputfield formfield="${pdict.CurrentForms.testimonials.address1}" type="input" 
+															attribute1="requiredmesage" 
+															value1="${Resource.msg('address.addressline1.missingerror','forms',null)}"/>
+											</div>
+										</div>
+										<div class="formfield">
+											<div>
+												<isinputfield formfield="${pdict.CurrentForms.testimonials.address2}" type="input" />
+											</div>
+										</div>
+									</div>
+								</div>
+								<div class="formfield citystatezip">
+									<div class="city">
+										<isinputfield formfield="${pdict.CurrentForms.testimonials.city}" type="input" 
+											attribute1="requiredmesage" 
+											value1="${Resource.msg('address.city.missingerror','forms',null)}"/></div>
+									<div class="state-outer">
+										<isinputfield formfield="${pdict.CurrentForms.testimonials.state}" type="select" 
+											attribute1="requiredmesage" 
+											value1="${Resource.msg('address.state.missingerror','forms',null)}"/></div>
+									<div class="zip-outer">
+										<isinputfield formfield="${pdict.CurrentForms.testimonials.zip}" type="input" 
+											attribute1="requiredmesage" 
+											value1="${Resource.msg('address.zip.missingerror','forms',null)}"/>
+									</div>
+								</div>							
+								
+								<div class="formfield dayphone">
+									<label class="label">${Resource.msg('createaccount.dayphone','account',null)}
+									<span class="requiredindicator">*</span></label>
+									<div>
+					                <input type="text" id="phone1" class="small" maxlength="3" />
+					                <input type="text" id="phone2" class="small" maxlength="3"/>
+					                <input type="text" id="phone3" class="numberbox" maxlength="4"/>
+					                <isinputfield formfield="${pdict.CurrentForms.testimonials.phone}" type="hidden" id="phoneNo"/>
+					                </div>
+					                <div class="clear"></div>
+					                <div class="phoneErrorMsg">Enter valid value</div>
+					                  <!-- FOAT CLEAR -->
+						           	<!-- isinputfield formfield="${pdict.CurrentForms.testimonials.phone}" type="input" 
+											attribute1="requiredmesage" 
+											value1="${Resource.msg('address.phone.missing','forms',null)}"/-->
+						        </div>						
+								<div class="formfield ageGender">
+									<div class="age">
+										<isinputfield formfield="${pdict.CurrentForms.testimonials.age}" type="input" 
+										attribute1="requiredmesage" 
+										value1="${Resource.msg('forms.testimony.require.age','forms',null)}"/>
+										<div class="ageErrorMsg">Enter valid value</div>
+										</div>
+										
+									<div class="gender">
+										<isinputfield formfield="${pdict.CurrentForms.testimonials.gender}" type="select" 
+											attribute1="requiredmesage" 
+											value1="${Resource.msg('forms.testimony.require','forms',null)}"/>
+									</div>
+								</div>							
+								<div class="formfield" id="w-auto">
+									<isinputfield formfield="${pdict.CurrentForms.testimonials.story}" type="textarea" 
+										attribute1="requiredmesage" value1="${Resource.msg('forms.testimony.require.yourstory','forms',null)}"/>
+									<span class="semi-note"><isprint value="${Resource.msg('testimony.submit.storylength.note','rendering',null)}" encoding="off"/></span>
+								</div>	
+							</div><!-- //eo personal-details -->
+							
+							<div class="photo-details">					
+								<div class="disclaimer">
+									<div class="disclaimer-heading"><isprint value="${Resource.msg('testimony.submit.form.upload.before.after.header','rendering',null)}" 
+										encoding="off"/></div>
+									<isprint value="${Resource.msg('testimony.submit.disclaimer','rendering',null)}" encoding="off"/>
+								</div>							
+								<div class="beforeGroup">
+									<div class="formfield">
+										<label class="label">
+											<isprint value="${Resource.msg('testimony.submit.form.upload.before.note','rendering',null)}" 
+												encoding="off"/>
+										</label>
+										<div>
+											<input type="file" name="${pdict.CurrentForms.testimonials.before1.htmlName}" 
+												attribute1="requiredmesage" 
+												value1="${Resource.msg('forms.testimony.require','forms',null)}"/>
+										</div>
+										<div>
+											<input type="file" name="${pdict.CurrentForms.testimonials.before2.htmlName}"/>
+										</div>
+										<div>
+											<input type="file" name="${pdict.CurrentForms.testimonials.before3.htmlName}"/>
+										</div>
+										<div class="note"><isprint value="${Resource.msg('testimony.submit.image.note','rendering',null)}" 
+												encoding="off"/></div>
+									</div>
+								</div>						
+								<div class="afterGroup">
+									<div class="formfield">
+										<label class="label">
+											<isprint value="${Resource.msg('testimony.submit.form.upload.after.atleast.note','rendering',null)}" 
+												encoding="off"/><br/>
+												<span class="smalltext"><isprint value="${Resource.msg('testimony.submit.form.upload.after.atleast.notesmall','rendering',null)}" 
+												encoding="off"/></span>
+										</label>
+										<div>
+											<input type="file" name="${pdict.CurrentForms.testimonials.after1.htmlName}" 
+												attribute1="requiredmesage" 
+												value1="${Resource.msg('forms.testimony.require','forms',null)}"/>
+										</div>
+										<div>
+											<input type="file" name="${pdict.CurrentForms.testimonials.after2.htmlName}"/>
+										</div>
+										<div>
+											<input type="file" name="${pdict.CurrentForms.testimonials.after3.htmlName}"/>
+										</div>
+										<div class="note"><isprint value="${Resource.msg('testimony.submit.image.note','rendering',null)}" 
+												encoding="off"/></div>
+									</div>
+								</div>
+								<div class="formactions">
+									<button class="grnBtnBig" onclick="beforeSubmit()" name="${pdict.CurrentForms.testimonials.submit.htmlName}">SUBMIT YOUR STORY</button>
+								</div>	
+							</div>
+						</div><!-- //eo form-column -->										
+					</form>		
+				</div>
+		</div>
+		<iscomment><isslot id="right-bottom-orderCta" context="category" description="Right Bottom Order Module" context-object="${dw.catalog.CatalogMgr.getCategory(pdict.Content.custom.categoryName)}"/></iscomment>				
+	</div>
+</div>
+<!--  mainWide: End -->
+<iscomment>Media Pixel
+     <isslot id="MediaPixelForContentPages" context="global" description="MediaPixelForContentPages" />
+</iscomment>
+<script type="text/javascript"><!--
+//populating phone no. on load it available
+
+function beforeSubmit(){
+	var textVal1 = jQuery("#phone1").val();
+	var textVal2 = jQuery("#phone2").val();
+	var textVal3 = jQuery("#phone3").val();
+	var textval = textVal1+textVal2+textVal3;
+	jQuery("input[id=phoneNo]").val(textval);
+
+	if(isNaN(jQuery("input[name=${pdict.CurrentForms.testimonials.age.htmlName}]").val())){
+		$('.ageErrorMsg').show();
+		if(event.preventDefault){ 
+			event.preventDefault();
+		}else{
+			event.returnValue = false;
+		}
+	};
+
+	if(isNaN(jQuery("input[name=${pdict.CurrentForms.testimonials.phone.htmlName}]").val()) || jQuery("input[name=${pdict.CurrentForms.testimonials.phone.htmlName}]").val().length != 10){
+		$('.phoneErrorMsg').show();
+		if(event.preventDefault){ 
+			event.preventDefault();
+		}else{
+			event.returnValue = false;
+		}
+	};
+}
+
+
+jQuery(document).ready(function() {
+	$("#dwfrm_testimonials_story").keyup(function () {
+	miniLength = $('#dwfrm_testimonials_story').val().length;
+	if(miniLength < 50 ){
+		$('.semi-note').removeClass('errormessage');	
+		$('#dwfrm_testimonials_story').removeClass('errormessage');
+			
+	}
+ 	});
+	
+	$("#dwfrm_testimonials_story").blur(function() {
+		if(miniLength < 50 ){
+			$('#dwfrm_testimonials_story').addClass('errormessage');
+			$('.semi-note').addClass('errormessage');			
+		}
+		});
+	
+	$("#dwfrm_testimonials_story").blur(function() {
+		if(miniLength > 49 ){
+			$('#dwfrm_testimonials_story').removeClass('errormessage');
+			$('.semi-note').removeClass('errormessage');			
+		}
+		});
+	if($("#phoneNo").val()!= null){
+		var acc1= $("#phoneNo").val().substr(0,3);
+		var acc2= $("#phoneNo").val().substr(3,3);
+		var acc3= $("#phoneNo").val().substr(6,4);
+		jQuery("#phone1").val(acc1);
+		jQuery("#phone2").val(acc2);
+		jQuery("#phone3").val(acc3);
+	}
+
+	$("#eveningphone1,#eveningphone2,#eveningphone3,#phone1,#phone2,#phone3").keyup(function () {
+	    var maxLength = $(this).attr('maxlength');
+		if($(this).val().length == maxLength) {
+	        $(this).next().focus();
+	    }
+	});
+
+	$(jQuery("input[name=${pdict.CurrentForms.testimonials.age.htmlName}]")).focus(function () {
+		$('.ageErrorMsg').hide();
+	});
+
+	$(jQuery("input[name=${pdict.CurrentForms.testimonials.phone.htmlName}]")).focus(function () {
+		$('.phoneErrorMsg').hide();
+	});
+
+	
+	
+	
+	$("#testimonialForm").submit(function(event){
+		miniLength = $('#dwfrm_testimonials_story').val().length;
+		if(miniLength < 50 ){
+			$('#dwfrm_testimonials_story').addClass('errormessage');
+			$('.semi-note').addClass('errormessage');
+			if(event.preventDefault){ 
+				event.preventDefault();
+			}else{
+				event.returnValue = false;
+			}
+				
+		}
+		
+		//copy the values to form element
+		var textVal1 = jQuery("#phone1").val();
+		var textVal2 = jQuery("#phone2").val();
+		var textVal3 = jQuery("#phone3").val();
+		var textval = textVal1+textVal2+textVal3;
+		jQuery("input[id=phoneNo]").val(textval);
+
+		if(isNaN(jQuery("input[name=${pdict.CurrentForms.testimonials.age.htmlName}]").val())){
+			$('.ageErrorMsg').show();
+			if(event.preventDefault){ 
+				event.preventDefault();
+			}else{
+				event.returnValue = false;
+			}
+		};
+
+		if(isNaN(jQuery("input[name=${pdict.CurrentForms.testimonials.phone.htmlName}]").val()) || jQuery("input[name=${pdict.CurrentForms.testimonials.phone.htmlName}]").val().length != 10){
+			$('.phoneErrorMsg').show();
+			if(event.preventDefault){ 
+				event.preventDefault();
+			}else{
+				event.returnValue = false;
+			}
+		};
+	});
+});
+//--></script>
+</isdecorate>
+<script type="text/javascript">
+<!--
+jQuery('li.before-afterNav').addClass('active');
+//-->
+</script>

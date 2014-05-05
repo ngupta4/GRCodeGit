@@ -1,0 +1,18 @@
+<iscomment>Please refer header.isml from proactiv for controlling retention header. as some portion is deleted from this file to control ACquistion only header issues.</iscomment>
+<iscomment>For AB testing: Showing Old footer</iscomment>
+	<isif condition="${'showOrderButton' in pdict && pdict.showOrderButton}">
+		<isset name="showOrderButton" value="${pdict.showOrderButton}" scope="page"/>
+	<iselse>
+		 <isset name="showOrderButton" value="${false}" scope="page"/>
+	</isif>
+
+
+	<isif condition="${'donotShowNavMenu' in pdict && !empty(pdict.donotShowNavMenu)}">
+		<isset name="donotShowNavMenu" value="${pdict.donotShowNavMenu}" scope="page"/>
+	<iselse>
+		 <isset name="donotShowNavMenu" value="${true}" scope="page"/>
+	</isif>
+	
+	 <isinclude url="${URLUtils.url('Home-HeaderOld','showOrderButton',showOrderButton,'donotShowNavMenu',donotShowNavMenu)}"/>
+	
+	

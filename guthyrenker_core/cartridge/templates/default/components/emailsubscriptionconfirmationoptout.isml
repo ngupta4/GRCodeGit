@@ -1,0 +1,31 @@
+<!--- TEMPLATENAME: emailsubscriptionconfirmation.isml --->
+<isdecorate template="components/pt_unsubscribe">
+<isset name="OmniturePage" value="emailUnsubscribeConfirmation" scope="pdict" />
+<isinclude template="util/modules"/>
+<div class="dialogContainer dialog unsubscribe" id="popup_optout-body">
+	<div class="unsubscribeMain">
+	<isif condition="${pdict.unsubscribeBrandID=='GR'}">
+   	<iscontentasset aid="unsubscribeGR"/>
+   <iselse>
+	<iscontentasset aid="unsubscribe"/>
+   </isif>
+	<div class="unsubscribeThankYou"><isif condition ="${pdict.status == '200'}">
+	<div class="unsubscribeEmail">
+	
+	<isif condition="${null!=pdict.CurrentForms.emailsubscribe.optout.email.value}">
+	<p>${Resource.msg('customizekit.popupdesc.email','account',null)}
+		<a href="mailto:${pdict.CurrentForms.emailsubscribe.optout.email.htmlValue}">
+			<isprint value="${pdict.CurrentForms.emailsubscribe.optout.email.htmlValue}" encoding="off"/>
+		</a>
+	</p>
+	</isif>
+	</div>
+	
+	<iscontentasset aid="Email-OptOutSurvey"/>
+	
+	<iselse>
+		 <isinclude template="util/errordisplay"/>
+	</isif></div>
+	</div>
+</div>
+</isdecorate>

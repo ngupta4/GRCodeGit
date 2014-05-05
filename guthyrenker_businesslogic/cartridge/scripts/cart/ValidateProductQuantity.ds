@@ -1,0 +1,38 @@
+/**
+* This script validates the maximum qty for a product added in product line items.
+*
+*   @input basket : dw.order.Basket
+*	@input product : dw.catalog.Product
+*	@input quantityToAdd : String
+*   @output isQuantityLimitViolated : Boolean
+*
+*/
+importPackage( dw.system );
+
+function execute( args : PipelineDictionary ) : Number
+{
+	Logger.info("Entering ValidateProductQuantity.ds ");
+	args.isQuantityLimitViolated = false;
+	
+	if(null != args.basket.getProductLineItems()){
+	
+		for each(var product_li:dw.order.ProductLineItem in args.basket.getProductLineItems())
+		{		
+			if(product_li.getProductID()== args.product.ID)
+			{
+				if(args.quantityToAdd!=null)
+				{
+					if(product_li.quantity.value + Number(args.quantityToAdd) > args.product.custom.maxQty)
+					{
+					 	args.isQuantityLimitViolated = true;
+					 	Logger.debug("Is Quantity Limit Violated? " + args.isQuantityLimitViolated);
+					 	return PIPELET_ERROR;
+					}
+				}
+			}
+		}
+	
+	}
+    Logger.info("Exiting ValidateProductQuantity.ds ");
+    return PIPELET_NEXT;
+}

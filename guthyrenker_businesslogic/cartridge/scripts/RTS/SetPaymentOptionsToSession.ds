@@ -1,0 +1,40 @@
+/**
+ * Gets only payment methods that have cartID value as in current Campaign Configuration
+ * 
+ * @input payoption :dw.util.ArrayList
+ */
+
+
+importPackage( dw.system );
+importPackage( dw.util );
+importPackage( dw.order );
+importPackage( dw.web );
+importPackage( dw.order );
+
+importPackage( dw.system );
+
+function execute( args : PipelineDictionary ) : Number
+{
+
+    var showPP : Boolean =false; var showPL : Boolean =false; var showCC : Boolean =false;var showEC : Boolean =false;
+	var paymentOption : XML = args.payoption;
+	
+	if(null!=paymentOption && !empty(paymentOption))
+	{
+		for each(payOpt in paymentOption){							
+				if(payOpt == Resource.msg('rtsService.paypal.name','configuration',null)){					
+					showPP = true;
+				}else if(payOpt == Resource.msg('rtsService.paylater.name','configuration',null)){					
+					showPL = true;
+				}else if(payOpt == Resource.msg('rtsService.echeck.name','configuration',null)){					
+					showEC = true;
+				}else if(payOpt == Resource.msg('rtsService.creditCard.name','configuration',null)){					
+					showCC = true;
+				}
+			}
+		
+	}
+	
+   session.custom.RTSPayMethod = showCC+":"+showPP+":"+showPL+":"+showEC;	
+	return PIPELET_NEXT;
+}

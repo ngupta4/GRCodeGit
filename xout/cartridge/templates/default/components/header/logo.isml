@@ -1,0 +1,22 @@
+<!--- TEMPLATENAME: logo.isml --->
+<isscript>
+	var enableCompanyLogoLink : boolean = true;
+	if('enableCompanyLogoLink' in dw.system.Site.getCurrent().preferences.custom){
+		enableCompanyLogoLink = dw.system.Site.getCurrent().preferences.custom.enableCompanyLogoLink;
+	}
+</isscript>
+
+<isif condition="${!empty(showHeader) && showHeader}">
+	<isif condition=${!empty(enableCompanyLogoLink) && enableCompanyLogoLink}>
+  		<a href="${URLUtils.httpHome()}" class="logo seo-text"><h2>${Resource.msg('sitename.text','rendering',null)}</h2></a>
+  	<iselse>
+  		<div class="logo seo-text"><h2>${Resource.msg('sitename.text','rendering',null)}</h2></div>
+  	</isif>
+  	<isslot id="header-order-now" context="category" description="Order Now Content Slot" context-object="${category}"/>
+
+<iselse/>
+
+	<h2 class="logo seo-text" href="${URLUtils.httpHome()}">${Resource.msg('sitename.text','rendering',null)}</h2>  
+	<div id="callnumber"><strong>${Resource.msg('questions.text','rendering',null)}</strong> ${Resource.msg('questions2.text','rendering',null)} ${CCC.phone}</div>
+
+</isif>

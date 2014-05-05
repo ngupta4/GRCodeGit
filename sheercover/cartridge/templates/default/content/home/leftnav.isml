@@ -1,0 +1,13 @@
+<!--- TEMPLATENAME: leftnav.isml --->
+<isset name="rootCategory" value="${dw.catalog.CatalogMgr.getCategory(Resource.msg('search.retention','search',null))}" scope="page"/>
+	<div class="leftNavCatalog">
+	<ul>
+				<isloop items="${rootCategory.getOnlineSubCategories()}" var="subCat">
+				
+				<li <isif condition="${pdict.CurrentHttpParameterMap.cgid.value==subCat.getID()}">class="active" <iselse/> class="nonActive"</isif>  >	
+					<a href="${URLUtils.url('Search-Show','cgid', subCat.getID())}"><isprint value="${subCat.getDisplayName()}" encoding="off"/></a></li>	
+				
+				
+				</isloop>
+		</ul>
+		</div>

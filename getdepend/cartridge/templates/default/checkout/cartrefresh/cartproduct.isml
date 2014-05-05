@@ -1,0 +1,89 @@
+<!--- TEMPLATENAME: cartproduct.isml --->
+<isscript>
+/* Used to access getSortedShipmentLineItems() call. */
+importScript('guthyrenker_businesslogic:checkout/Utils.ds');
+</isscript>
+
+<iscomment>Set the flag specifuing that we can show Upsells section</iscomment>
+<isset name="ShowUpsells" value="${true}" scope="pdict" />
+<isset name="showVitamin" value="true" scope="page">
+<div class="ch_selected_products" summary="Cart">
+
+	<iscomment><iscontentasset aid="60-day-money-back-guarantee"/></iscomment>
+	<iscomment>LOOP TO SEPARATE DIFFERENT SHIPMENTS ex: Gift Registry Shipments Etc.</iscomment>
+	<isloop items="${pdict.CurrentForms.cart.shipments}" var="Shipment" status="loopstate">
+		<iscomment>Put core offer first in new array</iscomment>						
+		<isloop items="${Shipment.items}" alias="FormLi" status="loopstate">
+			<isset name="lineItem" value="${FormLi.object}" scope="page"/>
+			<isscript>
+				var isInWishList = false;
+			</isscript>
+			
+			<iscomment>Product Area!</iscomment>
+			<isif condition="${lineItem.bonusDiscountLineItem == null}">
+			<!-- Product item -->
+			<isif condition="${lineItem.product.custom.coreItem}">
+			<isset name="coreProd" value="${lineItem.product}" scope="page" />			
+				<div class="tablerow"<isif condition="${lineItem.product.custom.coreItem}"> id="coreOffer"</isif>>
+					<div class="imagecolumn ${lineItem.product.ID}">
+						<iscomment>Try to get product image (of type "small")</iscomment>
+	
+	
+		     <isscript>
+            var varProd1 : Product= dw.catalog.ProductMgr.getProduct(lineItem.product.ID);
+			var downsellrecommIter1 : dw.util.Iterator = varProd1.getRecommendations(10).iterator();
+			var hasDownsellProd1 : Boolean = false;
+			var downsellRecommendation1 : Recommendation;
+			var downsellProduct1 : Product;
+			while (downsellrecommIter1.hasNext()){
+				hasDownsellProd1=true;
+				downsellRecommendation1  = downsellRecommendation1.next();
+			}
+			</isscript>
+		<isif condition="${hasDownsellProd1}">
+			<isset name="productImage" value="${lineItem.product.getImage('medium', 0)}" scope="page" /> 
+	    <iselse>
+	    	<isif condition="${lineItem.product.custom.Gender=='female'}">
+	    		<isset name="productImage" value="${lineItem.product.getImage('medium', 0)}" scope="page" /> 
+			<iselse>
+	    			<isset name="productImage" value="${lineItem.product.getImage('medium', 1)}" scope="page" />
+	    	</isif>
+	    </isif>
+
+				<isif condition="${!empty(productImage)}">
+							<img src="${productImage.url}" alt="${productImage.alt}" title='<isprint value="${productImage.title}" encoding="off" />' />
+						<iselse>
+							<img src="${URLUtils.staticURL('/images/panelc/noimagemedium.png')}" alt="${lineItem.productName}" title="${lineItem.productName}"/>
+						</isif>
+						
+						<isif condition="${lineItem.bonusProductLineItem}">
+							<span class="bonusitem">${Resource.msg('global.bonus', 'locale', null)}</span>
+						</isif>
+					</div>
+					<div class="detailscolumn herosection">
+						<iscomment>Call module to render product</iscomment>
+						
+						<h4>${Resource.msg('you.selected','locale',null)}</h4>
+						
+						<div class="name">
+							<isprint value="${lineItem.product.name}"  encoding="off" />
+						</div><!-- END: name -->
+						<div class="shortDescription">
+							<isprint value="${lineItem.product.custom.orderButtonCallout}" encoding="off"/>
+							
+						</div><!-- END: shortDescription -->
+					
+					</div>
+					
+				</div>
+			<iselse>
+				<isset name="showVitamin" value="false" scope="page">
+			</isif>
+			
+			<!-- END product item -->
+					
+			</isif>
+		</isloop>
+	</isloop>
+</div>	
+	

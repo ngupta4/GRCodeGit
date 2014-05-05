@@ -1,0 +1,129 @@
+<isdecorate template="account/pt_account">
+<isinclude template="util/modules"/>
+<isset name="OmniturePage" value="KitShipping" scope="pdict">
+<isset name="instantAccess" value="${pdict.CurrentSession.custom.instantAccess}" scope="page"/>
+<div class="accountContainer">
+<isinclude template="util/errordisplay"/>
+<isif condition="${!empty(pdict.errorCode)}">
+	<div class="changeFrequencyError"><isprint encoding="off" value="${pdict.errorCode}"/></div>	
+</isif>	
+ <h2 class="formTitle" id="formTitleChangeFrequency">${Resource.msg('kit.shipping.frequency','account',null)}</h2>
+ <p class="changeFrequencyTopText"><isprint value="${Resource.msg('kit.shipping.desc','account',null)}" encoding="off"/></p>
+  <isset name="weeksFreq" value="${4}" scope="page"/>
+  
+  <isif condition="${'profile' in pdict.CurrentCustomer && pdict.CurrentCustomer.profile != null}">
+  	<isset name="isrememberCustomer" value="${false}" scope="page"/>
+  <iselseif condition="${'profile' in pdict.rememberCustomer && pdict.rememberCustomer.profile != null}">
+  	<isset name="isrememberCustomer" value="${true}" scope="page"/>
+  </isif>
+ 
+
+	<isif condition="${!isrememberCustomer && !empty(pdict.CurrentCustomer.profile.custom.weeksBetweenShipments) && pdict.CurrentCustomer.profile.custom.weeksBetweenShipments != null}">
+		<isset name="weeksFreq" value="${pdict.CurrentCustomer.profile.custom.weeksBetweenShipments}" scope="page"/>
+	<iselseif condition="${isrememberCustomer && !empty(pdict.rememberCustomer.profile.custom.weeksBetweenShipments) && pdict.rememberCustomer.profile.custom.weeksBetweenShipments != null}">
+		<isset name="weeksFreq" value="${pdict.rememberCustomer.profile.custom.weeksBetweenShipments}" scope="page"/>
+	<iselse>
+		<isset name="weeksFreq" value="${4}" scope="page"/>
+	</isif>
+	
+	<isif condition="${!isrememberCustomer && !empty(pdict.CurrentCustomer.profile.custom.shipdate) && pdict.CurrentCustomer.profile.custom.shipdate != null}">
+		<isset name="shipDate" value="${pdict.CurrentCustomer.profile.custom.shipdate}" scope="page"/>
+	<iselseif condition="${isrememberCustomer && !empty(pdict.rememberCustomer.profile.custom.shipdate) && pdict.rememberCustomer.profile.custom.shipdate != null}">
+		<isset name="shipDate" value="${pdict.rememberCustomer.profile.custom.shipdate}" scope="page"/>
+	</isif>
+    <isif condition="${null != instantAccess && instantAccess == true}">
+         <div class="errorclient">
+             ${Resource.msg('instantAccess.message1','account',null)}${Resource.msg('instantAccess.message2','account',null)}
+         </div>
+	</isif>
+
+<div class="changeFrequency">
+	<div class="checkout_box">	     
+		<h4>${Resource.msg('kit.change.frequency','account',null)}</h4>
+	</div>
+	<form action="${URLUtils.https('KitCustomizer-KitChangeShippingFrequency')}" method="post" id="newShippingfreq" name ="${pdict.CurrentForms.kit.dynamicHtmlName}">
+        <div class="top bgnone">
+        	<p><isprint value="${Resource.msg('kit.change.frequency.desc','account',null)}" encoding="off"/></p>
+        	<p class="currentFrequency">
+        		<span>${Resource.msg('kit.current.frequency','account',null)}</span>
+        		<span><span>${Resource.msg('account.order.every','account',null)}</span> <isprint value="${weeksFreq}" style="INTEGER"/> <span>${Resource.msg('account.order.weeks','account',null)}</span></span>
+        	</p>
+        	<iscomment>Instant Access Flag Check</iscomment>
+           <isif condition="${null == instantAccess || instantAccess != true}">
+        	<p class="selectNewFrequency"><isinputfield formfield = "${pdict.CurrentForms.kit.changeFreq}" type= "select" value="false">
+	        	<span id="frequencyselectbox">
+					<select name="${pdict.CurrentForms.kit.changeFreq.htmlName}" id="frequencyselect" class="selectborder">
+						<isif condition="${!empty(dw.system.Site.current.preferences.custom.changeFrequency) && dw.system.Site.current.preferences.custom.changeFrequency!=null}">
+						  	<isloop items="${dw.system.Site.getCurrent().preferences.custom.changeFrequency}" alias="frequency">
+								<OPTION value="${frequency.getDisplayValue()}"
+									<isif condition="${weeksFreq==frequency.getValue()}">selected="selected"</isif>>
+									<isprint value="${frequency.getDisplayValue()}">&nbsp;<isprint value="${Resource.msg('account.order.weeks','account',null)}"/>
+								</OPTION>
+							</isloop>	
+						</isif>
+					</select>
+				</span>
+       		</p>
+		
+		<button id="change" name="${pdict.CurrentForms.kit.changeFrequency.htmlName}" class="gr-btn" type="submit" value="${Resource.msg('kit.button.change','account',null)}"><span class="lc"></span><span>${Resource.msg('kit.button.change','account',null)}</span></button>
+	 </isif>	
+	 </div>    	
+	</form>						
+
+</div> 
+<div class="changeFrequency">
+	<div class="checkout_box">	     
+    	<h4>${Resource.msg('kit.ship.now','account',null)}</h4>
+   	</div>
+    <div id="newShippingfreq" class="panel-wraper accordion"> 
+      	<p>${Resource.msg('kit.ship.now.desc','account',null)}</p>
+       	<p>${Resource.msg('kit.ship.now.note','account',null)}</p>
+       	<p>
+       		<strong>${Resource.msg('kit.next.shipment','account',null)}</strong>
+       		<isprint value="${shipDate}" style="DATE_SHORT" timezone="utc"/>
+       	</p>
+       	<iscomment>Instant Access Flag Check</iscomment>
+       	 <isif condition="${null == instantAccess || instantAccess != true}">
+       		<a id="shipnow" class="gr-btn" value="${Resource.msg('kit.button.ship.now','account',null)}"  href="${URLUtils.url('KitCustomizer-KitShipNow')}"><span class="lc"></span><span>${Resource.msg('kit.button.ship.now','account',null)}</span></a>
+       	</isif>
+    </div>
+</div>
+	 
+	 <div class="aboutChangingYourFrequency">
+	  	<div class="aboutChangingYourFrequencyMiddle">
+	  		<h2 class="categoryTitle">About Changing Your Frequency</h2>
+	  		<p><strong>${Resource.msg('kit.Q1','account',null)}</strong><br/>${Resource.msg('kit.A1','account',null)}</p>
+	  		<p><strong>${Resource.msg('kit.Q2','account',null)}</strong><br/>
+			${Resource.msg('kit.A2','account',null)}</p>
+			<p>&nbsp;</p>
+			<p>&nbsp;</p>
+	  	</div>
+	  </div>
+	 
+  </div>  
+  
+  
+</div>
+
+<isset name="OmniturePage" value="KitShipping" scope="pdict">
+
+<script type="text/javascript">
+jQuery("#change").click(function(event) {
+    		s.linkTrackVars='events,prop27,eVar27';
+    		s.linkTrackEvents='event27';
+    	    s.events="event27";
+    	    s.prop27="${pdict.rememberCustomer.profile.custom.weeksBetweenShipments}"+'weeks >'+ $('#frequencyselect').val()+" weeks";
+    	    s.eVar27="${pdict.rememberCustomer.profile.custom.weeksBetweenShipments}"+'weeks >'+ $('#frequencyselect').val()+" weeks";
+    	    s.tl(this,'o',"Change Frequency"); 
+			
+		});
+jQuery("#shipnow").click(function(event) {
+	s.linkTrackVars='events';
+	
+	s.linkTrackEvents='event28';
+	 s.events="event28";
+    s.tl(this,'o',"ShipNow");
+});	 
+</script>
+</isdecorate>		
+		

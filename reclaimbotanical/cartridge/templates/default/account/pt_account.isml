@@ -1,0 +1,34 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<isinclude template="util/modules"/>
+<head>
+
+	<iscomment>Include all important information globally , e.g. meta-data, link information, and javascript.</iscomment>
+	
+	<isif condition="${!('pagetitle' in pdict)}">
+		<isset name="pagetitle" value="${Resource.msg('pagetitle.account','account',null)}" scope="pdict"/>
+	</isif>
+	<isinclude template="components/header/htmlhead"/>
+	
+</head>
+<body  id="ptAccount">
+	<isinclude template="components/header/header"/>
+	<div class="mainWrapper">	
+		<isreplace/>
+	</div>			
+	<isinclude template="components/footer/footer"/>
+	<isinclude template="components/footer/pixels"/>
+	<input type="hidden" value="${pdict.CurrentHttpParameterMap.showKit.stringValue}" id="showKit"/>
+	<isif condition = "${pdict.CurrentHttpParameterMap.showKit.stringValue == 'true'}">
+		<script type="text/javascript">
+			//var widget = new KitCustomizer();
+			widget.startWidget();
+			widget.showKit();
+			var contParam = "${pdict.CurrentHttpParameterMap.kitcontinue.stringValue}";
+			if(contParam != null && contParam != '')
+				widget.checkContinuation(contParam);
+		</script>
+	</isif>
+<isslot id="ClickTrackingSlotForAccountPages" context="global" description="ClickTrackingSlotForAccountPages" />
+</body>
+</html>

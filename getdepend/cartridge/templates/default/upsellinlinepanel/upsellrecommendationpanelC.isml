@@ -1,0 +1,189 @@
+<!--- TEMPLATENAME: upsellrecommendationpanelC.isml --->
+<isinclude template="util/modules"/>
+
+<isloop items="${offersList}" var="product" status="offers_status">
+       <isscript>
+              if( !empty(product) ) {
+                     
+                           var titleString = product.getName();
+                           var lastIndex = titleString.lastIndexOf(" ",24);
+                           if( titleString.length>23 && lastIndex>0 ) {
+                                  titleString = titleString.substring(0,lastIndex);
+                           }
+                           var altSKUsString = product.ID;
+                           var altSKUs = altSKUsString.split(',');
+                           
+                           var giftProducts : dw.util.ArrayList = new dw.util.ArrayList();
+                           for( var i=0, ii=altSKUs.length; i<ii; i++ ) {
+                                  giftProducts.add1(dw.catalog.ProductMgr.getProduct(altSKUs[i]));
+                           }
+              }
+       </isscript>   
+       <isloop items="${giftProducts}" var="aProduct" status="gift_status">
+       
+              <isscript>
+              if( !empty(aProduct) ) {
+                     var upsellProductsMale : dw.util.ArrayList=getVariantswithRecommendations(aProduct.ID,Resource.msg('sas.recommendation.five', 'configuration', null),Resource.msg('gender', 'configuration', null),Resource.msg('gender.male', 'configuration', null));
+                     var upsellProductsFemale : dw.util.ArrayList=getVariantswithRecommendations(aProduct.ID,Resource.msg('sas.recommendation.five', 'configuration', null),Resource.msg('gender', 'configuration', null),Resource.msg('gender.female', 'configuration', null));
+                     var subSys:Number=1;
+              }      
+              </isscript>
+              
+                                          <isif condition="${!empty(giftProducts)}">
+                                     
+                                         <isif condition="${null!=upsellProductsFemale && !empty(upsellProductsFemale)}">
+                                         <isscript>    
+                                         var index:Number=1;
+                                         </isscript>
+                                         <isloop items="${upsellProductsFemale}" var="recommendProduct" status="recommend_status">
+                                         <isif condition="${!recommend_status.isEven() && recommend_status.count!=1 }">
+                                         <isscript>    
+                                         index++;
+                                         </isscript>
+                                         </isif>
+                                         <isif condition="${!recommend_status.isEven()}">
+                                         <div id="system${offers_status.count}subsys${subSys.toFixed()}Product${index.toFixed()}Upsell" class="upsell-id  female" style="display:none;">
+                                         <h2 class="pageTitle">${Resource.msg('sas.upgrade.your.supply.title','locale',null)}</h2>
+                                         <ul>
+                                         </isif>
+                                              <isscript> 		
+										          params = recommendProduct.custom.defaultKitSelectionParameters;
+										          supply =  getQueryString(params,"supply");										     
+								              </isscript> 								              
+                                                <li class="${recommendProduct.ID} updatecartbtn ${supply}">
+                                                <span class="selected">${recommendProduct.custom.size}</span>                                               
+                                                
+                                                 <input type="hidden" name="recommend_Gender" class="recommend_Gender" value="female" />
+                                               
+                                                
+                                              
+                                                       <div class="giftBlockUpsell">
+                                                           
+                                                            <div class="giftImage">
+                                                                     <isif condition="${!empty(recommendProduct.getImage('large',0))}">
+                                                                         <img src="${recommendProduct.getImage('large',0).url}" />
+                                                                   <iselse>
+                                                                         <img src="${URLUtils.staticURL('/images/noimagelarge.png')}"/>
+                                                                   </isif>
+                                                            </div>
+                                                            <isif condition="${null!=recommendProduct.shortDescription && !empty(recommendProduct.shortDescription)}">
+                                                                <div class="supplyShortDescription"><isprint value="${recommendProduct.shortDescription}" encoding="off"/></div>
+                                                          <iselse>
+                                                                <div class="supplyShortDescription empty"><isprint value="${recommendProduct.shortDescription}" encoding="off"/></div>
+                                                          </isif>
+                                                            
+                                                            <h3><isprint value="${recommendProduct.custom.detailsSecondName}" encoding="off"/></h3>
+                                                            <div class="supplyLongDescription">
+                                                                   <isprint value="${recommendProduct.longDescription}" encoding="off"/>
+                                                                   <div class="pdata">
+                                                                            <isset name="productprice" value="${recommendProduct.priceModel.getPrice()}" scope="page"/>
+                                                                    ${Resource.msg('your.price.supply','locale',null)} <span class="ppriceupsell"><isprint value="${productprice}" /> + <isprint value="${recommendProduct.custom.listOfShippingCosts}"/></span>
+                                                                     <span class="saveShippingPrice"><isprint value="${recommendProduct.custom.shippingLabel}"/></span>
+                                                              </div>
+                                                               </div>
+                                                            <div class="select-this-pack">${Resource.msg('select.this.pack','locale',null)}</div>        
+                                                   </div>
+                                                </li>
+                                               <isif condition="${recommend_status.isEven()}">
+                                                </ul>
+                                                </div>
+                                                </isif>
+                                                 
+                                         </isloop>
+                                         <isscript>    
+                                         subSys++;
+                                         </isscript>
+                                         
+                                         </isif>
+                                      
+                                         
+                                        <isif condition="${null!=upsellProductsMale && !empty(upsellProductsMale)}">
+                                        <isscript>
+                                         var index:Number=1;
+                                         </isscript>
+                                         <isloop items="${upsellProductsMale}" var="recommendProduct" status="recommend_status">
+                                         <isif condition="${!recommend_status.isEven() && recommend_status.count!=1}">
+                                         <isscript>    
+                                         index++;
+                                         </isscript>
+                                         </isif>
+                                         <isif condition="${!recommend_status.isEven()}">
+                                         <div id="system${offers_status.count}subsys${subSys.toFixed()}Product${index.toFixed()}Upsell" class="upsell-id male" style="display:none;">
+                                         <h2 class="pageTitle">${Resource.msg('sas.upgrade.your.supply.title','locale',null)}</h2>
+                                         <ul>
+                                         </isif>
+                                            <isscript> 		
+										          params   = recommendProduct.custom.defaultKitSelectionParameters;
+										          supply =  getQueryString(params, "supply");
+										     
+								              </isscript>
+                                                <li class="${recommendProduct.ID} updatecartbtn ${supply}">
+                                                <span class="selected">${recommendProduct.custom.size}</span>                                               
+                                                <input type="hidden" name="recommend_Gender" class="recommend_Gender" value="male" />
+                                               
+                                                <div class="giftBlockUpsell">
+                                                       <span class="selected"></span>
+                                                              <div class="giftImage">
+                                                     <isscript>
+                                                              var varProd : Product= dw.catalog.ProductMgr.getProduct(recommendProduct.ID);
+                                                                                                var downsellrecommIter : dw.util.Iterator = varProd.getRecommendations(10).iterator();
+                                                                                                var hasDownsellProd : Boolean = false;
+                                                                                                var downsellRecommendation : Recommendation;
+                                                                                                var downsellProduct : Product;
+                                                                                                while (downsellrecommIter.hasNext()){
+                                                                                                       hasDownsellProd=true;
+                                                                                                       downsellRecommendation  = downsellRecommendation.next();
+                                                                                                }
+                                                                                         </isscript>
+                                                                                         <isif condition="${hasDownsellProd==false}">
+                                                                   <isif condition="${!empty(recommendProduct.getImage('large',1))}">
+                                                                         <img src="${recommendProduct.getImage('large',1).url}" />
+                                                                   <iselse>
+                                                                   has downsell
+                                                                         <img src="${URLUtils.staticURL('/images/noimagelarge.png')}"/>
+                                                                   </isif>
+                                                         <iselse>
+                                                                     <isif condition="${!empty(recommendProduct.getImage('large',0))}">
+                                                                         <img src="${recommendProduct.getImage('large',0).url}" />
+                                                                   <iselse>
+                                                                         <img src="${URLUtils.staticURL('/images/noimagelarge.png')}"/>
+                                                                   </isif>
+                                                         </isif>
+                                                            </div>
+                                                               <isif condition="${null!=recommendProduct.shortDescription && !empty(recommendProduct.shortDescription)}">
+                                                                <div class="supplyShortDescription"><isprint value="${recommendProduct.shortDescription}" encoding="off"/></div>
+                                                                        <iselse>
+                                                                              <div class="supplyShortDescription empty"><isprint value="${recommendProduct.shortDescription}" encoding="off"/></div>
+                                                                        </isif>
+                                                              <h3><isprint value="${recommendProduct.custom.detailsSecondName}" encoding="off"/></h3>
+                                                                <div class="supplyLongDescription">
+                                                                     <isprint value="${recommendProduct.longDescription}" encoding="off"/>
+                                                               
+                                                                     <div class="pdata">
+                                                                                  <isset name="productprice" value="${recommendProduct.priceModel.getPrice()}" scope="page"/>
+                                                                           ${Resource.msg('your.price.supply','locale',null)} <span class="ppriceupsell"><isprint value="${productprice}" /> + <isprint value="${recommendProduct.custom.listOfShippingCosts}"/></span>
+                                                                            <span class="saveShippingPrice"><isprint value="${recommendProduct.custom.shippingLabel}"/></span>
+                                                                     </div>
+                                                                 </div>        
+                                                              <div class="select-this-pack">${Resource.msg('select.this.pack','locale',null)}</div>
+                                                       </div>
+                                                </li>
+                                                <isif condition="${recommend_status.isEven()}">
+                                                </ul>
+                                                </div>                                               
+                                                </isif>
+                                         </isloop>
+                                        </isif> 
+                                  
+                                  </isif>
+                     
+       </isloop>
+</isloop>
+  <isscript>
+	   httpQuery1 = httpQuery + Resource.msg('campaign.param.default.checkout', 'rendering', null);
+	     </isscript>
+ <div class="bottomPanel panelB">
+	    <a href="${httpQuery1}" class="medOrngBtn" id="step4">${Resource.msg('next.select','locale',null)}</a>
+ </div>
+
+ 

@@ -1,0 +1,46 @@
+<iscomment>
+	This isml renders the right navigation for community conversations page
+</iscomment>
+<script type="text/javascript">
+$(function() {
+	$( "#accordion" ).accordion();
+});
+</script>
+
+<isinclude template="community/widget/userinfo"/>
+<div class="graybox">
+	<div class="l-top-lt corner"></div>
+	<div class="l-top-rt corner"></div>
+	<div class="l-btm-lt corner"></div>
+	<div class="l-btm-rt corner"></div>
+	<h3><isprint value="${Resource.msg('community.conversation.categories','community',null)}"/></h3>
+	<div class="content" id="accordion">
+			<iscomment>
+				Check if there are categories in BM, then list them under skin concerns
+			</iscomment>
+			<isif condition="${'bvSkinConcernCategories' in dw.system.Site.current.preferences.custom}">
+			<h4><isprint value="${Resource.msg('community.skin.concerns','community',null)}"/></h4>
+				<div class="whitebox2">
+					<div class="l-top-lt corner"></div>
+					<div class="l-top-rt corner"></div>
+					<div class="l-btm-lt corner"></div>
+					<div class="l-btm-rt corner"></div>
+					<isloop items="${dw.system.Site.current.preferences.custom.bvSkinConcernCategories}" var="category">
+						<a href="${URLUtils.url('Community-Conversations', 'bvCategory', category, 'displayName', category.displayValue)}"><isprint value="${category}"/></a>
+					</isloop>
+				</div>
+			</isif>
+			<isif condition="${'bvWinningAgainstAcneCategories' in dw.system.Site.current.preferences.custom}">
+				<h4><isprint value="${Resource.msg('community.wining.acne','community',null)}"/></h4>
+				<div class="whitebox2">
+					<div class="l-top-lt corner"></div>
+					<div class="l-top-rt corner"></div>
+					<div class="l-btm-lt corner"></div>
+					<div class="l-btm-rt corner"></div>
+					<isloop items="${dw.system.Site.current.preferences.custom.bvWinningAgainstAcneCategories}" var="category">
+						<a href="${URLUtils.url('Community-Conversations', 'bvCategory', category, 'displayName', category.displayValue)}"><isprint value="${category}"/></a>
+					</isloop>
+				</div>
+			</isif>
+		</div>
+</div>

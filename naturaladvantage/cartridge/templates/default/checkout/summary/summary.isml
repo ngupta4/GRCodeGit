@@ -1,0 +1,216 @@
+<isdecorate template="content/checkout/pt_checkout">
+<!--- TEMPLATENAME: summary.isml --->
+<iscomment>
+	This template visualizes the last step of the checkout, the order summary
+	page prior to the actual order placing.
+	It displays the complete content of the cart including product line items,
+	bonus products, redeemed coupons and gift certificate line items.
+</iscomment>
+<isscript>
+	importPackage(dw.object);
+	importPackage(dw.catalog);
+	
+	var CCC : Object = pdict.CurrentCampaignConfig;
+	var campaignCode : String = CCC.campaignCode;
+	
+	var showHeader : boolean = CCC.showHeader;
+	var showFooter : boolean = CCC.showFooter;
+	var showNav : boolean = CCC.showNav;
+	var showOrderButton : boolean = CCC.showOrderButton;
+	
+	var category : dw.catalog.Category = CCC.getCampaignCategory();
+</isscript>
+
+<isinclude template="util/modules"/>
+<isinclude template="util/reporting/ReportBasket.isml"/>
+
+<ischeckoutbreadcrumbs type="multi" step="3" />
+
+<div class="content_box_outer_pdp">
+	<div class="content_box_inner_sp">		
+		
+		<p class="suggest_text">${Resource.msg('revieworder.text','rendering',null)}</p>
+		
+	    <isinclude template="/checkout/checkoutinfo/minisummary"/>
+	    
+	    <div class="checkout_box">
+	    	<h4>	    		
+	    		<form action="${URLUtils.continueURL()}" method="post" >
+					<button class="edit_btn" type="submit" value="${Resource.msg('global.edit','locale',null)}" name="${pdict.CurrentForms.orderreview.backtocart.htmlName}" >${Resource.msg('global.edit','locale',null)}</button>
+				</form>
+				${Resource.msg('orderinfo.text','rendering',null)}
+	    	</h4>
+	    	
+	    	<div class="checkout_box_inner">
+		    
+			    <isif condition="${pdict.PlaceOrderError != null && false}">
+					<div class="errorform">${Resource.msg(pdict.PlaceOrderError.code,'checkout',null)}</div>
+				</isif>
+					<table class="orderinfo_products" summary="Checkout Summary Table">
+						<tfoot>
+						<iscomment>RENDER COUPON/ORDER DISCOUNTS</iscomment>			
+						<isloop items="${pdict.Basket.couponLineItems}" var="couponLineItem" status="cliloopstate">
+							<isif condition="${couponLineItem.valid}">
+								<tr class="rowcoupons">
+									<td class="detailscolumn">
+										<div class="name">${Resource.msg('summary.coupon','checkout',null)}</div>
+										<div class="cartcoupon">
+											<span class="label">${Resource.msg('summary.couponnumber','checkout',null)}</span>
+											<span class="value"><isprint value="${couponLineItem.couponCode}"/></span>
+										</div>
+										<isloop items="${couponLineItem.priceAdjustments}" var="Promo">
+											<div class="discount">
+												<span class="label"><isprint value="${Promo.lineItemText}"></span>										
+											</div>
+										</isloop>
+									</td>									
+									<td class="quantitycolumndetails">
+										<div class="editdetails"><a href="${URLUtils.url('Cart-Show')}"><span>${Resource.msg('global.editdetails','locale',null)}</span></a></div>
+									</td>
+									<td>&nbsp;</td>
+									<td class="itemtotalcolumn">
+										<isif condition="${couponLineItem.applied}">
+											<span class="couponapplied">${Resource.msg('summary.applied','checkout',null)}</span>
+										<iselse/>
+											<span class="couponnotapplied">${Resource.msg('summary.notapplied','checkout',null)}</span>
+										</isif>
+									</td>
+								</tr>
+							</isif>
+						</isloop>
+						<isloop items="${pdict.Basket.priceAdjustments}" var="priceAdjustment" status="cliloopstate">
+							<tr>
+								<td colspan="4">
+									<div class="orderdiscount">
+									    <span class="label">${Resource.msg('summary.orderdiscount','checkout',null)}</span>
+									    <span class="value"><isprint value="${priceAdjustment.lineItemText}"/></span>
+									</div>
+								</td>
+							</tr>
+						</isloop>
+						<tr>
+							<td colspan="4" class="placeorderfooter"><!-- PLACE ORDER FOOTER --></td>
+						</tr>
+						</tfoot>
+											
+						<iscomment>render each shipment</iscomment>
+						<isset name="shipmentCount" value="${0}" scope="page"/>
+						<isloop items="${pdict.Basket.shipments}" var="shipment" status="shipmentloopstate">
+							<tr>
+								<td class="image"></td>
+								<td class="qty">${Resource.msg('global.quantity','locale',null)}</td>
+								<td class="price">${Resource.msg('orderinfo.unitproce.text','rendering',null)}</td>
+								<td class="total">${Resource.msg('singleshipping.total','checkout',null)}</td>
+							</tr>
+							<isif condition="${shipment.productLineItems.size() > 0 || shipment.giftCertificateLineItems.size() > 0}">
+								<isset name="shipmentCount" value="${shipmentCount+1}" scope="page"/>
+								<isif condition="${pdict.Basket.shipments.size() > 1}">
+									<tr>
+										<td colspan="4">
+											<div class="shipmentlabel">Shipment ${'#' + shipmentCount}</div>
+										</td>
+									</tr>
+								</isif>
+								<isloop items="${shipment.productLineItems}" var="productLineItem" status="pliloopstate">
+									<tr class="tablerow <isif condition="${productLineItem.bonusProductLineItem}">bonusproduct</isif>">
+										<td></td>										
+										<td class="qty">
+											<div class="quanity"><isprint value="${productLineItem.quantity}" /></div>
+											<iscomment>
+												<div class="editdetails"><a href="${URLUtils.url('Cart-Show')}">${Resource.msg('global.editdetails','locale',null)}</a></div>
+											    <isdisplayproductavailability p_productli="${productLineItem}">
+										    </iscomment>
+										</td>
+										<td class="price">
+											<isif condition="${productLineItem.bonusProductLineItem}">
+											    <span class="bonusitem">${Resource.msg('global.bonus','locale',null)}</span>
+											<iselse/>
+												<iscomment>Otherwise, render price using call to adjusted price </iscomment>
+											    <isprint value="${productLineItem.adjustedPrice}" />
+											</isif>
+											
+											<isif condition="${productLineItem.optionProductLineItems.size() > 0}">
+												<isloop items="${productLineItem.optionProductLineItems}" var="optionLI">
+													<p>+ <isprint value="${optionLI.adjustedPrice}"/></p>
+												</isloop>
+											</isif>
+										</td>
+									    <td class="total">
+											<isprint value="${productLineItem.adjustedPrice}" />
+										</td>
+									</tr>
+									<tr>
+										<td class="image">
+											<isif condition="${productLineItem.product != null && productLineItem.product.getImage('small',0) != null}">
+												<img src="${productLineItem.product.getImage('small',0).url}" alt="${productLineItem.product.getImage('small',0).alt}" title="${productLineItem.product.getImage('small',0).title}"/>
+											<iselse/>
+												<img src="${URLUtils.staticURL('/images/noimagesmall.png')}" alt="${productLineItem.productName}" title="${productLineItem.productName}"/>
+											</isif>
+											<isif condition="${productLineItem.bonusProductLineItem}">
+												<div class="bonusitem">${Resource.msg('global.bonusitem','locale',null)}</div>
+											</isif>
+										</td>
+										<td colspan="3" class="description">
+											<iscomment>Display product line and product using module</iscomment>
+											<div class="name">
+												<isprint value="${productLineItem.productName}"/> 
+											</div><!-- END: name -->
+											<isprint value="${productLineItem.product.custom.cartDescription}" encoding="off"/>
+											<iscomment>
+											<div class="editdetails"><a href="${URLUtils.url('Cart-Show')}">${Resource.msg('global.editdetails','locale',null)}</a></div>
+											</iscomment>
+										</td>
+									</tr>
+								</isloop>
+								<isloop items="${shipment.giftCertificateLineItems}" var="giftCertificateLineItem" status="gcliloopstate">
+									<tr class="tablerow">
+										<td class="imagecolumn">
+											<img src="${URLUtils.staticURL('/images/gift_cert.gif')}" alt="<isprint value="${giftCertificateLineItem.lineItemText}"/>" />
+										</td>
+										<td>1</td>
+										<td>
+											<div class="giftcertificateto">
+												<span class="label">${Resource.msg('global.to','locale',null)}:</span>
+												<span class="value"><isprint value="${giftCertificateLineItem.recipientName}"/> (<ismask p_string="${giftCertificateLineItem.recipientEmail}" p_maskchars="${6}">)</span>
+											</div>
+											<div class="giftcertificatefrom">
+												<span class="label">${Resource.msg('global.from','locale',null)}:</span>
+												<span class="value"><isprint value="${giftCertificateLineItem.senderName}"/></span>
+											</div>
+										</td>										
+										<td class="total">
+											<isprint value="${giftCertificateLineItem.price}"/>
+										</td>
+									</tr>
+								</isloop>
+								<tr>
+									<td class="blank"></td>
+								</tr>
+							</isif>
+						</isloop>
+					</table>
+					
+					<div class="review-totals">
+						<isordertotals p_lineitemctnr="${pdict.Basket}" p_showshipmentinfo="${false}" p_shipmenteditable="${false}" p_totallabel="${Resource.msg('summary.ordertotal','checkout',null)}">
+					</div>
+					
+				</div><!-- End checkout_box_inner -->
+			</div><!-- End checkout_box -->
+			
+			<div class="checkout_bottom clearfix chb_summary">
+				<form action="${URLUtils.continueURL()}" method="post">
+					<div class="agree_box">
+						<p>${Resource.msg('cart.agreetext','rendering',null)}</p>
+						<isinputfield formfield="${pdict.CurrentForms.orderreview.agree}" type="checkbox" attribute1="requiredmesage" value1="${Resource.msg('forms.checkout.agree.value-error','forms',null)}">
+					</div>
+					<div class="place_order_btn">
+						<button type="submit" value="${Resource.msg('global.edit','locale',null)}" name="${pdict.CurrentForms.orderreview.apply.htmlName}" ></button>
+					</div>
+				</form>
+			</div>
+   	
+	</div>
+</div>
+	<isset name="OmniturePage" value="COSummary" scope="pdict">
+	<isset name="pixel_content_asset" value="pixels_preview" scope="request">
+</isdecorate>

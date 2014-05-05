@@ -1,0 +1,33 @@
+<isset name="CCC" value="${pdict.CurrentCampaignConfig}" scope="page" />
+	
+<isscript>
+		importPackage(dw.object);
+		importPackage(dw.catalog);
+		
+		importScript('int_gutheyrenker:common/libEncoding.ds');
+		
+		if(pdict.CurrentCampaignConfig!=null)
+		{
+			var CCC : Object = pdict.CurrentCampaignConfig;
+			if(CCC!=null){
+				var category : dw.catalog.Category = CCC.getCampaignCategory(); 
+			}
+		}
+</isscript>
+<link href="${URLUtils.absStatic('/css/default.css')}" type="text/css" rel="stylesheet" />
+<link href="${URLUtils.absStatic('css/header.css')}" type="text/css" rel="stylesheet" />
+<isif condition="${ pdict.CurrentHttpParameterMap.loggedin == 'false'}">
+	<isinclude url="${URLUtils.url('Faqheader-OldHeader')}"/>
+<iselseif condition="${ pdict.CurrentHttpParameterMap.loggedin == 'true'}">
+	<isinclude url="${URLUtils.url('Home-IncludeHeaderMenu','loggedin',pdict.CurrentHttpParameterMap.loggedin.stringValue)}"/>
+</isif>
+
+
+
+
+
+
+
+
+
+

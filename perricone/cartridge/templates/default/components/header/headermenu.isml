@@ -1,0 +1,271 @@
+<iscache status="off"/>
+
+<iscomment>
+	This template displays a 3-level category tree as top navigation.
+	Only categories marked with showInMenu are shown.
+</iscomment>
+
+
+<isscript>
+	importPackage(dw.web);
+	importPackage(dw.util);
+	importScript("guthyrenker_core:common/libUtils.ds")
+	
+	var loggedIn : boolean = isLoggedIn();
+	
+	var sessionID = null;
+	
+	if( !empty(pdict.CurrentHttpParameterMap.pactvid) && !empty(pdict.CurrentHttpParameterMap.pactvid.stringValue) ) {
+		sessionID = pdict.CurrentHttpParameterMap.pactvid.stringValue;
+	}
+	
+	function getContentAssetMap(rootFolderId:String):HashMap{
+		var retentionRootFolder:Folder=dw.content.ContentMgr.getFolder(rootFolderId);
+		var contentMap:HashMap = getFolderContent(retentionRootFolder,new HashMap());
+	  	return contentMap;
+	}
+	
+	function url3(pipeline,k1,v1,k2,v2,k3,v3) {
+		var outs : String = '';
+		if( pipeline.indexOf('COCart')>-1 ) {
+			outs = URLUtils.https(pipeline,k1,v1,k2,v2,k3,v3);
+		} else {
+			outs = URLUtils.url(pipeline,k1,v1,k2,v2,k3,v3);
+		}
+		return outs;
+	}
+	
+	function url2(pipeline,k1,v1,k2,v2) {
+		var outs : String = '';
+		if( pipeline.indexOf('COCart')>-1 ) {
+			outs = URLUtils.https(pipeline,k1,v1,k2,v2);
+		} else {
+			outs = URLUtils.url(pipeline,k1,v1,k2,v2);
+		}
+		return outs;
+	}
+	
+	function url1(pipeline,k1,v1) {
+		var outs : String = '';
+		if( pipeline.indexOf('COCart')>-1 ) {
+			outs = URLUtils.https(pipeline,k1,v1);
+		} else {
+			outs = URLUtils.url(pipeline,k1,v1);
+		}
+		return outs;
+	}
+	
+	function url0(pipeline) {
+		var outs : String = '';
+		if( pipeline.indexOf('COCart')>-1 ) {
+			outs = URLUtils.https(pipeline);
+		} else {
+			outs = URLUtils.url(pipeline);
+		}
+		return outs;
+	}
+</isscript>
+
+<isset name="PHPSESSID" value="${!empty(pdict.CurrentRequest.httpCookies['PHPSESSID']) ? pdict.CurrentRequest.httpCookies['PHPSESSID'].value : (!empty(sessionID)?sessionID:'')}" scope="page" />
+
+<isset name="pactvid" value="${empty(PHPSESSID)?'':'?pactvid='+PHPSESSID}" scope="page"/>
+
+<isset name="isLoggedIn" value="${loggedIn}" scope="page"/>
+
+<isset name="HomeLink" value="${(!isLoggedIn?URLUtils.httpHome():dw.system.Site.current.getCustomPreferenceValue('GRLoggedInHome')+(!empty(PHPSESSID)?'?pactvid='+PHPSESSID:''))}" scope="page"/>
+<div id="header_new">
+  <div class="wrapper"> <a id="paLogo_new" class="logo" href="${URLUtils.httpHome()}">	Proactiv Solution</a>
+    <div class="topcoloum">
+	    <isif condition="${ null != pdict.CurrentHttpParameterMap.loggedin && !empty(pdict.CurrentHttpParameterMap.loggedin) && pdict.CurrentHttpParameterMap.loggedin.stringValue=='true'}">
+		   <isset name="loggedin" value="${true}" scope="page"/>
+		<iselse>
+		 	<isset name="loggedin" value="${false}" scope="page"/>
+	    </isif>
+	     <isif condition="${pdict.CurrentSession.userAuthenticated || pdict.CurrentCustomer.registered || pdict.CurrentSession.custom.cRememberMe || loggedin}">
+		      <div id="minicartOuter">
+		      	<div id="minicart" class="minicart"><isinclude url="${URLUtils.url('Cart-MiniCart')}"/></div>
+		      </div>
+	      </isif>       
+	      <div class="welcomecoloum"><isinclude template="components/header/headercustomerinfo.isml"/></div>   		
+    </div>
+    
+<iscomment>Using javascript to enable sliding effect for nav menu</iscomment>
+<script type="text/javascript">
+	jQuery(document).ready(function(){
+		$(".content-nav li, .category-nav li").hover(function() {
+			$(this).find("div.subnav").slideDown(200)
+			$(this).siblings("li").find("div.subnav").hide();
+		}, function() {
+			$(this).find("div.subnav").slideUp(10);
+		});
+	});
+</script>
+   
+<ul class="content-nav">
+<isset name="OnlineSubFolders" value="${getPrimaryNavigation(isLoggedIn,'retention-primary-navigation')}" scope="page" />
+<isset name="ContentMap" value="${getContentAssetMap('retention-primary-navigation')}" scope="page"/>
+<isloop items="${OnlineSubFolders}" var="aFolder1" status="navstat1">
+	<isif condition="${true || !empty(getCustomerUID(request)) || aFolder1.ID != 'community'}">
+	  <isif condition="${ContentMap.get(aFolder1.ID)!=null}">
+	  	<isset name="FolderLinkURL1" value="${URLUtils.http('Page-Show','cid',ContentMap.get(aFolder1.ID))}" scope="page" />
+	  <iselse>
+	  	<isset name="FolderLinkURL1" value="${URLUtils.http('Page-Show','cid',aFolder1.ID)}" scope="page" />
+	  </isif>	  
+	  <isif condition="${'linkHref' in aFolder1.custom && !empty(aFolder1.custom.linkHref)}">
+	  		<isset name="FolderLinkURL1" value="${aFolder1.custom.linkHref}" scope="page" />	  		
+	  </isif>
+	  <isif condition="${'linkPipeline' in aFolder1.custom && !empty(aFolder1.custom.linkPipeline)}">
+		<isset name="FolderLinkURL1" value="${URLUtils.http({aFolder1.custom.linkPipeline})}" scope="page" />	  		
+	  </isif>
+		 <li id="${aFolder1.ID}">
+		 		<a href='<isprint value="${FolderLinkURL1}" encoding="off" />' ><span>${aFolder1.displayName}</span></a> 
+		
+				<isset name="SecondaryNav" value="${aFolder1.ID}" scope="page" />
+				<isset name="SecFolders" value="${getPrimaryNavigation(isLoggedIn,SecondaryNav)}"  scope="page"/>
+				
+				<div class="subnav">
+				 	 <isloop items="${SecFolders}" var="aFolder2" status="navstat2">					 	  
+   					     	<isset name="FolderLinkURL2" value="" scope="page" />							 
+							<isif condition="${ContentMap.get(aFolder2.ID)!=null}">
+								<isset name="FolderLinkURL2" value="${URLUtils.http('Page-Show','cid',ContentMap.get(aFolder2.ID))}" scope="page" />
+							<iselse>
+								<isset name="FolderLinkURL2" value="${URLUtils.http('Page-Show','cid',aFolder2.ID)}" scope="page" />
+							</isif>
+							
+							<isif condition="${'linkHref' in aFolder2.custom && !empty(aFolder2.custom.linkHref)}">					  	  		
+							 	<isset name="FolderLinkURL2" value="${aFolder2.custom.linkHref}" scope="page" />	  		
+							</isif>
+							
+							<isif condition="${'linkPipeline' in aFolder2.custom && !empty(aFolder2.custom.linkPipeline)}">
+								<isset name="FolderLinkURL2" value="${URLUtils.http(aFolder2.custom.linkPipeline)}" scope="page" />	  		
+							</isif>
+	 							 
+							  <div class="category">
+						  	     <isif condition="${'displayImage' in aFolder2.custom}">
+							  		<img src="${Resource.msg('image.scene7url','common',null) + aFolder2.custom.sceneimage}" alt='<isprint value="${aFolder2.displayName}" encoding="off"/>' />
+		   					    	<iscomment>
+		   					    			<img src="${aFolder2.custom.displayImage.url}" alt='<isprint value="${aFolder2.displayName}" encoding="off"/>' />
+							  		</iscomment>		   					    
+		   					     </isif>
+		   					     	
+								 <div class="heading">								
+									<a href='<isprint value="${FolderLinkURL2}" encoding="off" />'><isprint value="${aFolder2.displayName}" encoding="off"/></a>
+								 </div>
+								 
+								 <isset name="showInMenu" value="${true}" scope="page"/>
+								 <isset name="showDescriptionInMenu" value="${true}" scope="page" />
+							     <isset name="TertiaryNav" value="${aFolder2.ID}" scope="page" />
+						         <isset name="TertiaryFolders" value="${getPrimaryNavigation(isLoggedIn,TertiaryNav)}" scope="page" />
+						         
+							     <isif condition="${TertiaryFolders.length>0}">
+							     	<isset name="countNotInMenu" value="${0}" scope="page"/>
+								     <ul>
+								     	<isloop items="${TertiaryFolders}" var="aFolder3" status="navstat3">												 
+											 <isif condition="${'htmlID' in aFolder3.custom && (aFolder3.custom.htmlID == 'DontShowInMenu' || aFolder3.custom.htmlID == 'ShowOnlyInSiteMap')}">
+											  	<isset name="showInMenu" value="${false}" scope="page"/>
+											  	<isset name="countNotInMenu" value="${countNotInMenu + 1}" scope="page"/>
+											 <iselse/>
+											 	<isset name="showInMenu" value="${true}" scope="page"/>    
+											 </isif>
+								       		<iscomment>The menuContext is checked to display in header and if menu
+								       		context is null, display in footer sitemap only</iscomment>
+								       		<isif condition="${aFolder3.custom.menuContext != null && showInMenu}">
+									       		<li>
+									       		    <isif condition="${ContentMap.get(aFolder3.ID)!=null}">
+												  	   <isset name="FolderLinkURL3" value="${URLUtils.http('Page-Show','cid',ContentMap.get(aFolder3.ID))}" scope="page" />
+												    <iselse>
+												  	   <isset name="FolderLinkURL3" value="${URLUtils.http('Page-Show','cid',aFolder3.ID)}" scope="page" />
+												    </isif>
+													<isif condition="${'linkHref' in aFolder3.custom && !empty(aFolder3.custom.linkHref)}">
+  													   <isset name="FolderLinkURL3" value="${aFolder3.custom.linkHref}" scope="page" />	  		
+  													</isif>	
+  													<isif condition="${'linkPipeline' in aFolder3.custom && !empty(aFolder3.custom.linkPipeline)}">
+														<isset name="FolderLinkURL3" value="${URLUtils.http({aFolder3.custom.linkPipeline})}" scope="page" />	  		
+														</isif>	 															
+									       		  	<a href='<isprint value="${FolderLinkURL3}" encoding="off" />'>${aFolder3.displayName}</a>
+									       		</li>
+								       		</isif>
+								       </isloop>
+								     </ul>
+								     <isif condition="${TertiaryFolders.length != countNotInMenu}">
+								     	<isset name="showDescriptionInMenu" value="${false}" scope="page" />
+								     </isif>
+							     </isif>
+							     
+							     <isif condition="${showDescriptionInMenu}">
+							     	<div class="subnav-content"><isprint value="${aFolder2.description}" encoding="off" /></div>
+							     </isif>						    
+							  </div>		
+					  </isloop>
+	 
+ 					 <div class="seemore"> 
+ 					 	<a href='<isprint value="${FolderLinkURL1}" encoding="off" />'><img src="${URLUtils.absStatic('themes/demandwarestore/images/btn-seemore.jpg')}"  alt="See More"  /></a> 
+ 					 </div>
+	 			</div>
+	</isif>
+	 </li>
+</isloop>
+</ul>
+
+		<isif condition="${pdict.CurrentSession.userAuthenticated || pdict.CurrentCustomer.registered || pdict.CurrentSession.custom.cRememberMe || loggedin}">
+		    	<isinclude template="search/simplesearch"/>	
+		<iselse/> 
+			 <div class="toporder">
+				 <a href="${URLUtils.url('Page-Show','cid','order')}" >Order Now</a>  
+			 </div>
+		</isif>
+  </div>
+</div>
+
+
+
+
+
+
+  <isscript>
+	// get root category of current site's navigation catalog
+	var siteCatalog = dw.catalog.CatalogMgr.getSiteCatalog();
+	var root = null;
+	if(siteCatalog!=null) {root = siteCatalog.getRoot();}
+
+	// get the "sale" category
+	var saleCategory = dw.catalog.CatalogMgr.getCategory('Product-Type');
+</isscript>
+
+<isif condition="${pdict.CurrentSession.userAuthenticated || pdict.CurrentCustomer.registered || pdict.CurrentSession.custom.cRememberMe || loggedin}">
+<div id="header-category">
+  <div class="wrapper">
+
+<ul class="category-nav">
+<isset name="cgid" value="${pdict.CurrentHttpParameterMap.cgid.stringValue}" scope="page"/>
+	<isloop items="${saleCategory.getOnlineSubCategories()}" var="subCat">
+		<isif condition="${subCat.ID == dw.web.Resource.msg('search.solutionfinder','search',null)}">
+			<iscontinue/>
+		</isif>
+      <li>
+	     <a href="${URLUtils.http('Search-Show', 'cgid', subCat.getID())}"><isprint value="${subCat.getDisplayName()}"/></a>
+	    <div class="subnav">
+			 <isslot id="headerNavigation" context="category" description="Header Sub Navigation" context-object="${subCat}"/>
+			 <div class="seemore"> <a href="${URLUtils.http('Search-Show', 'cgid', subCat.ID)}"><img src="${URLUtils.absStatic('themes/demandwarestore/images/btn-seemore.jpg')}"  alt="See More"  /></a> </div>
+		</div>
+      </li>
+
+		<iscomment>
+			Category landing Banners
+			<isslot id="CategoryPromoBanner" context="category" description="Category Promo Banner" context-object="${subCat}"/>
+		</iscomment>      
+
+      </isloop>
+    </ul>
+    <div class="solution"><a href="javascript:void(0)">SOLUTION FINDER</a>
+      <div class="subnav"> 
+              <isinclude template="components/header/solutionfinder"/>
+      </div>
+    </div>
+
+</div>
+</div>
+</isif>
+
+
+

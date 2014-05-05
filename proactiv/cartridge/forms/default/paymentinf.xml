@@ -1,0 +1,104 @@
+<?xml version="1.0"?>
+<form xmlns="http://www.demandware.com/xml/form/2008-04-19">
+
+    <!-- field for credit card type -->
+    <field formid="type" label="forms.paymentinf.creditcard.type.label" type="string" mandatory="true" binding="creditCardType"
+        missing-error="forms.paymentinf.creditcard.type.typemissing">
+        <options optionid-binding="cardType" value-binding="cardType" label-binding="name"/>
+    </field>
+    
+    <!--  default-value="CREDIT_CARD" -->
+    <field formid="selectedPaymentMethodID" type="string">
+		<options optionid-binding="ID" value-binding="ID" label-binding="name"/>
+	</field>
+	
+	<!-- list of available credit cards to select from -->
+	<list formid="creditCardList">
+
+		<!-- action for actually selecting the credit card -->
+		<action formid="useThisCreditCard" valid-form="false"/>
+
+	</list>
+
+	<!-- field for credit card number -->
+    <field formid="number" label="creditcard.number" type="string" mandatory="true" masked="4" max-length="16"
+	    binding="creditCardNumber"
+	    missing-error="forms.paymentinf.creditcard.number.numbermissing" value-error="forms.paymentinf.creditcard.number.numbervalueerror"/>
+
+	<!-- field for credit card expiration month -->
+    <field formid="month" label="forms.month" type="integer" mandatory="true" binding="creditCardExpirationMonth"
+      	missing-error="forms.paymentinf.creditcard.month.monthmissing" value-error="creditcard.yearvalueerror">
+        <options>
+        	<option label="-Month-" 	value=""/>
+            <option label="month.january" 	value="01"/>
+            <option label="month.february" 	value="02"/>
+            <option label="month.march" 	value="03"/>
+            <option label="month.april" 	value="04"/>
+            <option label="month.may" 		value="05"/>
+            <option label="month.june" 		value="06"/>
+            <option label="month.july" 		value="07"/>
+            <option label="month.august" 	value="08"/>
+            <option label="month.september" value="09"/>
+            <option label="month.october"   value="10"/>
+            <option label="month.november"  value="11"/>
+            <option label="month.december"  value="12"/>
+        </options>
+    </field>
+
+	<!-- 
+		field for credit card expiration year; 
+		a value error (credit card is expired is only displayed for this field) 
+	-->
+    <field formid="year" label="forms.year" type="integer" format="#" mandatory="true" binding="creditCardExpirationYear"
+      	missing-error="forms.paymentinf.creditcard.year.yearmissing" >
+        <options>
+        	<option optionid="none" label="-Year-" value=""/>
+            <option optionid="2013" label="year.2013" value="2013"/>
+            <option optionid="2014" label="year.2014" value="2014"/>
+            <option optionid="2015" label="year.2015" value="2015"/>
+            <option optionid="2016" label="year.2016" value="2016"/>
+            <option optionid="2017" label="year.2017" value="2017"/>
+            <option optionid="2018" label="year.2018" value="2018"/>
+            <option optionid="2019" label="year.2019" value="2019"/>
+            <option optionid="2020" label="year.2020" value="2020"/>
+            <option optionid="2021" label="year.2021" value="2021"/>
+            <option optionid="2022" label="year.2022" value="2022"/>
+            <option optionid="2023" label="year.2023" value="2023"/>
+        </options>
+    </field>
+
+	<!-- field for credit card owner -->
+    <field formid="owner" label="creditcard.ownerlabel" type="string" mandatory="false" max-length="40" binding="creditCardHolder"
+     	missing-error="creditcard.ownermissingerror"/>
+
+	<!-- field for credit card security code -->
+    <field formid="cvn" label="creditcard.cvnlabel" type="string" mandatory="false" masked="0"
+     	missing-error="creditcard.cvnmissingerror" value-error="creditcard.cvnrangeerror"/>
+     	
+     	<!-- field for Echeck  -->
+     	
+	<field formid="bankAccountType" label="eCheck.bankAccountType.label" type="string"  mandatory="true" binding="custom.bankAccountType">
+		<options>
+			<option optionid="Checking" label="eCheck.checking.label" value="Checking" />
+			<option optionid="Savings" label="eCheck.saving.label" value="Savings" />
+		</options>
+	</field>
+     	
+      <field formid="bankName" label="eCheck.bankName.label" type="string" mandatory="true" max-length="25"
+	    binding="custom.bankName" missing-error="forms.paymentinf.eCheck.routing.numbermissing" parse-error="forms.paymentinf.eCheck.routing.numbervalueerror" />
+     	
+     <field formid="routing" label="eCheck.routing.label" type="string" mandatory="true" 
+     missing-error="forms.paymentinf.eCheck.routing.numbermissing" value-error="forms.paymentinf.eCheck.routing.numbervalueerror" max-length="9"
+	    binding="custom.routingNumber"/>
+     	
+     <field formid="account" label="eCheck.account.label" type="string" mandatory="true" 
+     missing-error="forms.paymentinf.eCheck.account.numbermissing" range-error="forms.paymentinf.eCheck.account.lengtherror" value-error="forms.paymentinf.eCheck.account.numbervalueerror" masked="4" min-length="4" max-length="17"
+	    binding="custom.accountNumber"/>
+ 
+	<!-- optional flags -->
+	<field formid="saveCard" label="creditcard.savecard" type="boolean" mandatory="false" default-value="true" />
+
+	<!-- confirm action to save the card details -->
+    <action formid="confirm" valid-form="true"/>
+
+</form>

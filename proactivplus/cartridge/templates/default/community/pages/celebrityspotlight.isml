@@ -1,0 +1,44 @@
+<isdecorate template="community/successstories/pt_celebritylisting">
+<isset name="categoryID" value="${pdict.CurrentHttpParameterMap.cgid.stringValue}" scope="page"/>
+<isinclude template="util/modules"/>
+<div class="mainWide celebrity-listing">
+	<div class="pageWidth">
+		<isset name="categoryName" value="${dw.catalog.CatalogMgr.getCategory(pdict.CurrentHttpParameterMap.cgid).getDisplayName()}" scope="page"/>
+		<h1>${Resource.msg('celebrity.heading','common',null)}: ${categoryName} </h1>
+		
+		<isset name="categoryID" value="${pdict.CurrentHttpParameterMap.cgid.stringValue}" scope="page"/>		
+			<div class="celebrityCarousel" id="celebrity-carousel">
+				<isslot id="CelebrityCrousel" context="category" description="Celebrity Listing" context-object="${dw.catalog.CatalogMgr.getCategory('celebrity-listing')}"/>
+				<iscomment><isinclude url="${URLUtils.url('Community-CelebritySpotLight','cid',pdict.CurrentHttpParameterMap.cgid.stringValue)}"/></iscomment>
+				<a class="carousel-nav nav-left" href="#" id="celebrity-carousel-left"></a> <a class="carousel-nav nav-right" href="#" id="celebrity-carousel-right"></a> 
+			</div>
+			
+			<isslot id="celebrity-spotlightbox" description="celebrity-spotlight" context="category" context-object="${dw.catalog.CatalogMgr.getCategory(categoryID)}"/>
+	
+	 
+	  </div>
+	  <isslot id="right-bottom-orderCta" context="category" description="Right Bottom Order Module" context-object="${dw.catalog.CatalogMgr.getCategory(categoryID)}"/>
+</div>
+	
+<div id="VideoViewDialog"></div>
+ 
+<iscomment>Media Pixel</iscomment>
+      <isslot id="MediaPixelForContentPages" context="global" description="MediaPixelForContentPages" />	
+	<isset name="OmniturePage" value="StaticContent" scope="pdict">
+	
+	<script type="text/javascript">
+$(document).ready(function() {
+	var carouselWidth = $('#celebrity-carousel ul').width()
+	$('#celebrity-carousel ul').css('width',carouselWidth);
+});
+</script>
+</isdecorate>
+<script type="text/javascript">
+<!--
+jQuery('li#nav-stories').addClass('active');
+
+var crouselElementID = 'crousel'+'${pdict.CurrentHttpParameterMap.cgid.stringValue}';
+
+jQuery('#'+crouselElementID).addClass('active');
+//-->
+</script>

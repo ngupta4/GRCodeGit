@@ -1,0 +1,43 @@
+importPackage(dw.system);
+importPackage(dw.rpc);
+importPackage(dw.util);
+importPackage(dw.object);
+importPackage(dw.net);
+
+function BazaarvoiceAPIWebService() {
+	return {
+		"callService": function (url) {						
+			var timeout = this.config.service.timeout,
+				retries = this.config.service.retries,				
+				httpClient : HTTPClient = new HTTPClient();
+
+			httpClient.timeout = timeout;
+			httpClient.open("GET", url);
+
+			while (true) {
+				try {					
+					httpClient.send();
+					
+					if (httpClient.statusCode === 200) {
+						return httpClient.text;
+					} else {
+						throw {
+							"message": "Error calling web service",
+							"url": url,
+							"httpClient-statusCode": httpClient.statusCode,
+							"httpClient-statusMessage": httpClient.statusMessage,
+							"httpClient-errorText": httpClient.errorText
+						};
+					};
+					break;
+				} catch (e) {
+					if (retries > 0) {
+						retries--;
+					} else {
+						throw e;
+					};
+				};
+			};
+		}
+	};
+};

@@ -1,0 +1,50 @@
+<iscache type="relative" hour="24" varyby="price_promotion" />
+<isset name="DecoratorTemplate" value="content/pt_customerservice" scope="page"/>
+
+<iscomment>Use another decorator if the context is the content search</iscomment>
+<isif condition="${!empty(pdict.ContentSearchResult) && pdict.ContentSearchResult.count > 0}">
+	<isset name="DecoratorTemplate" value="search/pt_faqcontentsearchresult" scope="page"/>
+</isif>
+
+<isdecorate template="${DecoratorTemplate}">
+<iscomment>
+	Use the decorator template based on the page context. If
+	the content page was requested from a search result the
+	decorator search/pt_contentsearchresult is used. The default 
+	decorator for the content page is content/content/pt_content.
+</iscomment>
+
+<iscomment>Render a "back" link and the article title based on the page context.</iscomment>
+<isif condition="${!empty(pdict.ContentSearchResult) && pdict.ContentSearchResult.count > 0}">
+<iscomment> code for handling back to result functionality for global search and faq search RM-18030</iscomment>
+	<isscript>		
+		var url=URLUtils.url('FAQSearch-ShowContent');		
+		
+		if(null!=pdict.CurrentHttpParameterMap.fdid.value && !empty(pdict.CurrentHttpParameterMap.fdid.value) && pdict.CurrentHttpParameterMap.fdid.value == Resource.msg('search.fid.generalcontent','search',null)){
+		url=URLUtils.url('Search-Show');
+		}
+		
+		if (null!=pdict.CurrentHttpParameterMap.fdid.value && !empty(pdict.CurrentHttpParameterMap.fdid.value)) {
+			 url.append("fdid",pdict.CurrentHttpParameterMap.fdid.value);
+		}
+		
+		if (null!=pdict.CurrentHttpParameterMap.q.value && !empty(pdict.CurrentHttpParameterMap.q.value)) {
+			 url.append("q",pdict.CurrentHttpParameterMap.q.value);
+		}
+		
+	</isscript>
+	
+	<div class="back"><a href="${url}">${Resource.msg('foldercontenthits.backtoresults','rendering',null)}</a></div>
+	
+	<isif condition="${!empty(pdict.Content) && pdict.Content.classificationFolder.displayName!=null}">
+		<div class="faqsectiontitle">${pdict.Content.classificationFolder.displayName}</div>
+	</isif>
+
+	<h1><isprint value="${pdict.Content.name}"/></h1>
+</isif>
+
+
+<isset name="OmniturePage" value="searchFAQ" scope="pdict">
+<iscomment>This content piece must deliver a valid wrapping div!</iscomment>
+<isinclude template="content/content/htmlcontentasset"/>
+</isdecorate>

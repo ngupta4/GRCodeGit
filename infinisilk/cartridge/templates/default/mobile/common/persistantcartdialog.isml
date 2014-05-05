@@ -1,0 +1,78 @@
+<!--- TEMPLATENAME: persistantcartdialog.isml --->
+<iscomment>
+	Code Included For Merge/Persistant Cart. If user is authenticated and cookie is not set.
+</iscomment>
+
+<isset name="storedBasketSize" value="${0}" scope="page" />
+<isif condition="${pdict.CurrentSession.custom.sessionStoredBasket!=null}">
+	<isset name="storedBasketSize" value="${pdict.CurrentSession.custom.sessionStoredBasket.allProductLineItems.size()}" scope="page" />
+</isif>
+<isif condition="${pdict.CurrentCustomer.authenticated && storedBasketSize>0}">
+	<div id="persistcartdialog" style="display:none;">
+			<isinclude template="util/modules"/>
+			<iscomment>selected product is combo or a kit product then only this isml should be rendered</iscomment>
+			<div class="confirmForms">
+				
+				<isif condition="${pdict.CurrentHttpParameterMap.targetpipeline != null && !empty(pdict.CurrentHttpParameterMap.targetpipeline.stringValue) }">
+					<isset name="targetParamValue" value="${pdict.CurrentHttpParameterMap.targetpipeline.stringValue}" scope="page"/>
+				<iselse>
+					<isset name="targetParamValue" value="${pdict.TargetPipeline}" scope="page"/>
+				</isif>
+				<iscomment>Displays the default target if there is no target available</iscomment>
+				<isif condition="${targetParamValue==null}">
+					<isset name="targetParamValue" value="Home-Show" scope="page"/>
+				</isif>
+				
+				<iscomment>
+					<a href="${URLUtils.https('Cart-MergeExistingBasket')}?targetpipeline=${targetParamValue}" title="Yes" class="gy-btn gy-btn-a"><span class="grey-button"></span><span>Yes</span></a>
+				</iscomment>
+				<div class="head-popup">${Resource.msg('merge.cart.heading','checkout',null)}</div>
+				<div class="head-text">${Resource.msgf('merge.cart.added','checkout',null,storedBasketSize)}</div>
+				<div class="head-text">${Resource.msg('merge.cart.added.question','checkout',null)}</div>
+				
+				<a href="${URLUtils.https('Cart-MergeExistingBasket')}?targetpipeline=${targetParamValue}" title="Yes" class="blue-btn bl-btn-a greenButton aButton"><span>${Resource.msg('merge.cart.addtocart','checkout',null)}</span></a>
+				<a href="javascript:;" title="No" class="gy-btn gy-btn-a grayButton aButton"><span>${Resource.msg('merge.cart.nothanks','checkout',null)}</span></a>
+			</div>
+	</div>
+		
+	<script type="text/javascript">		
+		
+		if(${pdict.CurrentCustomer.authenticated && storedBasketSize>0}){		
+				app.createDialog({id: 'persistcartdialog', options: {
+						bgiframe: false, autoOpen:true,
+						modal: true,
+						overlay: {
+				    	opacity: 0.5,
+				     	background: "black"
+						},
+				    	height:100,
+				    	width:430,
+				    	title:'Merge Your Cart',
+				    	resizable: false
+					}});
+					jQuery('#persistcartdialog').css({'height':'auto','width':'332px'});
+					jQuery('#persistcartdialog').dialog('open');					
+					jQuery('.ui-dialog-titlebar').hide();
+		}
+		
+		jQuery('#persistcartdialog a.gy-btn').click(function() {
+
+			jQuery.ajax({
+		    	url: "${URLUtils.url('Cart-HandleNoEventMergeCart')}",
+		    	contentType: "application/json; charset=utf-8",
+				dataType: "json",
+		    	type: "GET",
+	            async: false,
+			    cache: false,
+	            success: function(data) {
+	            },
+	            error: function(xhr, txtStatus, e) {
+	            	//Displaying error if ajax processing failed
+	         	}
+	         });
+	         
+			jQuery('#persistcartdialog').dialog('close');		
+		});	
+	</script>		
+</isif>	
+	

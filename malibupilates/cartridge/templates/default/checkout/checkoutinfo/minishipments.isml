@@ -1,0 +1,50 @@
+<iscomment>
+	This template renders a summary of all shipments of the basket which is
+	used below the order summary at the right hand side in the checkout
+	process.
+</iscomment>
+<isset name="Shipments" value="${pdict.Basket.shipments}" scope="page"/>
+
+<iscomment>the url to edit shipping addresses depends on the checkout scenario</iscomment>
+
+<isif condition="${!empty(Shipments)}">
+	<iscomment>render a box per shipment</iscomment>
+	<isset name="shipmentCount" value="${0}" scope="page"/>
+	<isloop items="${Shipments}" var="shipment" status="loopstate">
+		<isif condition="${(shipment.giftCertificateLineItems.size() > 0 && shipment.shippingAddress == null) || shipment.shippingAddress != null}">
+			<isset name="shipmentCount" value="${shipmentCount+1}" scope="page"/>
+			<div class="checkout_box minishipment">
+				<iscomment>omit the shipment name, if there is just one shipment</iscomment>
+				<h4>					
+					<form action="${URLUtils.continueURL()}" method="post">
+						<button class="edit_btn" type="submit" value="${Resource.msg('global.edit','locale',null)}" name="${pdict.CurrentForms.orderreview.backtoinfo.htmlName}" >${Resource.msg('global.edit','locale',null)}</button>
+					</form>
+					<span>${Resource.msg('minishipments.shippingaddress','checkout',null)}</span>
+				</h4>
+	
+				<div class="checkout_box_inner details">
+					<iscomment>
+						render the detail section depending on whether this is a physical shipment with products
+						(shipped to an address) or if this is a gift certificate (send via email)
+					</iscomment>
+					<isif condition="${shipment.giftCertificateLineItems.size() > 0}">
+						<isloop items="${shipment.giftCertificateLineItems}" var="giftCertLI">
+							<div><isprint value="${giftCertLI.recipientName}"/></div>
+							<div>(<ismask p_string="${giftCertLI.recipientEmail}" p_maskchars="${6}"/>)</div>
+						</isloop>
+					<iselseif condition="${shipment.shippingAddress != null && pdict.Basket.productLineItems.size() > 0}"/>
+						<isset name="address" value="${shipment.shippingAddress}" scope="page"/>
+						<div><isprint value="${address.firstName}"/> <isprint value="${address.lastName}"/></div>
+						<div><isprint value="${address.address1}"/></div>
+						<isif condition="${!empty(address.address2)}">
+							<div><isprint value="${address.address2}"/></div>
+						</isif>
+						<div><isprint value="${address.city}"/>, <isprint value="${address.stateCode}"/> <isprint value="${address.postalCode}"/></div>
+						<div><isprint value="${address.countryCode}"/></div>
+					</isif>
+				</div>
+	
+			</div>
+		</isif>
+	</isloop>
+</isif>

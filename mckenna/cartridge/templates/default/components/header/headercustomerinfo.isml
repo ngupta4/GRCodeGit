@@ -1,0 +1,63 @@
+<iscache type="relative" hour="24"/>
+
+<iscomment>
+	This template displays a 3-level category tree as top navigation.
+	Only categories marked with showInMenu are shown.
+</iscomment>
+
+<a href="#sign-in" id="signInTrigger"></a>
+<div style="top: -75px;" class="loggedout loginDrawer" id="infopanel_loggedout">
+
+	<!--start header notlogged in content-->
+	<form id="formHeadLogin" method="post" action="${URLUtils.https('Account-Show')}">
+		
+		<div id="emailGroup">
+			<span>
+			<label for="login_email">email</label>
+			<input type="text" class="required" name="email" id="login_email">
+			</span>
+		</div>
+		<div id="passwordGroup">
+			<span>
+			<label for="login_password">password</label>
+			<input type="password" class="required" name="passwd" id="login_password">
+			</span>
+		</div>
+		<div id="signInBtn">
+			<button alt="Sign In" name="sign_in" type="submit" class="btnHeadLogin"></button>
+		</div>
+		<div id="rememberGroup">
+	        <a class="iconInfo" title="What's this?" href="javascript:void(0);">What's this?</a>
+			<input type="checkbox" checked="checked" name="remember_me" id="login_remember_me"> 
+			<div>
+				<label for="login_remember_me">Remember me</label>
+				<!--(<a class="openOverlay" href="/remember/index.php" id="overlayRemember" onClick="return false;">What's This?</a>)-->
+			</div>
+		</div> 
+		<div id="forgotGroup">
+			<a class="iconInfo" title="What's this?" href="javascript:void(0);">What's this?</a>
+	        <a href="${'#'}forgot-password">Forgot password?</a>
+		</div>
+	    <div id="registerGroup">
+			<a class="iconInfo" title="What's this?" href="javascript:void(0);">What's this?</a>
+	        <a class="btnRegister" href="${URLUtils.https('Account-Show')}">Register</a>
+		</div>
+	</form>
+	<!--//end header notlogged in content-->
+</div>
+
+<iscomment>
+<div id="member-login">
+    <isif condition="${pdict.CurrentCustomer.registered}">
+        <span class="welcomemessage">${Resource.msg('headercustomerinfo.welcome','components',null)}</span>
+        <a href="${URLUtils.https('Account-Show')}" title="${Resource.msg('global.accountlink','locale',null)} ${pdict.CurrentCustomer.profile.firstName} ${pdict.CurrentCustomer.profile.lastName}" class="username"><span class="username"><isprint value="${pdict.CurrentCustomer.profile.firstName}"/>&nbsp;<isprint value="${pdict.CurrentCustomer.profile.lastName}"/></span></a>
+         <isif condition="${!pdict.CurrentCustomer.authenticated}">
+            <span class="unauthenticated">(<a title="${Resource.msg('global.login','locale',null)}${pdict.CurrentCustomer.profile.firstName} ${pdict.CurrentCustomer.profile.lastName}" href="${URLUtils.https('Account-Show')}" class="userlogin">${Resource.msg('headercustomerinfo.pleaselogin','components',null)}</a>)</span>
+        </isif>
+        <span class="divider">|</span>
+        (<a title="${Resource.msg('headercustomerinfo.not','components',null)} ${pdict.CurrentCustomer.profile.firstName} ${pdict.CurrentCustomer.profile.lastName}" href="${URLUtils.url('Login-Logout')}" class="usernot">${Resource.msg('headercustomerinfo.not','components',null)} ${pdict.CurrentCustomer.profile.firstName}</a>?)	
+    <iselse>
+    	Already a Home Delivery Member?<strong>&nbsp;<a class="underlink" href="${URLUtils.https('Account-Show')}">Log In</a> &gt;&gt;&nbsp;&nbsp;</strong>
+    </isif>
+</div><!-- END: headercustomerinfo -->
+</iscomment>

@@ -1,0 +1,40 @@
+<iscache type="relative" minute="30" varyby="price_promotion"/>
+
+<!--- TEMPLATENAME: sidebar.isml --->
+<isif condition="${ pdict.Product != null}">
+	<isobject object="${pdict.Product}" view="detail">
+		<iscomment>set the product for local reuse</iscomment>
+		<isset name="Product" value="${pdict.Product}" scope="page"/>
+		<div class="productimage"><!-- Product Image -->
+			<isif condition="${Product.master && pdict.CurrentVariationModel && CurrentVariationModel.variants.size() > 0}">
+				<isset name="imageProduct" value="${CurrentVariationModel.variants[0]}" scope="page"/>
+			<iselse/>
+				<isset name="imageProduct" value="${Product}" scope="page"/>
+			</isif>
+		
+			<isif condition="${!empty(imageProduct.getImage('small',0))}">
+				<isset name="imageUrl" value="${imageProduct.getImage('small',0).url}" scope="page"/>
+				<isset name="imageAlt" value="${imageProduct.getImage('small',0).alt}" scope="page"/>
+				<isset name="imageTitle" value="${imageProduct.getImage('small',0).title}" scope="page"/>
+			<iselse/>
+				<isset name="imageUrl" value="${URLUtils.staticURL('/images/noimagesmall.png')}" scope="page"/>
+				<isset name="imageAlt" value="${Product.name}" scope="page"/>
+				<isset name="imageTitle" value="${Product.name}" scope="page"/>
+			</isif>
+			<img src="${imageUrl}" alt="${imageAlt}" title="${imageTitle}"/>
+		</div>
+		<div class="OrderNowLink">
+			<iscomment><a title="${Resource.msg('addtocart.label','rendering',null)}" href="${URLUtils.url('COCart-AddProduct','pid',Product.ID)}">${Resource.msg('button.ordernow.label','rendering',null)}</a> &gt;&gt;</iscomment>
+			<a title="${Resource.msg('addtocart.label','rendering',null)}" href="${URLUtils.url('Page-Show','cid','order')}">${Resource.msg('button.ordernow.label','rendering',null)}</a> &gt;&gt;
+		</div>
+		
+		<div class="contentPageOfferCopy"><isprint value="${Product.custom.contentPageOfferCopy}" encoding="off"/></div>	
+		
+		<div class="OrderNowLink_button">
+			<iscomment><a title="${Resource.msg('addtocart.label','rendering',null)}" href="${URLUtils.url('COCart-AddProduct','pid',Product.ID)}">${Resource.msg('button.ordernow.label','rendering',null)}</a> &gt;&gt;</iscomment>
+			<a title="${Resource.msg('addtocart.label','rendering',null)}" href="${URLUtils.url('Page-Show','cid','order')}">${Resource.msg('button.ordernow.label','rendering',null)} &gt;&gt;</a>
+		</div>
+	</isobject>
+<iselse/>
+	
+</isif>

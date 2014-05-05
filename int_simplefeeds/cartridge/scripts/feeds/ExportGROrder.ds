@@ -1,0 +1,81 @@
+/**
+* Demandware Script File
+* Export an XML file of customer metadata, not included in standard customer export (e.g. create and last-mod dates)
+*
+*	@input Orders : dw.util.Iterator mandatory, Orders of interest, in an Iterator
+*	@input ReportId  : String mandatory,Should be unique for each report/file. Maxlength=10
+*	@input OrdersCount : Number mandatory 
+*	-@input StartDate : Date mandatory, Should be the first date of the date range of the orders contained within the file
+*	-@input EndDate : Date mandatory,  Should be the end date of the date range of the orders contained within the file
+*	@input ExportFile : String  Export file path. This path is relative to the 'src' subdirectory within the top-level IMPEX directory.
+*	@output Status	: dw.system.Status 
+*	@output OrdersOut : dw.util.List
+*	@output FailedOrders : dw.util.List
+* 	@output OrdersCountOut : Number
+*/
+importPackage( dw.system );
+importPackage( dw.util );
+importPackage( dw.io );
+importPackage( dw.order );
+importPackage( dw.catalog );
+
+importScript('int_gutheyrenker:common/libUtils.ds');
+
+var log : Log = Logger.getLogger("OrderExport");
+
+function execute( args : PipelineDictionary ) : Number
+{
+	var startdate : Number = new Date().getTime();
+	Logger.getLogger("simplefeeds").debug("ExportGROrder: Start"); 
+	var processedOrders : List 	= new ArrayList();
+	var failedOrders 	: List 	= new ArrayList();
+	args.OrdersOut 				= processedOrders;
+	args.OrdersCountOut 		= processedOrders.length;
+	args.FailedOrders 			= failedOrders;
+	var exportFile : String = args.ExportFile;
+	if (empty(exportFile)){
+		trace("ExportGROrder: Parameter ExportFile empty");
+		Logger.getLogger("simplefeeds").error( "ExportGROrder: Parameter ExportFile empty" );
+		args.Status = new Status(Status.ERROR,"IMPEX-100");
+		return PIPELET_ERROR;
+	}
+	var orders : dw.util.Iterator = args.Orders;
+	if(empty(orders)){
+		trace("ExportGROrder: Parameter Orders empty");
+		Logger.getLogger("simplefeeds").error( "ExportGROrder: Parameter Orders empty" );
+		args.Status = new Status(Status.ERROR,"IMPEX-103");
+		return PIPELET_ERROR;
+	}
+	var maxOrders : Number = new Number(Site.getCurrent().getCustomPreferenceValue("GRMaxNoOfOrdersToExport"));
+	var lastOrderNo : Number = (args.OrdersCount > maxOrders?maxOrders:args.OrdersCount)-1;
+	var ordersList : List = orders.asList(0, maxOrders);
+	
+	var endDate : Date =  ordersList.get(lastOrderNo).creationDate;
+	var startDate : Date =  ordersList.get(0).creationDate;
+	orders = ordersList.iterator();
+	var exportFilePath : String = File.IMPEX + File.SEPARATOR +"src"+ File.SEPARATOR + exportFile;
+	
+	var xmlFile : File = new File(exportFilePath); 
+	var xmlFileWriter : FileWriter = new FileWriter(xmlFile,"UTF-8");
+	
+	var orderExportStyle : String = getOrderExportStyle();
+	
+	var result = writeOrderExportToFile( orderExportStyle, args, xmlFileWriter, orders, startDate, endDate, processedOrders, failedOrders );
+	
+	args.OrdersOut = processedOrders;
+	args.OrdersCountOut = processedOrders.length;
+	args.FailedOrders = failedOrders;
+	
+	if( result==PIPELET_NEXT ) {
+		Logger.debug("xml: " + xmlFile);
+		xmlFileWriter.flush();
+		xmlFileWriter.close();
+		var enddate : Number = new Date().getTime();
+		Logger.getLogger("simplefeeds").debug("ExportGROrder: Export Runtime:"+(startdate-enddate)/1000+"s");
+		Logger.getLogger("simplefeeds").debug("ExportGROrder: End");
+		args.Status = new Status(Status.OK,"IMPEX-0","OK");
+	}
+	
+	return result;
+	
+}

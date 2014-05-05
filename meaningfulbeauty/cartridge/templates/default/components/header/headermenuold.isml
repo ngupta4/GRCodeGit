@@ -1,0 +1,201 @@
+<iscache status="off"/>
+<iscomment>
+	This template displays a 3-level category tree as top navigation.
+	Only categories marked with showInMenu are shown.
+</iscomment>
+<isscript>
+	importPackage(dw.web);
+	importPackage(dw.util);
+	importScript("guthyrenker_core:common/libUtils.ds")
+	var loggedIn : boolean = isLoggedIn();
+	
+	var sessionID = null;
+	
+	if( !empty(pdict.CurrentHttpParameterMap.pactvid) && !empty(pdict.CurrentHttpParameterMap.pactvid.stringValue) ) {
+		sessionID = pdict.CurrentHttpParameterMap.pactvid.stringValue;
+	}
+	
+	function url3(pipeline,k1,v1,k2,v2,k3,v3) {
+		var outs : String = '';
+		if( pipeline.indexOf('COCart')>-1 ) {
+			outs = URLUtils.https(pipeline,k1,v1,k2,v2,k3,v3);
+		} else {
+			outs = URLUtils.url(pipeline,k1,v1,k2,v2,k3,v3);
+		}
+		return outs;
+	}
+	
+	function url2(pipeline,k1,v1,k2,v2) {
+		var outs : String = '';
+		if( pipeline.indexOf('COCart')>-1 ) {
+			outs = URLUtils.https(pipeline,k1,v1,k2,v2);
+		} else {
+			outs = URLUtils.url(pipeline,k1,v1,k2,v2);
+		}
+		return outs;
+	}
+	
+	function url1(pipeline,k1,v1) {
+		var outs : String = '';
+		if( pipeline.indexOf('COCart')>-1 ) {
+			outs = URLUtils.https(pipeline,k1,v1);
+		} else {
+			outs = URLUtils.url(pipeline,k1,v1);
+		}
+		return outs;
+	}
+	
+	function url0(pipeline) {
+		var outs : String = '';
+		if( pipeline.indexOf('COCart')>-1 ) {
+			outs = URLUtils.https(pipeline);
+		} else {
+			outs = URLUtils.url(pipeline);
+		}
+		return outs;
+	}
+</isscript>
+
+<isset name="PHPSESSID" value="${!empty(pdict.CurrentRequest.httpCookies['PHPSESSID']) ? pdict.CurrentRequest.httpCookies['PHPSESSID'].value : (!empty(sessionID)?sessionID:'')}" scope="page" />
+
+<isset name="pactvid" value="${empty(PHPSESSID)?'':'?pactvid='+PHPSESSID}" scope="page"/>
+
+<isset name="isLoggedIn" value="${loggedIn}" scope="page"/>
+
+<isset name="HomeLink" value="${(!isLoggedIn?URLUtils.httpHome():dw.system.Site.current.getCustomPreferenceValue('GRLoggedInHome')+(!empty(PHPSESSID)?'?pactvid='+PHPSESSID:''))}" scope="page"/>
+
+<a id="mbLogo" href="${HomeLink}">Meaningful Beauty</a>
+	
+	<isif condition="${('showOrderButton' in pdict.CurrentHttpParameterMap)}">
+		 <isset name="showOrderButton" value="${pdict.CurrentHttpParameterMap.showOrderButton}" scope="page"/>
+	<iselse>
+		 <isset name="showOrderButton" value="${false}" scope="page"/>
+	</isif>
+	  
+<ul class="primaryNavigation">
+	<li class="home"><a id="home" href="${HomeLink}" title="Home">Home</a></li>
+	<isset name="OnlineSubFolders" value="${getPrimaryNavigation(isLoggedIn, 'primary-navigation')}" scope="page" />
+	<isloop items="${OnlineSubFolders}" var="aFolder" status="navstat">
+    <isif condition="${true || !empty(getCustomerUID(request)) || aFolder.ID != 'community'}">
+			<li class="${aFolder.ID}${navstat.last ? ' last' : ''}">
+				<isif condition="${'linkPipeline' in aFolder.custom && !empty(aFolder.custom.linkPipeline)}">
+					<isset name="LinkParts" value="${aFolder.custom.linkPipeline.split(',')}" scope="page" />
+					<isset name="Pipeline" value="${LinkParts[0]}" scope="page" />
+					<isif condition="${LinkParts.length>5}">
+						<isset name="FolderLinkURL" value="${url3(Pipeline,LinkParts[1],LinkParts[2],LinkParts[3],LinkParts[4],LinkParts[5],LinkParts[6])}" scope="page" />
+					<iselseif condition="${LinkParts.length>3}">
+						<isset name="FolderLinkURL" value="${url2(Pipeline,LinkParts[1],LinkParts[2],LinkParts[3],LinkParts[4])}" scope="page" />
+					<iselseif condition="${LinkParts.length>1}">
+						<isset name="FolderLinkURL" value="${url1(Pipeline,LinkParts[1],LinkParts[2])}" scope="page" />
+					<iselse/>
+						<isset name="FolderLinkURL" value="${url0(Pipeline)}" scope="page" />
+					</isif>				
+				<iselseif condition="${('linkType' in aFolder.custom && !empty(aFolder.custom.linkType) && aFolder.custom.linkType.value == 'link') && ('linkHref' in aFolder.custom && !empty(aFolder.custom.linkHref))}">
+					<isset name="FolderLinkURL" value="${aFolder.custom.linkHref+pactvid}" scope="page" />			
+				<iselse/>
+					<isset name="FirstContentAsset" value="${!empty(aFolder.onlineContent)?aFolder.onlineContent[0].ID:aFolder.ID}" scope="page" />
+					<isset name="FolderLinkURL" value="${URLUtils.http('Page-Show','cid',FirstContentAsset)}" scope="page"/>
+				</isif>
+				<a id="${('htmlID' in aFolder.custom && !empty(aFolder.custom.htmlID))?aFolder.custom.htmlID:aFolder.ID}" href="<isprint value="${FolderLinkURL}" encoding="off"/>" class="alt-img" title="${aFolder.displayName}">${aFolder.displayName}</a>
+				
+				<isset name="subNav" value="${dw.content.ContentMgr.getFolder(aFolder.ID)}" scope="page"/>
+				<isif condition="${!empty(subNav.getOnlineSubFolders())}">
+				
+<ul class="sub-navigation">
+<isloop items="${subNav.getOnlineSubFolders()}" var="aFolder" status="navstat">
+<isscript>
+var classToAdd="";
+if (navstat.index==0){ classToAdd="firstnavitem"; }
+else if (navstat.index==subNav.getOnlineSubFolders().length-1){ classToAdd="lastnavitem"; }
+</isscript>
+
+<li id="${aFolder.ID}" class="subNav ${classToAdd}">
+<isif condition="${'linkPipeline' in aFolder.custom && !empty(aFolder.custom.linkPipeline)}">
+<isset name="LinkParts" value="${aFolder.custom.linkPipeline.split(',')}" scope="page" />
+<isset name="Pipeline" value="${LinkParts[0]}" scope="page" />
+<isif condition="${LinkParts.length>5}">
+<isset name="FolderLinkURL" value="${URLUtils.url(Pipeline,LinkParts[1],LinkParts[2],LinkParts[3],LinkParts[4],LinkParts[5],LinkParts[6])}" scope="page" />
+<iselseif condition="${LinkParts.length>3}">
+<isset name="FolderLinkURL" value="${URLUtils.url(Pipeline,LinkParts[1],LinkParts[2],LinkParts[3],LinkParts[4])}" scope="page" />
+<iselseif condition="${LinkParts.length>1}">
+<isset name="FolderLinkURL" value="${URLUtils.url(Pipeline,LinkParts[1],LinkParts[2])}" scope="page" />
+<iselse/>
+<isset name="FolderLinkURL" value="${URLUtils.url(Pipeline)}" scope="page" />
+</isif>
+ 
+<iselse/>
+<isset name="FirstContentAsset" value="${!empty(aFolder.onlineContent)?aFolder.onlineContent[0].ID:aFolder.ID}" scope="page" />
+<isset name="FolderLinkURL" value="${URLUtils.url('Page-Show','cid',FirstContentAsset)}" scope="page"/>
+</isif>
+<a href="<isprint value="${FolderLinkURL}" encoding="off"/>" class="alt-img">${aFolder.displayName}</a>
+ 
+</li>
+</isloop>
+</ul>
+
+				</isif>
+				
+			</li>
+		</isif>
+	</isloop>
+
+	<script>//SETUP THE JQUERY ROLLOVERS
+	$(".primaryNavigation li").hover(function(){ $(this).find(".sub-navigation").show(); },function(){ $(this).find(".sub-navigation").hide(); });
+	</script>
+	
+	<isif condition="${((!(pdict.CurrentSession.userAuthenticated || pdict.CurrentSession.custom.cRememberMe)) && (showOrderButton=="true"))}">
+	
+		<li class="order-now last">
+
+			<iscomment>If campaign is panel B, called "refreshB", then change greater than to exclamation point.</iscomment>
+				<isscript>var campaignPanel = pdict.CurrentSession.privacy.campaignID</isscript>
+				<isif condition = "${campaignPanel == 'refreshB-campaign'}">
+					<a title="Order Now" class="alt-img" href="${URLUtils.http('Page-Show','cid','order')}" id="order-now">Order Now!</a>
+				<iselse>
+					<a title="Order Now" class="alt-img" href="${URLUtils.http('Page-Show','cid','order')}" id="order-now">Order Now &gt;</a>
+				</isif>
+
+		</li>
+		
+	<iselse/>
+		<li class="rightCurve"></li>
+	</isif>
+
+</ul>
+
+<isset name="secondaryNav" value="${getPrimaryNavigation(isLoggedIn, 'secondary-navigation')}" scope="page"/>
+<isif condition="${secondaryNav != null}">
+	<ul class="secondaryNavigation">
+		<isloop items="${secondaryNav}" var="aFolder" status="navstat">
+			<li class="${aFolder.ID}">
+				<isif condition="${'linkPipeline' in aFolder.custom && !empty(aFolder.custom.linkPipeline)}">
+					<isset name="LinkParts" value="${aFolder.custom.linkPipeline.split(',')}" scope="page" />
+					<isset name="Pipeline" value="${LinkParts[0]}" scope="page" />
+					<isif condition="${LinkParts.length>5}">
+						<isset name="FolderLinkURL" value="${url3(Pipeline,LinkParts[1],LinkParts[2],LinkParts[3],LinkParts[4],LinkParts[5],LinkParts[6])}" scope="page" />
+					<iselseif condition="${LinkParts.length>3}">
+						<isset name="FolderLinkURL" value="${url2(Pipeline,LinkParts[1],LinkParts[2],LinkParts[3],LinkParts[4])}" scope="page" />
+					<iselseif condition="${LinkParts.length>1}">
+						<isset name="FolderLinkURL" value="${url1(Pipeline,LinkParts[1],LinkParts[2])}" scope="page" />
+					<iselse/>
+						<isset name="FolderLinkURL" value="${url0(Pipeline)}" scope="page" />
+					</isif>				
+				<iselseif condition="${('linkType' in aFolder.custom && !empty(aFolder.custom.linkType) && aFolder.custom.linkType.value == 'link') && ('linkHref' in aFolder.custom && !empty(aFolder.custom.linkHref))}">
+					<isset name="FolderLinkURL" value="${aFolder.custom.linkHref+pactvid}" scope="page" />
+				<iselse/>
+					<isset name="FirstContentAsset" value="${!empty(aFolder.onlineContent)?aFolder.onlineContent[0].ID:aFolder.ID}" scope="page" />
+					<isset name="FolderLinkURL" value="${URLUtils.http('Page-Show','cid',FirstContentAsset)}" scope="page"/>
+				</isif>
+				<a id="${('htmlID' in aFolder.custom && !empty(aFolder.custom.htmlID))?aFolder.custom.htmlID:aFolder.ID}" href="<isprint value="${FolderLinkURL}" encoding="off"/>" class="alt-img">${aFolder.displayName}</a>
+			</li>
+		</isloop>
+	</ul>
+</isif>
+
+<isscript>var campaignPanel = pdict.CurrentSession.privacy.campaignID</isscript>
+<isif condition = "${campaignPanel == 'refreshB-campaign'}">
+	<!-- REFACTOR if panel B becomes core -->
+	<script type="text/javascript">
+		document.getElementById('the-stories').innerHTML="The Story";
+	</script>
+</isif>

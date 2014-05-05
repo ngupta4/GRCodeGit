@@ -1,0 +1,70 @@
+<!-- this isml should be included in header of confirmation page-->
+
+
+<isset name="fname" value="" scope="page"/>
+<isset name="lname" value="" scope="page"/>
+<isset name="email" value="" scope="page"/>
+<isset name="orderId" value="" scope="page"/>
+<isset name="orderUCI" value="" scope="page"/>
+<isset name="orderDate" value="" scope="page"/>
+<isset name="orderUID" value="" scope="page"/>
+<isset name="orderSessionId" value="" scope="page"/>
+
+<isif condition="${(null != pdict.Order) && !empty(pdict.Order)}">
+	<isset name="fname" value="${pdict.Order.billingAddress.firstName}"  scope="page"/>
+	<isset name="lname" value="${pdict.Order.billingAddress.lastName}" scope="page"/>
+	<isset name="email" value="${pdict.Order.customerEmail}" scope="page"/>
+
+	<isset name="orderId" value="${pdict.Order.orderNo}" scope="page"/>
+	<isset name="referrerUCIValue" value="" scope="page"/>
+	<isif condition="${'referrerUCI' in pdict.CurrentSession.custom && pdict.CurrentSession.custom.referrerUCI!=null}">
+	
+		<isset name="referrerUCIValue" value="${pdict.CurrentSession.custom.referrerUCI}" scope="page"/>
+	</isif>	
+		
+	<isif condition="${'uciCode' in pdict.Order.custom}">
+		<isset name="orderUCI" value="${pdict.Order.custom.uciCode}" scope="page"/>
+	</isif>	
+	
+	<isscript>		
+		var orderCreatedDate = StringUtils.formatDate(pdict.Order.creationDate,"yyyy-MM-dd'T'HH:mm:ss'Z'");
+	</isscript>
+	<isset name="orderDate" value="${orderCreatedDate}" scope="page"/>
+	
+	<isif condition="${'userId' in pdict.Order.custom}">
+		<isset name="orderUID" value="${pdict.Order.custom.userId}" scope="page"/>
+	</isif>	
+	
+	<isset name="orderSessionId" value="${pdict.CurrentSession.sessionID}" scope="page"/>
+			
+</isif>
+
+
+<script type="text/javascript"> 
+  var _xtq = [];
+  _xtq.push(['log_host', 'wenhaircare.extole.com']);
+  var _xtq_options = {};
+  _xtq_options['status'] = 1;
+  _xtq_options['client_id'] = 1020609577;
+  // Optional parameters
+  // _xtq_options['revenue'] = 19.95;
+  // _xtq_options['email'] = 'noreply@example.com';
+  // _xtq_options['product.type'] = 1;
+	_xtq_options['order_date'] = "${orderDate}";
+	_xtq_options['session'] = "${orderSessionId}"; //friend session
+	_xtq_options['order.id'] = "${orderId}";
+	
+	_xtq_options['friend_email'] = "${email}";
+	_xtq_options['friend_fname'] = "${fname}";
+	_xtq_options['friend_lname'] = "${lname}";
+	_xtq_options['friend_uci'] = "${orderUCI}";
+	_xtq_options['friend_uid'] = "${orderUID}";
+	_xtq_options['referrer_uci'] = "${referrerUCIValue}";
+  
+  _xtq.push(['log_conversion', _xtq_options]);
+  (function() {
+    var x = document.createElement("script"); x.type = "text/javascript"; x.async = true;
+    x.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + "//media.extole.com/track/traction.min.js";
+    var s = document.getElementsByTagName("script")[0]; s.parentNode.insertBefore(x, s);
+  })();
+</script>

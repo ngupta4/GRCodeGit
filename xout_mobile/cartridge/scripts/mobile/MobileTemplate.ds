@@ -1,0 +1,18 @@
+/**
+* Demandware Script File
+*
+* @input template : String
+* @output mobileTemplate : String
+*
+*/
+importPackage( dw.system );
+
+function execute( pdict : PipelineDictionary ) : Number
+{
+	var template = pdict.template;
+	var baseDirectory : String = "mobile/";
+	
+	pdict.mobileTemplate = baseDirectory + template;
+   
+    return PIPELET_NEXT;
+}

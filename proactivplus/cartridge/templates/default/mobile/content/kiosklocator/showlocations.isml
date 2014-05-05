@@ -1,0 +1,589 @@
+<isinclude template="util/modules" />
+
+<isdecorate template="content/kiosklocator/pt_kiosklocator">
+<div class="kiosk-locator">
+	<div class="pageHead">
+		<h1>${Resource.msg('kiosklocator.showlocation.head','rendering',null)}</h1>
+  		<p class="intro">${Resource.msg('kiosklocator.showlocation.intro','rendering',null)}</p>
+	</div>
+	
+	<isscript>
+		function normalize(o){
+			if(o === null || o === 'null'){
+				return '';
+			}
+			for(var i in o){
+				if(o.hasOwnProperty(i) && (o[i] === 'null' || o[i] === null )){
+					o[i] = '';
+				}
+			}
+			return o;
+		}
+		
+		//This function was created because of isprint tag with attribute formatter="00000" does not work
+		function normalizeZip(zipCode){
+			var zip_=String(zipCode); 
+			return (zipCode && zip_.length<5 && zip_.length>0)?'0'+zip_:normalize(zipCode)
+		}
+		
+		// Stores object, also is a key to distance data
+		var Locations = pdict.NearestLocations.keySet(),			
+			normalizedLocationList : dw.util.ArrayList = new dw.util.ArrayList(), 
+			normalizedLocation,
+			zip = pdict.CurrentForms.kiosklocator.zip.htmlValue;
+			
+		
+	</isscript>
+	<div class="blockGrey">
+		<div class="block">
+			<div class="blockTop"><div class="blockTopRight"></div></div>
+
+			
+			<h3><isprint value="${Resource.msgf('kiosklocator.showlocation.searchinfo','rendering',null,pdict.CurrentForms.kiosklocator.radius.htmlValue,zip)}" encoding="off"/><a href="${URLUtils.url('KioskLocator-Locate')}">${Resource.msg('kiosklocator.showlocation.newsearch','rendering',null)}</a></h3>
+			<div class="block-content">
+				<div class='phpGoogleStoreLocator_body'>
+					<div id="map" class="kiosk_map"></div>	
+					<table align="center" cellpadding="0" cellspacing="0" border="0" class="kiosk_results">
+						<thead>
+							<tr>
+								<!-- <th>${'#'}</th> -->
+								<th>${Resource.msg('kiosklocator.showlocation.distance','rendering',null)}</th><th>${Resource.msg('kiosklocator.showlocation.location','rendering',null)}</th><th>${Resource.msg('kiosklocator.showlocation.phone','rendering',null)}</th><th>${Resource.msg('kiosklocator.showlocation.findit','rendering',null)}</th>
+							</tr>
+						</thead>
+						<tbody>	
+							<tr></tr>
+							<isif condition="${Locations.size() > 0}">							
+								<isloop items="${Locations}" alias="location" status="status">
+									<isif condition="${status.count > 25}">
+										<isbreak/>
+									</isif>
+									<isscript>
+										try{
+											
+											normalizedLocation = normalize({
+												id: location.ID,
+												name: location.name,
+												phone: location.phone?location.phone:'N/A',
+												longitude: location.longitude,
+												latitude: location.latitude,
+												address: location.address1,
+												city: location.city,
+												state: location.stateCode,
+												zip: normalizeZip(location.postalCode),
+												country: location.countryCode.value,
+											});
+											normalizedLocationList.push(JSON.stringify(normalizedLocation));
+
+										}catch(e){
+											dw.system.Logger.getRootLogger().error("Kiosk locator: something wrong with object {0}, exception: {1}", location, e);
+										}
+									</isscript>
+								
+									<tr class="store_line">
+<!-- 										<td><a href="${'#'}" onclick="show_marker(${status.count+1});">${status.count}</a></td> -->
+										<td class="distance" rel="${normalizedLocation.latitude}:${normalizedLocation.longitude}">${pdict.NearestLocations.get(location).toFixed(1)}</td>
+										<td>${normalizedLocation.name}<br>${normalizedLocation.address}<br>${normalizedLocation.city}, ${normalizedLocation.state} <isprint value="${normalizedLocation.zip}" formatter="00000" /> ${normalizedLocation.country}<br></td>
+										<td>${normalizedLocation.phone}</td>
+										<td><a class="gml" target="_blank" href="http://maps.google.com/maps?saddr=${zip}&daddr=${normalizedLocation.address}, ${normalizedLocation.city}, ${normalizedLocation.state} ${normalizedLocation.zip} ${normalizedLocation.country}&hl=en">Map & Directions</a></td>
+									</tr>
+								</isloop>
+							</isif>
+						</tbody>
+					</table> 
+					<div class="clearboth"></div>
+				</div>
+			</div>     
+			<div class="blockBottom"><div class="blockBottomRight"></div></div>
+		</div>
+	</div>
+</div>
+<isscript>
+	var GoogleMapApiKey = request.isHttpSecure()?'GoogleMapApiKeySecure':'GoogleMapApiKey';
+</isscript>
+<script src="http://maps.google.com/maps?file=api&amp;v=2.61&amp;key=<isprint value="${dw.system.Site.getCurrent().getCustomPreferenceValue(GoogleMapApiKey)}" encoding="off"/>" type="text/javascript"></script>
+
+<script type="text/javascript">
+//<![CDATA[
+	
+var htmls = [];
+//var i = 0;
+// arrays to hold variants of the info window html with get direction forms open
+var to_htmls = [];
+var from_htmls = [];
+// arrays to hold copies of the markers and html used by the sidebar
+// because the function closure trick doesnt work there
+var gmarkers = [];
+var index = 1;
+//TOP level function on map handlers
+
+//This function picks up the click and opens the corresponding info window
+function myclick(i) {
+	gmarkers[i].openInfoWindowHtml('<div  class="map_balloon_body">'+htmls[i]+'</div>');
+}
+
+//functions that open the directions forms
+function tohere(i) {
+	gmarkers[i].openInfoWindowHtml('<div  class="map_balloon_body">'+ to_htmls[i]+'</div>');
+}
+	
+function fromhere(i) {
+	gmarkers[i].openInfoWindowHtml('<div  class="map_balloon_body"'+ from_htmls[i] +'</div>');
+}
+
+function show_marker(id) {
+ gmarkers[id].openInfoWindowHtml(htmls[id])
+}
+
+/*
+ GxMarker version 1.2
+
+ SYNOPSIS
+    This version is compatible with Google Maps API Version 2
+
+    A more full-featured marker that supports tooltips and hover events.  The
+    first iteration just supports triggering of mouse over events, and tooltips.
+   
+    To setup a tooltip, pass in a third parameter (after the icon) to the
+    GxMarker class:
+        var marker = new GxMarker( new GPoint(lat,lng), icon, "My Tooltip" );
+        map.addOverlay(marker);
+
+    Or:
+        var marker = new GxMarker( new GPoint(lat,lng) );
+        marker.setTooltip("My Tooltip");
+        map.addOverlay(marker);
+
+    As of 1.1, changes to setTooltip() should work after the initial invocation
+
+    Please refer to http://code.toeat.com/package/gxmarker for additional
+    documentation.
+    
+    TESTED PLATFORMS:
+        Linux: Firefox
+        Windows: Firefox, IE6
+        Mac OS X (Panther): Safari
+
+    There is no warranty of functionality of this code, if you wish to use it
+    and it does not work for you, I recommend you submit a patch.  This software
+    is licensed under the GNU Lesser General Public License (LGPL):
+    the full text at: http://opensource.org/licenses/lgpl-license.php
+	
+	Update: 04/07/06 - modified to load with API v2.44+ of the Google Maps API
+	Modified by Robert Aspinall - raspinall (AT) gmail (dot) com
+*/
+
+
+function ConsoleFactory(){
+    	var debug = false,
+    		_console = (typeof console != 'undefined') ? console : {};
+
+    	function stringify(o, deepLevel){
+			//default threshold of deep 2
+			console.log('prepare %o, %s',o,deepLevel)
+			var deep = parseInt(deepLevel)||3;
+			
+			if(typeof o !== 'undefined'){
+			
+				var type = Object.prototype.toString.call(o);
+				
+				if(deep--){
+					var buffer = [];
+					switch (type) {							
+						case '[object Array]':							
+							for(var i = 0, l = o.length;i<l;i++){
+								buffer.push(stringify(o[i],deep));
+							}
+							return  '['+buffer.join(',')+']';							
+							
+						case '[object Object]':
+							try{
+								for(var i in o){
+									if(o.hasOwnProperty(i)){
+										buffer.push(i+': '+stringify(o[i],deep));
+									}
+								}
+								return '{'+buffer.join(', ')+'}';
+							}catch(e){
+								//no hasOwnProperty method								
+							}
+					}				
+				}else{
+					o = type;
+				}
+			}
+			return o;
+		}
+
+    	
+		if(debug)
+			return _console||{
+			log : function(){
+				var args = Array.prototype.slice.call(arguments);
+				var content = args.shift(),
+					item = null;				
+				if(args.length >= 1){
+					while(item = stringify(args.shift())){
+						console.log(item);
+						var matches = content.match(/%[so]/),
+							m = null;
+						if(matches && ( m = matches.shift() )){
+							content = content.replace(new RegExp(m),item);
+							
+						}else{
+							content += item;
+						}
+					}
+				}else{
+					content = stringify(content);
+				}
+			alert(content);
+			},
+			dir : function(){
+				this.log.apply(this,arguments)
+			} 
+		};
+		return {log:function(){},dir: function(){}}
+}
+jQuery(function(){
+
+	var sidebar_html = "";
+	
+	console = ConsoleFactory();
+	
+	var map = new GMap(document.getElementById("map"));
+	
+	function GxMarkerNamespace() {
+		
+		var n4=(document.layers);
+		var n6=(document.getElementById&&!document.all);
+		var ie=(document.all);
+		var o6=(navigator.appName.indexOf("Opera") != -1);
+		var safari=(navigator.userAgent.indexOf("Safari") != -1);
+		var currentSpan = new GBounds();
+		
+		function setCursor( container, cursor ) {
+		    try {
+		        container.style.cursor = cursor;
+		    }
+		    catch ( c ) {
+		        if ( cursor == "pointer" )
+		            setCursor("hand");
+		    }
+		};
+		
+		function GxMarker( a, b, tooltip ) {
+		    this.inheritFrom = GMarker;
+		    this.inheritFrom(a,b);
+		    if ( !currentSpan.minX || a.x < currentSpan.minX ) currentSpan.minX = a.x;
+		    if ( !currentSpan.maxX || a.x > currentSpan.maxX ) currentSpan.maxX = a.x;
+		    if ( !currentSpan.minY || a.y < currentSpan.minY ) currentSpan.minY = a.y;
+		    if ( !currentSpan.maxY || a.y > currentSpan.maxY ) currentSpan.maxY = a.y;
+		    if ( typeof tooltip != "undefined" ) {
+		        this.setTooltip( tooltip );
+		    }
+		}
+			
+		GxMarker.prototype = new GMarker(new GLatLng(1, 1));
+	
+		//set tooltip with "content" and remove old one 
+		GxMarker.prototype.setTooltip = function( string ) {
+		    this.removeTooltip();
+		    this.tooltip = new Object();
+		    this.tooltip.opacity  = 70;
+		    this.tooltip.contents = string;
+		};
+	
+		
+		GxMarker.prototype.initialize = function( a ) {
+		    try {
+		        GMarker.prototype.initialize.call(this, a);
+		        // Setup the mouse over/out events
+				GEvent.bind(this, "mouseover", this, this.onMouseOver);
+				GEvent.bind(this, "mouseout", this, this.onMouseOut);
+		    } catch(e) {
+				//console.log(e); Eat them up
+		    }
+		}
+		
+		GxMarker.prototype.setCursor = function( cursor ) {
+		    var c = this.iconImage;
+		    // Use the image map for Firefox/Mozilla browsers
+		    if ( n6 && this.icon.imageMap && !safari) {
+		        c = this.imageMap;
+		    }
+		    // If we have a transparent icon, use that instead of the main image
+		    else if ( this.transparentIcon && typeof this.transparentIcon != "undefined" ) {
+		        c = this.transparentIcon;
+		    }
+		}
+		
+		GxMarker.prototype.remove = function( a ) {
+		    GMarker.prototype.remove.call(this);
+		    this.removeTooltip();
+		}
+		
+		GxMarker.prototype.removeTooltip = function() {
+		    if ( this.tooltipObject ) {
+		        this.map.div.removeChild(this.tooltipObject);
+		        this.tooltipObject = null;
+		    }
+		}
+		
+		GxMarker.prototype.onInfoWindowOpen = function() {
+		    this.hideTooltip();
+		    GMarker.prototype.onInfoWindowOpen.call(this);
+		}
+		
+		GxMarker.prototype.onMouseOver = function() {
+		    this.showTooltip();
+		    //GEvent.trigger(this, "mouseover");
+		};
+		
+		GxMarker.prototype.onMouseOut = function() {
+		    this.hideTooltip();
+		    //GEvent.trigger(this, "mouseout");
+		};
+		
+		GxMarker.prototype.showTooltip = function() {
+		    if ( this.tooltip ) {
+		        if ( !this.tooltipObject ) {
+		            var opacity = this.tooltip.opacity / 100;
+		            this.tooltipObject = document.createElement("div");
+		            this.tooltipObject.style.display    = "none";
+		            this.tooltipObject.style.position   = "absolute";
+		            this.tooltipObject.style.background = "#fff";
+		            this.tooltipObject.style.padding    = "0";
+		            this.tooltipObject.style.margin     = "0";
+		            this.tooltipObject.style.MozOpacity = opacity;
+		            this.tooltipObject.style.filter     = "alpha(opacity=" + this.tooltip.opacity + ")";
+		            this.tooltipObject.style.opacity    = opacity;
+		            this.tooltipObject.style.zIndex     = 50000;
+		            this.tooltipObject.innerHTML        = "<div class=\"markerTooltip\">" + this.tooltip.contents + "</div>";
+		            map.getPane(G_MAP_MARKER_PANE).appendChild(this.tooltipObject);
+				}
+		
+		        var c = map.fromLatLngToDivPixel(new GLatLng(this.getPoint().y, this.getPoint().x));
+				try {
+		        	this.tooltipObject.style.top  = c.y - ( this.getIcon().iconAnchor.y + 5 ) + "px";
+		        	this.tooltipObject.style.left = c.x + ( this.getIcon().iconSize.width - this.getIcon().iconAnchor.x + 5 ) + "px";
+		        	this.tooltipObject.style.display = "block";
+				} catch(e) {
+					console.log(e);
+				}
+		    }
+		}
+		
+		GxMarker.prototype.hideTooltip = function() {
+		    if ( this.tooltipObject ) {
+		        this.tooltipObject.style.display = "none";
+		    }
+		}
+		
+		GMap.prototype.flushOverlays = function() {
+		    currentSpan = new GBounds();
+		    this.clearOverlays();
+		}
+		
+		GMap.prototype.zoomToMarkers = function() {
+		    var span = new GSize( currentSpan.maxX - currentSpan.minX, currentSpan.maxY - currentSpan.minY );
+		    for ( var zoom = 0; zoom < this.spec.numZoomLevels; zoom++ ) {
+		        var ppd = this.spec.getPixelsPerDegree(zoom);
+		        var pixelSpan = new GSize(
+		            Math.round(span.width * ppd.x), Math.round(span.height * ppd.y));
+		        if ( pixelSpan.width  <= this.viewSize.width &&
+		             pixelSpan.height <= this.viewSize.height )
+		        { break; }
+		    }
+		    this.centerAndZoom( new GPoint( currentSpan.minX + (span.width/2), currentSpan.minY + (span.height/2) ), zoom);
+		}
+		
+		function makeInterface(a) {
+		    var b = a || window;
+		    b.GxMarker = GxMarker;
+		}
+		
+		makeInterface();
+	}
+	//End GXMarker Code
+	
+	
+	function CreateMap(){
+		// create the map
+		//var map = new GMap(document.getElementById("map"));
+		map.addControl(new GLargeMapControl());
+		map.addControl(new GMapTypeControl());
+		map.addControl(new GScaleControl());
+		GEvent.addListener(map, 'click', function(overlay, point) {
+			if (overlay) {
+			//map.removeOverlay(overlay);
+			} else if (point) {
+				output.innerHTML += "";
+				if (map.getZoomLevel() >= zoomToLevel) {
+					map.centerAndZoom(point, zoomToLevel);
+				}
+				map.addOverlay(new GMarker(point));
+			}
+		});
+		
+		var marker;
+	
+		// A function to create the marker and set up the event window
+		function addMarker(point, name, html, address, tooltip, icon) {	
+			console.log(arguments);	
+			var marker = new GxMarker(point,icon); //GMarker(point);
+			marker.setTooltip(tooltip);
+			
+			console.log(address,++index);
+			// The info window version with the "to here" form open
+			to_htmls[index] = html + '<div class="map_balloon_body">Directions: <b>To here</b> - <a href="javascript:fromhere(' + index + ')">From here</a>' +
+			'<br>Start address:<form action="http://maps.google.com/maps" method="get" target="_blank">' +
+			'<input type="text" SIZE=40 MAXLENGTH=40 name="saddr" id="saddr" value="" /><br>' +
+			'<INPUT value="Get Directions" TYPE="SUBMIT">' +
+			'<input type="hidden" name="daddr" value="' + address + '"/>';
+			//point.y + ',' + point.x + '"/>';
+			// The info window version with the "to here" form open
+			from_htmls[index] = html + '<br>Directions: <a href="javascript:tohere(' + index + ')">To here</a> - <b>From here</b>' +
+			'<br>End address:<form action="http://maps.google.com/maps" method="get"" target="_blank">' +
+			'<input type="text" SIZE=40 MAXLENGTH=40 name="daddr" id="daddr" value="" /><br>' +
+			'<INPUT value="Get Directions" TYPE="SUBMIT">' +
+			'<input type="hidden" name="saddr" value="' + address + '"/></div>';
+			//point.y + ',' + point.x + '"/>';
+			// The inactive version of the direction info
+			html = html + '<div class="map_balloon_body">Directions: <a href="javascript:tohere('+index+')">To here</a> - <a href="javascript:fromhere('+index+')">From here</a></div>';
+			
+			GEvent.addListener(marker, "click", function() {
+				marker.openInfoWindowHtml('<div  class="map_balloon_body">'+html+'</div>');
+			});
+			
+			// save the info we need to use later for the sidebar
+			gmarkers[index] = marker;
+			htmls[index] = html;
+			
+			// add a line to the sidebar html
+			sidebar_html += '<a href="javascript:myclick(' + index + ')">' + name + '</a><br>';
+			
+			
+			return marker;
+		}
+	
+		
+	
+	
+		
+		function createMyMarker(data){
+			console.log('MyMarker %o',data);
+			//var lon = -72.5323139, lat = 41.9142515;
+			var myPoint = new GPoint(data.longitude, data.latitude);
+			
+			//Create the custom Green icon.  Google only provides red, so I've modified it with a different color.
+			var icon = new GIcon();
+			//icon.shadow = "http://www.google.com/mapfiles/shadow50.png";
+			icon.iconSize = new GSize(25, 25);
+			
+			icon.shadowSize = new GSize(37, 34);
+			icon.iconAnchor = new GPoint(9, 34);
+			icon.infoWindowAnchor = new GPoint(9, 2);
+			icon.infoShadowAnchor = new GPoint(18, 25);
+			icon.image = "${URLUtils.absStatic('images/kiosklocator/circle_orange.gif')}";
+			
+			//map.centerAndZoom(new GPoint(-72.5323139, 41.9142515), 8);
+			map.centerAndZoom(myPoint, 8);
+			marker = addMarker(myPoint, 'you','', data.address, 'You', icon);
+			map.addOverlay(marker);
+		}
+		
+	
+		function createMarker(data){
+			console.log(data);
+			var point = new GPoint(data.longitude,data.latitude);
+			//Create the custom Green icon.  Google only provides red, so I've modified it with a different color.
+			var icon = new GIcon();		
+			icon.iconSize = new GSize(20, 34);
+			icon.iconAnchor = new GPoint(9, 34);
+			icon.infoWindowAnchor = new GPoint(9, 2);
+			icon.infoShadowAnchor = new GPoint(18, 25);
+			var address = data.address+", "+data.city+", "+data.state+" "+data.zip+" "+data.country;
+			//Setup the custom Icons
+			icon.image = "${URLUtils.absStatic('images/kiosklocator/legend_blue.gif')}";
+			var marker = addMarker(point, data.id, '<div class="map_balloon_body"><b>Zoom - '
+												+data.name+'</b><br>'
+												+data.address+'<br>'
+												+data.city+', '
+												+data.state+' '
+												+data.zip+' '
+												+data.country+'<br></div>',address, 'Zoom - '+data.name, icon);
+			marker.id++;
+			map.addOverlay(marker);
+		}
+	
+	
+	
+		var locations = new Array();
+			
+		<isloop items="${normalizedLocationList}" var="location" status="status">
+			try{
+				locations.push(<isprint value="${location}" encoding="off"/>);
+			}catch(e){
+				console.log(e)
+			}
+		</isloop>
+	
+	
+		function calculateGeoData(){
+			var geocoder = new GClientGeocoder();
+			geocoder.getLocations('${pdict.CurrentForms.kiosklocator.zip.value}', function(response){
+				if (!response || response.Status.code != 200)
+				{
+					console.log("Sorry, we were unable to geocode the first address");
+				}else{
+					var myLocation = {latitude: response.Placemark[0].Point.coordinates[1], longitude: response.Placemark[0].Point.coordinates[0], address: response.Placemark[0].address};
+					createMyMarker(myLocation);
+					calculateLocations(myLocation,function(el, gMyLocation, latitude, longitude ){
+							//coordinates[0] - latitude and coordinates[1] - longitude
+							 distance = gMyLocation.distanceFrom(new GLatLng(latitude,longitude,3959)).toFixed(1);
+							 jQuery(el).html(distance);
+					});
+				}
+				function calculateLocations(myLocation, cb ){
+					var gMyLocation = new GLatLng(myLocation.latitude, myLocation.longitude),
+						getDistance = cb || function(){};
+					jQuery('.store_line .distance').each(function(){
+						var relAttr = jQuery(this).attr('rel'),
+							coordinates,
+							distance,
+							jqGml = jQuery(this).parent().find('a.gml');
+						
+						if( relAttr && (coordinates = relAttr.split(':')) != relAttr ){
+							//we already have distance
+							//getDistance(this,gMyLocation,coordinates[0],coordinates[1]);
+							 if(jqGml.length){
+									jqGml.attr('href','http://maps.google.com/maps?saddr='+myLocation.latitude+','+myLocation.longitude+'&daddr='+coordinates[0]+','+coordinates[1]);
+								}
+						}else{
+							if(jqGml.length){
+								jqGml.attr('href',jqGml.attr('href').replace('saddr=${zip}','saddr='+myLocation.address));
+							}
+						}
+					});
+				}
+			});
+		}
+		calculateGeoData();
+
+		//console.log(locations);
+		//creating
+		
+		for(var i=0,l=locations.length;i<l;i++){
+			try{			
+				createMarker(locations[i]);
+			}catch(e){console.log(e)}
+		}
+	};
+	
+	GxMarkerNamespace();
+	CreateMap();
+});
+</script>
+
+
+</isdecorate>

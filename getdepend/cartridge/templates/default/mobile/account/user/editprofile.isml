@@ -1,0 +1,315 @@
+<isdecorate template="account/pt_account">
+  <isinclude template="util/modules"/>
+  	<isinclude template="KitCustomizer/kitinclude"/>
+  	<input type="hidden" id="tagetPipeline" value="${pdict.TargetPipeline}"/>
+		<input type="hidden" id="tagetParams" value="${pdict.TargetPipelineParams}"/>
+    <iscomment>Builds a registration page for the user. It provides all input fields for names and address</iscomment>
+    <istabdisplayed  tabid="EP"/>
+  <!--START: Account information form -->
+  <div class="accountContainer">
+     <iscomment>Include common framework to make tabs</iscomment>
+	 <iscomment>Instant Access Flag Check</iscomment>
+	 <isset name="instantAccess" value="${pdict.CurrentSession.custom.instantAccess}" scope="page"/>
+     <isif condition="${null != instantAccess && instantAccess == true}">
+         <div class="top-label">
+             ${Resource.msg('instantAccess.message1','account',null)}<br>${Resource.msg('instantAccess.message2','account',null)}
+         </div>
+	</isif>
+    <isinclude template="util/errordisplay"/>
+
+    <div class="accountForm accountInfo">
+  	  <h2 class="formTitle">${Resource.msg('account.information','account',null)}</h2>
+      <form action="${URLUtils.httpsContinue()}" method="post" id="RegistrationForm">
+        <fieldset>
+              <div class="formfields">
+                
+                <div class="formfield regRow nameContainer">
+                  <div class="formfield firstName">
+                    <isinputfield formfield="${pdict.CurrentForms.profile.customer.firstname}" type="input" attribute1="requiredmesage" value1="${Resource.msg('profile.firstname.missingerror','forms',null)}"/>
+                    <span id="firstNameNoSpan" class="errormessage"></span>
+                  </div>
+                  <!-- END: firstname -->
+                  <div class="formfield lastName">
+                    <isinputfield formfield="${pdict.CurrentForms.profile.customer.lastname}" type="input" attribute1="requiredmesage" value1="${Resource.msg('profile.lastname.missingerror','forms',null)}"/>
+                     <span id="lastNameNoSpan" class="errormessage"></span>
+                  </div>
+                </div>
+                
+                <div class="formfield regRow phoneContainer">
+                  <div class="label">${Resource.msg('createaccount.dayphone','account',null)}</div>
+                    <div class="formfield phone">
+                        <input type="text" id="phone1" class="small" maxlength="3" size="3" />
+                        <input type="text" id="phone2" class="small" maxlength="3" size="3" />
+                        <input type="text" id="phone3" class="numberbox" maxlength="4" size="4"/>
+                    </div>            
+                    <div class="formfield phone">
+                        <isinputfield formfield="${pdict.CurrentForms.profile.customer.phone}" type="hidden" id="phonenumber"/>
+                    </div>
+                    <isif condition="${pdict.CurrentForms.profile.customer.phone.valid!=true}">
+                        <div class="errormessage">Invalid Phone</div>
+                    </isif>
+                </div>
+                <div class="formfield regRow emailAddress">
+                  <isinputfield formfield="${pdict.CurrentForms.profile.customer.email}" type="input" attribute1="requiredmesage" value1="${Resource.msg('profile.email.missingerror','forms',null)}"/>
+                </div>
+                
+                <div class="formfield regRow verifyEmail">
+                  <isinputfield formfield="${pdict.CurrentForms.profile.customer.emailconfirm}" type="input" attribute1="requiredmesage" value1="${Resource.msg('profile.confirmemail.missingerror','forms',null)}"/>
+                </div>
+                
+                <div class="formfield regRow pwdContainer">
+                  <div class="label"> 
+                  	<span class="labeltext">${Resource.msg('account.passwordlabel','account',null)}</span>
+                    <span class="requiredindicator">*</span>
+                   </div>
+                   <div class="value">
+                       <div class="password">
+                       <input type="text" value="***********" readonly="readonly" id="password"/>
+                       </div>
+                       <a href="${URLUtils.https('Account-ChangePassword','targetPipeline','Account-Show')}" title="" class="changePassword">
+                       	<isprint value="${Resource.msg('account.change.password','account',null)}"/>
+                       </a>
+                  </div>
+                </div>
+                <div class="formfield regRow accountContainer">
+                    <div class="label">${Resource.msg('profile.accountNumber','forms',null)}</div>
+                         <div class="account">
+                             <iscomment>
+                             <input type="text" id="accountnumber1" class="small" readonly="readonly" value="46"/>
+                           	 <input type="text" id="accountnumber2" class="small" readonly="readonly" value="${pdict.CurrentCustomer.profile.custom.mpgm}"/>
+                             </iscomment>
+                             <input type="text" id="accountnumber3" class="numberbox" readonly="readonly"/>
+                           </div>
+                    <isinputfield formfield="${pdict.CurrentForms.profile.customer.accountNumber}" type="hidden" id="accNo"/>
+                    <iscomment><div class="labelhelp regRow">${Resource.msg('createaccount.acountnumber.discription','account',null)}
+                    	<div class="formfieldtooltip">
+                        	<a class="tooltip">${Resource.msg('view.illus','locale',null)}
+                                <div class="tooltip-body" style="display:none">
+                                    <div class="tooltipcontainer">
+                                        <iscontentasset aid="create-account_viewIllustration"/>
+                                    </div>
+                                </div>
+                            </a>
+                       </div>
+                    </div></iscomment>
+                 </div>
+                
+                
+                <div class="formfield zip regRow">
+                    <isinputfield formfield="${pdict.CurrentForms.profile.customer.billingZipCode}" type="input" attribute1="readonly" value1="readonly" attribute2="requiredmesage" value2="${Resource.msg('profile.zip.missingerror','forms',null)}"/>
+                </div>
+                
+                <div class="formfield remember regRow">
+                   <isinputfield formfield="${pdict.CurrentForms.profile.login.rememberme}" type="checkbox"/>
+                </div>
+                
+                <div class="formfield formactions regRow">
+                  <button type="button" class="brownButton saveChangesBtn" onclick="submitForm();" value="${Resource.msg('global.apply','locale',null)}" name="${pdict.CurrentForms.profile.confirm.htmlName}">
+	                  ${Resource.msg('global.apply','locale',null)}
+	                   
+                  </button>
+                  <a href="${URLUtils.https('Account-Show')}" title="Cancel" class="grayButton cancelBtn aButton">
+                      <span>${Resource.msg('cancel.button','account',null)}</span>
+                       
+                  </a>
+                </div>
+                <div id="registrationformaction"></div>
+                <input type="hidden" name="${pdict.CurrentForms.profile.secureKeyHtmlName}" value="${pdict.CurrentForms.profile.secureKeyValue}"/>
+                
+              </div><!-- END: formfields -->
+        </fieldset>
+      </form>
+    </div><!-- END: registrationForm -->
+    <div class="requiredcaption">
+      <div class="label">
+      	<span class="requiredindicator">*</span><span class="requiredmessage">${Resource.msg('global.requiredfield','locale',null)}</span>
+      </div>
+      <div class="value"><!-- Empty Value Container --></div>
+    </div>
+    <!-- END: requiredcaption --> 
+    <isset name="OmniturePage" value="MyAccountUserDetailsUpdate" scope="pdict">
+   
+</div> 
+  <!-- END: Account Information form -->
+  
+  
+  <script type="text/javascript"><!--
+	var loginChanged = false;
+	var nameChanged = false;
+	app.URLs.submitFormURL = "${URLUtils.url('Account-UpdateName')}"
+
+	
+	
+	function submitForm() {
+		// if firstname/lastname change and no other field update the data via AJAX
+		// otherwise do normal submit	
+		
+		//Adding account number by fetching info from the three text boxes
+		/*
+		Part Commented as we dont want to display the Account number 1 and MPGM (Account Number 2) as of now.
+			var textVal1 = $("#accountnumber1").val();
+			var textVal2 = $("#accountnumber2").val();
+		*/
+			var textVal3 = $("#accountnumber3").val();
+		jQuery("input[id=accNo]").val(textVal3);
+
+		//Adding Phone number by fetching info from the three text boxes
+		var textVal1 = jQuery("#phone1").val();
+		var textVal2 = jQuery("#phone2").val();
+		var textVal3 = jQuery("#phone3").val();
+		var textval = textVal1+textVal2+textVal3;
+		jQuery("input[id=phonenumber]").val(textval);
+
+		var fn = jQuery("input[name=${pdict.CurrentForms.profile.customer.firstname.htmlName}]").val(); 
+		var ln = jQuery("input[name=${pdict.CurrentForms.profile.customer.lastname.htmlName}]").val();
+		var submitFormWithNameChanged = true;
+		var regexLetter =  /^[a-zA-Z ]+$/;
+
+		if(null!=fn && fn!='')
+		{
+		if(!regexLetter.test(fn)){
+			jQuery('#firstNameNoSpan').text("${Resource.msg('forms.customeraddress.invalid.firstname','forms',null)}");
+			submitFormWithNameChanged= false;
+			}else{
+				jQuery('#firstNameNoSpan').text("");
+			}
+		}		
+		if(null!=ln && ln!='')
+		{
+		if(!regexLetter.test(ln)){
+			jQuery('#lastNameNoSpan').text("${Resource.msg('forms.customeraddress.invalid.lastname','forms',null)}");
+			submitFormWithNameChanged= false;
+			}else{
+				jQuery('#lastNameNoSpan').text("");
+			}
+		}
+
+		if (nameChanged && !loginChanged) {
+
+			if(submitFormWithNameChanged==true)
+			{
+				if (jQuery("#RegistrationForm").validate().element( "[name=${pdict.CurrentForms.profile.customer.firstname.htmlName}]" ) && 
+						jQuery("#RegistrationForm").validate().element( "[name=${pdict.CurrentForms.profile.customer.lastname.htmlName}]" )) {
+					
+					var post = jQuery('#RegistrationForm').serialize();
+					
+			  		jQuery.ajax({
+					   type: "POST",
+					   url: app.URLs.submitFormURL,
+					   data: post,
+					   dataType: 'html',
+					   success: function(data){
+							var showurl = "${URLUtils.https('Account-Show')}";
+							window.location.href = showurl;
+					   },
+					   failure: function(data) {
+					   		alert("${Resource.msg('global.serverconnection','locale',null)}");		
+					   }
+					});
+				}
+		   }
+		} else {
+			jQuery('#registrationformaction').append("<input name='${pdict.CurrentForms.profile.confirm.htmlName}' type='hidden' />");
+			jQuery("#RegistrationForm").submit();
+		}
+	}
+	
+	function readCookie(name) {
+  var nameEQ = name + "=";
+  var ca = document.cookie.split(';');
+  for(var i=0;i < ca.length;i++) {
+    var c = ca[i];
+    while (c.charAt(0)==' ') c = c.substring(1,c.length);
+    if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length,c.length);
+  }
+  return null;
+}
+
+
+	
+
+	jQuery(document).ready(function() {	
+
+		var instantAccess = ${instantAccess};
+		if(null!=instantAccess && instantAccess== true)
+		{
+			jQuery("input[name=${pdict.CurrentForms.profile.customer.email.htmlName}]").addClass('grayOut');
+			jQuery("input[name=${pdict.CurrentForms.profile.customer.emailconfirm.htmlName}]").addClass('grayOut');
+			jQuery("input[name=${pdict.CurrentForms.profile.customer.email.htmlName}]").attr("readonly","readonly");
+			jQuery("input[name=${pdict.CurrentForms.profile.customer.emailconfirm.htmlName}]").attr("readonly","readonly");
+		}
+	
+		var value= jQuery("[name=${pdict.CurrentForms.profile.customer.email.htmlName}]").val();
+		jQuery("[name=${pdict.CurrentForms.profile.customer.emailconfirm.htmlName}]").val(value);
+
+
+		//populating account no. on load it availabel
+		var actNo="${pdict.CurrentForms.profile.customer.accountNumber.value}";
+		if(actNo!='null'){
+			var actNo="${pdict.CurrentForms.profile.customer.accountNumber.value}";
+			$("#accountnumber3").val(actNo);
+		}
+
+		
+		$("#phone1,#phone2,#phone3").keyup(function () {
+		    var maxLength = $(this).attr('maxlength');
+			if($(this).val().length == maxLength) {
+		        $(this).next().focus();
+		    }
+		});
+
+		//populating phone no. on load it availabel
+		if($("#phonenumber").val()!= null && $("#phonenumber").val()!= 'fake'){
+			var acc1= $("#phonenumber").val().substr(0,3);
+			var acc2= $("#phonenumber").val().substr(3,3);
+			var acc3= $("#phonenumber").val().substr(6,4);
+			jQuery("#phone1").val(acc1);
+			jQuery("#phone2").val(acc2);
+			jQuery("#phone3").val(acc3);
+		}
+
+	 	//var remember = readCookie("dwcustomer_d5daae0bfd2ff56096ea8fea58bad5e2");	 	
+	 	var remember = readCookie("rememberMe");
+	 	if(null!=remember){	
+			jQuery("#dwfrm_profile_login_rememberme").attr('checked','checked');
+		}
+
+		
+		    
+		// keep track of which fields are changed, firstname/lastname are nameChanged, all others are loginChanged
+		jQuery('input').change(function(formField) {
+			//alert(formField.currentTarget.id.indexOf("${pdict.CurrentForms.profile.customer.accountNumber.htmlName}") >= 0) ;
+	        if (formField.currentTarget.id.indexOf("${pdict.CurrentForms.profile.login.htmlName}") >= 0) {  
+	        	loginChanged = true;
+	        } else if (formField.currentTarget.id.indexOf("${pdict.CurrentForms.profile.customer.email.htmlName}") >= 0) {
+	        	loginChanged = true;
+	        }else if ((formField.currentTarget.id.indexOf("accountnumber3") >= 0)) {
+    	        nameChanged = true;
+	        } else if ((formField.currentTarget.id.indexOf("${pdict.CurrentForms.profile.customer.firstname.htmlName}") >= 0) || 
+	    	        (formField.currentTarget.id.indexOf("${pdict.CurrentForms.profile.customer.lastname.htmlName}") >= 0)) {  
+	        	nameChanged = true;    
+	        }   
+		});
+
+		// if the select box has a change set the flag
+		jQuery('select').change(function(e) {
+			loginChanged = true;
+		});
+		
+
+		// clear out formfields that could be part of autocomplete
+	    //jQuery("[name=${pdict.CurrentForms.profile.customer.emailconfirm.htmlName}]").val("");
+	    /*jQuery("[name=${pdict.CurrentForms.profile.login.password.htmlName}]").val("");	 
+	    jQuery("[name=${pdict.CurrentForms.profile.login.passwordconfirm.htmlName}]").val("");*/	
+
+	    // change the labels of the password fields in case the user is logged in
+	   /* if (${pdict.CurrentCustomer.registered}) {
+	    	jQuery("[name=${pdict.CurrentForms.profile.login.password.htmlName}]").parent().prev().children('.labeltext').html("${Resource.msg('label.newpassword','forms',null)}:");
+	    	jQuery("[name=${pdict.CurrentForms.profile.login.passwordconfirm.htmlName}]").parent().prev().children('.labeltext').html("${Resource.msg('profile.newpasswordconfirm','forms',null)}:");
+	    }*/
+	});
+
+	
+
+//--></script> 
+</isdecorate>

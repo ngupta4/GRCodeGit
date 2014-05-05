@@ -1,0 +1,48 @@
+<!--- TEMPLATENAME: selectasystem.isml --->
+<isdecorate template="search/pt_selectasystem_full">
+<isinclude template="util/modules"/>
+
+<iscomment>create reporting event</iscomment>
+<isinclude template="util/reporting/ReportSearch.isml"/>
+
+<isset name="showHeader" value="${true}" scope="page" />
+<isset name="showFooter" value="${true}" scope="page" />
+<isset name="showNav" value="${true}" scope="page" />
+<isset name="showOrderButton" value="${false}" scope="page" />
+
+<isscript>
+	importPackage(dw.util);
+	importPackage(dw.catalog);
+	
+	var CCC : Object = pdict.CurrentCampaignConfig;
+	var category : dw.catalog.Category = CCC.getCampaignCategory();
+	
+</isscript> 
+<isif condition="${!empty(pdict.Content.custom.categoryName)}">
+	<isset name="folderName" value="${pdict.Content.custom.categoryName}" scope="page"/>
+<iselse>
+	<isset name="folderName" value="${pdict.Content.classificationFolder.displayName}" scope="page"/>
+</isif>
+<div style="clear:both;"><!-- FLOAT CLEAR --></div>
+<div class="content_top_slot">
+	<isslot id="SAS-Top-banner" context="category" description="Top banner sas page" context-object="${category}"/>
+</div>
+<div style="clear:both;"><!-- FLOAT CLEAR --></div>
+<div class="content_left_slot">
+	<isslot id="SAS-Left-banner" context="category" description="Left banner sas page" context-object="${category}"/>
+</div>
+<isinclude template="content/content/htmlcontentasset" />
+<div class="product_slot">
+	<isslot id="SAS-Products" context="category" description="Right banner sas page" context-object="${category}"/>
+</div>
+<div class="content_right_slot">
+	<isslot id="SAS-Right-banner" context="category" description="Right banner sas page" context-object="${category}"/>
+</div>
+<div style="clear:both;"><!-- FLOAT CLEAR --></div>
+<isset name="OmniturePage" value="Offerpage" scope="pdict" />
+<div class="content_bottom_slot">
+	<isslot id="SAS-Bottom-banner" context="category" description="Bottom banner sas page" context-object="${category}"/>
+	<iscomment> SAS Page Pixels<iscontentasset aid="selectasystem-mediapixel"/></iscomment>
+		<isslot id="SAS-MediaPixel" context="category" description="MediaPixel sas page" context-object="${category}"/>
+</div>
+</isdecorate>

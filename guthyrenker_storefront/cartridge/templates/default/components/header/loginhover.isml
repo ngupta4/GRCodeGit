@@ -1,0 +1,66 @@
+<isif condition="${!(!empty(LoggedIn) && LoggedIn.value == '1') || empty(RememberMe)}">	
+	<div class="loggedout loginDrawer" id="infopanel_loggedout">
+	
+		<!--start header notlogged in content-->
+		<form id="formHeadLogin" method="post" action="${URLUtils.https('Account-LoginHover')}">
+			<script type="text/javascript">
+			$(document).ready( function(){				
+				$("#login_email").focus( function() {					
+					$('[for="login_email"]').addClass("focused");
+				});
+				$("#login_email").blur( function() {
+					if($(this).attr("value") == "") {
+						$('[for="login_email"]').removeClass("focused");
+					}
+				});
+				$("#login_password").focus( function() {
+					$('[for="login_password"]').addClass("focused");
+				});
+				$("#login_password").blur( function() {
+					if($(this).attr("value") == "") {
+						$('[for="login_password"]').removeClass("focused");
+					}
+				});
+			} );
+			</script>
+			<div id="emailGroup">
+				<span>
+					<label for="login_email">email</label>
+					
+					<isif condition="${!empty(RememberMe)}">
+						<input type="text" class="required" name="email" id="login_email" value="${RememberUserEmail}" />
+					<iselse/>
+						<input type="text" class="required" name="email" id="login_email" />
+					</isif>
+			
+				</span>
+			</div>
+			<div id="passwordGroup">
+				<span>
+					<label for="login_password">password</label>
+					
+					<input type="password" class="required" name="passwd" id="login_password" />
+		
+				</span>
+			</div>
+			<div id="signInBtn">
+				<button name="sign_in" type="submit" class="orngBtnSmall" value="">sign in</button>
+			</div>
+			<div id="rememberGroup">
+		  <iscomment><a class="iconInfo" title="What's this?" href="javascript:void(0);">What's this?</a></iscomment>
+				<input type="checkbox" checked="checked" name="remember_me" id="login_remember_me" /> 
+					<label for="login_remember_me">Remember me</label>
+					<!--(<a class="openOverlay" href="/remember/index.php" id="overlayRemember" onClick="return false;">What's This?</a>)-->
+			</div> 
+			<div id="forgotGroup">
+				<iscomment><a class="iconInfo" title="What's this?" href="javascript:void(0);">What's this?</a></iscomment>
+		    <a href="${URLUtils.https('Account-PasswordResetDialog')}" id="PasswordReset" title="${Resource.msg('logininclude.forgotpassword','account',null)}">Forgot password?</a>
+			</div>
+		  <div id="registerGroup">
+				<iscomment><a class="iconInfo" title="What's this?" href="javascript:void(0);">What's this?</a></iscomment>
+		    <a class="orngBtnSmall" href="${URLUtils.https('Account-StartRegister')}">Register</a>
+			</div>
+		</form>
+		<!--//end header notlogged in content-->
+	</div>
+</isif>

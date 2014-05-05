@@ -1,0 +1,23 @@
+<!--- TEMPLATENAME: pt_escalation.isml --->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+				
+		<isinclude template="components/header/htmlhead" />
+		
+		<script type="text/javascript" src="${URLUtils.staticURL('lib/jquery/js/form/jquery.form.js')}"></script>
+		<link rel="stylesheet" href="${URLUtils.staticURL('css/escalation.css')}" type="text/css" />
+	</head>
+	
+	<body>
+		<div id="escalationContainer">
+
+			<isreplace/>
+			
+			<div class="clearfix"></div>
+			
+		</div>
+		
+	</body>
+</html>

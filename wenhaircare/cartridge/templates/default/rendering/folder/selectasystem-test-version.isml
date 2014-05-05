@@ -1,0 +1,121 @@
+<!--- TEMPLATENAME: selectasystem.isml --->
+<isdecorate template="search/pt_selectasystem_full">
+<isinclude template="util/modules"/>
+
+<iscomment>create reporting event</iscomment>
+<isinclude template="util/reporting/ReportSearch.isml"/>
+
+<isset name="showHeader" value="${true}" scope="page" />
+<isset name="showFooter" value="${true}" scope="page" />
+<isset name="showNav" value="${true}" scope="page" />
+<isset name="showOrderButton" value="${true}" scope="page" />
+
+<isscript>
+	importPackage(dw.util);
+	importPackage(dw.catalog);
+	
+	var CCC : Object = pdict.CurrentCampaignConfig;
+
+	var offersList : ArrayList = new ArrayList();
+	var offerCodes : Array = null;
+	if( !empty(CCC) ) {
+		offerCodes = CCC.sasOfferCodes;
+		var aProduct : Product = null;
+		for( var i=0, ii=offerCodes.length; i<ii; i++ ) {
+			aProduct = ProductMgr.getProduct(offerCodes[i]);
+			if( !empty(aProduct) ) {
+				offersList.add1(aProduct);
+			}
+		}
+	}
+	var kitQtyClass = "";
+	var kitQty = 0;
+	if( !empty(offersList) ) {
+		kitQty = offersList.size();
+		switch(kitQty) {
+		case 1:
+			kitQtyClass="oneKit";
+			break;
+		case 2:
+			kitQtyClass="twoKits";
+			break;
+		case 3:
+			kitQtyClass="threeKits";
+			break;
+		case 4:
+			kitQtyClass="fourKits";
+			break;
+		case 5:
+			kitQtyClass="fiveKits";
+			break;
+		}
+	}
+
+	var category : dw.catalog.Category = CCC.getCampaignCategory();
+
+</isscript> 
+
+<isset name="KitQtyClass" value="${kitQtyClass}" scope="page" />
+
+<div class="sasWrap">
+
+	<div class="sas-head">
+		 
+		<div class="headerLeft">
+			<h1 class="titleTextIntend">${Resource.msg('sas.selectasystem.pagetitle.h1','locale',null)}</h1>
+			<h2>${Resource.msg('sas.selectasystem1','locale',null)}</h2>
+			<p class="intro">
+				<isprint value="${Resource.msg('sas.choosethekit','locale',null)}" encoding="off" />
+			</p>
+		</div>
+
+		<iscomment>to show bv rating in the header.	</iscomment>	
+		<isinclude template="bv/display/rr/reviewsummary" />
+		<div class="headerRight">
+			<iscontentasset aid="${'sas-new-guarantee'}" />
+			<div class="sasLivechat">
+				<iscontentasset aid="sas-LiveChat"/>
+			</div> 
+		</div>
+			
+	</div>
+ 	
+ 	<isslot id="sas-content-slot" description="SAS Chaz Dean test" context="category" context-object="${category}" />
+        
+</div>
+		<iscomment><a href="http://newreviews.proactiv.com/0570pa/011114/writereview.htm?format=embedded&amp;campaignid=BV_RATING_SUMMARY&amp;return=http%3A%2F%2Fwww.proactiv.com%2Forder%2Fselect.php%3Ftt%3D1&amp;innerreturn=http%3A%2F%2Fnewreviews.proactiv.com%2F0570pa%2F011114%2Freviews.htm%3Fformat%3Dembedded%26sort%3Drating&amp;user=__USERID__&amp;submissionparams=__BVSUBMISSIONPARAMETERS__&amp;submissionurl=http%3A%2F%2Fwww.proactiv.com%2Fclubcatalog%2Freview-submit.php" onclick="bvShowContentOnReturnPRR('0570pa', '011114', 'BVRRWidgetID');" target="BVFrame" name="BV_TrackingTag_Rating_Summary_1_WriteReview_011114" title="Write a review">Write a review</a> <span class="BVRRRatingSummaryLinkWriteSuffix"></span>
+		</iscomment>
+        
+<div class="clear"></div>        
+		<isset name="acqPage" value="${true}" scope="pdict" />
+		<isinclude template="bv/display/rr/reviews" />
+
+<isset name="OmniturePage" value="sas2" scope="pdict" />
+
+<script type="text/javascript"><!--
+
+	jQuery(".SelectSidePanel .fragrance").click(function() 
+	{
+			app.sas.selectFragrance(jQuery(this));
+	});
+
+	jQuery(".SelectSidePanel .kitselection").click(function() 
+	{
+		app.sas.selectFragrance(jQuery(this));
+	});
+--></script>
+
+<script  type="text/javascript">
+var tabelement = $('.selectKit li');
+$(tabelement).click(function(){
+	var index = $(tabelement).index(this)+1;
+	$(tabelement).removeClass("activated");
+	$(this).addClass("activated");
+		 $("ul.theKits li.sasTabs").css('display','none');
+		 $("ul.theKits").find("li.tab"+index).css('display','block');
+	});
+	
+
+</script>
+
+</isdecorate>

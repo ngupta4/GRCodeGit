@@ -1,0 +1,25 @@
+<!--- TEMPLATENAME: updateqtyjson.isml --->
+<iscontent compact="true" type="text/json" />
+
+<isif condition="${!empty(pdict.ProductLI)}">
+{
+	"success" : true,
+	"qty" : ${pdict.ProductLI.quantityValue},
+	"update": {
+	    "merchandiseTotal" : {
+	        stringValue: "<isprint value="${pdict.Basket.getAdjustedMerchandizeTotalPrice(false)}">",
+	        number: <isprint value="${pdict.Basket.getAdjustedMerchandizeTotalPrice(false).value}" formatter="###0.00">
+	    },
+	    "shipping" : {
+	        "stringValue": "<isprint value="${pdict.Basket.getAdjustedShippingTotalPrice()}">",
+	        "number": <isprint value="${pdict.Basket.getAdjustedShippingTotalPrice().value}" formatter="###0.00">
+	    },
+	    "totalPrice" : {
+	        "stringValue": "<isprint value="${pdict.Basket.getTotalNetPrice()}">",
+	        "number": <isprint value="${pdict.Basket.getTotalNetPrice().value}" formatter="###0.00">
+	    }
+	}
+}
+<iselse>
+{"success" : false}
+</isif>

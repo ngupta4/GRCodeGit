@@ -1,0 +1,34 @@
+/**
+ * MobileSearchRedirectURL.ds
+ *
+ * This takes the search redirect url and put's a "m" before the pipeline
+ * for the mobile app.
+ *
+ * @input SearchRedirectURL : String
+ * @output MobileSearchRedirectURL : String
+ */
+function execute( pdict : PipelineDictionary ) : Number
+{
+	var searchRedirectURL : String = pdict.SearchRedirectURL;	
+	var mobileSearchRedirectURL : String = "";
+	
+	if (searchRedirectURL == null)
+	{
+		return PIPELET_ERROR;
+	}
+	
+	var pipelineIndex : Number = searchRedirectURL.lastIndexOf("/");
+	
+	if (pipelineIndex == -1)
+	{
+		return PIPELET_ERROR;
+	}
+	
+	// Add 1 to the index since we need the length and not the index for the substr method.
+	pipelineIndex++;
+	
+	mobileSearchRedirectURL = searchRedirectURL.substr(0, pipelineIndex) + "m" + searchRedirectURL.substr(pipelineIndex ); 
+	pdict.MobileSearchRedirectURL = mobileSearchRedirectURL;
+	
+   	return PIPELET_NEXT;
+}

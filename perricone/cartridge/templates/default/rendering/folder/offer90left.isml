@@ -1,0 +1,106 @@
+
+<iscomment>This is the left side of the SAS page for panel B (RM 18400) which adds 90 day to SAS page</iscomment>
+<div class="dw-object dw-object-rinclude" style="display:none;" id="ext-gen98"><textarea wrap="off" rows="10" cols="100" id="ext-gen99">({"PipelineURL":"http://localhost:60606/target=/c/guthyrenker_businesslogic/p/COCart-AddProduct","TemplateURL":"http://localhost:60606/target=/c/perricone/t/default/product/offer.isml","PageCacheExpires":"01/06/2014 12:49 pm","PipelineTitle":"COCart-AddProduct (guthyrenker_businesslogic)","TemplateTitle":"/default/product/offer.isml (perricone)","PageProcessingTime":20})</textarea></div><div class="offerContainer" id="offer-BD9D3P">
+		        
+    <isset name="orderBtnName" value="${offersList[0].custom.orderButtonCallout}" scope="page"/>
+
+
+	<div class="name ">
+		<h2>${offersList[0].name}</h2>
+	</div><!-- END: name -->
+
+	<div class="productimage"><!-- Product Image -->
+		<isif condition="${!empty(offersList[0].getImage('large',0))}">
+			<img src="${offersList[0].getImage('large',0).url}" />
+		<iselse>
+			<img src="${URLUtils.staticURL('/images/noimagelarge.png')}"/>
+		</isif>		</div>
+	<div class="imageNote">&nbsp;</div>
+	<div class="sas_product_bg_img-180v"></div>
+
+	<div class="sasTabDescription">
+		Start looking younger with Dr. Perricone's Cold Plasma Sub-D and automatically receive the bonus High Potency Amine Face Lift Treatment for tightening the appearance of skin, along with the Discovery Collection (see below for details).
+	</div>
+
+	<div class="OrderNowButton kitgroup1">
+		<a href="${URLUtils.https('COCart-AddProduct','pid',offersList[0].ID)}">${orderBtnName}</a>
+		<div class="burst-free-shipping"></div>
+	</div>
+
+	<div class="shortDescription">
+		<style>
+			.sas #control-offer .OrderNowButton .burst-free-shipping{ display:block !important; position:absolute; width:69px; height:66px; left:556px; top:535px; background:url(http://demandware.edgesuite.net/aafd_prd/on/demandware.static/Sites-Perricone-Site/-/default/v1371598153337/images/burst-free-shipping.png) no-repeat; }
+			.sas #control-offer .OrderNowButton.height .burst-free-shipping{left: 387px;position: relative;top: -68px;}
+		</style>
+
+		<span style="font-size:18px;font-weight:bold" class="bonus"><br><br>Your Sub-D Basic Kit Includes a 30-Day supply of:</span><br><br>
+
+		<b>Cold Plasma Sub-D</b><br>
+		Formulated to help address the loss of elasticity along the jawline, chin, and neck areas while dramatically smoothing the appearance of wrinkles and visibly improving skin texture.
+		<br>
+	</div><!-- END: shortDescription -->
+
+
+	<div class="longDescription">
+		<span style="font-weight:600;font-style:italic;color:red" class="bonus">Plus a free bonus:</span><br>
+		<b>High Potency Amine Face Lift Treatment</b><br>This amazing treatment is designed to do for your face what Sub-D can do for your neck.
+	</div><!-- END: longDescription -->
+
+	<div class="promo"><div class="freeGiftRibbon">
+		<b><i>With this introductory shipment:</i></b><br>
+		<b style="font-weight:600;font-size:1.4em;color:red" class="bonus">The Discovery Collection</b><br>
+		<span class="copy">Our three-piece sampler containing Citrus Facial Wash, our <br>No Foundation Foundation and a sample of Cold Plasma.</span>
+	</div>
+
+<iscomment><div style="color:white;text-align:center;font-weight=bold;position:relative;top:54px;left:10px;font-size: 18px;">PER MONTH</div></iscomment></div>
+	<div class="pricing"><div style="font-size: 15px;padding-top:5px;float:right">Not available in stores.</div></div>
+	
+	<div class="price-order" style="height:270px; text-align:left">
+		<div class="price" style="height:190px">
+
+			<isloop items="${offersList}" var="offer" status="offers_status">					
+		      <isif condition="${offers_status.count<=2}">			   	 
+
+			    		     	
+			   	 <isif condition="${offers_status.index==1}">
+					<div style="clear:both;width:436px; position:relative; left:12px; top:27px"><hr /></div>
+			        <isset name="newPrice" value="${offer.priceModel.getPrice()}" scope="page"/>
+				<iselse>
+					<isset name="newPrice" value="${offer.priceModel.getPrice()}" scope="page"/>
+				</isif>
+
+				<div class="terms_only" style="font-size:24px; line-height:normal; margin-top:15px">
+					<label style="float:left;margin:12px 7px 0 0">
+						<input id="${offer.ID}" type="radio" name="kitgroup1" value='<isprint value="${kit1Name}" encoding="off"/>'  <isif condition="${offers_status.count%2!=0}">checked='checked'<isset name="prodId1" value="${offer.ID}" scope="page"/></isif>   class="kitselection" />
+					<div style="float:left">
+						<span style="font-weight:bold;">
+							<isif condition="${offer.custom.tabDetails.markup != null}">
+								<isprint value="${offer.custom.tabDetails.markup}" encoding="off" />
+							</isif>
+						</span><br />
+						<span style="font-size:20px">
+							Only
+							<span class="amount" style="font-size:24px; font-weight:bold;">
+							<iscomment>newPrice deteremined above to display total of product in 3x payments</iscomment>
+								<isprint value="${newPrice}" style="MONEY_LONG" />
+							</span>
+							per month
+						</span>
+					</div>
+					</label>
+					
+				</div>
+			 </isif>
+			</isloop> 
+		
+		</div>
+		<div style="clear:both"></div>
+		<div class="OrderNowButton height kitgroup1">
+			<a href="${URLUtils.https('COCart-AddProduct','pid',offersList[0].ID)}">${orderBtnName}</a>
+			<div class="burst-free-shipping"></div>
+		</div>
+		
+	</div>
+			<div class='footnote'>**retail value for Basic 30-Day supply</div>
+	
+</div>

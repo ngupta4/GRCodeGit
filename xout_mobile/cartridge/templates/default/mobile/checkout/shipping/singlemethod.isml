@@ -1,0 +1,111 @@
+<isdecorate template="mobile/pt_mobile">
+<isinclude template="mobile/util/modules"/>
+
+<isscript>
+
+	importPackage(dw.customer);
+	importPackage(dw.order);
+	importPackage(dw.util);
+	
+	var basket : Basket;
+	
+	try{
+		basket = pdict.Basket;
+	} catch(e){}
+	
+	//test if the basket can use the giftcard shipping
+	var giftCardDelivery = true;
+	var str = "";
+	try{
+		
+		var prod;
+		for each(var li in basket.getProductLineItems()){
+			
+			prod = li.getProduct();
+			
+			if(prod.custom.shippingFeature.value != 'giftCardDelivery'){
+				giftCardDelivery = false;
+				break;
+			}
+		}
+	
+	} catch(e){}
+	
+	
+	
+</isscript>
+
+<div id="singleshipping" class="mobilecontent">
+    <div>
+		<div id="shippingmethodform">
+			<h3>${Resource.msg('singleshipping.shippingmethodheader','checkout',null)}</h3>
+			
+			<div>
+				<isif condition="${pdict.Basket.defaultShipment.shippingPriceAdjustments.size() > 0}">
+					<isloop items="${pdict.Basket.defaultShipment.shippingPriceAdjustments}" var="shippingPA">
+						<isset name="shippingPromotion" value="${shippingPA.promotion}" scope="page"/>
+						<isif condition="${shippingPromotion != null}">
+							<div>
+								<isprint value="${Resource.msg('shipment.qualifiesfor','checkout',null)}"/> <isprint value="${shippingPromotion.calloutMsg}"/>
+							</div>
+						</isif>
+					</isloop>
+				</isif>
+			</div>
+
+			<iscomment>determine and render the list of applicable shipping methods</iscomment>
+			<isscript>
+				var applicableShippingMethods : dw.util.Collection = new dw.util.ArrayList();
+				var shipment : dw.order.Shipment = pdict.Basket.defaultShipment;
+				var shippingModel : dw.order.ShipmentShippingModel = null;
+				if(shipment != null){
+					shippingModel = dw.order.ShippingMgr.getShipmentShippingModel( shipment );
+					applicableShippingMethods = shippingModel.applicableShippingMethods;
+				}
+				
+				
+			</isscript>
+				
+			<isif condition="${applicableShippingMethods.size() > 0}">
+				<isloop items="${applicableShippingMethods}" var="shippingMethod">
+				
+				<isif condition="${giftCardDelivery}">
+					
+					<isif condition="${shippingMethod.ID != 'N'}">
+		    			<a href="${URLUtils.https('mCOShipping-ShippingMethodContinue','shippingMethodID',shippingMethod.ID)}" class="linkbar"><isprint value="${shippingMethod.displayName}">:
+		    			<isprint value="${shippingModel.getShippingCost(shippingMethod).getAmount()}">
+		    			<isif condition="${!empty(shippingMethod.description)}">(<isprint value="${shippingMethod.description}"/>)</isif>
+		    			</a>
+					</isif>
+				
+				<iselse>
+				
+					<isif condition="${shippingMethod.ID != '3'}">				
+		    			<a href="${URLUtils.https('mCOShipping-ShippingMethodContinue','shippingMethodID',shippingMethod.ID)}" class="linkbar"><isprint value="${shippingMethod.displayName}">:
+		    			<isprint value="${shippingModel.getShippingCost(shippingMethod).getAmount()}">
+		    			<isif condition="${!empty(shippingMethod.description)}">(<isprint value="${shippingMethod.description}"/>)</isif>
+		    			</a>    		
+			    	</isif>
+				
+				</isif>
+
+				</isloop>
+				
+			<iselse/>
+				<div>${Resource.msg('singleshipping.noshippingmethods','checkout',null)}</div><!-- END: noshippingmethods -->
+			</isif>
+		
+			<form action="${URLUtils.https('mCOShipping-CreateShipping')}" method="post" name="SingleShippingContinueForm" id="SingleShippingContinueForm">
+				
+				<div style="padding-top: 15px;">
+					<table cellpadding="0" cellspacing="0" width="100%" border="0">
+						<tr>
+							<td><button type="submit" value="back" name="action">${Resource.msg('global.back','locale',null)}</button></td>
+						</tr>
+					</table>
+				</div>
+			</form>
+		</div><!-- END: shippingmethodform -->
+	</div><!-- END: checkoutshipping -->
+</div><!-- END: checkout -->
+</isdecorate>

@@ -1,0 +1,82 @@
+<!--- TEMPLATENAME: pt_stories.isml --->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<isinclude template="util/modules"/>
+
+<head>
+	<iscomment>Include all important information globally , e.g. meta-data, link information, and javascript.</iscomment>
+	<isinclude template="components/header/htmlhead"/>
+	
+	<link rel="stylesheet" href="${URLUtils.staticURL('css/main_success.css')}" type="text/css" />
+</head>
+
+<body>
+	<isscript>
+	importPackage(dw.content);
+	importPackage(dw.util);
+	importPackage(dw.catalog);
+	
+	importScript('guthyrenker_core:common/libUtils.ds');
+	
+	var contentInfo    = getCurrentContentInfo(pdict.CurrentHttpParameterMap);
+	var folderPathInfo = getFolderPathInfo(contentInfo);
+	
+	var CurrentFolder  : Folder = contentInfo.folder;
+	var CurrentContent : Content = contentInfo.content;
+	
+	var CurrentFolderPath : String = folderPathInfo.folderPath;
+	var RootFolder        : Folder = folderPathInfo.rootFolder;
+	
+	CurrentFolderPath += " body_"+RootFolder.ID+" "+RootFolder.ID;
+	
+	var PageID : String = "page_";
+	
+	if( empty(CurrentContent) ) {
+		PageID += CurrentFolder.ID;
+	} else {
+		PageID += CurrentContent.ID;
+	}
+	</isscript>
+
+	<isinclude template="common/mediaPixelsInit" />
+	
+	<iscomment>Cookies and Javascript enabled check</iscomment>
+	<isinclude template="components/browsertoolscheck" />
+<isinclude template="components/header/header"/>
+	<div  class="mainWrapper">
+	  	<div class="clearfix" id="main">
+	  		<div id="page-${CurrentContent.ID}">
+				<div id="primaryContent" class="clearfix">
+					<isreplace/>
+					<div class="clearfix"><!-- FLOAT CLEAR --></div>
+				</div><!-- END: content -->
+				
+				<iscomment>Side menu</iscomment>
+				<div id="secondaryContent" class="successstories">
+					<iscomment>Create a section for each sub-folder of the Success Stories folder</iscomment>
+					<isloop items="${RootFolder.getOnlineSubFolders()}" var="folder">
+						<div class="block nav">
+							<div class="blockTop"><div class="blockTopRight"></div></div>
+							<div class="blockContent">
+								<h5 class="sidebarTitle altimg">${folder.displayName}</h5>
+								<isif condition="${folder.getContent().length > 0}">
+									<ul>
+										<isloop items="${folder.content}" var="contentItem">
+											<li><a href="${URLUtils.url('Page-Show', 'cid', contentItem.ID)}">- ${contentItem.name}</a></li>
+										</isloop>
+									</ul>
+								</isif>
+							</div>
+							<div class="blockBottom"><div class="blockBottomRight"></div></div>
+						</div>
+					</isloop>
+				</div>
+			</div>
+		</div>
+	</div><!-- END: main -->
+	
+	
+	<isinclude template="components/footer/footer"/>
+	<isinclude template="components/footer/pixels"/>
+</body>
+</html>

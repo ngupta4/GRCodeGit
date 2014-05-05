@@ -1,0 +1,372 @@
+importPackage(dw.util)
+importPackage(dw.system)
+importPackage(dw.net)
+importPackage( dw.crypto );
+importScript('common/libUtils.ds');
+
+
+function formatISODateNoMills(date:Date):String{
+	return date == null ? "" : formateDate(date, "yyyy-MM-dd'T'HH:mm:ss'Z'");
+}
+
+function formatISODate(date:Date):String{
+    return date == null ? "" : date.toISOString();
+}
+
+function formateDate(date:Date, format:String):String{
+    return StringUtils.formatCalendar(new Calendar(date), format);
+}
+
+function formateDate(date:Date, format:String):String{
+    return StringUtils.formatCalendar(new Calendar(date), format);
+}
+
+function normalizeURL(url:String){
+	if(url == null){
+		return null;
+	}
+	
+	return url.charAt(url.length - 1) == '/' ? url.substr(0, url.length - 1) : url;
+}
+
+function notNull(value){
+    return value || "";
+}
+
+function pref(name, defaultValue){
+    var value = dw.system.Site.getCurrent().getCustomPreferenceValue(name);
+    return value == null ? (defaultValue || "") : value;
+}
+
+function setValue(logObject:CustomObject, prop:String, value:Object){
+    
+    try{
+        logObject.custom[prop] = value;
+    }catch(e){
+        Logger.error("Can't set property '" + prop + "' for cart log entry. [" + e + "]");
+    }
+}
+
+function credentialsFromUrl(url:String):Object{
+    var match = url.match(/^(https?:\/\/)(.+):(.+)@(.*)$/);
+    if(match != null && match.length == 5){
+        return {url: match[1] + match[4], user:match[2], password: match[3]};
+    }
+    else
+    {
+        return null;
+    }
+}
+
+
+function openUrl(method:String, url:String):HTTPClient
+{
+	var client:HTTPClient = new HTTPClient();
+	
+    var credentials = credentialsFromUrl(url);
+    if(credentials != null){
+        client.open(method, credentials.url, credentials.user, credentials.password);
+    }
+    else
+    {
+        client.open(method, url);
+    }
+    
+    return client;
+}
+
+function getCampaignCode(request:Request):String{
+    var cookie = request.httpCookies.campaign;
+    return cookie == null ? "" :cookie.value;
+}
+
+function getPrimaryUCI(request:Request):String{
+    var cookie = request.httpCookies.uci;
+    return cookie == null ? "" :cookie.value;
+}
+
+function getSecondaryUCI(request:Request):String{
+    var cookie = request.httpCookies.secondaryuci;
+    return cookie == null ? "" :cookie.value;
+}
+
+function getCustomerUID(request:Request):String{
+	var cookie = null;
+	if(request != null && 'httpCookies' in request && request.httpCookies != null)
+    	cookie = request.httpCookies.cookie_uid;
+    /*Remove hard coded value of UID when DEV29 became .com enabled*/
+    return cookie == null ? "VHgNyZ" :cookie.value;
+}
+
+function getSessionStartDate(session:Session){
+    var sessionStartDate = session.custom.sessionStartDate;
+    if(empty(sessionStartDate)){
+        sessionStartDate = new Date();
+        session.custom.sessionStartDate = sessionStartDate;
+    }
+    
+    return sessionStartDate;
+}
+
+function merge(dest, src){
+	var  o : Object = {};
+	for(let item in dest){
+		o[item] = dest[item];	
+	}
+	if(!empty(src)){
+		for(let item in src){
+			if(src.hasOwnProperty(item)){
+				o[item] = src[item];
+			}
+		}
+	}
+	return o;
+}
+
+var _mwAPI;
+function getAPI() : Object {
+
+	importClass(dw.net.HTTPClient);
+	
+	importScript('int_gutheyrenker:common/libUtils.ds');
+	importScript('int_gutheyrenker:common/libOAuth.ds');
+	
+	var domain : String = pref('middlewareAPIURL','https://grws.grdev.com');
+	
+	var callDefaults = {contentType: 'text/xml', action: 'GET'};	
+	
+	//validation url regexp 
+	function validateURL(url){
+		return /^https?:\/\/.+$/.test(url);	
+	}
+	
+	//common work for API calls
+	function callAPI(url : String, options : Object, cb : Function){
+		options = merge(callDefaults, options);
+		if( !empty(url) && validateURL(url)){
+			Logger.getRootLogger().debug('[MW CallApi] for url: '+url);
+			var http : HTTPClient = new HTTPClient();
+			http.setRequestHeader('Content-Type',options.contentType);
+			http.setRequestHeader('Authorization',getOAuthHeader(url, options.action));
+			Logger.getRootLogger().debug(" URL = "+url);
+			http.open(options.action, url);
+			try{
+				http.send();
+				var response = cb(http.getText(), http.getErrorText(), http.statusCode );
+				Logger.getRootLogger().debug("[MW CallApi] Response = "+response);
+				return response;
+			}catch(e){
+				Logger.getRootLogger().fatal('[MW CallApi] Failed to get MW xml file url: '+url+',exception: '+e.toString());
+			}
+		}
+		Logger.getRootLogger().debug('[MW CallApi] if failed due invalid url: '+url);
+		return null;
+	}
+	
+	return _mwAPI || (_mwAPI = {
+		getCustomerInfo : function (acct : String, inactive : Boolean) : XML {
+			//var domain = normalizeURL(pref('middlewareAPIURL'))
+			var brandID = Site.current.getCustomPreferenceValue("GRMProductLine");
+			var url : String = domain+'/customer/API/view/customerNumber/'+acct+'/brand_id/'+brandID+(inactive?'/Inactive/true':'');
+			
+		    return callAPI(url, {}, function(resp : String, errResp: String, statusCode: Number){
+				var responseXML : XML = null;
+				
+				if( !empty(resp) && empty(errResp) ) {
+					responseXML = new XML(resp);		
+				}else{
+					Logger.getRootLogger().debug('[MW CallApi] Error in <GetCustomerInfo> response, errorResponse='+errResp);
+					return null;
+				}			
+				return responseXML;
+			});
+		},
+		getEmailVerificationInfo : function(email : String, productLine : String, request : dw.system.Request) : XML {
+			var uid:String = getCustomerUID(request);
+			var transactionID = getTransactionID();
+			//default productLine = PA : https://grws.grdev.com/customer/email-verify/email/<email>/ brand/<brandId>/uid/<uid>/trans/<transactionId>
+			var url : String = domain+'/customer/email-verify/email/'+encodeURIComponent(email)+'/brand/'+(productLine?productLine:Site.current.getCustomPreferenceValue("GRMProductLine"))+'/uid/'+uid+'/trans/'+transactionID;
+			Logger.getRootLogger().debug('getEmailVerificationInfo: url: ' + url);
+			
+
+			return callAPI(url, {}, function(resp : String, errResp: String, statusCode: Number){
+				var responseXML : XML = null;
+					
+				if( !empty(resp) || !empty(errResp)){
+					if(statusCode >= 400) {
+						responseXML = new XML(errResp);
+					}else{
+						responseXML = new XML(resp);
+					}
+					Logger.getRootLogger().debug('getEmailVerificationInfo: responseXML: ' + responseXML);
+					
+					if(responseXML != null && !empty(responseXML)){
+						return responseXML;
+					}
+				}
+				Logger.getRootLogger().debug('[MW CallApi] responseCode:'+statusCode+', no accountStatus in response was found.');
+				return null;
+			});
+		}
+	})
+}
+
+
+
+/* Function to extract the Error Response (status code, error codes and error messages) from XML
+
+	Sets the Error Response List in the session
+	Structure of errorResponse: [0] - Status Code
+								[1] - Error Code 1
+								[2] - Error Message 1
+								[3] - Error Code 2
+								[4] - Error Message 2
+								.. and so on.
+*/
+
+function getErrorResponse (responseXML:XML) 
+{
+	var errorResponseStatus : String = "";
+	var errorResponseCode : String = "";
+	var errorResponseMessage : String = "";
+	
+// In case of a blank response XML, set the error values to TIMEOUT
+
+	if ((responseXML == null)||(responseXML.toString()=="")) {
+		errorResponseStatus = "TIMEOUT";
+		errorResponseCode = "TIMEOUT";
+		errorResponseMessage = "TIMEOUT";
+	}
+	else
+	{
+		var status : String = responseXML.status;
+		errorResponseStatus = status.toString();
+		
+		if (status == "500") {
+			Logger.error('\n\nError in Middleware Web Service invocation. Status code 500 received in response. Please refer to the response XML below:\n\n' + responseXML.toString());
+		}
+		
+		
+		var errorCount = 1;
+		if('errorCount' in responseXML){
+			errorCount = responseXML.errorCount;
+		}
+		
+		if('errorData' in responseXML){
+			for (var i=0,j=1; i<errorCount; i++)
+			{
+				errorResponseCode = responseXML.errorData.error[i].code.toString();
+				errorResponseMessage = responseXML.errorData.error[i].message.toString();
+						
+			}
+		}
+	}
+
+	// Set the errorResponse strings in session
+	
+	session.custom.errorResponseStatus = errorResponseStatus;
+	session.custom.errorResponseCode = errorResponseCode;
+	session.custom.errorResponseMessage = errorResponseMessage;
+}
+
+function callMWAPI (http:HTTPClient, method:String, url:String, requestXML:XML, serviceTimeout:Number) : HTTPClient
+{
+	logDebug("Inside callMWAPIWithXML");
+	
+// Set the timeout parameter and maximum attempts from Site preferences
+	 oauthHeader  = getOAuthHeader(url, 'POST');
+	
+	if(serviceTimeout != null && !empty(serviceTimeout) )
+		http.timeout = serviceTimeout;
+	else	
+		http.timeout = dw.system.Site.getCurrent().preferences.custom.webServiceTimeout;
+		
+	logDebug("Timeout value: "+http.timeout);
+	var maxAttempts = dw.system.Site.getCurrent().preferences.custom.webServiceMaxAttempts;
+	logDebug("Maximum Request Attempts: "+maxAttempts);
+
+// Code for hitting the API
+	var attempts = 0;
+	var isError;
+	
+	do {
+		attempts++;
+		isError = false;
+		try {
+			logDebug("Sending request attempt no. "+attempts);
+			
+			
+			http.setRequestHeader('Content-Type','text/xml');
+			http.setRequestHeader('Authorization',oauthHeader);
+			
+			http.open(method, url);
+			if (requestXML == null) {
+				http.send();
+			} else {
+				http.send(requestXML);
+			}	
+		}
+		catch(e) {
+			logError (e);
+			isError = true;
+		}
+	} while (attempts<maxAttempts && isError);
+	
+	logDebug("Middleware Webservice Http Response text = "+ http.text +", Error text = "+ http.errorText);
+	
+	logDebug("Exiting callMWAPIWithXML");
+	return http;
+		
+}
+
+
+function getOAuthHeader(url : String, method : String, accessID:String, sharedSecret:String) {
+    
+    var errorText : String = "";
+    
+    var nonce : String = UUIDUtils.createUUID();
+    var timestamp : Number = (new Date().getTime()/1000).toFixed(0);
+    var methodName = method || 'POST';
+    
+    accessID     = accessID     || pref("middlewareAPIAccessID", null);
+    sharedSecret = sharedSecret || pref("middlewareAPISharedSecret",null);
+    
+    
+    //var url2 = url.replace('50.56.25.161','grws.grdev.com');
+    //1.    First collect the needed parameters
+    //2.    Percent-encode the parameters and sort them first by their name and then by their value. 
+    //3.    Concatenate the parameters into a string just the way you compute an application/x-www-form-urlencoded string. For this example, the value of this string is gr_access_key_id= AKIAJND7YR3VTASBTW7A&nonce=4d78bb5007f247.66366289&signature_method=HMAC-SHA256&signature_version=1.0&timestamp=1299764225
+    //4.    Compute a signature using the shared secret. For this example, the signature is 701a515f4f0242f11d3640f6a28b550d3a421b0f4ff0e6dc2ac5962c791938fb
+    //5.    Base64-encode the signature, and then percent-encode the resulting text. 
+   
+    var mac : Mac = new Mac(Mac.HMAC_SHA_1); 
+                 
+    var unencodedString = "oauth_consumer_key=" + accessID 
+                + "&oauth_nonce=" + nonce
+                + "&oauth_signature_method=HMAC-SHA1"
+                + "&oauth_timestamp=" + timestamp
+                + "&oauth_version=1.0";
+                
+    //if( contentType=='application/x-www-form-urlencoded' && !empty(args.MessageBody) ) {
+    //    unencodedString += "&"+body;
+    //}
+                                
+    var signatureString : String = methodName+"&"+Encoding.toURI(url)+"&"+Encoding.toURI(unencodedString);
+
+    var msg : Bytes = mac.digest(signatureString, encodeURIComponent(sharedSecret)+"&");
+    
+    var outString : String = Encoding.toBase64(msg);
+    outString = Encoding.toURI(outString); 
+
+    var msgHeaderString : String = "OAuth oauth_consumer_key=\""+ accessID  + "\""
+                + ", oauth_nonce=\"" + nonce + "\""
+                + ", oauth_signature_method=\"HMAC-SHA1\""
+                + ", oauth_timestamp=\"" + timestamp + "\""
+                + ", oauth_version=\"1.0\""
+                + ", oauth_signature=\"" + outString + "\"";
+                
+    var msgQueryString : String = Encoding.toBase64(mac.digest("POST&http%3A%2F%2Fgrws.grdev.com%2Fvalidator%2F123&oauth_consumer_key%3DAKIAJH5PY7QKS77ZBS4Q%26oauth_nonce%3DvJM5WSSS2HZ%26oauth_signature_method%3DHMAC-SHA1%26oauth_timestamp%3D1314991408%26oauth_version%3D1.0", encodeURIComponent(sharedSecret)+"&"));       
+    
+    return msgHeaderString;
+}
+

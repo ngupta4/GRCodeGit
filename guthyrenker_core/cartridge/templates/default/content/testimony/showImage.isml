@@ -1,0 +1,9 @@
+<!--- TEMPLATENAME: showImage.isml --->
+
+<isif condition="${'tid' in pdict.CurrentHttpParameterMap && !empty(pdict.CurrentHttpParameterMap.tid.value) && 'img' in pdict.CurrentHttpParameterMap && !empty(pdict.CurrentHttpParameterMap.img.value)}">	
+
+  <img href="${dw.web.URLUtils.httpImage(dw.web.URLUtils.CONTEXT_LIBRARY,'','/images/testimonials/'+pdict.CurrentHttpParameterMap.tid.value +'/'+pdict.CurrentHttpParameterMap.img.value,o)}"/>
+	
+  <img src="${dw.web.URLUtils.httpImage(dw.web.URLUtils.CONTEXT_LIBRARY,'','/images/testimonials/'+pdict.CurrentHttpParameterMap.tid.value +'/'+pdict.CurrentHttpParameterMap.img.value,null)}"/>
+
+ </isif>

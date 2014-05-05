@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<?demandware-pipeline version="2.0"?>
+
+<pipeline type="view">
+  <branch basename="Locate">
+    <segment>
+      <node>
+        <start-node name="Locate" secure="false"/>
+        <node-display x="1" y="0"/>
+      </node>
+      <simple-transition/>
+      <node>
+        <pipelet-node pipelet-name="UpdatePageMetaData" pipelet-set-identifier="bc_api">
+          <key-binding alias="proactiv kiosk, proactiv kiosk locator" key="DefaultKeywords"/>
+          <key-binding alias="To purchase Proactiv products in person, enter your Zip Code and distance below and click the &#8220;Find&#8221; button to see a map of Proactiv kiosks near you." key="DefaultDescription"/>
+          <key-binding alias="null" key="Product"/>
+          <key-binding alias="null" key="Category"/>
+          <key-binding alias="null" key="Content"/>
+          <key-binding alias="Proactiv Kiosk Locator | Locate A Proactiv Kiosk | Proactiv&#174;" key="DefaultTitle"/>
+        </pipelet-node>
+        <node-display x="0" y="1"/>
+      </node>
+      <simple-transition/>
+      <node>
+        <interaction-continue-node secure="false" start-name="FindRetailer" transaction-required="false">
+          <template buffered="true" dynamic="false" name="content/kiosklocator/findretailer"/>
+        </interaction-continue-node>
+        <node-display x="0" y="1"/>
+        <branch basename="b2" source-connector="find">
+          <transition target-connector="in">
+            <transition-display>
+              <bend-point relative-to="target" x="0" y="-1"/>
+            </transition-display>
+          </transition>
+          <segment>
+            <node>
+              <pipelet-node pipelet-name="GetNearestStores" pipelet-set-identifier="bc_api">
+                <config-property key="DistanceUnit" value="mi"/>
+                <key-binding alias="CurrentForms.kiosklocator.zip.value" key="PostalCode"/>
+                <key-binding alias="CurrentForms.kiosklocator.country.value" key="CountryCode"/>
+                <key-binding alias="CurrentForms.kiosklocator.radius.value" key="MaxDistance"/>
+                <key-binding alias="NearestLocations" key="Stores"/>
+                <key-binding alias="'mi'" key="DistanceUnit"/>
+              </pipelet-node>
+              <node-display x="-1" y="1"/>
+            </node>
+            <simple-transition>
+              <transition-display>
+                <bend-point relative-to="source" x="0" y="1"/>
+              </transition-display>
+            </simple-transition>
+            <node>
+              <interaction-node transaction-required="false">
+                <template buffered="true" dynamic="false" name="content/kiosklocator/showlocations"/>
+              </interaction-node>
+              <node-display x="0" y="1"/>
+            </node>
+          </segment>
+        </branch>
+      </node>
+      <simple-transition>
+        <transition-display>
+          <bend-point relative-to="target" x="-1" y="0"/>
+        </transition-display>
+      </simple-transition>
+      <node>
+        <interaction-node transaction-required="false">
+          <template buffered="true" dynamic="false" name="content/kiosklocator/formerror"/>
+        </interaction-node>
+        <node-display orientation="horizontal" x="1" y="1"/>
+      </node>
+    </segment>
+  </branch>
+</pipeline>

@@ -1,0 +1,67 @@
+/**
+ * Gets only payment methods that have cartID value as in current Campaign Configuration
+ *
+ * @input CampaignConfig : Object
+ * @input Basket : dw.order.Basket
+ * @output PaymentMethods : dw.util.ArrayList
+ */
+importPackage( dw.system );
+importPackage( dw.util );
+importPackage( dw.order );
+importPackage( dw.web );
+importPackage( dw.order );
+
+function isCoreOnly(basket:Basket){
+    return basket.productLineItems.length == 1;
+}
+
+function execute( args : PipelineDictionary ) : Number
+{
+	var cartID : String = args.CampaignConfig['cartID'];
+	var allMethodsList : List = PaymentMgr.getActivePaymentMethods();
+	var methodsList : ArrayList = new ArrayList();
+	
+	var showPayPal:Boolean = args.Basket == null || isCoreOnly(args.Basket);
+	
+	/* We need to get PayPal as well, so if the payment method
+	   has a credit cards then we will add them to the list 
+	   or if it doesn't, then we will add the payment method itself */
+	for each (var paymentMethod : PaymentMethod in allMethodsList)
+	{
+		// We need only payment methods with proper cartID
+		if ('cartID' in paymentMethod.custom && !empty(paymentMethod.custom['cartID']) && paymentMethod.custom['cartID'] != cartID ) {
+			continue;
+		}
+		
+		if(paymentMethod.ID == "PayPal" && !showPayPal){
+			continue;
+		}
+		
+		// Add method cards
+		if (paymentMethod.getActivePaymentCards().size() > 0)
+		{
+			for each (var paymentCard : PaymentCard in paymentMethod.getActivePaymentCards())
+			{
+				methodsList.add({
+					'cardType' : paymentCard.cardType,	// Type
+					'methodID' : paymentMethod.ID,		// Preserve the method ID
+					'name' : paymentCard.name 			// Name
+				});
+			}
+		}
+		// Add method itself
+		else
+		{
+			methodsList.add({
+				'cardType' : paymentMethod.ID,
+				'methodID' : paymentMethod.ID,
+				'name' : paymentMethod.name
+			});
+		}
+	}
+	
+	// return the methods list
+	args.PaymentMethods = methodsList;
+	
+	return PIPELET_NEXT;
+}

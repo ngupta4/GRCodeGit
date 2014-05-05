@@ -1,0 +1,49 @@
+<div class="selectKit freeGiftSelector PanelB kitType">
+	<div class="selectKit">
+		<h2 class="pageTitle">Select a System That Works for You</h2>
+		<div class="subtittle-1" >Now With <strong>Free Shipping!</strong></div>
+		<ul class="sasKits">
+			<isloop items="${offersList}" var="offer" status="offers_status">
+				<li id="system${offers_status.count}" class="${offer.ID} updatecartbtn">
+					<div class="giftBlockSAS">
+						<div class="selectKit_Img">
+							<iscomment>For customer favourite</iscomment>
+							<isif condition="${!empty(offer.custom.offerTabCallout)&&!empty(offer.custom.offerTabCallout.markup)}">
+								<isprint value="${offer.custom.offerTabCallout.markup}" encoding="off"/>
+							<iselse/>
+							</isif>
+							<img src="${offer.getImage('small',0).url}" />
+						</div>
+						<div class="sasLongDescription">
+							<isprint value="${offer.longDescription}" encoding="off"/>
+						</div>
+						<div class="kitIncludes">
+							<isif condition="${!empty(offer.custom.tabDescription)&&!empty(offer.custom.tabDescription.markup)}">
+								<isprint value="${offer.custom.tabDescription.markup}" encoding="off"/>
+							<iselse/>
+							</isif>
+						</div>
+					</div>
+					<div class="pdata">
+						<span class="pTab"><isprint value="${offer.custom.altGiftName}" encoding="off"/></span>
+						<span class="pprice"><isprint value="${offer.priceModel.getPrice()}" /></span>
+						<isif condition="${!empty(offer.custom.tabDetails)&&!empty(offer.custom.tabDetails.markup)}">
+							<span class="pTabDetails"><isprint value="${offer.custom.tabDetails.markup}" encoding="off"/></span>
+						<iselseif condition="${!empty(product.custom.tabDetails)&&!empty(product.custom.tabDetails.markup)}"/>
+							<span class="pTabDetails deluxe"><isprint value="${product.custom.tabDetails.markup}" encoding="off"/></span>
+						</isif>
+						</span>
+					</div>
+				</li>
+			</isloop>
+		</ul>
+	</div>
+	<div class="bottomPanel">
+			<div class="freeExtrasStrip">
+				<isif condition="${!empty(product.custom.tabDetails)&&!empty(product.custom.tabDetails.markup)}">
+					<isprint value="${product.custom.tabDetails.markup}" encoding="off"/>
+				</isif>
+			</div>
+			<a href="#Step2" class="medOrngBtn" id="step2">&nbsp;<span>${Resource.msg('next.select.free.gift.panelb', 'locale', null)}</span></a>
+	</div>
+</div>

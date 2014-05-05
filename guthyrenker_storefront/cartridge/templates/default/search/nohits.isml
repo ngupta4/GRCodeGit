@@ -1,0 +1,50 @@
+<isset name="pagetitle" value="${'Search | ' + pdict.CurrentHttpParameterMap.q.stringValue}" scope="pdict">
+<isdecorate template="search/pt_productsearchresult">
+<iscache type="relative" minute="30" varyby="price_promotion" />
+<isinclude template="util/modules"/>
+<iscomment>create reporting event</iscomment>
+<isinclude template="util/reporting/ReportSearch.isml"/>
+
+<isobject object="${pdict.ProductSearchResult}" view="none">
+
+<div class="content" id="content">
+<div id="search" class="search">
+	<isslot id="noresult-banner" description="Banner for searches with no hits" context="global"/>
+	<div class="nohits">
+		<h1>${Resource.msgf('nohits.headersearch','search',null)} <span class='searchoutput'>"<isprint value=${pdict.ProductSearchResult.searchPhrase} />"</span></h1>
+		<div class="nohitsmessage">
+			${Resource.msgf('nohits.message','search',null,pdict.ProductSearchResult.searchPhrase)}
+		<iscomment>render a link to execute the search with an alternative suggested search phrase</iscomment>
+		<isif condition="${!empty(pdict.ProductSearchResult.getSuggestedSearchPhrase())}">
+			<div class="didyoumean">
+				${Resource.msg('nohits.didyoumean','search',null)}
+				<a title="${pdict.ProductSearchResult.suggestedSearchPhrase}" href="Search-Show?q=<isprint value="${pdict.ProductSearchResult.suggestedSearchPhrase}"/>"><isprint value="${pdict.ProductSearchResult.suggestedSearchPhrase}"/></a>?
+			</div><!-- END: didyoumean -->
+		</isif>
+		<iscomment>render a link to content search results if any content was found</iscomment>
+		</div><!-- END: nohitsmessage -->
+		<div class="noresults-help">
+		 	${Resource.msg('nohits.help','search',null)}
+		</div><!-- END: noresults-help -->
+
+		<div class="nohitssearch">
+		 	<form class="searchagain" action="${URLUtils.url('Search-Show')}" method="get">
+				<fieldset>
+					<label>${Resource.msg('nohits.searchlabel','search',null)}</label>
+					<input type="text" name="q" value=""/>
+					<button class="btnHeadLogin" type="submit" value="${Resource.msg('global.go','locale',null)}" name="simplesearch">Search</button>
+				</fieldset>
+			</form>
+		</div><!-- END: nohitssearch -->
+		<iscomment>Products to be displayed
+		<div class="popularproducts">
+			<h1>Most Popular Products</h1>		
+		</div>
+		</iscomment>
+	</div><!-- END: nohits -->
+	<iscomment>Slot for showing most popular products when no search item is found</iscomment>
+	<isslot id="most-popular-products" description="slot for most popular products" context="global" />
+</div><!-- END: search -->
+</div>
+ <isset name="OmniturePage" value="searchnohits" scope="pdict">
+</isdecorate>

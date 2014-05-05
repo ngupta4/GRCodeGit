@@ -1,0 +1,315 @@
+select{font-size:11px;}
+#main #content h1,#main #content1 h1{background-repeat: no-repeat;color: #4E4D4B;font-family: helvetica,arial;font-size: 36px; padding:0px;}
+#idMainWide .pt_checkout #content{float: left; width:452px;}
+#idMainWide .pt_Cart #content{float: left; width:895px; min-height:600px;}
+#idMainWide #main #content1{float: left;padding-top: 48px; width:560px;}
+#idMainWide #main #rightcolumn{padding-top: 104px;}
+
+#container #idMainWide #main #rightcolumn{width:333px;}
+#idMainWide .pt_checkout,#idMainWide .pt_checkoutorder,#idMainWide .pt-order-confirmation{padding-top:48px;}
+.pt_checkout #rightcolumn,.pt_checkout .right_column{width:331px; float:none; overflow:hidden;}
+.pt_checkout .right_column{padding-top:10px;}
+.cart{width:100%; float:left; min-height: 350px; }
+.cart h2{font-size:14px; font-weight: bold}
+.addressform h2{font-size:14px; font-weight: bold; padding-top:9px;}
+.cart_left{width:652px; float:left; overflow:hidden}
+.actions{width:895px; float:left;}
+.actions ul{float:right}
+.actions ul li{float:left; padding-left:10px;}
+form.formcontinueshopping div.continueshopping{margin-top:15px}
+#main .cart .name a{font-size:18px; font-weight: bold;color:#4e4d4b; border:none}
+.border_bottom{border-bottom:1px #d7d7d7 solid; height:1px}
+table.carttable{width:100%}
+table.carttable tr td{text-align:left; vertical-align:top; padding-right:5px; width:65px}
+table.carttable tr.tablerow.bonusProduct td {padding: 10px 0;background:#ECEAEB;border-bottom: 1px solid #D7D7D7;border-top: 1px solid #D7D7D7;}
+table.carttable tr.tablerow.bonusProduct td .productimage{padding: 0 0 0 5px;}
+.carttable tr.tablerow td.quantitycolumndetails{width:43px;  padding-right: 10px;}
+.carttable tr.blankspace td{height:20px;border-top:1px #d7d7d7 solid}
+.carttable tr.blankspace_bottom td{height:20px; border-bottom: 1px #D7D7D7 solid;}
+.carttable td.imagecolumn img{width:110px; height:110px; border:1px #d7d7d7 solid; text-align:center}
+.carttable tr.tablerow td.detailscolumn{width:275px}
+.carttable tr.tablerow td.detailscolumn .name{padding-bottom:10px}
+.carttable tr.tablerow td.detailscolumn button{ color: #A18D53;font-size: 12px;padding: 0;border-bottom:1px dotted  #A18D53; font-family: arial;}
+#rightcolumn,.right_column{width:217px;position: relative; height: auto; float: right; overflow: hidden}
+#rightcolumn .right_cart_blocksbg,.right_column  .right_cart_blocksbg {background-color: #eee; width:209px; padding:5px; }
+#rightcolumn h2,.right_column  h2{color:#e3d8b6; font-weight:bold; font-size:14px; background-color: #4e4d4b; display: block; padding:2px 10px 2px 10px}
+#rightcolumn .blockcontent,.right_column  .blockcontent{padding:10px 10px 10px 10px;}
+#rightcolumn .blockcontent .couponinput,.right_column .blockcontent .couponinput{width:123px; height:15px;border:1px solid #c3c3c3}
+#rightcolumn .blockcontent .addtocartbutton,.right_column .blockcontent .addtocartbutton {margin:10px 0px 9px 0px; }
+#rightcolumn .blockcontent .row-carttotal,.right_column  .blockcontent .row-carttotal{ padding-bottom:10px;}
+#rightcolumn .gr-bg-wraper,.right_column .gr-bg-wraper{ background:#eee; padding:5px; margin-bottom:10px;}
+#rightcolumn .btn-wraper,.right_column .btn-wraper{ margin-top:6px;}
+#rightcolumn .white-bg,.right_column .white-bg{ background:#fff; padding:4px; border:1px #b4b4b4 solid; position:relative;}
+#lyt_btmFooter{width:100%; float:left}
+.cart .addtocartbutton{margin:10px 0}
+.helpicon{background: url(../images/helpicon.png) no-repeat transparent;width:13px; height:13px; display:inline-block; margin-left:6px; position: relative; top:1px}
+
+
+
+/*SHIPPING*/
+/***** Checkout Progress Indicator *****/
+.checkout{float:left}
+.checkoutprogressindicator {float:left; width:100%; height:42px; margin-bottom:10px;}
+.checkoutprogressindicator .active a,.checkoutprogressindicator .complete a{color:#666;text-decoration:none;display: block; height: 38px;}
+.checkoutprogressindicator .inactive a,.checkoutprogressindicator .inactiveLast a{color:#fff;text-decoration:none;display: block; height: 38px;}
+.checkoutprogressindicator .label {display:none}
+.checkoutprogressindicator .value {display:none}
+.checkoutprogressindicator .step1,.checkoutprogressindicator .step2,.checkoutprogressindicator .step3{margin: 0px;padding: 0px;height: 40px;float:left;font-size: 12px;}
+.checkoutprogressindicator .step1.active {background: #fff url(../images/progressindicator.gif) right top no-repeat;width:162px;}
+.checkoutprogressindicator .step1.complete,.checkoutprogressindicator .step1.inactive {background: #fff url(../images/progressindicator.gif) right -189px no-repeat;width:143px;}
+.checkoutprogressindicator .step2.active.giftcert{background: #fff url(../images/progressindicator.gif) right -431px no-repeat;width:141px;}
+.checkoutprogressindicator .step2.active {background: #fff url(../images/progressindicator.gif) right -251px no-repeat;width:157px;}
+.checkoutprogressindicator .step2.inactive {background: #fff url(../images/progressindicator.gif) right -63px no-repeat;width:140px;}
+.checkoutprogressindicator .step2.complete {background: #fff url(../images/progressindicator.gif) right -311px no-repeat;width:154px;}
+.checkoutprogressindicator .step2.complete.giftcert{background: #fff url(../images/progressindicator.gif) right -601px no-repeat;width:144px;}
+.checkoutprogressindicator .step3.inactive {background: #fff url(../images/progressindicator.gif) right -126px no-repeat;width:143px;}
+.checkoutprogressindicator .step3.active {background: #fff url(../images/progressindicator.gif) right -496px no-repeat;width:158px;margin-left: -18px;}
+.checkoutprogressindicator .step3.active.giftcert {background: #fff url(../images/progressindicator.gif) right -544px no-repeat;width:155px;}
+.checkoutprogressindicator .step3.inactive.giftcert{background: #fff url(../images/progressindicator.gif) right -487px no-repeat;width:140px;}
+.checkoutshipping{float:left}
+
+/*SHIPPING FORM*/
+.addressform{margin-top:2px;}
+.addressform .addressformentry input[type="text"]{width:118px; height:15px; margin:4px 0px 11px 0px;}
+.addressform .addressformentry input#dwfrm_singleshipping_shippingAddress_addressFields_address1,.addressform input#dwfrm_singleshipping_shippingAddress_addressFields_address2{width:270px}
+.addressform .addressformentry input#dwfrm_singleshipping_shippingAddress_addressFields_zip{width:60px;}
+.addressform .addressformentry select{width:46px;height:23px; margin:4px 0px 11px 0px;padding: 2px 0;}
+.addressform .addressformentry .formfield.firstname, .addressform .formfield.city, .addressform .formfield.country{float:left}
+.addressform .addressformentry .formfield.lastname,.addressform .formfield.state{float:left; padding-left:26px;}
+.addressform .addressformentry .formfield.zip{float:left; padding-left:16px;}
+.addressform .addressformentry .usaonly{float:left;width:260px;font-size:11px;line-height: 15px;margin: 18px 0 0 15px;}
+.addressform #reqindicator{margin-top:21px;}
+
+/*SHIPPING METHOD*/
+#shippingmethodform{margin-top:28px;}
+.formactions{margin-top:11px}
+.shippingmethods{margin-top:10px; line-height:22px;}
+
+
+/*TOOLTIP*/
+#main form .formfieldtooltip a.tooltip,#rightcolumn a.tooltip{border:none}
+
+
+
+
+/*order review css*/
+.clear{ clear:both;}
+.accountoverview .gr-bg-wraper{ background:#eee; padding:5px; margin-bottom:10px; float: left;}
+.accounteditaddress .default{ margin-top: 10px; width:313px;float: left;margin-right: 8px;background:#eee; padding:5px;}
+.accountoverview .gr-bg-wraper .btn-wraper{ margin-top:6px;}
+.accountoverview .widthwhite-bg,.accounteditaddress .widthwhite-bg{width: 299px;}
+.accountoverview .white-bg,.accounteditaddress .white-bg{ background:#fff;  float: left; padding:10px 4px; border:2px #d4d4d4 solid; position:relative;}
+.orderconfirmation .gr-bg-wraper{background:#eee; padding:5px;}
+.orderconfirmation .white-bg{ background:#fff; padding:4px; border:1px #B4B4B4 solid; position:relative;}
+.title{background:#4e4d4b; height:25px;  font:14px Arial, Helvetica, sans-serif bold; font-weight:bold; color:#dfd4b1; padding:0px 10px;line-height:25px;}
+.top-l-corner{background:url(../images/prod-white-roundbg.jpg) no-repeat;  height: 8px;  left: -1px; position: absolute; top:-1px;width:8px; }
+.top-r-corner{background:url(../images/prod-white-roundbg-right.jpg) no-repeat; height: 8px;  right: -3px; position: absolute; top:-1px;width:8px;}
+.bot-l-corner{background:url(../images/prod-bot-left-bg.jpg) no-repeat; position:absolute; bottom:-3px; left:-1px;height: 8px;width:8px;}
+.bot-r-corner{background:url(../images/prod-bot-right-bg.jpg) no-repeat; position:absolute; bottom:-3px; right:-3px;height: 8px;width:8px;}
+.checkoutbilling{float:left; width:700px;}
+.checkout-wraper{}
+.checkoutbilling h2{ font-size:36px; font-weight:normal; padding: 17px 0;}
+.checkoutbilling h3{ font-size:14px; font-weight:normal;}
+.checkoutbilling .checkbox input{ float:left; margin: 3px 3px 0 0;}
+.checkbox{margin: 10px 0px;}
+.addressform .addressformentry .addressformtags .sameasshipping{}
+.checkoutbilling input[type="text"],.checkoutbilling .addressform .addressformentry input[type="text"]{width:270px;  margin: 4px 0 11px;}
+.addressform .addressformentry .addressformtags .name-con input[type="text"],.addressform .addressformentry .addressformtags .city input[type="text"],.addressform .addressformentry .addressformtags .country input[type="text"]{width:118px;}
+.addressform .addressformentry .addressformtags .location-wraper .zip input[type="text"]{width: 60px;}
+
+.checkoutbilling select{margin: 4px 0 11px;  width: 127px;}
+.month{float:left;}
+.year{float:left; padding-left: 26px;}
+.paymentmethods{margin: 10px 0;}
+.pt_checkoutorder .checkoutsummaryheader a{border-bottom:1px #a08d52 dotted; text-decoration:none;line-height: normal;}
+.pt_checkout #rightcolumn .checkoutminicart .summaryproduct{ margin-top: 20px;}
+.pt_checkout #rightcolumn .checkoutminicart .summaryproduct .image{ float:left;text-align: center; width:110px; height:110px;}
+.checkoutminicart .summaryproduct .image img{border:1px #d7d7d7 solid;height: 110px;  width: 110px; }
+.pt_checkout #rightcolumn .checkoutminicart .summaryproduct .mini-cart-right{float: left; padding:0 0 0 22px;width: 160px;}
+.pt_checkout #rightcolumn .checkoutminicart .summaryproduct .p-desc{ float: left; font-size:11px;width: 160px;}
+.pt_checkout #rightcolumn .checkoutminicart .summaryproduct .p-desc .name{font-weight:bold;}
+
+.pt_checkoutorder .minibillingaddress,.pt_checkoutorder .minipaymentinstrument{ float:left; width:422px;}
+.pt_checkoutorder .minishipment,.pt_checkoutorder .shippingmethod{ float:right; width:422px;}
+.pt_checkoutorder .header{ background:#efefef;  height: 21px;    line-height: 21px;    padding: 0 17px 0px 10px;}
+.pt_checkoutorder .header span{ float:left; font-size:14px; font-weight:bold;}
+.pt_checkoutorder .header a{float:right;font-size:12px; font-weight:normal; display:inline-block; padding-top:2px; border-bottom:1px #a08d52 dotted; text-decoration:none;line-height: normal;}
+.pt_checkoutorder .details{padding:10px;}
+.checkoutsummaryheader{border-bottom:1px #d7d7d7 solid; padding:14px 0px;}
+.checkoutsummaryheader .l-panel{ float:left; font-size: 16px;    font-weight: bold;}
+.checkoutsummaryheader .r-panel{float:right;}
+.pt_checkoutorder .checkoutminisummary{ float:left; width:100%;}
+.pt_checkoutorder .right-box{ width:219px; background:none; text-align:center; font-size:11px; float:right;  padding: 0px 0;}
+.pt_checkoutorder .checkoutminicart .summaryproduct{border-bottom: 1px solid #D7D7D7;   padding: 18px 0;}
+.pt_checkoutorder .checkoutminicart .summaryproduct .image{ float:left;text-align: center; width:110px; height:110px;}
+.pt_checkoutorder .checkoutminicart .summaryproduct .p-desc{width: 126px; float: left;    padding-left: 15px; font-size:11px;}
+.registration .checkoutordertotals,#rightcolumn .checkoutordertotals{margin-top:18px;}
+.checkoutordertotals .ordertotals{float:right;}
+.checkoutordertotals .ordertotals .label{text-align:right; padding-right:30px;}
+.checkoutordertotals .ordertotals .value{}
+.orderconfirmation .orderheaderwraper{margin-top:20px;}
+.orderconfirmation .thankyoumessage{}
+.orderconfirmation .thankyoumessage h2{padding:15px 0px;font-size:36px;}
+.orderconfirmation .summarywraper{padding:20px 10px;}
+.orderconfirmation .buttonwraper{margin-top:15px;}
+.orderconfirmation .orderheaderwraper .orderheader{ float:left; width:653px;}
+.orderconfirmation .orderheaderwraper .r-section{float:right; width:219px;}
+.orderconfirmation .orderheaderwraper .r-section .right-box{  background:#f4f4f4; text-align:center; font-size:11px;  margin-top: 19px; padding: 30px 40px;}
+.bot-con{float:right;}
+.blockcontent .ordershipping td{padding-bottom:15px;}
+.blockcontent .ordertotal td{padding-bottom:15px;}
+.pt_Cart{position:relative; padding-top:30px!important;}
+.pt_Cart #content #rightcolumn{position:absolute; top:0px; right:15px;}
+.pt_Cart .cart .attribute{padding-top: 20px;}
+.ordertotals table{width: 100%;}
+.pt_checkout .checkoutsummaryheader{display:none;}
+.billing-note{margin-top:20px;}
+#main .fl select{ width:277px; margin:15px 0px 5px 0px;}
+.pt_checkout .blue-btn{margin:0px;}
+.pt_checkoutorder .section-cont,.pt-order-confirmation .section-cont{margin:12px 0px; width: 80%; float: left;}
+.creditcardlist select{width: 277px;}
+.popup-wraper{display:none;}
+.pt_checkout .details{display:none;}
+.addressform .value .checkbox input{ float:left; margin: 3px 3px 0 0;}
+.shippingmethods .value input{float:left; margin: 5px 3px 0 0;}
+
+#paymentmethods input[type="radio"]{ margin:2px 3px 0px 0px; float:left;}
+#paymentmethods .paymentmethods input{margin:1px 3px 0 0;}
+#paymentmethods .paymentmethods label{float:left;}
+.checkoutminisummary-wraper{ margin: 20px 0px;}
+.checkoutminisummary-wraper .checkoutminicart{border-top:1px #d7d7d7 solid;}
+.checkoutminisummary-wraper .checkoutminicart .summaryproduct .p-desc{width:500px;}
+.checkoutminisummary-wraper .checkoutminicart .summaryproduct .p-desc .name{ font-size:18px; font-weight:bold;}
+.checkoutminisummary-wraper .checkoutminicart .summaryproduct .qty{ float:left;width: 52px; padding-left: 23px;  text-align: center;}
+.checkoutminisummary-wraper .checkoutminicart .summaryproduct .yourprice{ float:left;padding-left: 23px;  width: 68px; text-align: right;}
+.checkoutminisummary-wraper .checkoutminicart .summaryproduct .pricing{ float:left;width: 50px;  text-align: right;padding-left: 20px;}
+.checkoutminisummary-wraper .checkoutminicart .summaryproduct .p-desc .item-num{padding-top:20px;}
+#main-wraper .minibillingaddress,#main-wraper .minishipment,#main-wraper .minipaymentinstrument,#main-wraper .shippingmethod{width: 317px;}
+.inner-container{border-bottom: 1px solid #D7D7D7;}
+.note-wraper{ padding-top: 10px;    text-align: right;}
+.note-wraper a{border-bottom:1px dotted  #A18D53;}
+.pt_checkout .checkoutordertotals .ordertotals{width: 100%;}
+.spacing-btn{margin:0px 15px 0px 0px;}
+.spacing-btn span{padding: 0px 20px 0px 10px;}
+#main-wraper .checkoutordertotals{border-top:1px solid #D7D7D7;padding-top: 15px;}
+.wait{margin-top: 15%; text-align: center;}
+.checkoutminisummary #main-wraper{margin-top:18px;}
+.rowcoupons{background:#eceaeb;  }
+.rowcoupons td{padding:15px 0px;border-top:1px #d7d7d7 solid;border-bottom: 1px solid #d7d7d7;}
+.rowcoupons .cartcoupon{ color: #4E4D4B;    font-size: 16px;    font-weight: bold;}
+.rowcoupons .quantitycolumndetails{padding-right:5px;}
+.rowcoupons button{ border-bottom: 1px dotted #A18D53;    color: #A18D53;    font-family: arial;    font-size: 12px;    padding: 0;}
+.itemtotalcolumn .itemtotals{ padding-left: 20px;    width: 58px;}
+.radio-wraper label{  margin-right: 10px;}
+#rightcolumn .checkoutordertotals .ordertotals .label{    display: inline-block;    padding-right: 30px;    text-align: left;    width: 210px;}
+
+.ph-1{width: 25px !important;}
+.ph-2{width: 44px !important;}
+select{padding:2px 0px; height:23px; }
+.pt_checkoutorder .ordertotal .label{font-weight:bold;}
+.c-dis input{background:#d4d0c8;}
+.l-text a{border-bottom: 1px dotted #A18D53;}
+
+/*css for additional info popup*/
+#page_popup_shipping_nojs .blockTeal h2, #overlay_shipping h2 {
+    background: url("../img/headers/title-shipping-overlay.png") no-repeat scroll 0 0 transparent;
+    height: 14px;
+    padding-bottom: 10px;
+    text-indent: -99999em;
+}
+#overlay_shipping h2.new-h{ border-bottom: 1px solid #CCCCCC;    font-size: 14px;    font-weight: bold;    margin-bottom: 7px;    text-indent: 0;}
+.proactiv_content h2, .invoice_content h2, .security_content h2, .remember_content h2, .shipping_content h2, .howto_content h2, .promocode_content h2 {
+    border-bottom: 1px solid #CCCCCC;
+    margin: 0 15px 10px;
+}
+
+.proactiv_content p, .proactiv_content ul, .proactiv_content table, .invoice_content p, .invoice_content ul, .invoice_content table, .security_content p, .security_content ul, .security_content table, .remember_content p, .remember_content ul, .remember_content table, .shipping_content p, .shipping_content ul, .shipping_content table, .howto_content p, .howto_content ul, .howto_content table, .promocode_content p, .promocode_content ul, .promocode_content table, .promocode_content form {
+    margin: 0 15px;
+}
+#page_popup_shipping_nojs .blockTeal table, #page_popup_shipping_nojs .blockTeal td, #overlay_shipping table, #overlay_shipping td {
+    border-collapse: collapse;
+}
+#page_popup_shipping_nojs .blockTeal table, #overlay_shipping table {
+    margin-bottom: 10px;
+    margin-top: 10px;
+    width: 533px;
+}
+.proactiv_content p, .proactiv_content ul, .proactiv_content table, .invoice_content p, .invoice_content ul, .invoice_content table, .security_content p, .security_content ul, .security_content table, .remember_content p, .remember_content ul, .remember_content table, .shipping_content p, .shipping_content ul, .shipping_content table, .howto_content p, .howto_content ul, .howto_content table, .promocode_content p, .promocode_content ul, .promocode_content table, .promocode_content form {
+    margin: 0 15px;
+}
+#page_popup_shipping_nojs .blockTeal table th, #overlay_shipping table th {
+    color: #6E9872;
+    font-weight: bold;
+    padding: 3px 15px 3px 2px;
+}
+caption, th, td {
+    font-weight: normal;
+    text-align: left;
+}
+#page_popup_shipping_nojs .blockTeal table td, #overlay_shipping table td {
+    border-top: 1px solid #CCCCCC;
+    padding: 3px;
+}
+#page_popup_shipping_nojs .blockTeal table, #page_popup_shipping_nojs .blockTeal td, #overlay_shipping table, #overlay_shipping td {
+    border-collapse: collapse;
+}
+#security h1{color: #00788A;    font-size: 21px;    padding: 10px 0 15px;}
+#security h3{font-size: 15px;    font-weight: bold;    padding-bottom: 10px;}
+#security h4{font-size: 13px;    font-weight: bold;    padding-bottom: 10px;}
+#security p {  margin-bottom: 15px;}
+.pt_checkoutorder .nobg{background: none;}
+.right-wraper-new{float:right;}
+
+.summarywraper .spacing-btn {margin-right: 20px !important;}
+.l-align{text-align:right;}
+.r-align{text-align:right;}
+.minicarttotals .ordersubtotal .r-align strong{font-weight:bold !important;}
+.ordersubtotal .r-align strong{font-weight:normal !important;}
+.pt_checkoutorder .ordertotals .r-align{text-align:left;}
+.checkoutOrderReview .ordertotals .r-align{text-align:right;}
+.checkoutminisummary-wraper .right-box{margin-top: 46px;}
+
+.continueSubtotal {
+  text-align:right;
+  border-bottom: 1px #D7D7D7 solid;
+  padding: 8px 40px;	
+  font-weight:  bold;
+}
+.memberSavingsTotal {
+  text-align:center;
+  border-bottom: 1px #D7D7D7 solid;
+  padding: 8px 40px;	
+  font-weight:  bold;
+}
+.continueSubtotal .value, .memberSavingsTotal .value {
+	font-weight: normal;
+}
+.salesTax {
+  text-align:right; 
+  font-weight:  normal; 
+  font-size:  10px;
+  border-bottom: 1px #D7D7D7 solid;
+  padding-bottom: 5px;
+  margin-bottom: 20px;	
+}
+.itemsSelected { font-size:  12px; }
+
+/* saf3+, chrome1+ */
+@media screen and (-webkit-min-device-pixel-ratio:0) {
+.shippingname {padding-right: 30px;}
+}
+
+#PaymentMethod_BANK_ACCOUNT .agree_box .errormessage{ left: 20px; position: absolute;top: 53px;}
+/* terms and conditions pop up styling : Start*/
+.ui-dialog .ui-dialog-titlebar-close .ui-icon{background:url(../images/cartRefresh/popupClose.png) no-repeat right top !important; width:14px; height:14px;}
+.ui-dialog .ui-dialog-titlebar-close:hover .ui-icon,.ui-dialog .ui-dialog-titlebar-close .ui-icon:hover{background-position:right bottom !important;}
+#ui-dialog-title-terms-ba{font-size: 24px;font-weight: normal;border-bottom: 1px solid black;padding-bottom: 15px;width: 90%;color:#4e4e4e}
+#terms-ba{padding-left:0px;}
+#terms-ba #sasModalContainer{width:100%;}
+#terms-ba h6{font-weight:bold;margin-bottom:10px;color:#4e4e4e;}
+.terms-ba > p{padding-bottom:10px;line-height:13px;color:#4e4e4e;}
+#terms-ba #sasModalContainer > div{margin:0px 35px 0px 0px;padding:0px;}
+#terms-ba .terms-ba a{color:#dd7d00;font-weight:bold;}
+#terms-ba .terms-ba strong{font-family: helvetica;}
+#terms-ba .terms-ba > ul{margin-bottom:10px}
+#terms-ba .terms-ba li {color: #4E4E4E;font-family: helvetica;line-height: 13px;}

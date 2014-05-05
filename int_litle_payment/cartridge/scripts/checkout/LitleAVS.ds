@@ -1,0 +1,246 @@
+/**
+* This script determines if there is more than one shipment 
+* going to the same shipping address. If so, then it combines 
+* the shipment items into one shipment.
+* 
+* @input Basket : dw.order.Basket The basket.
+* @input PaymentInstrument : dw.order.PaymentInstrument PaymentInstrument from the list in the Basket.
+* @output LitleRequestXML : String Request for debug
+* @output LitleResponseAVSCode : String Litle avsResult
+* @output LitleResponseAVSMessage : String Litle avsResult
+* @output LitleResponseXML : String LitleResponseXML;
+
+*/
+importPackage( dw.system );
+importPackage( dw.order );
+importPackage( dw.util );
+importPackage( dw.net );
+
+
+function execute( pdict : PipelineDictionary ) : Number
+{	
+	var basket : Basket = pdict.Basket;
+	var paymentInstrument : PaymentInstrument = pdict.PaymentInstrument;
+	if( empty(paymentInstrument) ) {
+		paymentInstrument = basket.paymentInstruments[0];	
+	}
+	
+	var creditCardType : String = paymentInstrument.creditCardType;
+	var li_reportGroup = dw.system.Site.getCurrent().preferences.custom.LitleReportGroup;
+	
+	var li_name = basket.billingAddress.fullName;
+	var li_customerId = basket.customerNo;
+	var li_addressLine1 = basket.billingAddress.address1;
+	var li_addressLine2 = basket.billingAddress.address2;
+	var li_addressLine3 = "";
+	var li_city = basket.billingAddress.city;
+	var li_state = basket.billingAddress.stateCode;
+	var li_zip = basket.billingAddress.postalCode;
+	var li_country = basket.billingAddress.countryCode;
+	var li_email = basket.customerEmail;
+	var li_phone = basket.billingAddress.phone;
+
+	var creditCardExpirationMonth = paymentInstrument.creditCardExpirationMonth;
+	var creditCardExpirationYear : String = paymentInstrument.creditCardExpirationYear;
+	var creditCardType = paymentInstrument.creditCardType;
+	if (creditCardExpirationMonth.toString().length == 1) {
+		creditCardExpirationMonth = "0" + creditCardExpirationMonth;
+	}
+	var year2digits = creditCardExpirationYear.toString().substring(2);
+	var li_creditCardExpiration = creditCardExpirationMonth + "" + year2digits;
+		
+	var li_ccnumber = getCCNumber(basket.paymentInstruments[0]);
+	
+
+	// Map credit card types to the litle format
+	switch ( creditCardType ) {
+		case "Visa":
+			creditCardType = "VI";
+		break;
+		case "Amex":
+			creditCardType = "AX";
+		break;
+		case "Master":
+		case "MasterCard":
+			creditCardType = "MC";
+		break;
+		case "Discover":
+			creditCardType = "DI";
+		break;
+	}
+
+	// Read preferences from Site:
+	var coreBrand : String = dw.system.Site.getCurrent().preferences.custom.LitleCoreBrand;
+	var merchantId_CC : String = getMerchantIDForBrand( coreBrand );
+	var username : String = dw.system.Site.getCurrent().preferences.custom.LitleUsername;
+	var password : String = dw.system.Site.getCurrent().preferences.custom.LitlePassword;
+	var gatewayUrl : String = dw.system.Site.getCurrent().preferences.custom.LitleURL;
+	
+	var responseXML : XML = null;
+	var responseAVSCode : String = "";
+	
+	var httpClient : HTTPClient = null;
+	var response : String = null;
+	
+	Logger.debug("merchantID: " + merchantId_CC);
+	     
+	httpClient = new HTTPClient();
+		 
+	Logger.debug("gatewayUrl: " + gatewayUrl);
+	httpClient.open('POST', gatewayUrl);
+		 
+	pdict.LitleRequestXML = getAVSRequest();
+
+	//Call Litle with request
+	httpClient.send(pdict.LitleRequestXML);
+		 
+
+	if (httpClient.statusCode == 200)
+	{
+		response = httpClient.text;
+		Logger.debug("litleAVSResponse: " + response);
+	}
+	else
+	{
+		// error handling
+		response="<message>An error occured with status code: "+httpClient.statusCode + "</message>";
+	}
+			 
+	 responseXML = new XML(response);	 
+	 responseAVSCode = "";
+
+	if (responseXML) {
+		if (responseXML["authorizationResponse"])
+		{
+			pdict.LitleResponseAVSCode = responseXML["authorizationResponse"]["fraudResult"]["avsResult"].toString();
+			if( !empty(pdict.LitleResponseAVSCode) )
+				pdict.LitleResponseAVSMessage = getMessageFromAVSCode(pdict.LitleResponseAVSCode);
+		}
+	}
+	else {
+		return PIPELET_ERROR;
+	}
+	
+	return PIPELET_NEXT;
+	
+	//Inner Functions
+		
+		function getAVSRequest() {
+			var GetPostXML : XML = new XML(
+
+				<litleOnlineRequest version="7.2" xmlns="http://www.litle.com/schema" merchantId={merchantId_CC}>
+					<authentication>
+						<user>{username}</user>
+						<password>{password}</password>
+					</authentication>
+					<authorization reportGroup={li_reportGroup}>
+						<orderId>AVS_NO_ORDER_ID</orderId>
+						<amount>000</amount>
+						<orderSource>ecommerce</orderSource>
+						<billToAddress>
+							<name>{li_name}</name>
+							<addressLine1>{li_addressLine1}</addressLine1>
+							<addressLine2>{li_addressLine2}</addressLine2>
+							<addressLine3>{li_addressLine3}</addressLine3>
+							<city>{li_city}</city>
+							<state>{li_state}</state>
+							<zip>{li_zip}</zip>
+							<country>{li_country}</country>
+							<email>{li_email}</email>
+							<phone>{li_phone}</phone>
+						</billToAddress>
+						<card>
+							<type>{creditCardType}</type>
+							<number>{li_ccnumber}</number>
+							<expDate>{li_creditCardExpiration}</expDate>
+						</card>
+					</authorization>
+				</litleOnlineRequest>
+			); 
+		
+			return GetPostXML.toXMLString();
+		}
+		
+}
+//end of execute function
+
+function getMerchantIDForBrand( brand : String ) {
+	var json : String = dw.system.Site.getCurrent().preferences.custom.LitleMerchantID_CC;
+	
+	var lookup : Object = JSON.parse(json);
+	
+	return lookup[brand];
+}
+
+// Response code mapping:
+function getMessageFromAVSCode(code) {
+		
+		var messageByCode : String = dw.web.Resource.msg("litle.avscode."+code, "litle", "");  
+		
+		return messageByCode;
+}
+
+function getCCNumber(paymentInstrument : dw.order.PaymentInstrument) {
+    var ccNumber : String = paymentInstrument.
+        getEncryptedCreditCardNumber(dw.order.PaymentInstrument.ENCRYPTION_ALGORITHM_RSA, 
+                                     getPublicKey());
+     ccNumber = (new dw.crypto.Cipher()).decrypt(ccNumber, 
+                                      getPrivateKey(),
+                                      dw.order.PaymentInstrument.ENCRYPTION_ALGORITHM_RSA,
+                                      '', 
+                                      0);
+	return ccNumber;
+}
+
+
+function getPrivateKey() {
+
+	
+	 var privateKeyPKS = ""+
+	
+		
+			"MIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQCeh7p7deW8UuCg"+
+			"vIoihG8HDa5xy7w9FwtZzd9AYocFnyyWfdoTYWEthkNvs0xavfQ+rrUTz6hrkouL"+
+			"3ot0FI8NiQL5z/8j78S2Cv/ivG2B8vX/+559adtRtxmBONfp3Nkuy6C6CVMkJZWd"+
+			"sPzgCzv6S1nsz8idL0uRJmsO4PiMEOLv4x7/x4vALU/EiqZSeRzhgNzedz9Jd5Ng"+
+			"PbxNeTdmMOFEhD80O4eZzJrwY+v1GcxgHdbLYPawWPDbCZRfyegpOBvr4Dv/9dWg"+
+			"vyYZiIocl1Y5c0KY+827wZVXaGIl9UNl9nOkG9sdjXYiWUcwn9lFkmWY7wsJN0t6"+
+			"LeavWyDbAgMBAAECggEACZCCzcQVMkGFz+zQILkAwdovdioml0D2rFphZ88J+mra"+
+			"E9JP/+9WH5sEIo8cwjTHsah0wFc9ABB9Xtj0bPJ4lwZ3KX9FE3P52Endml5n9Pkl"+
+			"omYZ79MdKlbzsPou/KsYZ1xdvBun6nxiBHuTJilHWxiEumbm4aTi2EULHICyPjEG"+
+			"Tkzcp53bhfqzITRiQ6J13Nq+T+rYAvqbJBlp20Y7Ik4n8UZ57y/E09fw0/lqz842"+
+			"81pONmXwdvIOPFM+6mCFbmrgn24i8TCgFO9fOuaoAC2wP9Sr3yPRAIcTvlFnqmDW"+
+			"vSZ6WDfuW7Ultl5I0Bky2Ir6h9Qywc1KEHHW0rA2wQKBgQDPh8Rn8+ic1bXb+HdQ"+
+			"Y5YClskM5zh3qikDlhGiWDSYQqG3xbmZIxlGBr+ZpBSpFcLWPYHGLhCJ+1yxgBsE"+
+			"Qt9f1e5PB0cnpdhZS0Y4oIQpIsiPkMeE5xB2GqKEgrl/GF8x7M7xPrn1RyViUH5L"+
+			"Kh34eqaA4EeUCSMZhJqPQOEFcQKBgQDDjj5gxo+cs2tWifAmJoVBcSMVVEXoAYyU"+
+			"RrR00J3xVGwvGaIrdmnc22Ku8tEWggqDkLk6ZNjZrfWRKuzMm9oZjSZh6j8PeZvq"+
+			"CiUjMWq/D3PY0Yeh/x1yBdvX5Q3Ns48A5jwhfjn6Ufif9VXsM/UP8YVEv/zjxWrV"+
+			"ANjssse1CwKBgHtsAyLPrEeZ0c5AtrTYhR6FDozd9nc0e6/mUBZ83squ1f61WOv6"+
+			"M82xtcFqE997UaSYb9WtD6kAFOB7j5W5L5+PW2skqOyrdT+lxN1omTDdvumi8QXZ"+
+			"ZbDXpk+obylnFTZb37cZ1v5IkbMmq/WH1sswJlX/DJK93GIQutr3etwBAoGBAKkn"+
+			"dHufpgAFDtcHcCx/64plA9TiVanPFTv5QQU+ozBqNz4yrR1tSzsYpe7w6L3QdKnD"+
+			"WQXSz+TTXfRZLgX61hh+CPJvfmazaZNzfRZJG63y/uFQtUMCewTzXmwMnPkO1acQ"+
+			"gHj0R9BocWhj/hPYCaXl48JJU8XuMW/YUMvGBYtrAoGBAMkM5z8s9yJqzNnIAuXp"+
+			"cX11Fxo+XRGuOWh+xg8FUqqIuG1KiCoRrM7TbsGVJDnDsDSaGOzrNYLFK+2rGdz3"+
+			"P8EYKf0Gqo7U0t2RqdLemHcrumCKJ7VmWTOXA2m2xm4A9mB6CTYewBpP3fnOTIZx"+
+			"v5NhXeLVNb/1WxysOC00Csjj";
+			
+				
+	return privateKeyPKS;
+  
+}
+
+function getPublicKey() {
+  var publicKey = ""+
+
+		"MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAnoe6e3XlvFLgoLyKIoRv"+
+		"Bw2uccu8PRcLWc3fQGKHBZ8sln3aE2FhLYZDb7NMWr30Pq61E8+oa5KLi96LdBSP"+
+		"DYkC+c//I+/Etgr/4rxtgfL1//uefWnbUbcZgTjX6dzZLsuguglTJCWVnbD84As7"+
+		"+ktZ7M/InS9LkSZrDuD4jBDi7+Me/8eLwC1PxIqmUnkc4YDc3nc/SXeTYD28TXk3"+
+		"ZjDhRIQ/NDuHmcya8GPr9RnMYB3Wy2D2sFjw2wmUX8noKTgb6+A7//XVoL8mGYiK"+
+		"HJdWOXNCmPvNu8GVV2hiJfVDZfZzpBvbHY12IllHMJ/ZRZJlmO8LCTdLei3mr1sg"+
+		"2wIDAQAB";
+
+  return publicKey;
+}

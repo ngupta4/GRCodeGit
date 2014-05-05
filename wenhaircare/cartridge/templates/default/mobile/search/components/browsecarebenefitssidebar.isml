@@ -1,0 +1,9 @@
+<!--- TEMPLATENAME: browsefoldersidebar.isml --->
+<isinclude template="util/modules" />
+
+<isif condition="${!loggedIn}">
+	<iscontentasset aid="${'care-benefits-anonymous-nav'}" />
+<iselse/>
+	<iscontentasset aid="${'care-benefits-loggedin-nav'}" />
+</isif>
+	

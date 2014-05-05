@@ -1,0 +1,90 @@
+<!--- TEMPLATENAME: pt_checkoutshippingovernight.isml --->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+	<isinclude template="util/modules"/>
+	
+	<isscript>
+		importScript('guthyrenker_core:common/libUtils.ds');
+	
+		importPackage(dw.object);
+		importPackage(dw.catalog);
+		
+		var CCC : Object = pdict.CurrentCampaignConfig;
+		var campaignCode : String = CCC.campaignCode;
+		
+		var showHeader : boolean = CCC.showHeader;
+		var showFooter : boolean = CCC.showFooter;
+		var showNav : boolean = CCC.showNav;
+		var showOrderButton : boolean = CCC.showOrderButton;
+		
+		var category : dw.catalog.Category = CCC.getCampaignCategory();
+	</isscript>
+	
+	<head>
+		<isinclude template="components/header/htmlhead"/>
+		
+		<link href="${URLUtils.staticURL('/css/main_checkout.css')}" type="text/css" rel="stylesheet" />
+		<link href="${URLUtils.staticURL('/css/main_checkoutshipmentovernight.css')}" type="text/css" rel="stylesheet" />
+		
+		<script type="text/javascript" src="${URLUtils.staticURL('js/xout.js')}"></script>
+	</head>
+	
+	<body id="page_checkout">
+		<div id="idMainWide" class="mainWide">
+			<isslot id="overnight-shipment-cart-banner-top" description="Overnight shipment cart header" context="category" context-object="${category}" />
+			<div id="main" class="clearfix">
+				<div id="checkoutheader">
+					<isslot id="overnight-shipment-cart-header" description="Overnight shipment cart header" context="category" context-object="${category}" />
+					
+					<isslot id="overnight-shipment-cart-top-footer" description="Overnight shipment cart top footer" context="category" context-object="${category}" />
+				</div>
+				
+				<div id="sideslots">
+					<div class="sideslot" id="overnight-shipment-cart-top">
+						<isslot id="overnight-shipment-cart-top" description="Overnight shipment cart top" context="category" context-object="${category}" />
+					</div>
+					
+					<div class="sideslot" id="overnight-shipment-cart-center">
+						<isslot id="overnight-shipment-cart-center" description="Overnight shipment cart center" context="category" context-object="${category}" />
+					</div>
+				</div>
+				
+				<div id="cartcontent">
+					<isreplace/>
+					
+					<div class="clearfix"></div>
+				</div>
+				
+				<div id="cartfooter">
+					<div id="cartfooterinner">
+						<isslot id="overnight-shipment-cart-top-bottom" description="Overnight shipment cart bottom" context="category" context-object="${category}" />
+					</div>
+				</div>
+			</div>
+			<div id="mainfooter">
+				<div id="footerbar">
+					<div id="footermenu">
+						<ul>
+							<li class="first"><a href="${URLUtils.url('Page-Show', 'cid', 'contents-terms-and-conditions-main')}">${Resource.msg('checkout.overnight.footer.menu.terms', 'rendering', null)}</a></li>
+							<li><a href="${URLUtils.url('Page-Show', 'cid', 'contents-privacy-policy-main')}">${Resource.msg('checkout.overnight.footer.menu.privacy', 'rendering', null)}</a></li>
+							<li><a href="${URLUtils.url('Page-Show', 'cid', 'contents-guarantee-main')}">${Resource.msg('checkout.overnight.footer.menu.guarantee', 'rendering', null)}</a></li>
+						</ul>
+					</div>
+				</div>
+				<div id="legalinfo">
+					<isprint value="${Resource.msg('checkout.overnight.legalinfo', 'rendering', null)}" encoding="off"></isprint>
+					<span style="display: block;">${Resource.msg('checkout.overnight.legalinfo2', 'rendering', null)}</span>
+				</div>
+				<isslot id="overnight-shipment-cart-footer" description="Overnight shipment cart footer" context="category" context-object="${category}" />
+			</div>
+		</div>
+		<isinclude template="analytics/omniture/omniture"/>
+<iscomponent pipeline ="Tealium-FooterInclude"
+pid=${pdict.CurrentHttpParameterMap.pid.stringValue}
+searchterm=${pdict.CurrentHttpParameterMap.q.stringValue}
+searchresultscount=${!empty(pdict.ProductSearchResult)?pdict.ProductSearchResult.count+'':''}
+orderno=${pdict.OrderNo}
+contentsearchresultscount=${!empty(pdict.ContentSearchResult)?pdict.ContentSearchResult.count+'':''}
+pagecgid=${pdict.CurrentHttpParameterMap.cgid.stringValue} />
+	</body>
+</html>

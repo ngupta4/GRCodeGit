@@ -1,0 +1,149 @@
+/**
+* Demandware Script File
+* To define input and output parameters, create entries of the form:
+*
+* @<paramUsageType> <paramName> : <paramDataType> [<paramComment>]
+*
+* where
+*   <paramUsageType> can be either 'input' or 'output'
+*   <paramName> can be any valid parameter name
+*   <paramDataType> identifies the type of the parameter
+*   <paramComment> is an optional comment
+*
+* For example:
+*
+*   @input email : String Email to verify
+*	@input password : String Customer password
+*	@input Request : dw.system.Request
+*   @output Error : String
+*	@output Status : String
+*
+*/
+importPackage( dw.system );
+importScript('int_gutheyrenker:grmiddleware/libGRMiddleware.ds');
+var verificationTreshold = 20;
+
+function execute( pdict : PipelineDictionary ) : Number
+{
+	var error : String = null,
+		action : Number = PIPELET_NEXT;
+	pdict.Status = "Not found";
+	pdict.Error = "";
+	var emailExists = "";
+	var accountStatus = "";
+	if(!pdict.email){
+		pdict.Error = 'Not valid mail';
+		return PIPELET_ERROR;
+	}	
+	
+	var checkedMails = session.privacy.checkedMails?session.privacy.checkedMails:{};
+	
+	//verify email limit check 
+	delete session.privacy.verifyemaillimit;
+	if(empty(session.privacy.verifyemaillimit) || checkedMails[pdict.email]){
+		var count : Number = session.privacy.verifyemailcount || 1;
+		//maximum checks of email
+		if(count++ >= verificationTreshold ){
+			session.privacy.verifyemaillimit = true;
+			delete session.privacy.verifyemailcount;
+		}else{
+			session.privacy.verifyemailcount = count;
+		}
+	
+		var verificationXML : XML;
+		if(checkedMails[pdict.email]){
+			verificationXML = checkedMails[pdict.email];
+		}else{
+			verificationXML = getAPI().getEmailVerificationInfo(pdict.email, null, pdict.Request);
+		}
+		
+		if(verificationXML && verificationXML instanceof XML){
+			
+			//if we have correnct XML
+			if(verificationXML.status == 200){
+				if(checkedMails[pdict.email]){
+					action = PIPELET_NEXT;
+				}
+				if('responseData' in verificationXML){
+					if('accountStatus' in verificationXML.responseData && verificationXML.responseData.accountStatus != null)
+						accountStatus = verificationXML.responseData.accountStatus.toString();
+					if('emailExists' in verificationXML.responseData && verificationXML.responseData.emailExists != null)	
+						emailExists = verificationXML.responseData.emailExists.toString();
+					if(emailExists != ""){
+						if(emailExists == "false"){
+							pdict.Status = "inactive";
+						} else if(emailExists == "true"){
+							pdict.Status = accountStatus;		
+						}
+					} else {
+						pdict.Status = "inactive";
+					}
+				}
+				//error show account active
+				if (!empty(emailExists) && emailExists == "true"){
+					error = 'checkout.error.useractive';
+					if(!empty(accountStatus) && accountStatus == "inactive"){
+						//ac1 inactive user and password empty
+						delete session.privacy.userinactivepdw;
+						error = '';
+						//return
+						action = PIPELET_NEXT;
+					} else if(!empty(accountStatus) && accountStatus == "active"){
+						if(!empty(pdict.password)){
+							//ac1 active with password error show provide email address
+							session.privacy.userinactivepdw = true;
+							action = PIPELET_ERROR
+						} else {
+							delete session.privacy.userinactivepdw;
+							error = '';
+							//return
+							action = PIPELET_NEXT;
+						}
+					}
+				} else {
+					delete session.privacy.userinactivepdw;
+					error = '';
+					//return in the case where email does not exist
+					action = PIPELET_NEXT;
+				}
+			}else if(verificationXML.status == 400){
+				//case where the email id is not valid.
+				if('errorData' in verificationXML){
+					var errorDataXML : XML = new XML(verificationXML.errorData);
+					if('error' in errorDataXML && 'message' in errorDataXML.error && (errorDataXML.error.message != null)){
+						error = errorDataXML.error.message.toString();
+					} else {
+						error = 'checkout.error.userinactivepdw';
+					}
+				}
+				action = PIPELET_ERROR;
+			}else if(verificationXML.status == 404){
+				
+				//password generation will be invoked later
+					//return 
+					action = PIPELET_NEXT;
+
+			}else if(!empty(verificationXML.errorData.error.message.toString())){
+				
+				error =  verificationXML.errorData.error.message.toString();
+				
+			}
+			
+			checkedMails[pdict.email] = verificationXML;
+			session.privacy.checkedMails = checkedMails;
+			
+
+		}else{
+			//reset if we have server error 
+			session.privacy.verifyemailcount = 0;
+			error = 'checkout.error.server';
+			//return
+			action = PIPELET_NEXT;
+		}
+		
+	}else{
+		error = 'checkout.error.limit';	
+	}
+	pdict.Error = error;
+	return action;
+}

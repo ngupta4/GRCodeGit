@@ -1,0 +1,137 @@
+<!--- TEMPLATENAME: pt_checkoutshippingovernight.isml --->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+	<isinclude template="util/modules"/>
+	
+	<isscript>
+		importScript('guthyrenker_core:common/libUtils.ds');
+	
+		importPackage(dw.object);
+		importPackage(dw.catalog);
+		
+		var CCC : Object = pdict.CurrentCampaignConfig;
+		var campaignCode : String = CCC.campaignCode;
+		
+		var showHeader : boolean = CCC.showHeader;
+		var showFooter : boolean = CCC.showFooter;
+		var showNav : boolean = CCC.showNav;
+		var showOrderButton : boolean = CCC.showOrderButton;
+		
+		var category : dw.catalog.Category = CCC.getCampaignCategory();
+		
+		var w : Number =CCC.sasOfferCodes.length>0?Number(400 / CCC.sasOfferCodes.length):400;
+		
+	</isscript>
+	
+	<head>
+		<isinclude template="components/header/htmlhead"/>
+		
+		<link href="${URLUtils.staticURL('/css/main_checkout.css')}" type="text/css" rel="stylesheet" />
+		<link href="${URLUtils.staticURL('/css/main_checkoutshipmentovernight.css')}" type="text/css" rel="stylesheet" />
+		
+		<script type="text/javascript" src="${URLUtils.staticURL('js/proactiv.js')}"></script>
+	</head>
+	
+	<body id="page_checkout">
+		<div id="idMainWide" class="mainWide">
+			<isslot id="overnight-shipment-cart-banner-top" description="Overnight shipment cart header" context="category" context-object="${category}" />
+			<div id="main" class="clearfix">
+				<div id="checkoutheader">
+					<isslot id="overnight-shipment-cart-header" description="Overnight shipment cart header" context="category" context-object="${category}" />
+					
+					<isslot id="overnight-shipment-cart-top-footer" description="Overnight shipment cart top footer" context="category" context-object="${category}" />
+				</div>
+				
+				<div id="sideslots">
+					<div class="sideslot" id="overnight-shipment-cart-top">
+						<isslot id="overnight-shipment-cart-top" description="Overnight shipment cart top" context="category" context-object="${category}" />
+					</div>
+					<div class="sideslot" id="overnight-shipment-cart-center">
+						<isslot id="overnight-shipment-cart-center" description="Overnight shipment cart center" context="category" context-object="${category}" />
+					</div>
+					
+					<iscomment>Show options for each gift sku</iscomment>
+					<isif condition="${CCC.enableSlpSas}">
+						<div id="slpsas">
+						<script langauge="javascript">
+
+				    	function swapProducts(prodid)
+				    	{
+					    		//hide all yes
+					    		jQuery('.slp-sas-yes').hide()
+					    		
+					    		//show all nos (except right one
+					    		jQuery('.slp-sas-no').show()
+					    		
+					    		//show the right yes
+					    		jQuery('#'+prodid +'-src-no').hide()
+					    		jQuery('#'+prodid +'-src-yes').show()
+					    		
+						 		jQuery.getJSON("${URLUtils.url('COCart-JsonAddProduct')}", {'pid':prodid}, function(json){
+							    	//$('#ajaxDrivenProductContent').html('<div class="offer_disc">'+json.offerdesc+json.offer+'</div><div class="product_image"><img src="images/'+json.cartimage+'" width="100" height="100" alt="Intro Kit Picture" /></div>');
+							    	//cartitems .celldescription .name 
+							    	//shortDescription
+							    	
+							    	//cellprice contentasset img src //replace with new content asset maybe...
+							    	$('.cartitems .celldescription .name').html(json.update.productInfo.name);
+							    	$('.cartitems .celldescription .shortDescription').html(json.update.productInfo.shortDescription);
+							    	$('.cartitems .cellimage img').attr("src",json.update.productInfo.imageSrc);
+							    	$('.cartitems .cellimage img').attr("alt",json.update.productInfo.imageAlt);
+							    	$('.cartitems .celldescription .offerCode').html(json.update.productInfo.offerCode);
+							    	$('.cartitems .cellprice').html(json.update.productInfo.priceContent);
+									
+									$('#merchandizeTotal').html(json.update.merchandiseTotal.stringValue);
+									$('#shippingTotalPrice').html(json.update.shipping.stringValue);
+									$('#basketTotalPrice').html(json.update.totalPrice.stringValue);
+							    	});		
+						    	return false;
+					    }
+						</script>
+						
+						<isloop items="${CCC.sasOfferCodes}" var="item" status="stat">
+						<a id="box-link" href="javascript:void(0)" onclick="swapProducts('${item}');" style="width:${100/CCC.sasOfferCodes.length}%;">
+								<isif condition="${!empty(pdict.Basket.getProductLineItems(item))}">
+									<img class="slp-sas-yes" id="${item}-src-yes" src="${URLUtils.staticURL('/images/sas/yes_dot.png')}" alt="${item}"/>
+									<img  class="slp-sas-no"  id="${item}-src-no" style="display:none" src="${URLUtils.staticURL('/images/sas/no_dot.png')}" alt="${item}"/>
+								<iselse>
+									<img  class="slp-sas-yes"  id="${item}-src-yes" style="display:none" src="${URLUtils.staticURL('/images/sas/yes_dot.png')}" alt="${item}"/>
+									<img class="slp-sas-no"  id="${item}-src-no" src="${URLUtils.staticURL('/images/sas/no_dot.png')}" alt="${item}"/>
+								</isif>
+						</a>
+						</isloop>
+						</div>
+					</isif>
+				</div>
+				
+				<div id="cartcontent">
+					<isreplace/>
+					
+					<div class="clearfix"></div>
+				</div>
+				
+				<div id="cartfooter">
+					<div id="cartfooterinner">
+						<isslot id="overnight-shipment-cart-top-bottom" description="Overnight shipment cart bottom" context="category" context-object="${category}" />
+					</div>
+				</div>
+			</div>
+			<div id="mainfooter">
+				<div id="footerbar">
+					<div id="footermenu">
+						<ul>
+							<li class="first"><a href="${URLUtils.url('Page-Show', 'cid', 'terms')}">${Resource.msg('checkout.overnight.footer.menu.terms', 'rendering', null)}</a></li>
+							<li><a href="${URLUtils.url('Page-Show', 'cid', 'privacy-policy')}">${Resource.msg('checkout.overnight.footer.menu.privacy', 'rendering', null)}</a></li>
+							<li><a href="${URLUtils.url('Page-Show', 'cid', 'guarantee')}">${Resource.msg('checkout.overnight.footer.menu.guarantee', 'rendering', null)}</a></li>
+						</ul>
+					</div>
+				</div>
+				<div id="legalinfo">
+					<isprint value="${Resource.msg('checkout.overnight.legalinfo', 'rendering', null)}" encoding="off"></isprint>
+					<span style="display: block;">${Resource.msg('checkout.overnight.legalinfo2', 'rendering', null)}</span>
+				</div>
+				<isslot id="overnight-shipment-cart-footer" description="Overnight shipment cart footer" context="category" context-object="${category}" />
+			</div>
+		</div>
+		<isinclude template="analytics/omniture/omniture"/>
+	</body>
+</html>

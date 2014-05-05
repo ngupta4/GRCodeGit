@@ -1,0 +1,253 @@
+<!--- TEMPLATENAME: selectasystem.isml --->
+<isdecorate template="mobile/search/pt_selectasystem_full">
+<isinclude template="util/modules"/>
+<isscript>
+	importPackage(dw.util);
+	importPackage(dw.catalog);
+	var CCC : Object = pdict.CurrentCampaignConfig;
+	var offersList : ArrayList = new ArrayList();
+	var offer1 = CCC.sasOfferCodes[0];
+	var offer2 = CCC.sasOfferCodes[1];
+	//get the campaign code and append this
+	var sasCat:Category = CatalogMgr.getCategory('m-' + CCC.campaignCode + '-SAS');
+</isscript>
+
+<isset name="OmniturePage" value="Offerpage" scope="pdict" />
+<iscontentasset aid="m-tab-script"/>
+ <div id="sas">    
+   <div id="main_container">
+	<h1 class="darkgrey larger">${Resource.msg('sas.selectkit','rendering',null)}</h1>
+	<div id="tabs_container">
+		<div data-role="navbar" id="tab">
+		  <ul>
+		  <isloop items="${sasCat.onlineSubCategories}" var="cat" status="page_status" >
+		     <isif condition="${!empty(cat.onlineProducts)}">
+				<isslot id="Tab" context="category" description="Tab Button" context-object="${cat}"/>
+		     </isif>
+		  </isloop>
+		  </ul>
+		  </div>
+
+		<div class="tab-content">
+  			<isloop items="${sasCat.onlineSubCategories}" var="cat" status="page_status" >
+		    <isif condition="${!empty(cat.onlineProducts)}">
+		    <isif condition="${cat.onlineProducts.length > 1}">
+		    	<iscomment>Second gift defaultly selected</iscomment>
+		    	<isset name="offer" value="${cat.onlineProducts[1]}" scope="page"/>
+		    	<iscomment>Drop in some java script to handle all the swipe actions</iscomment>
+		    <iselse>
+		    	<iscomment>First gift selected and it is the only one</iscomment>
+		    	<isset name="offer" value="${cat.onlineProducts[0]}" scope="page"/>
+		    </isif>
+		    <isset name="num" value="${(page_status.index + 1).toFixed()}" scope="page"/>
+			<div class="tab${num} <isif condition="${!page_status.first}">ui-screen-hidden</isif>">
+			<div id="tabs-${num}">
+				<isslot id="ProductTop" context="category" description="Top Product Info" context-object="${cat}"/>
+				
+				 <div class="darkgreybox">
+				   <div class="pricecontainer"><p class="white large">ONLY <isprint value="${offer.priceModel.getPrice()}" style="MONEY_LONG" /><span class="per_month right">PER<br /> MONTH</span></p></div>				   
+				   <a id="sas-cta${num}" class="cta3" href="${dw.web.URLUtils.https('COCart-AddProduct','pid',offer.ID)}" rel="external" data-role="button" data-theme="a" data-inline="true">Order Now</a></p>
+				   <p class="white"><isslot id="m-sas-shipping" description="shipping description" context="global" /></p>
+				</div>
+				
+				<isif condition="${cat.onlineProducts.length > 1}">
+				<!-- Swipe -->
+				<div class="ui-swipe-custom">
+					 <img class="go-left-${num}" src="${URLUtils.staticURL('mobile/images/go-left-alt.gif')}">
+				 	 <img class="go-right-${num}" src="${URLUtils.staticURL('mobile/images/go-right-alt.gif')}">
+
+					<div id='mySwipe${num}'  class='swipe'>
+					  <div class='swipe-wrap'>
+					  	<isloop items="${cat.onlineProducts}" var="gift" status="gift_status">
+					  						  	
+					  	<isif condition="${gift.ID ==  offer1 || gift.ID == offer2}">
+					      <div>
+					      		<img src="${gift.getImage('large',0).url}" alt="">
+					      		<div  class="gift-switch orange containing-element center">			      			
+					      			<a id="${gift.ID}" href="${dw.web.URLUtils.https('COCart-AddProduct','pid',gift.ID)}" rel="external" data-role="button" data-theme="a" data-inline="true"
+					      			  onclick="s.linkTrackVars='prop62';s.prop62='OrderNow:'+s.pageName+':btn1';s.tl(this,'o','OrderNow:'+s.pageName+':btn1');">${gift.custom.altGiftName}</a>
+					      		</div>
+					      </div>
+					      </isif>
+					     </isloop>
+					  </div>
+					</div>
+
+				 	 <script type="text/javascript">
+				 	 
+				 	 var swipeid = '#mySwipe' + '${num}';
+				 	 
+			         $(swipeid + ' img').on('touchstart click', function(event) {
+			            window.mySwipe.unfreeze();
+			         });
+			         $('.tab${num} .gift-switch,.tab${num} .gift-switch *').on('touchstart click', function(event) {
+			            window.mySwipe.freeze();
+			         });
+			         $('.tab${num} .gift-switch,.tab${num} .gift-switch *').on('touchend', function(event) {
+			            window.mySwipe.unfreeze();
+			         });
+			         
+			         $('.tab${num} .ui-swipe-custom .go-left-${num}').click(function()
+			         {
+			         	thistabnum=${num};
+			            window.mySwipe.prev();
+			            $("#sphere"+thistabnum+"-1").attr("src", "${URLUtils.staticURL('mobile/images/1.png')}");
+			            $("#sphere"+thistabnum+"-2").attr("src", "${URLUtils.staticURL('mobile/images/2.png')}");
+			            $("#sphere"+thistabnum+"-3").attr("src", "${URLUtils.staticURL('mobile/images/3.png')}");
+			            var sphere = $("#sphere"+thistabnum+"-"+(window.mySwipe.getPos()+1));
+			            var scr = sphere.attr("src").replace(".png","-active.png");
+			            sphere.attr("src", scr);
+						var offerID =  sphere.attr("data-value");
+						$('#' + offerID).trigger('click');
+						var link = $("#sas-cto"+thistabnum).attr('href').replace(/pid=.*/,'pid=' + offerID);
+						$("#sas-cto"+thistabnum).attr('href',link);
+			         });
+			
+			         $('.tab${num} .ui-swipe-custom .go-right-${num}').click(function()
+			         {
+			         	thistabnum=${num};
+			            window.mySwipe.next();
+			            $("#sphere"+thistabnum+"-1").attr("src", "${URLUtils.staticURL('mobile/images/1.png')}");
+			            $("#sphere"+thistabnum+"-2").attr("src", "${URLUtils.staticURL('mobile/images/2.png')}");
+			            $("#sphere"+thistabnum+"-3").attr("src", "${URLUtils.staticURL('mobile/images/3.png')}");
+			            var sphere = $("#sphere"+thistabnum+"-"+(window.mySwipe.getPos()+1));
+			            var scr = sphere.attr("src").replace(".png","-active.png");
+			            sphere.attr("src", scr);
+						var offerID =  sphere.attr("data-value");
+						$('#' + offerID).trigger('click');
+						var link = $("#sas-cto"+thistabnum).attr('href').replace(/pid=.*/,'pid=' + offerID);
+						$("#sas-cto"+thistabnum).attr('href',link);
+			         });
+				 	 $('.tab${num} .go-left-${num}').hover(function() {
+	       		        var src = $(".go-left-${num}").attr('src').indexOf('left-alt.gif') > -1 ? "${URLUtils.staticURL('mobile/images/go-left.gif')}" : "${URLUtils.staticURL('mobile/images/go-left-alt.gif')}";
+	        			$(".go-left-${num}").attr('src',src);
+
+	       				 return false;
+	   				 });
+				 	 $('.tab${num} .go-right-${num}').hover(function() {
+	       		        var src = $(".go-right-${num}").attr('src').indexOf('go-right-alt.gif') > -1 ? "${URLUtils.staticURL('mobile/images/go-right.png')}" : "${URLUtils.staticURL('mobile/images/go-right-alt.gif')}";
+	        			$(".go-right-${num}").attr('src',src);
+	       				 return false;
+	   				 });
+					$('.tab${num} .gift-switch :input').click(function(){
+						var offerID = $(this).val();
+						var link = $("#sas-cto").attr('href').replace(/pid=.*/,'pid=' + offerID);
+						$("#sas-cto").attr('href',link);
+						if($(this).prop("checked"))
+							$(this).parents(".gift-switch").addClass("dark");
+						else
+							$(this).parents(".gift-switch").removeClass("dark");
+					});					
+					$('.tab${num} #gift-num img').click(function(){
+						var offerID = $(this).attr("data-value");
+						$('#' + offerID).trigger('click');
+					});
+
+					
+					
+				 	 </script>
+
+				</div>
+				<!-- Swipe -->	
+				<div id="gift-num" class="center">
+					<iscomment>
+					<isloop items="${cat.onlineProducts}" var="gift" status="gift_status">
+						<img data-value="${gift.ID}" id="sphere${num}-${(gift_status.index + 1).toFixed()}" style="margin-top:30px;" src="${URLUtils.staticURL('mobile/images/' + (gift_status.index+1).toFixed() +'.png')}" width="" alt="">
+					</isloop>	
+					</iscomment>		
+				</div>
+				<iselse><iscomment>Only one gift, no swipe needed
+					  	<isloop items="${cat.onlineProducts}" var="gift" status="gift_status">
+					      <div class="center">
+					      		<img class="center" src="${gift.getImage('large',0).url}" alt="">
+					      		<div  class="gift-switch orange containing-element center">			      			
+					      			<a id="${gift.ID}" href="${dw.web.URLUtils.https('COCart-AddProduct','pid',gift.ID)}" rel="external" data-role="button" data-theme="a" data-inline="true" 
+					      			  onclick="s.linkTrackVars='prop62';s.prop62='OrderNow:'+s.pageName+':btn1';s.tl(this,'o','OrderNow:'+s.pageName+':btn1');">${gift.custom.altGiftName}</a>
+					      		</div>
+					      </div>
+					     </isloop>
+					     </iscomment>
+					<script>
+					$(function()
+					 {
+						var prevSelection = "tab1";
+					
+						$("#tab ul li").click(function()
+						{
+							$(this).children("a").attr("data-tab-class");
+							var newSelection = $(this).children("a").attr("data-tab-class");
+							$("."+prevSelection).addClass("ui-screen-hidden");
+							$("."+newSelection).removeClass("ui-screen-hidden");
+							prevSelection = newSelection;
+						});
+					});
+					</script>		
+				</isif>
+				<isslot id="ProductBottom" context="category" description="Bottom Product Info" context-object="${cat}"/>
+		</div>
+		</div>
+		</div>
+		</isif>
+		</isloop>
+	</div>
+<script language="javascript">
+jQuery(document).ready(function(){
+	$("#sphere1-2").attr("src", "${URLUtils.staticURL('mobile/images/2-active.png')}");
+	$("#sphere2-2").attr("src", "${URLUtils.staticURL('mobile/images/2-active.png')}");
+	$("#tab ul li").click(function()
+	{
+		$("#sphere1-1").attr("src", "${URLUtils.staticURL('mobile/images/1.png')}");
+		$("#sphere1-2").attr("src", "${URLUtils.staticURL('mobile/images/2-active.png')}");
+		$("#sphere1-3").attr("src", "${URLUtils.staticURL('mobile/images/3.png')}");
+		$("#sphere2-1").attr("src", "${URLUtils.staticURL('mobile/images/1.png')}");
+		$("#sphere2-2").attr("src", "${URLUtils.staticURL('mobile/images/2-active.png')}");
+		$("#sphere2-3").attr("src", "${URLUtils.staticURL('mobile/images/3.png')}");
+		
+		var	offerID = $("#sphere1-2").attr("data-value");
+		if(offerID){
+			//update tab active state
+			document.getElementById("sas-cto1").href=document.getElementById("sas-cto1").href.replace(/pid=.*/,'pid=' + offerID);
+		}
+		offerID = $("#sphere2-2").attr("data-value");
+		if(offerID){
+			//update tab active state
+			document.getElementById("sas-cto2").href=document.getElementById("sas-cto2").href.replace(/pid=.*/,'pid=' + offerID);
+		}
+		
+		$("#tab ul li").find("img").each(function( key, value ) {if(value.src.indexOf('-active')>-1){value.src=value.src.replace('-active.png','.png')}else{value.src=value.src.replace('.png','-active.png')}})
+		
+	})
+});
+
+$(function(){
+
+	var prevSelection = "tab1";
+
+    window.mySwipe = $('#mySwipe1').Swipe().data('Swipe');
+     
+	$("#tab ul li").click(function()
+	{
+		$(this).children("a").attr("data-tab-class");
+		var newSelection = $(this).children("a").attr("data-tab-class");
+		$("."+prevSelection).addClass("ui-screen-hidden");
+		$("."+newSelection).removeClass("ui-screen-hidden");
+		prevSelection = newSelection;
+	});
+	
+	$("#tab ul li").click(function(){
+		var index = $("#tab ul li").index(this) + 1;
+		window.mySwipe = $('#mySwipe'+ index).Swipe().data('Swipe');
+	});
+});
+</script>
+	
+	</div>	
+		
+ </div>
+        
+
+<isset name="OmniturePage" value="Offerpage" scope="pdict" />
+
+    <iscomment> SAS Page Pixels</iscomment>
+	
+</isdecorate>

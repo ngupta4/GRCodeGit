@@ -1,0 +1,23 @@
+<isset name="CCC" value="${pdict.CurrentCampaignConfig}" scope="page" />
+<isscript>
+		importPackage(dw.object);
+		importPackage(dw.catalog);
+		
+		importScript('int_gutheyrenker:common/libEncoding.ds');
+		
+		if(pdict.CurrentCampaignConfig!=null) {
+			var CCC : Object = pdict.CurrentCampaignConfig;
+			if(CCC !=null ){
+				var category : dw.catalog.Category = CCC.getCampaignCategory();
+			}
+		}
+</isscript>
+
+<iscomment>Check the htmlhead.isml for the server side tracking pixel</iscomment>
+<isif condition="${dw.system.Site.getCurrent().getCustomPreferenceValue('GRMVisitorLogPixelEnabled') == true}">
+    <img src="${URLUtils.url('GRMiddleware-VisitorLog', 'urlpath', request.httpPath, 'urlquery', request.httpQueryString)}" width="1" height="1"/>
+</isif>
+<isslot id="m-header" description="Home page Header Top" context="global" />
+
+<iscomment>Cookies and Javascript enabled check</iscomment>
+<isinclude template="components/browsertoolscheck"/>

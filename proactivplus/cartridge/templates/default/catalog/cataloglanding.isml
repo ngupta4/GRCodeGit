@@ -1,0 +1,45 @@
+<!--- TEMPLATENAME: cataloglanding.isml --->
+<isset name="starting" value="${0}" scope="page"/>
+<isset name="rootCategory" value="${dw.catalog.CatalogMgr.getCategory('homepage-featured')}" scope="page"/>
+<div class="pdpContainer">
+	<div class="productsContainer">
+
+			<isset name="products" value="${rootCategory.getOnlineProducts()}" scope="page"/>
+			<div class="productsDetails productlisting">	
+				<isloop items="${products}" var="Product">
+					<isif condition="${(Product.getAvailabilityModel().isInStock())}">
+                     	<isinclude template="product/producttiledetailed"/>
+                      </isif>
+				</isloop>
+				<div class="shop-all-container"><a href="/cat/ALL">${Resource.msg('search.category.shopallproducts','search',null)}</a></div>
+			</div>
+	 </div><!--END: productContainer -->
+	 
+</div><!--END: categoryContainer -->
+<isif condition="${!empty(dw.web.Resource.msg('bazaarvoice.isenabled','bazaarvoice',null)) 
+						&& dw.web.Resource.msg('bazaarvoice.isenabled','bazaarvoice',null) == 'true'}">
+		<isinclude template="bv/display/headerincludes"/>
+</isif>
+
+<script type="text/javascript">
+
+	//Add To Bag for Variant Products
+	 jQuery(".white-bg .addtobag").each(function() {		
+		  jQuery(this).click(function() 
+		  { 
+			  var parentObj = jQuery(this).siblings('.swatches');
+			  var productid=  parentObj.find('.addtocartvariation li.selected a').attr('id');
+			  var upsell =  parentObj.find('.addtocartvariation li.selected a').attr('upsell');
+			  app.minicart.addFromCLP(productid, 'true',upsell);
+		 });
+	 });
+	 jQuery(".white-bg .addtokitvar").each(function() {		
+		  jQuery(this).click(function() 
+		  {
+			  var parentObj = jQuery(this).parent().siblings('.swatches');
+			  var productid=  parentObj.find('.addtocartvariation li.selected a').attr('id');
+			  var isKitAdditionAllowedVal =  parentObj.find('.addtocartvariation li.selected input').val();
+			  addProduct(productid,isKitAdditionAllowedVal);
+		 });
+	 });
+ </script>

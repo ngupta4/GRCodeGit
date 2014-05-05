@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<meta http-equiv="x-ua-compatible" content="IE=8">
+<html>
+<isinclude template="util/modules"/>
+
+<head>
+	<iscomment>Include all important information globally , e.g. meta-data, link information, and javascript.</iscomment>
+	<isinclude template="components/header/htmlhead"/>
+</head>
+<body class="${bodyclass}">
+<div id="container"<isif condition="${'Content' in pdict && !empty(pdict.Content)}"> class="${pdict.Content.ID}"</isif>>
+	<div id="idMainWide" class="mainWide">
+	  	<div class="clearfix" id="main">
+			<div id="content">
+				<isinclude template="components/contentbreadcrumbs"/>
+				<isreplace/>
+				<div class="clear"><!-- FLOAT CLEAR --></div>
+			</div><!-- END: content -->
+		</div>
+	</div><!-- END: main -->
+	
+	<isinclude template="components/header/header"/>
+	
+	<isif condition="${CCC.showFooter}">
+		<isinclude template="components/footer/footer"/>
+	</isif>
+</div><!-- END: container -->
+</body>
+</html>

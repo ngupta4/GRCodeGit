@@ -1,0 +1,83 @@
+<!--- TEMPLATENAME: cart1.isml --->
+<isinclude template="util/modules" />
+
+<isscript>
+	importPackage(dw.object);
+	importPackage(dw.catalog);
+	
+	var CCC : Object = pdict.CurrentCampaignConfig;
+	var campaignCode : String = CCC.campaignCode;
+	
+	var showHeader : boolean = CCC.showHeader;
+	var showFooter : boolean = CCC.showFooter;
+	var showNav : boolean = CCC.showNav;
+	var showOrderButton : boolean = CCC.showOrderButton;
+	
+	var category : dw.catalog.Category = CCC.getCampaignCategory();
+	var decoratorTemplate = (empty(pdict.CheckoutStep) || 'cartinformation' == pdict.CheckoutStep) ? 'content/checkout/pt_checkoutsingle' : 'content/checkout/pt_checkout';
+</isscript>
+<isdecorate template="${decoratorTemplate}">
+	<isset name="multiCheckout" value="${false}" scope="pdict" />
+    
+	<isif condition="${empty(pdict.CheckoutStep) || 'cartinformation' == pdict.CheckoutStep}">
+		<iscomment>Disable checkout button for cart. We don't need it at this step</iscomment>
+		<isset name="EnableCheckout" value="${false}" scope="pdict" />
+		
+		<div class="scheckoutcontainer">
+			<isslot id="simplecheckoutleft" context="category" description="Simple Checkout Left" context-object="${category}"/>
+			<isslot id="simplecheckouttop" context="category" description="Simple Checkout Top" context-object="${category}"/>
+			
+			<isif condition=${pdict.multiCheckout}>
+				<ischeckoutbreadcrumbs type="multi" step="2" />
+			<iselse>
+				<ischeckoutbreadcrumbs type="simple" step="1" />
+			</isif>		
+			<div class="content_box_outer_pdp">
+				<div class="content_box_inner_sp">
+					<isinclude template="checkout/cart/cocart" />
+					<isinclude template="checkout/personinformation/personinformation"/>
+				</div>
+			</div>
+			<script type="text/javascript">
+			jQuery(document).ready(function () {
+				var imageUrl = jQuery('.navMenu').hide();
+			});
+			</script>
+		</div>
+		<isset name="OmniturePage" value="SimpleCheckout" scope="pdict">
+	<iselseif condition="${'review' == pdict.CheckoutStep}">
+		<isinclude template="checkout/steps/review" />
+		<isset name="OmniturePage" value="CheckoutInformation" scope="pdict">
+	<iselseif condition="${'confirmation' == pdict.CheckoutStep}">
+	
+		<isinclude template="checkout/steps/confirmation" />
+		<isset name="OmniturePage" value="COConfirmation" scope="pdict">
+	<iselseif condition="${'cartempty' == pdict.CheckoutStep}">
+		<iscomment> Redirect Empty cart page  </iscomment>
+		<isset name="Location" value="${URLUtils.url('Page-Show','cid','order')}" scope="pdict" />
+		<isinclude template="util/redirect" />
+	</isif>
+</isdecorate>
+
+<iscomment> Checkout Page Pixels  </iscomment>
+<isinclude template="common/mediaPixelsInit.isml"/>
+
+<isif condition="${empty(pdict.CheckoutStep) || 'cartinformation' == pdict.CheckoutStep}">
+
+  <iscomment>In checkout page</iscomment>
+  
+  <div class="mboxDefault"></div>
+  <script type="text/javascript">mboxCreate("DT_Checkout_SCP",'pageName='+"${mboxPageName}",'pageUCI='+ "${mboxUCI}",'renderingExperience=' +"${session.custom.renderingGroup.ID}",'deviceGroup=' +"${session.custom.deviceCategory}",'device=' +"${session.custom.device}");</script>
+
+<iselseif condition="${'review' == pdict.CheckoutStep}">
+
+  <iscomment>In Preview Page</iscomment>
+
+<iselseif condition="${'confirmation' == pdict.CheckoutStep}">
+  
+  <iscomment>In confirmation page</iscomment>
+  
+  <div class="mboxDefault"></div>
+  <script type="text/javascript">mboxCreate('DT_Confirm_SCP','productPurchasedId=' + offerArray.join(), 'orderTotal=' + subTotal, 'orderId=' + orderID);</script>
+
+</isif>

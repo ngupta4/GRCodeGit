@@ -1,0 +1,24 @@
+<!--- TEMPLATENAME: cartsetshippingmethodjson.isml --->
+<iscontent type="application/json" charset="UTF-8" compact="true">
+{
+	<isif condition=${empty(pdict.ErrorStatus)}>
+	"success": true,
+	"update": {
+	    "merchandiseTotal" : {
+	        stringValue: "<isprint value="${pdict.Basket.getAdjustedMerchandizeTotalPrice(false)}" formatter="$#,#00.0#">",
+	        number: "<isprint value="${pdict.Basket.getAdjustedMerchandizeTotalPrice(false).value}" formatter="$#,#00.0#">"
+	    },
+	    "shipping" : {
+	        "stringValue": "<isprint value="${pdict.Basket.getAdjustedShippingTotalPrice()}" formatter="$#,#00.0#">",
+	        "number": "<isprint value="${pdict.Basket.getAdjustedShippingTotalPrice().value}" formatter="$#,#00.0#">"
+	    },
+	    "totalPrice" : {
+	        "stringValue": "<isprint value="${pdict.Basket.getTotalNetPrice()}" formatter="$#,#00.0#">",
+	        "number": "<isprint value="${pdict.Basket.getTotalNetPrice().value}" formatter="$#,#00.0#">"
+	    }
+	}
+    <iselse/>
+		"success": false,
+		"error":"<isprint value="${pdict.ErrorCode}"/>"
+    </isif>
+} 

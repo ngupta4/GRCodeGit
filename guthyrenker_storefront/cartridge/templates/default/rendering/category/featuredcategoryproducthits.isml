@@ -1,0 +1,161 @@
+<isset name="DecoratorTemplate" value="search/pt_productsearchresult" scope="page"/>
+<isif condition="${pdict.CurrentHttpParameterMap.format.stringValue == 'ajax'}">
+	<isset name="DecoratorTemplate" value="util/pt_empty" scope="page"/>
+</isif>
+<isdecorate template="${DecoratorTemplate}">
+		<script type="text/javascript"><!--
+			// init the search result object
+			app.search.result = new app.search.SearchResult(<isif condition="${!empty(pdict.ProductSearchResult.searchPhrase)}">true<iselse/>false</isif>, <isif condition="${!empty(pdict.ProductSearchResult.categoryID)}">"${pdict.ProductSearchResult.categoryID}"<iselse>null</isif>);
+		//--></script>
+
+<iscomment>
+	Use the decorator template based on the requested output. If
+	a partial page was requested an empty decorator is used.
+	The default decorator for the product hits page is
+	search/pt_productsearchresult.
+</iscomment>
+
+<iscache type="relative" minute="30" varyby="price_promotion"/>
+<isinclude template="util/modules"/>
+
+<iscomment>
+	Configured as default template for the product search results.
+	Displays a global slot with static html and the product search
+	result grid.
+</iscomment>
+
+<iscomment>create reporting event</iscomment>
+<isinclude template="util/reporting/ReportSearch.isml"/>
+
+<div class="content"  id="content">
+<input type="hidden" id="tagetPipeline" value="${pdict.TargetPipeline}"/>
+<input type="hidden" id="tagetParams" value="${pdict.TargetPipelineParams}"/>
+<iscomment><h2 class="featured">${Resource.msg('search.featured-h','search',null)}</h2></iscomment>
+<div class="content-banner">
+<isslot id="FeaturedCategorySlot" description="Slot for Featured Category" context="global"/></div>
+
+<iscomment>suggest similar search phrase below the breadcrumb</iscomment>
+<isif condition="${!empty(pdict.ProductSearchResult.getSuggestedSearchPhrase())}">
+	<div class="didyoumean">
+		${Resource.msg('search.nohits.didyoumeanex','search',null)}
+		<a title="${pdict.ProductSearchResult.suggestedSearchPhrase}" href="<isprint value="${URLUtils.http('Search-Show','q',pdict.ProductSearchResult.suggestedSearchPhrase)}"/>"><isprint value="${pdict.ProductSearchResult.suggestedSearchPhrase}"/></a>
+	</div>
+</isif>
+
+<div class="producthits">
+	<iscomment>
+		Render promotional content at the top of search results as global slot.
+		This content is only displayed if the search result is refined by a category.
+		If the search result is not refined by a category a global default is displayed.
+	</iscomment>
+	
+	<isif condition="${!empty(pdict.ProductSearchResult.category)}">
+		<isslot id="cat-banner" context="category" description="Category Banner" context-object="${pdict.ProductSearchResult.category}"/>
+	<iselse/>
+		<isslot id="search-result-banner" description="Promotional Search Result Banner" context="global"/>
+	</isif>
+
+	<div id="search" class="search">
+		<isif condition="${!pdict.ProductSearchResult.refinedSearch && !empty(pdict.ContentSearchResult) && pdict.ContentSearchResult.count > 0}">
+			<div class="searchinformation">
+				${Resource.msgf('contenthitcount.yoursearch','search',null,pdict.ContentSearchResult.count)} &gt;
+				<a href="${'#relatedarticles'}">${Resource.msg('contenthitcount.goto','search',null)}</a>
+			</div><!-- END: searchinformation -->
+		</isif>
+		
+		<isscript>
+			var selectedString = 'selected="selected"';
+		</isscript>
+		<isif condition="${!pdict.ProductPagingModel.empty}">
+	
+			<isinclude template="search/productsearchgrid"/>
+		</isif>
+		
+		
+		
+		<isif condition="${pdict.ProductPagingModel.empty}">
+			<iscomment>display no results</iscomment>
+			<div class="noresults">
+				${Resource.msg('productresultarea.noresults','search',null)}
+			</div><!-- END: noresults -->
+
+		</isif>
+	</div><!-- END: search -->
+
+	<iscomment>Render promotional content at the bottom of search results as global slot</iscomment>
+	<isslot id="search-promo" description="Promotional Content at the bottom of Search Results" context="global"/>
+</div><!-- END: producthits -->
+</div>
+
+<iscomment>Include inline JS to update the refinements</iscomment>
+<isinclude template="search/components/jsrefinementsupdate"/>
+<isset name="OmniturePage" value="CategoryLandingPage" scope="pdict">
+
+<script type="text/javascript">
+jQuery(document).ready(function(){
+	$('.swatchesdisplay li:last-child').addClass("last");
+	 equalHeightname($(".productlisting .producttile .gr-bg-wraper .white-bg .name"));
+     equalHeightname($(".productlisting .producttile .gr-bg-wraper .white-bg .name"));
+	equalHeight($(".productlisting .producttile .gr-bg-wraper .white-bg .description"));
+        equalHeight($(".productlisting .producttile .producttilemain .white-bg"));
+        equalHeight($(".productlisting .producttile .gr-bg-wraper .white-bg"));
+       
+       
+       // equalHeightdescription($(".productlisting .producttile .gr-bg-wraper .white-bg .description"));
+       
+});
+
+function equalHeight(group) {
+       var tallest = 0;
+       group.each(function() {
+               var thisHeight = $(this).height();
+               if(thisHeight > tallest) {
+               tallest = thisHeight;
+               }
+       });
+       group.height(tallest);
+}
+
+function equalHeightname(group) {
+       var tallestname = 0;
+       group.each(function() {
+       var thisHeightname = $(this).height();
+       if(thisHeightname > tallestname) {
+       tallestname = thisHeightname;
+       }
+       });
+       group.height(tallestname);
+}
+
+
+</script>
+<script type="text/javascript">
+
+jQuery(document).ready(function(){
+	$('.swatchesdisplay li:last-child').addClass("last");
+});
+
+	//Add To Bag for Variant Products
+	 jQuery(".white-bg .addtobag").each(function() {		
+		  jQuery(this).click(function() 
+		  {
+			  var parentObj = jQuery(this).siblings('.swatches');
+			  var productid=  parentObj.find('.addtocartvariation li.selected a').attr('id');
+			  var upsell =  parentObj.find('.addtocartvariation li.selected a').attr('upsell');
+			  app.minicart.addFromCLP(productid, '${Product.available}',upsell);
+		 });
+	 });
+	 
+ 	 jQuery(".white-bg .addtokitvar").each(function() {		
+		  jQuery(this).click(function() 
+		  {
+			  var parentObj = jQuery(this).parent().siblings('.swatches');
+			  var productid=  parentObj.find('.addtocartvariation li.selected a').attr('id');
+			  var isKitAdditionAllowedVal =  parentObj.find('.addtocartvariation li.selected input').val();
+			  addProduct(productid,isKitAdditionAllowedVal);
+		 });
+	 });
+	 
+ </script>
+ 				 
+</isdecorate>

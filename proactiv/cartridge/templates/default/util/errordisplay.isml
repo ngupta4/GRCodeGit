@@ -1,0 +1,24 @@
+<!--- TEMPLATENAME: errorDisplay.isml --->
+
+<isif condition="${pdict.CurrentSession.custom.errorResponseStatus!=null && pdict.CurrentSession.custom.errorResponseStatus!="200"}">
+	
+	<!--You have encountered Error <strong>${pdict.CurrentSession.custom.errorResponseStatus}-->	
+	<div class="errormessage"><span>${Resource.msg('error.header.message', 'errormessages', null)}</span></div>
+	<isif condition="${pdict.CurrentSession.custom.errorResponseStatus==''}">
+		<div class="errormessage"><isprint value="${Resource.msg('error.empty.response', 'errormessages', null)}"/></div>
+	<iselseif condition="${pdict.CurrentSession.custom.errorResponseStatus=='500'}">
+		<div class="errormessage"><isprint value="${Resource.msg('error.500.response', 'errormessages', null)}"/></div>
+	<iselseif condition="${pdict.CurrentSession.custom.errorResponseStatus=='ScriptError'}">
+		<div class="errormessage"><isprint value="${Resource.msg('error.script', 'errormessages', null)}"/></div>
+	<iselse>
+		<isif condition="${!empty(pdict.CurrentSession.custom.errorResponseCode) && !empty(pdict.CurrentSession.custom.errorResponseStatus)}">
+			<div class="errormessage">${Resource.msg(pdict.CurrentSession.custom.errorResponseStatus,'errormessages',pdict.CurrentSession.custom.errorResponseCode)}.</div>
+		</isif>
+	</isif>
+	<isscript>
+		pdict.CurrentSession.custom.errorResponseStatus = null;
+		pdict.CurrentSession.custom.errorResponseCode = null;
+		pdict.CurrentSession.custom.errorResponseMessage = null;
+	</isscript>
+
+</isif>						

@@ -1,0 +1,248 @@
+<isdecorate template="checkout/pt_checkout_retention">
+<div class="leftColumn">
+<isinclude template="util/modules"/>
+
+<iscomment>
+	This template visualizes the first step of the single shipping checkout
+	scenario. It renders a form for the shipping address and shipping method
+	selection. Both are stored at a single shipment only.
+</iscomment>
+
+<iscomment>Report this checkout step (we need to report two steps)</iscomment>
+
+<isreportcheckout checkoutstep="${2}" checkoutname="${'ShippingAddress'}"/>
+<isreportcheckout checkoutstep="${3}" checkoutname="${'ShippingMethod'}"/>
+<isscript>
+	var productListAddresses : dw.util.HashMap 	= new dw.util.HashMap(),
+		owners : dw.util.HashMap 				= new dw.util.HashMap(),
+		productListTypes : dw.util.HashMap 		= new dw.util.HashMap(),
+		addressesJsonStr 						= "";
+		
+	if (pdict.Basket != null && pdict.Basket.productLineItems.size() > 0) {
+		addressesJsonStr = "{";
+		var lineItemsIt = pdict.Basket.productLineItems.iterator(),		
+			lineitem 	= null, 
+			productList = null, 
+			address 	= null;
+		
+		while (lineItemsIt.hasNext()) {
+			lineitem = lineItemsIt.next();
+			
+			if (lineitem.productListItem != null 		&& 
+				lineitem.productListItem.list != null 	&& 
+				( lineitem.productListItem.list.type == dw.customer.ProductList.TYPE_WISH_LIST || lineitem.productListItem.list.type == dw.customer.ProductList.TYPE_GIFT_REGISTRY) ) {
+				
+				productList = lineitem.productListItem.list;
+				
+				if (productList != null && pdict.CurrentCustomer != productList.owner) {
+					address = productList.shippingAddress;
+					
+					if (address != null) {	
+						productListAddresses.put(productList.owner.profile.credentials.login+'??'+address.ID, address);
+						owners.put(productList.owner.profile.credentials.login+'??'+address.ID, productList.owner);
+						productListTypes.put(productList.owner.profile.credentials.login+'??'+address.ID, lineitem.productListItem.list.type);
+						addressesJsonStr += "'"+productList.owner.profile.credentials.login+'??'+address.ID+"':"+"{address:{ID:'"+address.ID+"',firstName:'"+address.firstName+"',lastName:'"+address.lastName+"',address1:'"+address.address1+"',address2:'"+address.address2+"',postalCode:'"+address.postalCode+"',city:'"+address.city+"',stateCode:'"+address.stateCode+"',countryCode:'"+address.countryCode.value+"',phone:'"+address.phone+"'}}";
+						if (lineItemsIt.hasNext()) {
+							addressesJsonStr += ",";
+						}
+					}
+				}
+			}
+		}
+		addressesJsonStr +="}";
+		// get rid of null vals 
+		addressesJsonStr = addressesJsonStr.replace(new RegExp('null', 'g'), '');
+	}
+</isscript>
+	<iscomment><div class="content-header">${Resource.msg('pt_checkout.breadcrumb','checkout',null)}</div></iscomment>
+    <iscomment>checkout progress indicator</iscomment>
+    <ischeckoutprogressindicator step="1" rendershipping="${pdict.Basket.productLineItems.size() == 0 ? 'false' : 'true'}"/>
+    <div class="checkoutForm checkoutshipping">
+	<form action="${URLUtils.continueURL()}" method="post" id="${pdict.CurrentForms.singleshipping.shippingAddress.htmlName}">
+		<iscomment>shipping address area</iscomment>
+		<div id="addressform" class="addressform">
+			<h2 class="formTitle">${Resource.msg('singleshipping.shippingaddress','checkout',null)}</h2>
+			<div class="topLabel regRow">
+			<p class="textInfo">${Resource.msg('singleshipping.enteraddress','checkout',null)}</p>
+			</div>
+			
+			<div class="addressformentry">
+			
+			<iscomment>Hidden field for storing the target page</iscomment>
+			<isinputfield formfield="${pdict.CurrentForms.singleshipping.targetPage}" type="hidden" />
+			
+			<iscomment>Hidden field for storing the default address id</iscomment>
+			<isinputfield formfield="${pdict.CurrentForms.singleshipping.shippingAddress.selectedShippingAddressID}" type="hidden" />
+			
+			<iscomment>display select box with stored addresses if customer is authenticated and there are saved addresses</iscomment>
+			<isif condition="${pdict.CurrentCustomer.authenticated}">
+				<div class="addresslist regRow">
+						<select name="${pdict.CurrentForms.singleshipping.addressList.htmlName}">
+							<isif condition="${pdict.CurrentCustomer.profile.addressBook.addresses.size() > 0}">
+								<isloop items="${pdict.CurrentCustomer.profile.addressBook.addresses}" var="address">
+									<isif condition ="${pdict.CurrentCustomer.profile.custom.shippingSameAsBilling == true}">
+										<isif condition ="${address.ID != pdict.CurrentCustomer.profile.custom.billingAddressID}">
+											<isif condition="${!empty(pdict.CurrentForms.singleshipping.shippingAddress.selectedShippingAddressID.value)}">
+												<option value="${address.ID}" ${address.ID == pdict.CurrentForms.singleshipping.shippingAddress.selectedShippingAddressID.value ? "selected='selected'" : ""}><isprint value="${address.address1}"/></option>
+												<iselse>
+												<option value="${address.ID}"><isprint value="${address.address1}"/></option>
+											</isif>
+										</isif>
+									<iselse>
+										<isif condition="${!empty(pdict.CurrentForms.singleshipping.shippingAddress.selectedShippingAddressID.value)}">
+											<option value="${address.ID}" ${address.ID == pdict.CurrentForms.singleshipping.shippingAddress.selectedShippingAddressID.value ? "selected='selected'" : ""}><isprint value="${address.address1}"/></option>
+											<iselse>
+											<option value="${address.ID}"><isprint value="${address.address1}"/></option>
+										</isif>
+									</isif>
+								</isloop>
+							</isif>
+							<isloop items="${productListAddresses.keySet()}" var="addressKey">
+								<isset name="address" value="${productListAddresses.get(addressKey)}" scope="page"/>
+								<option value="${addressKey}" ${address.ID == pdict.SelectedAddressID ? "selected='selected'" : ""}>
+								${Resource.msg('global.bracket.open','locale',null)}
+								<isif condition="${productListTypes.get(addressKey) == dw.customer.ProductList.TYPE_WISH_LIST}">
+									${Resource.msgf( 'singleshipping.wishlist', 'checkout', null, owners.get(addressKey).profile.firstName )}
+								<iselseif condition="${productListTypes.get(addressKey) == dw.customer.ProductList.TYPE_GIFT_REGISTRY}">
+									${Resource.msgf( 'singleshipping.giftregistry', 'checkout', null, owners.get(addressKey).profile.firstName )}
+								<iselse>
+									<isprint value="${address.ID}"/>
+								</isif>
+								${Resource.msg('global.bracket.close','locale',null)} <isprint value="${address.address1}"/>${Resource.msg('global.comma','locale',null)} <isprint value="${address.city}"/>${Resource.msg('global.comma','locale',null)} <isprint value="${address.stateCode}"/>${Resource.msg('global.comma','locale',null)} <isprint value="${address.postalCode}"/></option>
+							</isloop>
+							<isif condition="${empty(pdict.CurrentForms.singleshipping.shippingAddress.selectedShippingAddressID.value)}">
+								<option value="" selected='selected'>${Resource.msg('forms.address.list.select','forms',null)}</option>
+								<iselse>
+								<option value="">${Resource.msg('forms.address.list.select','forms',null)}</option>
+							</isif>
+						</select>
+						<isif condition="${productListAddresses.size() > 0}"><div class="hidden json">${addressesJsonStr}</div></isif>
+				</div>
+			<iselse>
+				<isif condition="${productListAddresses.size() > 0}">
+					<div class="addresslist">	
+						<div class="selectaddress">
+							<select class="selectbox" name="${pdict.CurrentForms.singleshipping.addressList.htmlName}">
+							<isif condition="${productListAddresses.size() > 1}">		
+								<option value="">${Resource.msg('forms.address.list.select','forms',null)}</option>
+							</isif>
+							<isloop items="${productListAddresses.keySet()}" var="addressKey">
+								<isset name="address" value="${productListAddresses.get(addressKey)}" scope="page"/>									
+								<option value="${addressKey}" ${address.ID == pdict.SelectedAddressID ? "selected='selected'" : ""}>
+								${Resource.msg('singleshipping.bracket.open','checkout',null)}
+								<isif condition="${productListTypes.get(addressKey) == dw.customer.ProductList.TYPE_WISH_LIST}">
+									${Resource.msgf( 'singleshipping.wishlist', 'checkout', null, owners.get(addressKey).profile.firstName )}
+								<iselseif condition="${productListTypes.get(addressKey) == dw.customer.ProductList.TYPE_GIFT_REGISTRY}">
+									${Resource.msgf( 'singleshipping.giftregistry', 'checkout', null, owners.get(addressKey).profile.firstName )}
+								<iselse>
+									<isprint value="${address.ID}"/>
+								</isif>
+								${Resource.msg('singleshipping.bracket.close','checkout',null)} <isprint value="${address.address1}"/>, <isprint value="${address.city}"/>, <isprint value="${address.stateCode}"/>, <isprint value="${address.postalCode}"/></option>
+							</isloop></select><div class="hidden json">${addressesJsonStr}</div>
+						</div>
+					</div>
+				</isif>
+			</isif>	
+			
+			<div class="addressForm">	
+			<div class="formfield regRow nameContainer">
+			    <div class="formfield firstName">
+			    	<isinputfield formfield="${pdict.CurrentForms.singleshipping.shippingAddress.addressFields.firstName}" type="input" attribute1="requiredmesage" value1="${Resource.msg('address.firstname.missingerror','forms',null)}"/>
+			    </div>
+			    
+			    <div class="formfield lastName">
+			    	<isinputfield formfield="${pdict.CurrentForms.singleshipping.shippingAddress.addressFields.lastName}" type="input" attribute1="requiredmesage" value1="${Resource.msg('address.lastname.missingerror','forms',null)}"/>
+			    </div>
+			 </div>
+			    <div class="formfield address1 regRow">
+			    	<isinputfield formfield="${pdict.CurrentForms.singleshipping.shippingAddress.addressFields.address1}" type="input" attribute1="requiredmesage" value1="${Resource.msg('address.addressline1.missingerror','forms',null)}"/>
+			    </div>
+			    
+			    <div class="formfield address2 regRow">
+			    	<isinputfield formfield="${pdict.CurrentForms.singleshipping.shippingAddress.addressFields.address2}" type="input"/>
+			    </div>
+			 <div class="regRow addressContainer">
+			    <div class="formfield city">
+			    	<isinputfield formfield="${pdict.CurrentForms.singleshipping.shippingAddress.addressFields.city}" type="input" attribute1="requiredmesage" value1="${Resource.msg('address.city.missingerror','forms',null)}"/>
+			    </div>
+			    
+			    <div class="formfield state">
+			    	<isinputfield formfield="${pdict.CurrentForms.singleshipping.shippingAddress.addressFields.states.stateUS}" type="select" attribute1="requiredmesage" value1="${Resource.msg('address.state.missingerror','forms',null)}"/>
+			    	
+			    </div>
+			    
+			    <div class="formfield zipfield">
+			    	<isinputfield formfield="${pdict.CurrentForms.singleshipping.shippingAddress.addressFields.zip}" type="input" attribute1="requiredmesage" value1="${Resource.msg('address.zip.missingerror','forms',null)}"/>
+			    </div>
+			</div> 
+			    <div class="formfield country regRow">
+			    	<isinputfield formfield="${pdict.CurrentForms.singleshipping.shippingAddress.addressFields.country}" type="input"/>
+			    	<p class="usaonly">
+			    		<strong>${Resource.msg('forms.country.US.only','forms',null)}</strong>
+			    		<span>${Resource.msg('forms.country.US.only.msg','forms',null)}</span>&nbsp<a href="${URLUtils.httpHome()}" target="_blank" class="bt-border">${Resource.msg('forms.country.internationalsite','forms',null)}</a>
+			    	</p>
+			    </div>
+			    <iscomment>Day Phone</iscomment>
+			    <div class="formfield phone regRow">
+			    	<div class="label">${Resource.msg('profile.phone','forms',null)}</div>
+			       		<input type="text" id="day_phone_1" minlength="3" maxlength="3" size="3" class="small"/>
+                  		<input type="text" id="day_phone_2" minlength="3" maxlength="3" size="3" class="small"/>
+                  		<input type="text" id="day_phone_3" minlength="4" maxlength="4" size="4" class="numberbox" />
+                  	<div class="errormessage"></div>
+                  	<isinputfield formfield="${pdict.CurrentForms.singleshipping.shippingAddress.addressFields.phone}" type="hidden" />
+			    </div>
+			    
+			    
+			    <iscomment>Evening Phone</iscomment>
+			    <div class="formfield phone regRow">
+			    	<div class="label">${Resource.msg('profile.eveningPhone','forms',null)}</div>
+			    	<input type="text" id="eve_phone_1" minlength="3" maxlength="3" size="3" class="small"/>
+                  	<input type="text" id="eve_phone_2" minlength="3" maxlength="3" size="3" class="small"/>
+                  	<input type="text" id="eve_phone_3" minlength="4" maxlength="4" size="4" class="numberbox"/>
+			    	<div class="ePhoneErrorMsg" style="color:red;"></div>
+			    	<isinputfield formfield="${pdict.CurrentForms.singleshipping.shippingAddress.addressFields.eveningPhone}" type="hidden" />
+			    </div>
+			    
+			    
+			    <div class="formfield rememberme regRow">
+			    		<iscomment>Add address to Address Book</iscomment>
+			    		<isif condition="${pdict.CurrentCustomer.authenticated}">
+			    			<isinputfield formfield="${pdict.CurrentForms.singleshipping.shippingAddress.addToAddressBook}" type="checkbox"/>
+			    		</isif>
+			    </div>
+			    
+			    <div class="formfield required regRow" id="reqindicator">
+					<div class="label"><span class="requiredindicator">${Resource.msg('global.requiredsymbol','locale',null)}</span><span class="requiredmessage">${Resource.msg('global.requiredfield','locale',null)}</span></div>
+					<div class="value"><!-- Empty Value Container --></div>
+				</div>
+				
+			    
+		    </div>
+		</div>
+
+		<div id="shippingmethodform"><isinclude url="${URLUtils.https('COShipping-UpdateShippingMethodList')}"/></div><!-- END: shippingmethodform -->
+		
+		
+		<div class="actions regRow">
+				<button class="brownButton" type="submit" name="${pdict.CurrentForms.singleshipping.shippingAddress.save.htmlName}" value="${Resource.msg('global.continuecheckoutbrief','locale',null)}">
+				<span>${Resource.msg('global.continuecheckoutbrief','locale',null)}</span></button>
+			
+			<iscomment>Entry point for Multi-Shipping (disabled on purpose)</iscomment>
+			<isif condition="${pdict.Basket.productLineItems.size() > 1 && false}">
+				<div class="shiptomultiple">
+					${Resource.msg('singleshipping.multiple','checkout',null)} <a href="${URLUtils.https('COShippingMultiple-Start')}">${Resource.msg('global.yes','locale',null)}</a>
+				</div>
+			</isif>
+		</div>
+		
+		<input type="hidden" name="${pdict.CurrentForms.singleshipping.secureKeyHtmlName}" value="${pdict.CurrentForms.singleshipping.secureKeyValue}"/>
+		</div>
+	</form>
+	</div>
+<script type="text/javascript"> var inqSiteID = 22205248; </script>
+<isset name="OmniturePage" value="COShipping" scope="pdict"/>
+</div>
+<div class="rightColumn">
+				<iscontentasset aid="cart-additional-links"/>
+</div>
+</isdecorate>

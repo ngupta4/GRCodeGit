@@ -1,0 +1,14 @@
+<!--- TEMPLATENAME: testimonialsbottom.isml --->
+<isinclude template="util/modules" />
+
+<iscontentasset aid="${'90-days-' + CurrentContent.ID}" />
+
+<div class="getItNow">
+	<div class="getItNow_innerWrapper">
+		<div class="getItNow_text">
+			Order your Kit today<br/>
+			and get a <span class="orangeText">FREE GIFT!</span>
+		</div>
+		<a href="${URLUtils.url('Page-Show', 'cid', 'order')}"><img src="${URLUtils.staticURL('images/testimonials/getItNowButton.png')}" alt="Get It Now" class="getItNowButton"></a>
+	</div>
+</div>

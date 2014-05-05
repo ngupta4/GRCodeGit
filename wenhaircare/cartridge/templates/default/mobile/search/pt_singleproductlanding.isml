@@ -1,0 +1,24 @@
+<!--- TEMPLATENAME: pt_singleproductlanding.isml --->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		
+		<isinclude template="components/header/htmlhead" />
+		
+		<link rel="stylesheet" href="${URLUtils.staticURL('css/main_singleproductlanding.css')}" type="text/css" />
+	</head>
+	
+	<body>
+		<div id="mainWrapper">
+			<div id="header">
+				<a id="wenlogo" href="${URLUtils.home()}"><span>${Resource.msg('singleproduct.logo.label', 'rendering', null)}</span></a>
+				<div id="login">${Resource.msg('singleproduct.login.label', 'rendering', null)} <a href="https://www.guthyrenkerstore.com/login">${Resource.msg('singleproduct.login.link.label', 'rendering', null)}</a></div>
+			</div>
+			
+			<div id="mainCtn">
+				<isreplace/>
+			</div>
+		</div>
+	</body>
+</html>

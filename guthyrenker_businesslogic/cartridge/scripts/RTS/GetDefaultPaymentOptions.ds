@@ -1,0 +1,42 @@
+/**
+ * Gets only payment methods that have cartID value as in current Campaign Configuration
+ * 
+ * @output payoption :dw.util.ArrayList
+ */
+importPackage( dw.system );
+importPackage( dw.util );
+importPackage( dw.order );
+importPackage( dw.web );
+importPackage( dw.order );
+
+
+
+function execute( args : PipelineDictionary ) : Number
+{
+	var allMethodsList : List = PaymentMgr.getActivePaymentMethods();
+	var defaultPayOptions : String = Resource.msg('payMethods.defaultList','configuration',"");
+	var payoption :ArrayList = new ArrayList();
+	
+	
+	
+	if(null!=allMethodsList && !empty(allMethodsList))
+	{
+		for each(method in allMethodsList){
+			if(defaultPayOptions.indexOf(method.name)>=0){						
+				if(method.name==Resource.msg('payMethods.paypal.name','configuration',null)){
+					payoption.add(Resource.msg('rtsService.paypal.name','configuration',null));					
+				}else if(method.name==Resource.msg('payMethods.paylater.name','configuration',null)){
+					payoption.add(Resource.msg('rtsService.paylater.name','configuration',null));					
+				}else if(method.name==Resource.msg('payMethods.echeck.name','configuration',null)){
+					payoption.add(Resource.msg('rtsService.echeck.name','configuration',null));					
+				}else if(method.name==Resource.msg('payMethods.creditCard.name','configuration',null)){
+					payoption.add(Resource.msg('rtsService.creditCard.name','configuration',null));					
+				}
+			}
+		}
+	}
+	
+	// return the methods list
+	args.payoption = payoption;	
+	return PIPELET_NEXT;
+}

@@ -1,0 +1,25 @@
+<!--- TEMPLATENAME: review.isml --->
+<isset name="ShowBrowsingOrderYourSystem" value="${true}" scope="pdict" />
+<isset name="ShowOtherWaysToPurchase" value="${true}" scope="pdict" />
+
+<isinclude template="util/reporting/ReportBasket.isml" />
+
+<div class="contentBlock">
+	<div class="blockTop">
+		<div class="blockContent">
+			<div class="ordersummary">
+				<isinclude template="checkout/components/ordersummary" />
+			</div>
+			
+			<div class="yourinformation">
+				<isinclude template="checkout/components/yourinformation" />
+			</div>
+			<div class="completeyourorder">
+				<form action="${URLUtils.httpsContinue()}" method="post">
+						<button class="continueBtn completeBtn" type="submit" name="${pdict.CurrentForms.personinf.apply.htmlName}" value="Complete"><span>${Resource.msg('', 'resources', 'Complete Your Order')}</span></button>
+				</form>
+			</div>
+		</div>
+		<div class="blockBottom"></div>
+	</div>
+</div>

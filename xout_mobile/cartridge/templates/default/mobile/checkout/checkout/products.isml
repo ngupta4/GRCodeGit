@@ -1,0 +1,184 @@
+<isscript>	
+	var basket = pdict.Basket;
+</isscript>
+
+<script type="text/javascript">
+	jQuery(document).ready(function() {
+		var originalQty = parseInt(jQuery('.quantityinput').val());
+		jQuery('#updateCart').bind('click', function() {
+			var maxQty = ${pdict.Product.custom.maxQty};
+			if(maxQty == null) {
+				maxQty = 1;
+			}
+			if(parseInt(jQuery('.quantityinput').val()) > maxQty) {
+				jQuery('.quantityinput').val(originalQty);
+				jQuery('.productdetail .error').remove();
+				if(maxQty == 1) {
+					jQuery('<span class="error">${Resource.msgf("quantity.exceeded", "mcart", null, "1")}</span>').insertAfter('.productquanity');
+				} else {
+					jQuery('<span class="error">${Resource.msgf("quantity.exceeded", "mcart", null, "" + pdict.Product.custom.maxQty)}</span>').insertAfter('.productquanity');
+				}
+				return false;
+			}
+		});
+	});
+</script>
+
+<div id="cart">
+	<iscomment>prevent checkout if any product price is N/A or if invalid coupons</iscomment>
+	<isif condition="${pdict.BasketStatus != null && pdict.BasketStatus.error}">
+		<div class="errorform ">
+			<isif condition="${pdict.BasketStatus.code != null && pdict.BasketStatus.code=='CouponError'}">
+				${Resource.msg('cart.cartcouponinvalid','checkout',null)}
+			<iselse>
+				${Resource.msg('cart.carterror','checkout',null)}
+			</isif>
+		</div>
+	</isif>
+	<form action="${URLUtils.httpContinue()}" method="post" id="${pdict.CurrentForms.cart.htmlName}">
+		<table id="mainCartTable" cellpadding="0" cellspacing="0">
+			<tbody>
+				<isloop items="${pdict.CurrentForms.cart.shipments}" var="Shipment" status="loopstate">
+					<isloop items="${Shipment.items}" alias="FormLi" status="loopstate">
+						<isset name="lineItem" value="${FormLi.object}" scope="page"/>
+						<tr>
+							<td class="productdetail">	
+								<div class="productquanity">
+									<label>${Resource.msg('global.quantity','locale',null)}:</label>
+									<isif condition="${lineItem.bonusProductLineItem}">
+										<isprint value="${lineItem.quantity}"/>
+									<iselse>
+										<input type="text" name="${FormLi.quantity.htmlName}" size="2" maxlength="6" value="<isprint value="${lineItem.quantity}"/>" class="inputbox quantityinput positivenumber" />
+									</isif>
+									<isif condition="${!lineItem.bonusProductLineItem}">
+										<button class="removebutton" type="submit" value="${Resource.msg('global.remove','locale',null)}" name="${FormLi.deleteProduct.htmlName}"><span>${Resource.msg('global.remove','locale',null)}</span></button>
+									</isif>
+								</div>									
+							</td>
+						</tr>
+					</isloop>
+				</isloop>
+			</tbody>
+			<tfoot>	
+				<tr>
+					<td colspan="2">
+						<div class="cartfooter">
+			  
+
+							
+							<iscomment>Create page varibale representing the line item container</iscomment>
+							<isset name="LineItemCtnr" value="${pdict.Basket}" scope="page"/>
+							
+							<isif condition="${!empty(LineItemCtnr)}">
+							<div id="cartOrderTotals">
+								<table id="orderTotalTable" summary="Order Totals Table">
+							
+									<iscomment>
+										render order subtotal if there are both contained in the cart, products and gift certificates
+										(product line item prices including product level promotions plus gift certificate line items prices)
+									</iscomment>
+									<tr>
+										<td><label>${Resource.msg('ordersummary.ordersubtotal','mcomponents',null)}</label></td>
+										<td><span ><isprint value="${LineItemCtnr.getAdjustedMerchandizeTotalPrice(false).add(LineItemCtnr.giftCertificateTotalPrice)}"/></span></td>
+									</tr>
+									
+									<iscomment>calculate order level discounts</iscomment>
+									<isscript>
+										var merchTotalExclOrderDiscounts : dw.value.Money = LineItemCtnr.getAdjustedMerchandizeTotalPrice(false);
+										var merchTotalInclOrderDiscounts : dw.value.Money = LineItemCtnr.getAdjustedMerchandizeTotalPrice(true);
+										var orderDiscount : dw.value.Money = merchTotalExclOrderDiscounts.subtract( merchTotalInclOrderDiscounts );
+									</isscript>
+									<isif condition="${!empty(orderDiscount) && orderDiscount.value > 0.0}">
+										<tr>
+											<td><label>${Resource.msg('ordersummary.orderdiscount','components',null)}</label></td>
+											<td><span >- <isprint value="${orderDiscount}"/></span></td>
+										</tr>
+									</isif>
+								
+									<iscomment>render each single shipment or shipping total</iscomment>
+									<isif condition="${pdict.p_showshipmentinfo}">
+										<iscomment>the url to edit shipping depends on the checkout scenario</iscomment>
+										<isset name="editUrl" value="${URLUtils.https('mCOShipping-Start')}" scope="page"/>
+										<isif condition="${pdict.CurrentForms.multishipping.entered.value}">
+											<isset name="editUrl" value="${URLUtils.https('mCOShippingMultiple-StartShipments')}" scope="page"/>
+										</isif>
+										<isloop items="${LineItemCtnr.shipments}" var="Shipment" status="loopstatus">
+											<iscomment>show shipping cost per shipment only if it's a physical shipment containing product line items</iscomment>
+											<isif condition="${Shipment.productLineItems.size() > 0}">
+											<tr>
+												<td>
+													<isif condition="${pdict.p_shipmenteditable}">
+														<a href="${editUrl}" >${Resource.msg('ordersummary.ordershipping.edit','components',null)}</a>
+													</isif>
+													${Resource.msg('ordersummary.ordershipping','mcomponents',null)} <span ><!--  SHIPPING NAME --><isprint value="${Shipment.shippingMethod.displayName}"/></span>
+												</td>
+												<td><span ><isif condition="${LineItemCtnr.shippingTotalPrice.available}"><isprint value="${Shipment.shippingTotalPrice}"/><iselse/>&nbsp;</isif></span></td>
+											</tr>
+											</isif>
+										</isloop>
+									<iselse/>
+										<tr>
+											<td>
+												<label>${Resource.msg('ordersummary.ordershipping','mcomponents',null)}
+												<iscomment>
+												<span><!-- Display Shipping Method -->
+												<isset name="Shipment" value="${LineItemCtnr.shipments.iterator().next()}" scope="page"/>
+												<isif condition="${!empty(Shipment) && !empty(Shipment.shippingMethod)}">
+													<isprint value="${Shipment.shippingMethod.displayName}"/>
+												</isif>
+												</span>
+												</iscomment>
+												</label>
+											</td>
+											<td><span><isif condition="${LineItemCtnr.shippingTotalPrice.available}"><isprint value="${LineItemCtnr.shippingTotalPrice}"/><iselse/><!--  ELSE: Show as Empty --></isif></span></td>
+										</tr>
+									</isif>
+							
+									<iscomment>calculate shipping discount</iscomment>
+									<isscript>
+										var shippingExclDiscounts : dw.value.Money = LineItemCtnr.shippingTotalPrice;
+										var shippingInclDiscounts : dw.value.Money = LineItemCtnr.getAdjustedShippingTotalPrice();
+										var shippingDiscount : dw.value.Money = shippingExclDiscounts.subtract( shippingInclDiscounts );
+									</isscript>
+									<isif condition="${!empty(shippingDiscount) && shippingDiscount.value > 0.0}">
+										<isif condition="${pdict.p_showshipmentinfo}">
+											<tr>
+												<td><span >${Resource.msg('ordersummary.ordershippingdiscount','components',null)}</span></td>
+												<td><span >- <isprint value="${shippingDiscount}"/></span></td>
+											</tr>
+										<iselse/>
+											<tr >
+												<td><label>${Resource.msg('ordersummary.ordershippingdiscount','components',null)}</label></td>
+												<td><span>- <isprint value="${shippingDiscount}"/></span></td>
+											</tr>
+										</isif>
+									</isif>
+								
+									<iscomment>tax amount</iscomment>
+									<tr>
+										<td><label>${Resource.msg('ordersummary.ordertax','mcomponents',null)}</label></td>
+										<td><span><isif condition="${LineItemCtnr.totalTax.available}"><isprint value="${LineItemCtnr.totalTax}"/><iselse/><!--  ELSE: Show as Empty --></isif></span></span></td>
+									</tr>
+								
+									<iscomment>order total</iscomment>
+									<isif condition="${LineItemCtnr.totalGrossPrice.available}">
+									 	<isset name="orderTotalValue" value="${LineItemCtnr.totalGrossPrice}" scope="page"/>
+									<iselse/>
+										<isset name="orderTotalValue" value="${LineItemCtnr.getAdjustedMerchandizeTotalPrice(true).add(LineItemCtnr.giftCertificateTotalPrice)}" scope="page"/>
+									</isif>
+									<tr>
+										<td><label>${Resource.msg('ordersummary.ordertotal','mcomponents',null)}</label></td>
+										<td><span><isprint value="${orderTotalValue}"/></span></td>
+									</tr>
+								</table>
+							</div><!-- END: cartordertotals -->
+							</isif>
+							
+							<input type="image" id="updateCart" src="${URLUtils.staticURL('/themes/xout_mobile/images/button/btnUpdate.png')}" value="${Resource.msg('global.updatecart', 'locale',null)}" name="${pdict.CurrentForms.personinf.updateCart.htmlName}"/>
+						</div><!-- END: cartfooter -->
+					</td>
+				</tr>		
+			</tfoot>
+		</table>
+	</form>
+</div>	

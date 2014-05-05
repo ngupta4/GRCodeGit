@@ -1,0 +1,63 @@
+<iscomment>Mbox Redirect</iscomment>
+<isinclude template="common/mboxglobal"/>	
+	
+<isset name="CCC" value="${pdict.CurrentCampaignConfig}" scope="page" />
+<isscript>
+		importPackage(dw.object);
+		importPackage(dw.catalog);
+		
+		importScript('int_gutheyrenker:common/libEncoding.ds');
+		
+		if(pdict.CurrentCampaignConfig!=null) {
+			var CCC : Object = pdict.CurrentCampaignConfig;
+			if(CCC !=null ){
+				var category : dw.catalog.Category = CCC.getCampaignCategory();
+			}
+		}
+</isscript>
+
+<iscomment>Check the htmlhead.isml for the server side tracking pixel</iscomment>
+<isif condition="${dw.system.Site.getCurrent().getCustomPreferenceValue('GRMVisitorLogPixelEnabled') == true}">
+    <img src="${URLUtils.url('GRMiddleware-VisitorLog', 'urlpath', request.httpPath, 'urlquery', request.httpQueryString)}" width="1" height="1"/>
+</isif>
+
+<isif condition="${('showNav' in this && !!showNav) || empty(CCC) || empty(CCC.showNav) }">
+	<isset name="showNav" value="${true}" scope="page" />
+<iselse/>
+	<isset name="showNav" value="${CCC.showNav}" scope="page" />
+</isif>
+
+<isscript>
+      importScript('guthyrenker_core:common/libUtils.ds');
+      var contentInfo    = getCurrentContentInfo(pdict.CurrentHttpParameterMap);
+      var CurrentContent : Content = contentInfo.content;
+      
+      if (pdict.CurrentHttpParameterMap.enableSearch.value == 'true') {
+      		pdict.CurrentSession.custom.enableSearch = true;
+      }
+</isscript>
+
+<isif condition="${!empty(CurrentContent) && CurrentContent.ID == 'rightnow-header'}">
+  <isif condition = "${request.httpCookies['PHPSESSID'] == null}">
+    <iscookie name="PHPSESSID" value="${pdict.CurrentSession.sessionID}" path="/" maxAge="-1" />
+  </isif>
+  
+  <script type="text/javascript">
+    var session_id = "<isprint value="${pdict.CurrentSession.sessionID}">";
+  </script>
+</isif>
+  <isif condition="${pdict.CurrentCustomer.authenticated || pdict.CurrentCustomer.registered || pdict.CurrentSession.custom.cRememberMe || pdict.CurrentRequest.httpCookies['rememberMe']}">
+	<isset name="showNav" value="${true}" scope="page" />
+</isif>
+<isif condition="${showNav}">
+	<div class="headerWraper">
+		<isinclude template="components/header/headermenu"/>
+	</div>
+<iselse/>
+	<div class="headerWraper">
+		<isslot id="homeheader" context="category" description="Home page Header Top" context-object="${category}"/>			
+	</div>
+</isif>
+
+<iscomment>Cookies and Javascript enabled check
+<isinclude template="components/browsertoolscheck"/></iscomment>

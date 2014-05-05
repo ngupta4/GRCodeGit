@@ -1,0 +1,59 @@
+<iscomment> Isml to display the variations of freegifts </iscomment>
+<isscript>
+			importPackage(dw.util);
+			importPackage(dw.catalog);
+</isscript>
+<div class="selectVariantCont">
+	<div class="selectKit PanelB variantType">
+	<h2 class="pageTitle">${Resource.msg('sas.selectyourkit.freg','locale',null)}</h2>
+	<isloop items="${offersList}" var="offer" status="offers_status">	
+		<isscript>
+			if( !empty(offer) ) {			
+					var titleString = offer.getName();
+					var lastIndex = titleString.lastIndexOf(" ",24);
+					if( titleString.length>23 && lastIndex>0 ) {
+						titleString = titleString.substring(0,lastIndex);
+					}
+					var altSKUsString = offer.ID;
+					if( !empty(offer.custom.giftSelectSKUs) ) {
+						altSKUsString = offer.custom.giftSelectSKUs;
+					} 
+					var altSKUs = altSKUsString.split(',');
+					
+					var giftProducts : dw.util.ArrayList = new dw.util.ArrayList();
+					for( var i=0, ii=altSKUs.length; i<ii; i++ ) {
+						giftProducts.add1(dw.catalog.ProductMgr.getProduct(altSKUs[i]));
+					}
+			}
+		</isscript>
+		<isloop items="${giftProducts}" var="product" status="gift_Prod_status"> 
+			<div id="system${offers_status.count}Gift${gift_Prod_status.count}Variant" class="selectVariant column${product.variationModel.getVariants().size()} ">	
+				<ul class="sasKits">	
+				<isloop items="${product.variationModel.getVariants()}" var="variantProduct" status="vari_status">
+						<li id="system${offers_status.count}Gift${gift_Prod_status.count}Variant${vari_status.count}" class="${variantProduct.ID} updatecartbtn">
+						  <isif condition="${vari_status.count==1}"><div class="free_OfferID" style="display:none;">${variantProduct.variationModel.defaultVariant.ID}</div></isif>
+							<isset name="varImg" value="${variantProduct.getImage('mobile',0)}" scope="page"/>
+							<div class="selected"><span><isprint value="${variantProduct.custom.interstitialOfferTitle}" encoding="off"/></span></div>
+							<div class="variantContent">
+								<div class="variantImage">
+									<isif condition="${!empty(varImg)}">
+										<img src="${varImg.url}" alt="${varImg.alt}" />
+									<iselse>
+										<img src="${URLUtils.staticURL('/images/noimagemedium.png')}" alt="${Resource.msg('noimage.alt.text','locale',null)}"/>
+									</isif>						
+								</div>
+								<div class="bottomContent">									
+									<isprint value="${variantProduct.custom.interstitialOfferDescription}" encoding="off"/>
+								</div>
+							</div>						
+						</li>				
+					</isloop>
+					</ul>
+				</div>
+		 </isloop>
+	</isloop>		
+	</div>
+	<div class="bottomPanel panelB">
+	  <a href="#Step4" class="medOrngBtn" id="step4">&nbsp;<span><em><isprint value="${Resource.msg('next.select.freegiftsmall','locale',null)}" encoding="off"/></em><isprint value="${Resource.msg('next.select.freegift','locale',null)}" encoding="off"/></span></a>
+	</div>
+</div>

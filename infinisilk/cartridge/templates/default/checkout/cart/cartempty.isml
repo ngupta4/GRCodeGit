@@ -1,0 +1,9 @@
+<!--- TEMPLATENAME: cartempty.isml --->
+<isset name="DecoratorTemplate" value="${pdict.CartEmptyTemplateWithoutDecorator ? 'content/pt_empty' : 'content/checkout/pt_checkout'}" scope="pdict" />
+<isdecorate template="${pdict.DecoratorTemplate}">
+	<div class="cartempty">${Resource.msg('cart.cartempty','checkout',null)}</div>
+	
+	<div class="backtoshopping">
+		<a href="${URLUtils.url('Page-Show', 'cid', 'order')}" title="${Resource.msg('cart.continueshopping', 'rendering', null)}">${Resource.msg('cart.continueshopping', 'rendering', null)}</a>
+	</div>
+</isdecorate>

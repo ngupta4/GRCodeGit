@@ -1,0 +1,114 @@
+<!--- TEMPLATENAME: browsefoldersidebar.isml --->
+
+<isscript>
+importScript("guthyrenker_core:common/libUtils.ds")
+</isscript>
+
+<!--start tertiary nav-->
+<isif condition="${!empty(RootFolder.getOnlineSubFolders())}">
+	<div class="block nav">
+		<div class="blockTop"><div class="blockTopRight"></div></div>
+		<div class="blockContent"> 
+			<h5 class="sidebarTitle altimg">Browsing:<br/>${RootFolder.displayName}</h5>
+			<ul class="${notNull(pdict.FolderNavigationClass)}">
+				<isloop items="${RootFolder.getOnlineSubFolders()}" var="aFolder" status="navstat">
+					<li class="${aFolder.ID}<isif condition="${aFolder.ID==CurrentFolder.ID||aFolder.ID==CurrentContent.ID}"> selected</isif>  <isif condition="${navstat.last}">last</isif>">
+						<isif condition="${'linkPipeline' in aFolder.custom && !empty(aFolder.custom.linkPipeline)}">
+							<isset name="LinkParts" value="${aFolder.custom.linkPipeline.split(',')}" scope="page" />
+							<isset name="Pipeline" value="${LinkParts[0]}" scope="page" />
+							<isif condition="${LinkParts.length>5}">
+								<isset name="FolderLinkURL" value="${URLUtils.url(Pipeline,LinkParts[1],LinkParts[2],LinkParts[3],LinkParts[4],LinkParts[5],LinkParts[6])}" scope="page" />
+							<iselseif condition="${LinkParts.length>3}">
+								<isset name="FolderLinkURL" value="${URLUtils.url(Pipeline,LinkParts[1],LinkParts[2],LinkParts[3],LinkParts[4])}" scope="page" />
+							<iselseif condition="${LinkParts.length>1}">
+								<isset name="FolderLinkURL" value="${URLUtils.url(Pipeline,LinkParts[1],LinkParts[2])}" scope="page" />
+							<iselse/>
+								<isset name="FolderLinkURL" value="${URLUtils.url(Pipeline)}" scope="page" />
+							</isif>				
+						<iselse/>
+							<isset name="FirstContentAsset" value="${!empty(aFolder.onlineContent)?aFolder.onlineContent[0].ID:aFolder.ID}" scope="page" />
+							<isset name="FolderLinkURL" value="${URLUtils.url('Page-Show','cid',FirstContentAsset)}" scope="page"/>
+						</isif>
+						<a href="<isprint value="${FolderLinkURL}" encoding="off"/>" class="alt-img">${aFolder.displayName}</a>
+						<isset name="OnlineContents" value="${aFolder.getOnlineContent()}" scope="page" />
+						<isset name="OnlineFolders"  value="${aFolder.getOnlineSubFolders()}" scope="page" />
+						<isif condition="${!empty(OnlineContents) || (!empty(OnlineFolders) && isTrue(pdict.LeftNavRenderSubFolder))}">
+							<ul>
+								<isloop items="${OnlineContents}" var="aContent" status="navstat1">
+									<li class="${aContent.ID}<isif condition="${!empty(CurrentContent) && aContent.ID==CurrentContent.ID||aContent.ID==CurrentFolder.ID}"> selected</isif>">
+										<isif condition="${'linkPipeline' in aContent.custom && !empty(aContent.custom.linkPipeline)}">
+											<isset name="LinkParts" value="${aContent.custom.linkPipeline.split(',')}" scope="page" />
+											<isset name="Pipeline" value="${LinkParts[0]}" scope="page" />
+											<isif condition="${LinkParts.length>5}">
+												<isset name="ContentLinkURL" value="${URLUtils.url(Pipeline,LinkParts[1],LinkParts[2],LinkParts[3],LinkParts[4],LinkParts[5],LinkParts[6])}" scope="page" />
+											<iselseif condition="${LinkParts.length>3}">
+												<isset name="ContentLinkURL" value="${URLUtils.url(Pipeline,LinkParts[1],LinkParts[2],LinkParts[3],LinkParts[4])}" scope="page" />
+											<iselseif condition="${LinkParts.length>1}">
+												<isset name="ContentLinkURL" value="${URLUtils.url(Pipeline,LinkParts[1],LinkParts[2])}" scope="page" />
+											<iselse/>
+												<isset name="ContentLinkURL" value="${URLUtils.url(Pipeline)}" scope="page" />
+											</isif>				
+										<iselse/>
+											<isset name="ContentLinkURL" value="${URLUtils.url('Page-Show','cid',aContent.ID)}" scope="page"/>
+										</isif>
+										<a href="<isprint value="${ContentLinkURL}" encoding="off"/>" class="alt-img"> - ${aContent.name}</a>
+									</li>
+								</isloop>
+								<isloop items="${OnlineFolders}" var="aaFolder">
+								    <li>
+								        <isset name="FirstContentAsset" value="${!empty(RootFolder.onlineContent)?RootFolder.onlineContent[0].ID:RootFolder.ID}" scope="page" />
+                                        <isset name="FolderLinkURL" value="${URLUtils.url('Page-Show','cid',FirstContentAsset, 'folderid', aaFolder.ID)}" scope="page"/>
+                                        <a class="folderlink" href="${FolderLinkURL}" data-folderid="${aaFolder.ID}"> - ${aaFolder.displayName}</a></li>
+								</isloop>
+							</ul>
+						</isif>
+					</li>
+				</isloop>
+			</ul>
+		</div>
+		<div class="blockBottom"><div class="blockBottomRight"></div></div>
+	</div><!--//end block-->
+</isif>
+<div class="block nav">
+	<div class="blockTop"><div class="blockTopRight"></div></div>
+	<div class="blockContent">
+
+		<isinclude template="search/components/orderbyphone"/>
+
+	</div>
+  <div class="blockBottom"><div class="blockBottomRight"></div></div>
+</div><!-- end block -->
+
+<isif condition="${CurrentContent.ID == 'about-proactiv'}">
+	<iscomment>For your special day</iscomment>
+	<div class="block nav" id="weddingsidebar">
+		<div class="blockTop"><div class="blockTopRight"></div></div>
+		<div class="blockContent">
+			<iscontentasset aid="sidebar-specialday"/>			
+		</div>
+		<div class="blockBottom"><div class="blockBottomRight"></div></div>
+	</div><!-- end block -->
+</isif>
+
+<isscript>
+    var contentInfo    = getCurrentContentInfo(pdict.CurrentHttpParameterMap);
+    var folderPathInfo = getFolderPathInfo(contentInfo);  
+    var CurrentFolder  : Folder = contentInfo.folder;
+    var CurrentContent : Content = contentInfo.content;   
+</isscript>
+
+
+<isif condition="${pdict.ShowOptionalMenu == null || isTrue(pdict.ShowOptionalMenu)}">
+<isslot id="static-promo-menu" description="static-promo-menu on static content pages, left nav" context="global" />
+</isif>
+
+<isif condition="${pdict.ShowRelatedLinks == null || isTrue(pdict.ShowRelatedLinks)}">
+    <isslot id="static-related-links" description="static-promo-menu on static content pages, left nav" context="global" />
+</isif>
+<isif condition="${isTrue(pdict.ShowProactiv365Sidebar)}">
+    <isif condition="${isLoggedIn()}">
+        <isslot id="proactiv-365-sidebar-loggedin" description="proactiv 365 sidebar for the authorized user" context="global" />
+    <iselse/>
+        <isslot id="proactiv-365-sidebar-anonymous" description="proactiv 365 sidebar for the unauthorized user" context="global" />
+    </isif>
+</isif>

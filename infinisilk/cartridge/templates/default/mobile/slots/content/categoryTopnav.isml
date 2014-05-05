@@ -1,0 +1,19 @@
+<iscache type="relative" hour="24"/>
+
+<iscomment>
+	This template renders the slot content of the bottom category landing slot
+	in case the slot content is of type Content Asset.
+	Note, only one content asset is rendered.
+</iscomment>
+<isinclude template="util/modules"/>
+<iscomment>make sure we have content at all</iscomment>
+	<isif condition="${!empty(slotcontent) && !empty(slotcontent.content)}">
+		 <div class="subnav">       
+          <div class="product"> <img src="${URLUtils.absStatic('images/img-subcat.jpg')}"  alt="" width="140" height="80" /> <a href="">Why Proactiv ?</a> </div>
+          <div class="product"> <img src="${URLUtils.absStatic('images/img-subcat.jpg')}"  alt="" width="140" height="80" /> <a href="">Why Proactiv ?</a> </div>
+          <div class="product"> <img src="${URLUtils.absStatic('images/img-subcat.jpg')}"  alt="" width="140" height="80" /> <a href="">Why Proactiv ?</a> </div>
+          <div class="seemore"> <a href=""><img src="${URLUtils.absStatic('themes/demandwarestore/images/btn-seemore.jpg')}"  alt="" width="74" height="22" /></a> </div>
+        </div>
+</isif>
+			
+

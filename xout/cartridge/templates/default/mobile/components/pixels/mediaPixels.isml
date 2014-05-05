@@ -1,0 +1,122 @@
+<isscript>
+  var primaryUCI     : dw.web.Cookie = pdict.CurrentRequest.httpCookies['uci'];
+  var omnCampaignUCI : String = !empty(primaryUCI)?primaryUCI.value: !empty(pdict.CurrentSession.privacy.campaignUCIID) ? pdict.CurrentSession.privacy.campaignUCIID : '';
+</isscript>
+<script type="text/javascript">
+  var protocol = document.location.protocol;
+</script>
+
+
+<isif condition="${pdict.acquisitionstep == 'landingpage'}">
+  <iscomment>Mobile Homepage:</iscomment>
+
+  <!---Atlas--->
+  <script>
+    document.write('<s'+'cript language="JavaScript" src="http://view.atdmt.com/jaction/grkout_XOUTUnsecureRTGMobile_1"></s'+'cript>')</script>
+  <noscript><iframe src="http://view.atdmt.com/jaction/grkout_XOUTUnsecureRTGMobile_1" width="1" height="1" frameborder="0" scrolling="No" marginheight="0" marginwidth="0" topmargin="0" leftmargin="0"></iframe></noscript>
+
+  <!---MediaGeeks--->
+  <script language="javascript" src="http://delivery.mgplatform.com/gr/m307landing.js"></script>
+
+  <!-- MS tags -->
+  <script type="text/javascript"> if (!window.mstag) mstag = {loadTag : function(){},time : (new Date()).getTime()};</script> <script id="mstag_tops" type="text/javascript" src="//flex.atdmt.com/mstag/site/53a635e3-27cd-4fce-ba62-43648f2db9ff/mstag.js"></script> <script type="text/javascript"> mstag.loadTag("analytics", {dedup:"1",domainId:"1292465",type:"1",actionid:"41692"})</script> <noscript> <iframe src="//flex.atdmt.com/mstag/tag/53a635e3-27cd-4fce-ba62-43648f2db9ff/analytics.html?dedup=1&domainId=1292465&type=1&actionid=41692" frameborder="0" scrolling="no" width="1" height="1" style="visibility:hidden;display:none"> </iframe> </noscript>
+
+  <!-- Tapad Retargetting pixel -->
+  <script type="text/javascript">
+    document.write('<img width="1" height="1" src="'+protocol+'//pixel.tapad.com/tap/pxl.png?ta_property_id=948&ta_action_id=XOut_Retargeting" />');
+  </script>
+  <!--  End of Tapad Retargetting pixel -->
+</isif>
+
+
+<isif condition="${pdict.acquisitionstep == 'inlineshoppingcart'}">
+  <iscomment>InlineShoppingCart:</iscomment>
+
+  <!---Atlas--->
+  <script>document.write('<s'+'cript language="JavaScript" src="https://view.atdmt.com/jaction/grkout_XOUTShoppingCartMobile_8"></s'+'cript>')</script>
+  <noscript><iframe src="https://view.atdmt.com/jaction/grkout_XOUTShoppingCartMobile_8" width="1" height="1" frameborder="0" scrolling="No" marginheight="0" marginwidth="0" topmargin="0" leftmargin="0"></iframe></noscript>
+
+  <!---MediaGeeks--->
+  <script language="javascript" src="https://s2.mgplatform.com/gr/mxout_sr.js"></script>
+
+  <!-- Tapad Retargetting pixel -->
+  <script type="text/javascript">
+    document.write('<img width="1" height="1" src="'+protocol+'//pixel.tapad.com/tap/pxl.png?ta_property_id=948&ta_action_id=XOut_Retargeting" />');
+  </script>
+  <!--  End of Tapad Retargetting pixel -->
+  
+</isif>
+
+
+<isif condition="${pdict.acquisitionstep == 'confirmation'}">
+  <iscomment>Mobile Confirmation</iscomment>
+
+  <!---Atlas--->
+  <script>document.write('<s'+'cript language="JavaScript" src="https://view.atdmt.com/jaction/grkout_XOUTConfirmationMobile_7/v3/ato.${pdict.Order.orderNo}/atc1.xout/atc2.${pdict.Order.getAllProductLineItems()[0].productID}/atc3.${omnCampaignUCI}]"></s'+'cript>')</script>
+  <noscript><iframe src="https://view.atdmt.com/iaction/grkout_XOUTConfirmationMobile_7/v3/ato.${pdict.Order.orderNo}/atc1.xout/atc2.${pdict.Order.getAllProductLineItems()[0].productID}/atc3.${omnCampaignUCI}]" width="1" height="1" frameborder="0" scrolling="No" marginheight="0" marginwidth="0" topmargin="0" leftmargin="0"></iframe></noscript>
+
+  <!---MediaGeeks--->
+  <script id="script307m" src="https://s2.mgplatform.com/gr/mconfirm-xout.js?orderid=${pdict.Order.orderNo}"></script>
+
+  <!-- Kenshoo pixel -->
+
+  <script type=text/javascript>
+   var hostProtocol = (("https:" == document.location.protocol) ? "https" : "http");
+   document.write('<scr'+'ipt src="', hostProtocol+ '://506.xg4ken.com/media/getpx.php?cid=e95be9ef-38a2-44df-98cc-782de904d974','" type="text/JavaScript"><\/scr'+'ipt>');
+  </script>
+<script type=text/javascript>
+   var params = new Array();
+   params[0]='id=e95be9ef-38a2-44df-98cc-782de904d974';
+   params[1]='type=conv';
+   params[2]='val=<isprint value="${pdict.Order.getTotalNetPrice()}" formatter="###0.00">';
+   params[3]='orderId=${pdict.Order.orderNo}';
+   params[4]='promoCode=';
+   params[5]='valueCurrency=USD';
+   params[6]='GCID='; //For Live Tracking only
+   params[7]='kw='; //For Live Tracking only
+   params[8]='product='; //For Live Tracking only
+   k_trackevent(params,'506');
+</script>
+
+<noscript>
+   <img src="https://506.xg4ken.com/media/redir.php?track=1&token=e95be9ef-38a2-44df-98cc-782de904d974&type=conv&val=0.0&orderId=&promoCode=&valueCurrency=USD&GCID=&kw=&product=" width="1" height="1">
+</noscript>
+  
+ <!-- End Kenshoo pixel -->
+
+  <!--  Tapad Conversion pixel -->
+  <img width="1" height="1" src="https://pixel.tapad.com/tap/pxl.png?ta_property_id=948&ta_action_id=XOut_Conversion" />
+  <!--  End of Tapad Conversion pixel -->
+
+  <!--  Medialets Conversion pixel -->
+  <script type="text/javascript">
+    (function(a,b,d){var c="https://s-cdn-tag.medialytics.com/cp";window.medialetsCP=new function(a,b){this.spid=a;this.params=b}(b,d);"complete"===a.readyState?(b=a.createElement("script"),b.type="text/javascript",b.src=c,(a.getElementsByTagName("head")[0]||a.getElementsByTagName("body")[0]).appendChild(b)):a.write('<script type="text/javascript" src="'+c+'"><\/script>')})(
+            document, "3c385285720b432e8486492a2cb4bcfb", {
+              action:"Checkout",
+              value:'<isprint value="${pdict.Order.getTotalNetPrice()}" formatter="###0.00">',
+              conversionID:"${pdict.Order.orderNo}"
+            }
+    );
+  </script>
+  <!--  End of Medialets Conversion pixel -->
+
+	<!-- Facebook conversion pixel -->
+	<script type="text/javascript">
+		var fb_param = {};
+		fb_param.pixel_id = '6011042980924';
+		fb_param.value = '<isprint value="${pdict.Order.getTotalNetPrice()}" formatter="###0.00">';
+		fb_param.currency = 'USD';
+		(function(){
+		  var fpw = document.createElement('script');
+		  fpw.async = true;
+		  fpw.src = '//connect.facebook.net/en_US/fp.js';
+		  var ref = document.getElementsByTagName('script')[0];
+		  ref.parentNode.insertBefore(fpw, ref);
+		})();
+	</script>
+	<noscript><img height="1" width="1" alt="" style="display:none" src="https://www.facebook.com/offsite_event.php?id=6011042980924&amp;value=<isprint value="${pdict.Order.getTotalNetPrice()}" formatter="###0.00">&amp;currency=USD" /></noscript>
+			
+	<!--  end of facebook conversion pixel -->
+
+
+</isif>

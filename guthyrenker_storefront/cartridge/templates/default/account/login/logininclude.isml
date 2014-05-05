@@ -1,0 +1,43 @@
+<div class="logincustomers">
+	<div class="returningcustomers">
+		<div class="chsecondline"><isprint value="${Resource.msg('logininclude.chsecondline','account',null)}" encoding="off" /></div>
+
+		<form action="${URLUtils.httpsContinue()}" method="post" id="${pdict.CurrentForms.login.htmlName}">
+			<isif condition="${!pdict.CurrentForms.login.loginsucceeded.valid}">
+				<div class="errorform">${Resource.msg('logininclude.loginerror','account',null)}</div>
+			</isif>
+			<fieldset>
+				<div class="formfield username">
+					<isinputfield formfield="${pdict.CurrentForms.login.username}" type="input" attribute1="requiredmesage" value1="${Resource.msg('profile.email.missingerror','forms',null)}"/>
+					
+				</div>
+				<div class="formfield password">
+					<isinputfield formfield="${pdict.CurrentForms.login.password}" type="password" attribute1="requiredmesage" value1="${Resource.msg('profile.password.missingerror','forms',null)}"/>
+					
+				</div> 				
+				<div class="formfield rememberme">
+					<isinputfield formfield="${pdict.CurrentForms.login.rememberme}" type="checkbox" attribute1="checked" value1="checked"/>
+				
+				</div>	
+							
+				<div class="formactions">
+					<button class="blue-btn margin0" type="submit" value="${Resource.msg('global.login','locale',null)}" name="${pdict.CurrentForms.login.login.htmlName}">					
+					<span>${Resource.msg('button.signin','account',null)}</span></button>
+				
+				</div><!-- END: returningcustomers_button -->
+				<div class="forgotpassword">
+					<a href="${URLUtils.https('Account-PasswordResetDialog')}" id="PasswordReset" title="${Resource.msg('logininclude.forgotpassword','account',null)}" target="_top">${Resource.msg('logininclude.forgotpassword','account',null)}</a>
+				</div><!-- END: forgotpassword -->
+				<input type="hidden" name="${pdict.CurrentForms.login.secureKeyHtmlName}" value="${pdict.CurrentForms.login.secureKeyValue}"/>
+			
+			
+			</fieldset>
+		</form>
+		
+	</div><!-- END: returningcustomers -->
+	
+	<div class="label requiredtexttext">
+		<span class="requiredindicator">*</span>
+		<span class="labeltext">${Resource.msg('acount.required','account',null)}</span>
+	</div>
+</div><!-- END: logincustomers -->

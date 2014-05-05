@@ -1,0 +1,13 @@
+<div class="payment-summary">
+	<table>
+		<tr>
+			<td class="wide">Subtotal:</td><td>$${pdict.Basket != null ? pdict.Basket.getAdjustedMerchandizeTotalPrice().value : pdict.Order.getAdjustedMerchandizeTotalPrice().value}</td>
+		</tr>
+		<tr>
+			<td class="wide">Shipping:</td><td>$${pdict.Basket != null ? pdict.Basket.shippingTotalPrice.value : pdict.Order.shippingTotalPrice.value}</td>
+		</tr>
+		<tr>
+			<td class="wide total">TOTAL:</td><td class="total">$${pdict.Basket != null ? pdict.Basket.getTotalNetPrice().value : pdict.Order.getTotalNetPrice().value}</td>
+		</tr>
+	</table>
+</div>

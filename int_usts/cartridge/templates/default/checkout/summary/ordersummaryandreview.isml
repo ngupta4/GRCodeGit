@@ -1,0 +1,181 @@
+<isdecorate template="checkout/pt_checkoutorder"/>
+<isinclude template="util/modules"/>
+<iscomment>
+	This template renders the summary of the current basket at the right hand side
+	of all checkout pages. It includes an order summary including order totals,
+	a list of all included shipments as well as the payment methods used to pay
+	the basket.
+</iscomment>
+<isscript>
+		var shipment : dw.order.Shipment = pdict.Basket.defaultShipment;
+		var shippingModel : dw.order.ShipmentShippingModel = dw.order.ShippingMgr.getShipmentShippingModel( shipment );
+</isscript>
+<isreportcheckout checkoutstep="3" checkoutname="${'OrderSummary'}"/>
+<iscomment><isif condition="${!empty(pdict.checkoutstep)}">
+	<isset name="checkoutstep" value="${pdict.checkoutstep}" scope="page"/>
+</isif></iscomment>
+
+ <ischeckoutprogressindicator step="3" rendershipping="${pdict.Basket.productLineItems.size() == 0 ? 'false' : 'true'}"/>
+
+<iscomment>Added to display validation Errors</iscomment>
+<isif condition="${pdict.PlaceOrderError != null}">
+<div class="errorform"><span class="errormessage">${Resource.msg(pdict.PlaceOrderError.code,'checkout',null)}</span></div>
+</isif>
+
+<div class="errorform1" style="visibility:hidden">
+<isif condition="${PaymentInfoError != null}">
+<isprint value="${PaymentInfoError}"/></isif>
+<isloop iterator = "${pdict.ErrorContainer}" alias = "ValidatorError">
+<isprint value = "${ValidatorError.code}"> :<isprint value = "${ValidatorError.message}"> <BR>
+</isloop>
+<isif condition="${OrderCreationError != null}">
+<isprint value="${OrderCreationError}"/></isif>
+</div>
+
+<div class="accountOverView checkoutOrderReview">
+	<iscomment>render single shipment boxes</iscomment>
+	<h2 class="formTitle">${Resource.msg('orderreview.heading','checkout',null)}</h2>
+	<div class="orderreviewHeader">
+	<div class="topLabel regRow">
+		<p class="textInfo">${Resource.msg('orderreview.label','checkout',null)}</p>
+	</div>
+	<div class="actions">
+    	<!--  bla: <iscontent type="text/html" charset="UTF-8">${pdict.CybersourceForm}-->
+    	<!-- isredirect location="${pdict.RedirectUrl}" -->
+		<form action="${URLUtils.https('CORtnOrderSummary-Submit')}" method="post">
+				<button class="greenButton continuecheckout" type="submit" name="submit" value="${Resource.msg('global.submitorder','locale',null)}">
+					<span>${Resource.msg('global.submitorder','locale',null)}</span>
+				</button>
+		</form>
+	</div>
+			</div>
+    <div class="whiteBg">
+    	<div class="panelWraper">
+	    	 <div class="innerPanel">
+	    	 	<div class="leftPanel">
+					<isinclude template="checkout/summary/billingaddressinfo"/>
+				</div>
+				<div class="rightPanel">		
+					<isinclude template="checkout/summary/shipmentinfo"/>
+				</div>
+			</div> <!-- END: innerPanel -->
+		
+			<iscomment>render billing information: billing address and payment instruments</iscomment>
+			<div class="innerPanel panelBottom">
+				<div class="leftPanel">
+				 <isinclude template="checkout/summary/paymentinstrumentsinfo"/>
+				</div>
+				 <iscomment>Shipping Method</iscomment>
+			
+					<div class="rightPanel">
+						<div class="innerTitle">
+							<a href="${URLUtils.https('COShipping-Start')}" class="changeLink">${Resource.msg('global.change','locale',null)}</a>
+							<h2>${Resource.msg('minibillinginfo.shippingmethod','checkout',null)}</h2>
+						</div>
+						<div class="innerBox">
+							<isif condition="${pdict.Basket}">
+								<isset name="shippingMethod" value="${pdict.Basket.defaultShipment.shippingMethod}" scope="page"/>
+							</isif>
+							<isif condition="${!empty(shippingMethod)}">
+								<div class="shippingmethodcost">
+						    		<div class="label"><isprint value="${shippingMethod.displayName}"/>: 
+						    			<isprint value="${shippingModel.getShippingCost(shippingMethod).getAmount()}"/>
+						    		</div>
+						    	</div>
+								<isif condition="${!empty(shippingMethod.shippingPriceAdjustments)}">
+									<span class="shippingunadjusted"><isprint value="${shippingMethod.shippingTotalPrice}"/></span>
+									<span class="promotiondescription"><isprint value="${shippingMethod.adjustedShippingTotalPrice}"/></span>
+								<iselse/>
+									<isprint value="${shippingMethod.shippingTotalPrice}"/>
+								</isif>
+							</isif>
+							</div> <!-- END: innerBox -->
+						</div> <!-- END: rightPanel -->
+					</div>	<!-- END: innerPanel -->
+		</div> <!-- END: panelWraper -->
+	</div> <!-- END: whiteBg -->
+
+	<div class="checkoutminisummary">	 
+		<div class="checkoutsummaryheader">	
+			<iscomment>
+				The edit link depends on the basket content: if there is just one gift 
+				certificate in the basket the edit link leads to the gift certificate purchase page
+				offering to edit the gift certificate settings.
+			</iscomment>
+			<isset name="editUrl" value="${URLUtils.url('Cart-Show')}" scope="page"/>
+			<isif condition="${pdict.Basket.productLineItems.size() == 0 && pdict.Basket.giftCertificateLineItems.size() == 1}">
+				<isset name="editUrl" value="${URLUtils.url('GiftCert-Edit','GiftCertificateLineItemID', pdict.Basket.giftCertificateLineItems[0].UUID)}" scope="page"/>
+			</isif>
+			<span class="title">${Resource.msg('pt_checkout.cart','checkout',null)}</span>
+			 <a href="${editUrl}" class="orderEdit">${Resource.msg('order.changecart','checkout',null)}</a>
+		</div><!-- END: checkoutsummaryheader -->
+			<div class="checkoutminicart">
+				<islineitemsdetails p_lineitemctnr="${pdict.Basket}"/>
+			</div><!-- END: check_minicart -->
+	
+	<iscomment>render the order totals</iscomment>
+			<div class="checkoutordertotals">
+				<isif condition="${checkoutstep > 3}">
+					<isordertotals p_lineitemctnr="${pdict.Basket}" p_showshipmentinfo="${true}" p_shipmenteditable="${true}" p_totallabel="Order Total:"/>
+				<iselse>
+					<isordertotals p_lineitemctnr="${pdict.Basket}" p_showshipmentinfo="${false}" p_shipmenteditable="${false}" p_totallabel="Total:"/>
+				</isif>
+			</div><!-- END: checkoutordertotals -->
+			<div class="actions">
+		    	<!--  bla: <iscontent type="text/html" charset="UTF-8">${pdict.CybersourceForm}-->
+		    	<!-- isredirect location="${pdict.RedirectUrl}" -->
+				<form action="${URLUtils.https('CORtnOrderSummary-Submit')}" method="post">
+						<button class="greenButton continuecheckout" type="submit" name="submit" value="${Resource.msg('global.submitorder','locale',null)}">
+							<span>${Resource.msg('global.submitorder','locale',null)}</span>
+						</button>
+				</form>
+			</div>
+		<div class="noteWraper">
+		 	<div class="row">${Resource.msg('cart.salestax','checkout',null)}</div>
+			<div class="row">${Resource.msg('ordersummary.conditions','checkout',null)}&nbsp;<a id="privacyPolicy">${Resource.msg('ordersummary.conditions2','checkout',null)}</a>&nbsp;${Resource.msg('ordersummary.conditions3','checkout',null)}&nbsp;<a id="termsConditions">${Resource.msg('ordersummary.conditions4','checkout',null)}</a></div>
+		</div>
+		<iscomment><div class="right-box"><iscontentasset aid="cs-contact-number"/></div></iscomment>
+	</div> <!-- END: checkoutminisummary -->
+</div> <!--END: accountOverview -->
+<isset name="OmniturePage" value="OrderReview" scope="pdict">	
+</isdecorate>
+ <div class="privacypolicy" id="privacypolicy" style="display:none;overflow:auto;">
+    <iscontentasset aid="privacy-policy"/>
+  </div>
+  <div class="terms" id="terms" style="display:none;overflow:auto;">
+    <iscontentasset aid="terms"/>
+  </div>
+<script type="text/javascript">
+jQuery(document).ready(function() {	
+jQuery('#privacypolicy').dialog({
+		bgiframe: true,
+	autoOpen: false,
+	modal: true,
+	top:0,
+	width:895,
+	height:500,
+	title: '${Resource.msg('global.privacypolicy','locale',null)}',
+	resizable: false
+});
+			
+jQuery('#privacyPolicy').click( function() {
+jQuery('#privacypolicy').show();
+jQuery('#privacypolicy').dialog('open');
+});
+jQuery('#terms').dialog({
+	bgiframe: true,
+autoOpen: false,
+modal: true,
+top:0,
+	width: 895,
+	height:500,
+title: '${Resource.msg('global.terms','locale',null)}',
+resizable: false
+});
+
+jQuery('#termsConditions').click( function() {
+jQuery('#terms').show();
+jQuery('#terms').dialog('open');
+})
+});
+</script>

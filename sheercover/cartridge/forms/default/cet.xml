@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<form xmlns="http://www.demandware.com/xml/form/2008-04-19">
+	<field formid="firstname" label="forms.cet.firstname.label" type="string" mandatory="true" binding="firstName" max-length="50" />
+	<field formid="lastname" label="forms.cet.lastname.label" type="string" mandatory="true" binding="lastName" max-length="50" />
+	<field formid="email" label="forms.cet.email.label" type="string" mandatory="true" regexp="(?i)^[a-z0-9!#$%&amp;&apos;*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&amp;&apos;*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+(?:[a-z]{2}|aero|arpa|asia|biz|cat|com|coop|edu|gov|info|int|jobs|mil|mobi|museum|name|net|org|pro|tel|travel)$" parse-error="forms.contactinf.email.parse-error" binding="email" max-length="50" />	
+	<field formid="retypeemail" label="forms.cet.emailconfirm.label" type="string" mandatory="true" regexp="(?i)^[a-z0-9!#$%&amp;&apos;*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&amp;&apos;*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+(?:[a-z]{2}|aero|arpa|asia|biz|cat|com|coop|edu|gov|info|int|jobs|mil|mobi|museum|name|net|org|pro|tel|travel)$" parse-error="forms.contactinf.email.parse-error" max-length="50" value-error="forms.cet.email.value-error" />
+	
+	<field formid="address" label="forms.cet.address.label" type="string" mandatory="true" binding="address" />
+	<field formid="city" label="forms.cet.city.label" type="string" mandatory="true" binding="city" />
+	
+   	<include formid="states" name="optionalstates" />
+    
+    <field formid="zip" label="forms.cet.zip.label" type="string" mandatory="true" binding="zip" />
+ 	<field formid="phone" label="forms.cet.phone.label" type="string" mandatory="true" binding="phone" max-length="50" />
+ 	
+ 	<field formid="accountnumber" label="forms.cet.accountnumber.label" type="string" mandatory="false" binding="accountnumber" />
+ 	
+ 	<field formid="complaint" label="forms.cet.complaint.label" type="string" mandatory="true" binding="complaint" />
+ 	
+ 	<action formid="submit" valid-form="true" />
+</form>

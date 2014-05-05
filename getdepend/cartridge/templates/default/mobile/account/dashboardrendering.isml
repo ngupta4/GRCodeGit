@@ -1,0 +1,38 @@
+<isinclude template="util/modules"/>
+  <isif condition="${pdict.CurrentCustomer.authenticated}">
+  
+    <div class="whiteBg accountProfile">
+      <div class="title">${Resource.msg('account.profile','account',null)}</div>
+      <div class="panelWraper">
+        <div class="innerPanel">
+         <div class="leftPanel">
+          <isinclude template="account/dashboardAccountProfile"/>
+          </div>
+        </isif>
+        <div class="rightPanel">
+         <isinclude template="account/dashboardAddressBook"/>
+        </div>
+        </div>
+       <div class="innerPanel panelBottom">
+        <div class="leftPanel">
+			<isinclude template="account/dashboardPaymentMethod"/>
+        </div>
+        <div class="rightPanel">
+          <isinclude template="account/dashboardAboutUs"/>
+        </div>
+      </div>
+    </div>
+  </div> 
+  <div class="orderWraper">
+   <div class="leftPanel">
+        <div class="whiteBg minheight">
+    		<isinclude template="account/dashboardOrderStatusHistory"/>
+        </div>
+    </div>
+    <div class="rightPanel">
+        <div class="whiteBg minheight">
+	 <isinclude template="account/dashboardProactiveKit"/>
+        </div>
+    </div>
+    </div>
+ <!-- END: accountlanding --> 

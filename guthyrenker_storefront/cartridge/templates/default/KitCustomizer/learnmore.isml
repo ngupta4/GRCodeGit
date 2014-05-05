@@ -1,0 +1,48 @@
+<!--- TEMPLATENAME: learnmore.isml --->
+<isdecorate template="account/pt_account">
+<isinclude template="util/modules"/>
+<isscript>
+ if(('contentPageCounter' in pdict.CurrentSession.custom) && (null != pdict.CurrentSession.custom.contentPageCounter)){
+	pdict.CurrentSession.custom.contentPageCounter = pdict.CurrentSession.custom.contentPageCounter + 1
+	 }else{
+	  	pdict.CurrentSession.custom.contentPageCounter = 0;
+	  }
+	
+</isscript>
+
+	<isset name="pagetitle" value="${Resource.msg('kit.customizer.page.title','locale',null)}" encoding="off" scope="pdict">
+	
+
+    <div class="pageWidth kitLearnMore">
+		<isinclude template="KitCustomizer/kitinclude"/>
+	  <div class="customize-your-kit">
+	  	<h1 class="customizeProactive">${Resource.msg('learn.more.pagetitle','locale',null)}</h1>
+        <div class="leftPanel">			
+			<div class="widgetBox">
+				<div class="widgetTop">
+					<div class="widgetBottom customizeKit">
+					    <isslot id="left-side-contentpages" context="global" description="left navigation content pages"/>
+					      <isslot id="left-side-contentpages1" context="global" description="left navigation content pages1"/>
+					      <isslot id="left-side-contentpages2" context="global" description="left navigation content pages2"/>
+					   
+		    		</div>
+			    </div>
+		    </div>	
+	    
+		    <iscomment>Media Pixel</iscomment>
+		    <isslot id="MediaPixelForContentPages" context="global" description="MediaPixelForContentPages" />
+		</div>
+        
+       	<div class="rightPanel"> 
+         	<isif condition="${'categoryName' in pdict.Content.custom && empty(pdict.Content.custom.categoryName)}">
+           		<isset name="folderName" value="${pdict.Content.classificationFolder.displayName}"/>
+            		<isslot id="top-contentpage-banner" context="category" description="Top  left banner content pages" context-object="${dw.catalog.CatalogMgr.getCategory(folderName)}"/>
+           		<iselse>
+           		<isslot id="top-contentpage-banner" context="category" description="Top  left banner content pages" context-object="${dw.catalog.CatalogMgr.getCategory(pdict.Content.custom.categoryName)}"/>
+         	</isif>
+             <iscontentasset aid="Kit-learnmore"/>
+       	</div>
+	   </div>
+  		<isset name="OmniturePage" value="kitlearnmore" scope="pdict">
+	</div>
+</isdecorate>

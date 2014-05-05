@@ -1,0 +1,166 @@
+*, *:before, *:after {
+  -webkit-box-sizing: border-box; 
+  -moz-box-sizing: border-box; 
+  box-sizing: border-box;
+}
+
+body {
+	margin: 100px 0;
+	font-size: 12px;
+	font-family: Arial, Helvetica, sans-serif;
+	background-color: #ffffff;
+	color: #ffffff;
+}
+
+.pull-right { float: right !important; }
+.pull-left { float: left !important; }
+
+#escalationContainer {
+	width: 1168px;
+	height: 570px;
+	margin:0 auto;
+}
+
+#escalationContainer .leftColumn {
+	float: left;
+	width: 409px;
+	height: 570px;
+	background: url(../images/proactiv-bgLeft.png) no-repeat scroll 0 0 white;
+}
+
+#escalationContainer .rightColumn {
+	float: left;
+	width: 759px;
+	height: 570px;
+	background: url(../images/bgRight.jpg) no-repeat scroll 0 0 white;
+}
+
+#escalationContainer .formfields {
+	margin-top: 50px;
+}
+
+#escalationContainer .formfield {
+	width: 50%;
+	position:relative;
+	height: 33px;
+}
+
+#escalationContainer label {
+	width: 100px;
+	text-align: right;
+	float: left;
+	margin-right: 10px;	
+	margin-top: 4px;
+}
+
+
+#escalationContainer .message label {
+	width: 625px;
+}
+
+@-moz-document url-prefix() {
+	#escalationContainer .message label {
+		width: 614px;
+	}
+}
+
+#escalationContainer input[type="text"] {
+	width: 236px;
+	float: left;
+	margin-bottom: 12px;
+	padding-left: 2px;
+	height: 18px;
+}
+
+#escalationContainer select {
+	width: 242px;
+	float: left;
+	margin-bottom: 12px;
+	padding-left: 2px;
+	height: 18px;
+}
+
+
+#escalationContainer textarea {
+	float: left;
+	margin-bottom: 20px;
+	padding-left: 2px;
+	margin-left: 111px;
+	width: 617px;
+}
+
+#escalationContainer .address1 {
+	width: 100%;
+}
+
+#escalationContainer .address1 input[type="text"] {
+	width: 617px;
+}
+
+#escalationContainer #sendBtn {
+	width: 194px;
+	height:42px;
+	background: url(../images/submit.png) no-repeat scroll 0 0;
+	margin-left: 111px;
+}
+
+#escalationContainer .footnote {
+	margin-left: 111px;
+	margin-top: 12px;
+}
+
+#escalationContainer span.errormessage {
+	clear: both;
+	text-indent: 111px;
+	position: absolute;
+	top: 21px;
+	left: 0;
+}
+
+#escalationContainer .message span.errormessage {
+	top: 138px;
+}
+
+#escalationContainer .emailerror {
+	margin-bottom: 10px;
+	text-indent: 111px;
+	margin-top: -20px;
+}
+
+#escalationContainer .footer {
+	margin: 0 auto;
+	text-align: center;
+	width: 585px;
+	color: #6d6e70;	
+}
+
+#escalationContainer .footer span {
+	display:inline-table;
+	margin-top: -5px;
+}
+
+#escalationContainer .footerLinks li {
+	display: inline;
+	margin-top: 20px;
+	float: left;
+	border-right: 1px solid #6d6e70;
+	padding: 0 5px 0;
+	margin-bottom: 15px;
+}
+
+#escalationContainer .footerLinks a {
+	color: #6d6e70;
+	text-decoration: none;
+}
+
+#escalationContainer .requiredindicator { display: none; }
+
+#escalationContainer .clearfix:before,
+#escalationContainer .clearfex:after {
+    content: " ";
+    display: table;
+}
+
+#escalationContainer .clearfix:after {
+    clear: both;
+}

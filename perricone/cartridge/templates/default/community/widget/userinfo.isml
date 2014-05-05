@@ -1,0 +1,24 @@
+<iscomment>
+	Renders a widget showing Community information for current logged in user
+</iscomment>
+<div class="whitebox">
+	<div class="l-top-lt corner"></div>
+	<div class="l-top-rt corner"></div>
+	<div class="l-btm-lt corner"></div>
+	<div class="l-btm-rt corner"></div>
+	<img src="${URLUtils.staticURL('/images/community/user-profile-img.jpg')}" class="userimg" width="58" height="58" alt="User" />
+	<div class="userinfo">
+		<isif condition="${'CommunityUserProfileJSON' in pdict.CurrentSession.custom && null != pdict.CurrentSession.custom.CommunityUserProfileJSON}">
+			<strong><isprint value="${pdict.CurrentSession.custom.CommunityUserProfileJSON.DisplayName}" /></strong><br />
+			<isif condition="${null != pdict.CurrentSession.custom.CommunityUserProfileJSON.Location}">
+		    	from <strong><isprint value="${pdict.CurrentSession.custom.CommunityUserProfileJSON.Location}" /></strong><br />
+		    </isif>
+		    <b class="blue"><isprint value="${pdict.CurrentSession.custom.CommunityUserProfileJSON.Badge}" /></b>
+		<iselse>
+			<b class="blue"><isprint value="${Resource.msg('community.default.badge','community',null)}"/></b>
+		</isif>
+		
+	</div>
+	<div class="clear"></div>
+	<a href="${URLUtils.https('Community-Profile')}" class="community-profile">&nbsp;</a>
+</div>

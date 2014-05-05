@@ -1,0 +1,251 @@
+ <div class="top">
+            <h2>
+              <isprint value="${Resource.msg('account.addressbook','account',null)}"/>
+            </h2>
+
+	            <a href="${URLUtils.https('Address-List')}">
+	            <isprint value="${Resource.msg('account.edit','account',null)}"/>
+	            </a>
+
+            
+          </div>
+		<iscomment>Printing the Billing and Shipping Address</iscomment>
+            <isif condition="${!empty(pdict.CurrentCustomer.profile.addressBook.addresses)}">
+            <div class="inner-l">
+              
+              <isloop items="${pdict.CurrentCustomer.profile.addressBook.addresses}" var="address">
+              
+              <isif condition ="${pdict.CurrentCustomer.profile.custom.shippingSameAsBilling == true}">
+				<iscomment>Is if billing address is same as shipping address then print only once</iscomment>
+              <isif condition ="${address.custom.billingAddress == true}">
+
+              <isif condition="${null!=pdict.CurrentCustomer.profile.custom.member && pdict.CurrentCustomer.profile.custom.member == true}">
+                	<strong><isprint value="${Resource.msg('account.proactiv.shippingandbilling.address','account',null)}"/></strong>
+                <iselse>
+                	<strong><isprint value="${Resource.msg('account.default.shippingandbilling.address','account',null)}"/></strong>
+               </isif>
+                
+              
+              
+              
+	                <div class="accountaddress">
+	                  <isset name="p_address" value="${address}" scope="page"/>
+	                  <div class="name"> <span class="firstname">
+	                    <isprint value="${p_address.firstName}"/>
+	                    </span> <span class="lastname">
+	                    <isprint value="${p_address.lastName}"/>
+	                    </span> </div>
+	                  <!-- END: name -->
+	                  <div class="address">
+	                    <div class="street">
+	                      <div class="line1">
+	                        <isprint value="${p_address.address1}"/>
+	                      </div>
+	                      <isif condition="${!empty(p_address.address2)}">
+	                        <div class="line2">
+	                          <isprint value="${p_address.address2}"/>
+	                        </div>
+	                      </isif>
+	                    </div>
+	                    <!-- END: street -->
+	                    <div class="location">
+	                      <isif condition="${p_address.city != null}"> 
+	                      <span class="city"><isprint value="${p_address.city}"/></span><span class="statedivider">,&nbsp;</span> </isif>
+	                      <span class="state">
+	                      <isprint value="${p_address.stateCode}"/>
+	                      &nbsp;</span> <span class="zip">
+	                      <isprint value="${p_address.postalCode}"/>
+	                      </span> </div>
+	                    <!-- END: location -->
+	                    <div class="country">
+	                      <isprint value="${p_address.countryCode}"/>
+	                    </div>
+	                    
+					     <isif condition="${!empty(p_address.phone)}">
+						<isset name="phonenumber" value="${p_address.phone}" scope="pdict"/>
+						<isscript>
+							var tempphone = pdict.phonenumber;
+							var phone1 = tempphone.substring(0,3);
+							var phone2 = tempphone.substring(3,6);
+							var phone3 = tempphone.substring(6,10);
+						</isscript>
+							<div class="phone">
+							(<isprint value="${phone1}"/>) <isprint value="${phone2}"/>-<isprint value="${phone3}"/>
+							</div>
+						</isif>
+						
+						<isif condition="${!empty(p_address.custom.eveningPhone)}">
+						<isset name="phonenumber" value="${p_address.custom.eveningPhone}" scope="pdict"/>
+						<isscript>
+							var tempphone = pdict.phonenumber;
+							var phone1 = tempphone.substring(0,3);
+							var phone2 = tempphone.substring(3,6);
+							var phone3 = tempphone.substring(6,10);
+						</isscript>
+							<div class="phone">
+							(<isprint value="${phone1}"/>) <isprint value="${phone2}"/>-<isprint value="${phone3}"/>
+							</div>
+						</isif>
+	                    
+	                  </div>
+	                </div>
+	             </isif>
+	             <iscomment>If Addresses are different</iscomment>
+	             <iselse>
+			             <isif condition ="${address.custom.billingAddress == true}">
+			             
+			            <isif condition="${null!=pdict.CurrentCustomer.profile.custom.member && pdict.CurrentCustomer.profile.custom.member == true}">
+                			<strong><isprint value="${Resource.msg('account.proactiv.billing','account',null)}"/></strong>
+                		<iselse>
+                			<strong><isprint value="${Resource.msg('account.default.billing','account',null)}"/></strong>
+               			</isif>
+
+			             
+			             
+			                <div class="accountaddress">
+			                  <isset name="p_address" value="${address}" scope="page"/>
+			                  <div class="name"> <span class="firstname">
+			                    <isprint value="${p_address.firstName}"/>
+			                    </span> <span class="lastname">
+			                    <isprint value="${p_address.lastName}"/>
+			                    </span> </div>
+			                  <!-- END: name -->
+			                  <div class="address">
+			                    <div class="street">
+			                      <div class="line1">
+			                        <isprint value="${p_address.address1}"/>
+			                      </div>
+			                      <isif condition="${!empty(p_address.address2)}">
+			                        <div class="line2">
+			                          <isprint value="${p_address.address2}"/>
+			                        </div>
+			                      </isif>
+			                    </div>
+			                    <!-- END: street -->
+			                    <div class="location">
+			                      <isif condition="${p_address.city != null}">
+			                       <span class="city"><isprint value="${p_address.city}"/></span><span class="statedivider">,&nbsp;</span> </isif>
+			                      <span class="state">
+			                      <isprint value="${p_address.stateCode}"/>
+			                      &nbsp;</span> <span class="zip">
+			                      <isprint value="${p_address.postalCode}"/>
+			                      </span> </div>
+			                    <!-- END: location -->
+			                    <div class="country">
+			                      <isprint value="${p_address.countryCode}"/>
+			                    </div>
+							<isif condition="${!empty(p_address.phone)}">
+							<isset name="phonenumber" value="${p_address.phone}" scope="pdict"/>
+							<isscript>
+								var tempphone = pdict.phonenumber;
+								var phone1 = tempphone.substring(0,3);
+								var phone2 = tempphone.substring(3,6);
+								var phone3 = tempphone.substring(6,10);
+							</isscript>
+								<div class="phone">
+								(<isprint value="${phone1}"/>) <isprint value="${phone2}"/>-<isprint value="${phone3}"/>
+								</div>
+							</isif>
+							
+							<isif condition="${!empty(p_address.custom.eveningPhone)}">
+							<isset name="phonenumber" value="${p_address.custom.eveningPhone}" scope="pdict"/>
+							<isscript>
+								var tempphone = pdict.phonenumber;
+								var phone1 = tempphone.substring(0,3);
+								var phone2 = tempphone.substring(3,6);
+								var phone3 = tempphone.substring(6,10);
+							</isscript>
+								<div class="phone">
+								(<isprint value="${phone1}"/>) <isprint value="${phone2}"/>-<isprint value="${phone3}"/>
+								</div>
+							</isif>	
+			                  </div>
+			                </div>
+			             </isif>
+	             
+			             <isif condition ="${address.custom.shippingAddress == true}">
+			             
+			             <isif condition="${null!=pdict.CurrentCustomer.profile.custom.member && pdict.CurrentCustomer.profile.custom.member == true}">
+                			<strong><isprint value="${Resource.msg('account.proactiv.shipping','account',null)}"/></strong>
+                		<iselse>
+                			<strong><isprint value="${Resource.msg('account.default.shipping','account',null)}"/></strong>
+               			</isif>
+
+			             
+			                <div class="accountaddress">
+			                  <isset name="p_address" value="${address}" scope="page"/>
+			                  <div class="name"> <span class="firstname">
+			                    <isprint value="${p_address.firstName}"/>
+			                    </span> <span class="lastname">
+			                    <isprint value="${p_address.lastName}"/>
+			                    </span> </div>
+			                  <!-- END: name -->
+			                  <div class="address">
+			                    <div class="street">
+			                      <div class="line1">
+			                        <isprint value="${p_address.address1}"/>
+			                      </div>
+			                      <isif condition="${!empty(p_address.address2)}">
+			                        <div class="line2">
+			                          <isprint value="${p_address.address2}"/>
+			                        </div>
+			                      </isif>
+			                    </div>
+			                    <!-- END: street -->
+			                    <div class="location">
+			                      <isif condition="${p_address.city != null}"> 
+			                      <span class="city"><isprint value="${p_address.city}"/></span><span class="statedivider">,&nbsp;</span> </isif>
+			                      <span class="state">
+			                      <isprint value="${p_address.stateCode}"/>
+			                      &nbsp;</span> <span class="zip">
+			                      <isprint value="${p_address.postalCode}"/>
+			                      </span> </div>
+			                    <!-- END: location -->
+			                    <div class="country">
+			                      <isprint value="${p_address.countryCode}"/>
+			                    </div>
+			                    
+								<isif condition="${!empty(p_address.phone)}">
+									<isset name="phonenumber" value="${p_address.phone}" scope="pdict"/>
+									<isscript>
+										var tempphone = pdict.phonenumber;
+										var phone1 = tempphone.substring(0,3);
+										var phone2 = tempphone.substring(3,6);
+										var phone3 = tempphone.substring(6,10);
+									</isscript>
+										<div class="phone">
+										(<isprint value="${phone1}"/>) <isprint value="${phone2}"/>-<isprint value="${phone3}"/>
+										</div>
+									</isif>
+									
+									<isif condition="${!empty(p_address.custom.eveningPhone)}">
+									<isset name="phonenumber" value="${p_address.custom.eveningPhone}" scope="pdict"/>
+									<isscript>
+										var tempphone = pdict.phonenumber;
+										var phone1 = tempphone.substring(0,3);
+										var phone2 = tempphone.substring(3,6);
+										var phone3 = tempphone.substring(6,10);
+									</isscript>
+										<div class="phone">
+										(<isprint value="${phone1}"/>) <isprint value="${phone2}"/>-<isprint value="${phone3}"/>
+										</div>
+									</isif>
+									
+			                  </div>
+			                </div>
+			             </isif>
+	             
+                </isif>
+                
+                <!-- END: account_address --> 
+              </isloop>
+            </div>
+            <iselse>
+            <div class="inner-l">
+            <isprint value="${Resource.msg('account.address.book.empty','account',null)}"/>
+            </b> <a href="${URLUtils.https('Address-List')}">
+            <isprint value="${Resource.msg('account.enter.address','account',null)}"/>
+            </a>
+            <isprint value="${Resource.msg('account.easy.checkout','account',null)}"/>
+            </isif>
+            </div>

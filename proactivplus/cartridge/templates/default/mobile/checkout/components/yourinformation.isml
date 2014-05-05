@@ -1,0 +1,69 @@
+<!--- TEMPLATENAME: yourinformation.isml --->
+<isif condition="${'Basket' in pdict && !empty(pdict.Basket)}">
+	<isset name="LineItemCenter" value="${pdict.Basket}" scope="page" />
+<iselse/>
+	<isset name="LineItemCenter" value="${pdict.Order}" scope="page" />
+</isif>
+
+<div class="summaryblock">
+	<h2>${Resource.msg('cart.yourinformation.label', 'rendering', null)}</h2>
+	
+	<iscomment>Customer's name and Email</iscomment>
+	<div id="custName" class="customername"><!-- mp_trans_disable_start -->${pdict.CurrentForms.personinf.billtoaddress.firstName.value} ${pdict.CurrentForms.personinf.billtoaddress.lastName.value}</div>
+	<div id="custEmail" class="customeremail">${pdict.CurrentForms.personinf.contact.email.value}<!-- mp_trans_disable_end --></div>
+	
+	<iscomment>Payment and shipping information</iscomment>
+	<div class="paymentandshippinginfo">
+		<isif condition="${pdict.IsPaypalPayment}">
+			<iscomment>Display the PayPal logo if customer selected PayPal as payment method</iscomment>
+			<div class="paypallogo"></div>
+		</isif>
+		
+		<iscomment>Some information about payment method</iscomment>
+		<div class="paymentinfo">
+			<h3>${Resource.msg('cart.yourinformation.payment.mobile.label', 'rendering', null)}</h3>
+			<isif condition="${pdict.IsPaypalPayment}">
+				    <div>${Resource.msg('cart.yourinformation.payment.paypal.account', 'rendering', null)}: ${LineItemCenter.paymentInstruments[0].custom.paypalPayerID}</div>
+				<iselseif condition="${pdict.CurrentForms.personinf.creditcard.type.htmlValue == Resource.msg('payMethods.echeck.ID', 'configuration', null)}"> 
+					<div class="ui-grid-b">
+						<div class="ui-block-a">${Resource.msgf('payMethods.echeck.name', 'configuration', null)}: ${LineItemCenter.paymentInstruments[0].bankAccountNumber}</div>
+						<iscomment><div class="ui-block-b">${LineItemCenter.paymentInstruments[0].bankAccountNumber}</div></iscomment>
+						<iscomment><div class="ui-block-c">${LineItemCenter.paymentInstruments[0].bankRoutingNumber}</div></iscomment>
+					</div>
+				<iselse>
+					<div class="ui-grid-b">
+						<div class="ui-block-a">${LineItemCenter.paymentInstruments[0].creditCardType}:&nbsp;${LineItemCenter.paymentInstruments[0].maskedCreditCardNumber}</div>
+						<iscomment><div class="ui-block-b">${LineItemCenter.paymentInstruments[0].maskedCreditCardNumber}</div></iscomment>
+						<div class="ui-block-c">${Resource.msg('billing.creditcardlistexp.mobile', 'checkout', null)}: ${LineItemCenter.paymentInstruments[0].creditCardExpirationMonth}/${LineItemCenter.paymentInstruments[0].creditCardExpirationYear}</div>
+					</div>
+			</isif>
+		</div>
+		
+		<iscomment>If payment method is PayPal, we don't need to display Shipping and Billing addresses</iscomment>
+		<isif condition="${!pdict.IsPaypalPayment}">
+			<isset name="addrIDs" value="${{'billtoaddress' : 'billlingAddress', 'shipptoaddress' : 'shippingAddress'}}" scope="page" />
+			
+			<isloop items="${['billtoaddress', 'shipptoaddress']}" var="address">
+				<isset name="addressObj" value="${pdict.CurrentForms.personinf[address]}" scope="page" />
+				
+				<iscomment>If option 'Use as Shipping Address' set, then do so</iscomment>
+				<isif condition="${address == 'shipptoaddress' && pdict.CurrentForms.personinf.useAsBillingAddress.value != false}">
+					<isset name="addressObj" value="${pdict.CurrentForms.personinf.billtoaddress}" scope="page" />
+				</isif>
+				
+				<iscomment>Address block</iscomment>
+				<div class="${address}" id="${addrIDs[address]}">
+					<h3>${Resource.msg('cart.yourinformation.' + address + '.mobile.label', 'rendering', null)}</h3>
+					<div><!-- mp_trans_disable_start -->${addressObj.address1.value}</div>
+					<isif condition="${!empty(addressObj.address2.value)}">
+						<div>${addressObj.address2.value}</div>
+					</isif>
+					<div>${addressObj.city.value}, ${addressObj.states.stateUS.htmlValue}</div>
+					<div>${addressObj.zip.value}<!-- mp_trans_disable_end --></div>
+				</div>
+			</isloop>
+		</isif>
+	</div>
+	
+	<div class="clearfix"></div>
+</div>

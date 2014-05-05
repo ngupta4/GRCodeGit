@@ -1,0 +1,102 @@
+<isinclude template="util/modules" />
+<isscript>
+	var decoratorTemplate = ('cartempty' == pdict.CheckoutStep || 'review' == pdict.CheckoutStep) ? 'content/checkout/pt_checkout' : 'checkout/cartrefresh/pt_checkoutcartrefresh';
+	var showRecommendationPopup="true";
+</isscript>
+
+<isdecorate template="${decoratorTemplate}">
+
+	<isif condition="${empty(pdict.CheckoutStep) || 'cartinformation' == pdict.CheckoutStep}">
+	<isslot id="overnight-shipment-cart-header" description="Overnight shipment cart header" context="category" context-object="${category}" />
+		  
+		  <div class="mboxDefault"></div>
+  		  <script type="text/javascript">mboxCreate("PA_Checkout_CartRefresh",'renderingExperience=' +"${session.custom.renderingGroup.ID}",'deviceGroup=' +"${session.custom.deviceCategory}",'device=' +"${session.custom.device}");</script>
+  
+		<form action="${URLUtils.httpsContinue()}" method="post" id="${pdict.CurrentForms.cart.htmlName}" class="checkoutform">
+			<div class="leftSection">
+				<isset name="step" value="billingshipping" scope="page">
+				<isinclude template="checkout/cartrefresh/airlinemodelbreadcrumbs" />
+				<isinclude template="checkout/components/errors" />		
+				<isinclude template="checkout/cartrefresh/cartproduct" />
+				<isinclude template="checkout/cartrefresh/vitaminrecommendation" />
+				<isinclude template="checkout/cartrefresh/personinformation" />
+			</div>
+			<div class="rightSection">
+				<div class="rightPosition">
+					<isinclude template="checkout/cartrefresh/cartsummary" />
+					<isinclude template="checkout/cartrefresh/upsellrecommendation" />
+				</div>
+			</div>
+		</form>
+	<iselseif condition="${'review' == pdict.CheckoutStep}">
+		<ischeckoutbreadcrumbs type="simple" step="review" paypal="${true}" />		
+		<isinclude template="checkout/steps/review" />
+	<iselseif condition="${'confirmation' == pdict.CheckoutStep}">
+	<isslot id="overnight-shipment-cart-header" description="Overnight shipment cart header" context="category" context-object="${category}" />
+	<isscript>
+		  var rememberMeObj = {
+		   "firstName" : pdict.Order.billingAddress.firstName,
+		   "lastName"  : pdict.Order.billingAddress.lastName,
+		   "email"     : pdict.Order.customerEmail
+		  }
+		  
+		  var rememberMeAge:Number = 604800;
+		  var sharedsessionAge:Number = 604800;
+		  
+		  importPackage (dw.web);
+		  importPackage( dw.system );
+		  
+		  var cookiesNames:Array = Site.current.getCustomPreferenceValue("GRTransferCookiesList");
+		  if (!empty(cookiesNames)) {
+		  	for(var i = 0; i < cookiesNames.length; i++){
+	        	var cookieDesc:String  = cookiesNames[i];
+	        	var cokiesArr:Array = cookieDesc.split(":");
+	        
+	        	var cookieName:String = cokiesArr[0];
+	        	var maxAge:Number = cokiesArr.length == 2? cokiesArr[1] * 86400: 604800;
+	        	
+	        	if(cookieName == 'rememberMe'){
+	        		rememberMeAge = maxAge;
+	        	}
+	        	if(cookieName == 'sharedsession'){
+	        		sharedsessionAge = maxAge;
+	        	}
+	        }
+		  }
+	 
+		  var cookie : Cookie = new Cookie("rememberMe",encodeURIComponent(rememberMeObj['firstName']+' '+rememberMeObj['lastName']+':'+rememberMeObj['email']));
+		  cookie.setMaxAge(rememberMeAge);
+		  cookie.path = "/";
+		  request.addHttpCookie(cookie);
+		  
+		  var cookie2 : Cookie = new Cookie("sharedsession",encodeURIComponent(JSON.stringify(rememberMeObj)));
+		  cookie2.setMaxAge(sharedsessionAge);
+		  cookie2.path = "/";
+		  request.addHttpCookie(cookie2);
+		 
+		</isscript>
+		<isset name="step" value="confirmation" scope="page">	
+		<div class="checkout_header">
+			<h1><isprint value="${Resource.msg('confirmation.header','checkout',null)}"/></h1>
+		</div>
+		
+		<iscomment><ischeckoutbreadcrumbs type="simple" step="confirm" paypal="${pdict.IsPaypalPayment}" /></iscomment>
+		
+		<isinclude template="checkout/components/errors" />
+		
+		<isinclude template="checkout/steps/confirmation" />	
+	<iselseif condition="${'cartempty' == pdict.CheckoutStep}">
+		<div class="checkout_header">
+			<iscontentasset aid="cart-header-text-billing-details" />
+		</div>
+		
+		<ischeckoutbreadcrumbs type="simple" step="" paypal="${pdict.IsPaypalPayment}" />
+		
+		<isinclude template="checkout/components/errors" />
+		
+		<isinclude template="checkout/cartrefresh/cartempty" />
+	</isif>
+	<iscomment>Media Pixel</iscomment>
+	<isslot id="MediaPixelAirlineCartrefreshCartPage" context="global" description="MediaPixelAirlineCartrefreshCartPage" />
+		<isset name="OmniturePage" value="Checkout_Airline" scope="pdict">
+</isdecorate>

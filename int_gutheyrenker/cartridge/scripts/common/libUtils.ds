@@ -1,0 +1,1082 @@
+/**
+* Demandware Script File
+* Export an XML file of customer metadata, not included in standard customer export (e.g. create and last-mod dates)
+*
+*	@input Orders : dw.util.Iterator mandatory, Orders of interest, in an Iterator
+*	@input ReportId  : String mandatory,Should be unique for each report/file. Maxlength=10
+*	@input OrdersCount : Number mandatory 
+*	-@input StartDate : Date mandatory, Should be the first date of the date range of the orders contained within the file
+*	-@input EndDate : Date mandatory,  Should be the end date of the date range of the orders contained within the file
+*	@input ExportFile : String  Export file path. This path is relative to the 'src' subdirectory within the top-level IMPEX directory.
+*	@output Status	: dw.system.Status 
+*/
+importPackage( dw.system );
+importPackage( dw.util );
+importPackage( dw.io );
+importPackage( dw.order );
+importPackage( dw.value );
+importPackage( dw.catalog );
+importPackage (dw.crypto);
+importPackage( dw.campaign );
+
+importScript('common/libEncoding.ds');
+
+var log : Log = Logger.getLogger("int_gutheyrenker:common.libUtils.ds");
+
+var temporaryPasswordChars : String = '';
+
+function writeOrderExportToFile( orderExportStyle, args, xmlFileWriter, orders, startDate, endDate, ordersOut, failedOrders ) : Number {
+	var result = null;
+	if( orderExportStyle=='gr2' ) {
+		result = writeGR2OrderExportToFile(args, xmlFileWriter, orders, startDate, endDate, ordersOut, failedOrders);
+	} else {
+		result = writeGR1OrderExportToFile(args, xmlFileWriter, orders, startDate, endDate, ordersOut, failedOrders);
+	}
+	return result;
+}
+function writeGR2OrderExportToFile( args, xmlFileWriter, orders, startDate, endDate, ordersOut, failedOrders ) {
+	var startdate : Number = new Date().getTime();
+
+	// Write XML header to file
+	try {
+		xmlFileWriter.writeLine('<?xml version="1.0" encoding="UTF-8" ?>'); 
+		xmlFileWriter.writeLine('<OrderReport xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="order.xsd">');
+		xmlFileWriter.writeLine('  <ReportId>'+args.ReportId+'</ReportId>');
+		xmlFileWriter.writeLine('  <ReportPeriodStartDate>'+StringUtils.formatCalendar( new Calendar(startDate), "dd/MM/yyyy" )+ '</ReportPeriodStartDate><ReportPeriodStartTime>'+StringUtils.formatCalendar( new Calendar(startDate), "HH:mm:ss a" )+ '</ReportPeriodStartTime>');
+		xmlFileWriter.writeLine('  <ReportPeriodEndDate>'+StringUtils.formatCalendar( new Calendar(endDate), "dd/MM/yyyy" )+ '</ReportPeriodEndDate><ReportPeriodEndTime>'+StringUtils.formatCalendar( new Calendar(endDate), "HH:mm:ss a" )+ '</ReportPeriodEndTime>');
+		xmlFileWriter.writeLine('  <PurchaseList>');
+		xmlFileWriter.flush();
+	}
+	catch(e) {
+		trace("ExportGROrder: Could not write header for XML file");
+		Logger.getLogger("simplefeeds").error("ExportGROrder: Could not write header for XML file");
+		var enddate : Number = new Date().getTime();
+		Logger.getLogger("simplefeeds").error("ExportGROrder: Export Runtime:"+(startdate-enddate)/1000+"s");
+		args.Status = new Status(Status.ERROR,"IMPEX-130");
+		return PIPELET_ERROR;
+	}
+
+	var order : Order;
+	var orderWriter : StringWriter = new StringWriter();
+	
+	while(orders.hasNext()){
+		order = orders.next();
+		try {
+			addBuyerPurchase(orderWriter, order );
+		}
+		catch(e) {
+			Logger.error(e);
+			trace("ExportGROrder: Could not write data for order number " + order.orderNo);
+			Logger.getLogger("simplefeeds").fatal("ExportGROrder: Could not write data for order number " + order.orderNo);
+			orderWriter.close();
+			orderWriter = new StringWriter();
+			failedOrders.add(order);
+			continue;
+		}
+			
+		try {
+			xmlFileWriter.write(orderWriter.toString());
+			ordersOut.add(order);
+			Logger.getLogger("simplefeeds").info("ExportGROrder: Processed data for order number " + order.orderNo);
+		} catch(e) {
+			Logger.error(e);
+			trace("ExportGROrder: Could not write data for order number " + order.orderNo);
+			Logger.getLogger("simplefeeds").error("ExportGROrder: Could not write data for order number " + order.orderNo);
+		}
+		orderWriter.close();
+		orderWriter = new StringWriter();
+	}	
+	
+	orderWriter.close();	
+
+	// Write XML footer to file
+	try {
+		xmlFileWriter.writeLine('   </PurchaseList>');
+		xmlFileWriter.writeLine('</OrderReport>');
+		xmlFileWriter.flush();
+	}
+	catch(e) {
+		trace("ExportGROrder: Could not write footer for XML file");
+		Logger.getLogger("simplefeeds").error("ExportGROrder: Could not write footer for XML file");
+		var enddate : Number = new Date().getTime();
+		Logger.getLogger("simplefeeds").error("ExportGROrder: Export Runtime:"+(startdate-enddate)/1000+"s");
+		args.Status = new Status(Status.ERROR,"IMPEX-130");
+		return PIPELET_ERROR;
+	}
+	return PIPELET_NEXT;
+}
+function addBuyerPurchase(xmlFileWriter : Writer, order : Order){
+	xmlFileWriter.write('    <BuyerPurchase>');
+	addTransactionInfo(xmlFileWriter, order);
+	addShipmentList(xmlFileWriter, order);
+	xmlFileWriter.write('    </BuyerPurchase>\n');
+	xmlFileWriter.flush();
+}
+
+function addTransactionInfo(xmlFileWriter : Writer, order : Order){
+	var calendar : Calendar = new Calendar();
+	xmlFileWriter.write('      <TransactionInfo>');
+	xmlFileWriter.write('      	<OrderID>'+order.orderNo +'</OrderID>\n');
+	xmlFileWriter.write('      	<InvoiceNumber>'+order.orderNo+'</InvoiceNumber>\n');
+	xmlFileWriter.write('      	<OrderDate>'+StringUtils.formatCalendar( new Calendar(order.creationDate), "dd/MM/yyyy" )+ '</OrderDate>\n');
+	xmlFileWriter.write('      	<OrderTime>'+StringUtils.formatCalendar( new Calendar(order.creationDate), "HH:mm:ss" )+ '</OrderTime>\n');
+	xmlFileWriter.write('      	<IpAddress>'+(empty(order.custom.customerIPAddress)? '127.0.0.1': order.custom.customerIPAddress)+'</IpAddress>\n');
+
+	if( 'uciCode' in order.custom && !empty(order.custom['uciCode']) ) {
+		xmlFileWriter.write('			<UCI>'+order.custom['uciCode']+'</UCI>\n');	
+	}	
+	if( 'secondaryUCI' in order.custom && !empty(order.custom['secondaryUCI']) ) {
+		xmlFileWriter.write('			<UCI>'+order.custom['secondaryUCI']+'</UCI>\n');		
+	}
+	
+	xmlFileWriter.write('      	<MpgmCode>'+(empty(order.custom['campaignCode']) ? '000': order.custom['campaignCode'])+'</MpgmCode>\n');
+	xmlFileWriter.write('      	<KeyCode></KeyCode>\n');
+	if ('WebSiteId' in order.custom && !empty(order.custom['WebSiteId'])) {
+		//MSanders Fix
+		xmlFileWriter.write('       <SiteId>'+order.custom['WebSiteId']+'</SiteId>\n');
+	}	
+	xmlFileWriter.write('      	<TotalTax></TotalTax>\n');
+	xmlFileWriter.write('      	<TotalInvoiceAmount>'+order.totalNetPrice.value+'</TotalInvoiceAmount>\n');
+	xmlFileWriter.write('      	<OtherCost></OtherCost>\n');
+	addPayment(xmlFileWriter, order);
+	addBillingInfo(xmlFileWriter, order);
+	xmlFileWriter.write('      </TransactionInfo>\n');
+	xmlFileWriter.flush();
+}
+
+function addPayment(xmlFileWriter : Writer, order : Order){
+	var ccEncryptKey : String = Site.getCurrent().getCustomPreferenceValue("grCCEncryptionKey");
+	var ccEncryptType : String = Site.getCurrent().getCustomPreferenceValue("grEncryptionType");
+	
+	var ccNum : String = null;
+	
+	if( !empty(ccEncryptKey) ) {
+		ccNum = order.paymentInstruments[0].getEncryptedCreditCardNumber(ccEncryptType, ccEncryptKey);	
+	} else {
+		ccNum = getCCNumber(order.paymentInstruments[0]);
+	}
+	
+	//VI -Visa AE-AmericanExpress MC-Mastercard DI-Discover
+	if(order.paymentInstruments[0].creditCardType == "Visa"){
+		xmlFileWriter.write('      	<PaymentType>VI</PaymentType>\n');
+	}else if(order.paymentInstruments[0].creditCardType == "Amex"){
+		xmlFileWriter.write('      	<PaymentType>AE</PaymentType>\n');
+	}else if(order.paymentInstruments[0].creditCardType == "Discover"){
+		xmlFileWriter.write('      	<PaymentType>DI</PaymentType>\n');
+	}else if(order.paymentInstruments[0].creditCardType == "Master"){
+		xmlFileWriter.write('      	<PaymentType>MC</PaymentType>\n');
+	}else{
+		xmlFileWriter.write('      	<PaymentType></PaymentType>\n');
+	}
+	// #20815
+	// If the cc encryption site preference is empty, we don't want to print the plain text password at all
+	// In that scenario, an error email is sent out to the appropriate email address
+	if( !empty(ccEncryptKey) ) {
+		xmlFileWriter.write('      	<PaymentId>'+ccNum+'</PaymentId>\n');
+	}
+	xmlFileWriter.write('      	<ExpDate>'+order.paymentInstruments[0].creditCardExpirationMonth+'/'+order.paymentInstruments[0].creditCardExpirationYear+'</ExpDate>\n');
+	xmlFileWriter.write('      	<CVVNbr></CVVNbr>\n');
+	xmlFileWriter.write('      	<PaymentTransID></PaymentTransID>\n');
+}
+
+function addBillingInfo(xmlFileWriter : FileWriter, order : Order){
+	xmlFileWriter.write('      	<BillingNameTitle></BillingNameTitle>\n');
+	xmlFileWriter.write('      	<BillingFirstName><![CDATA['+order.billingAddress.firstName+']]></BillingFirstName>\n');
+	xmlFileWriter.write('      	<BillingLastName><![CDATA['+order.billingAddress.lastName+']]></BillingLastName>\n');
+	xmlFileWriter.write('      	<BillingAddress1><![CDATA['+order.billingAddress.address1+']]></BillingAddress1>\n');
+	xmlFileWriter.write('      	<BillingAddress2><![CDATA['+(!empty(order.billingAddress.address2) ? order.billingAddress.address2:'')+']]></BillingAddress2>\n');
+	xmlFileWriter.write('      	<BillingCity><![CDATA['+order.billingAddress.city+']]></BillingCity>\n');
+	xmlFileWriter.write('      	<BillingState><![CDATA['+order.billingAddress.stateCode+']]></BillingState>\n');
+	xmlFileWriter.write('      	<BillingZip><![CDATA['+order.billingAddress.postalCode+']]></BillingZip>\n');
+	xmlFileWriter.write('      	<BillingCountry><![CDATA['+order.billingAddress.countryCode.value+']]></BillingCountry>\n');
+	xmlFileWriter.write('      	<BillingDayPhone><![CDATA['+order.billingAddress.phone+']]></BillingDayPhone>\n');
+	xmlFileWriter.write('      	<BillingEveningPhone><![CDATA['+order.billingAddress.custom.eveningPhone+']]></BillingEveningPhone>');
+	xmlFileWriter.write('      	<BillingEmail><![CDATA['+order.customerEmail+']]></BillingEmail>');
+}
+
+
+function addShipmentList(xmlFileWriter : Writer, order : Order){
+	var shippingAddress : OrderAddress = order.defaultShipment.shippingAddress;
+	var pLineItems : Iterator = order.getProductLineItems().iterator();
+	xmlFileWriter.write('      <ShipmentList>');
+	xmlFileWriter.write('        <Shipment>');
+	xmlFileWriter.write('        <ShipmentNumber>1</ShipmentNumber>\n');
+	xmlFileWriter.write('        <ShipNameTitle></ShipNameTitle>\n');
+	xmlFileWriter.write('        <ShipFirstName><![CDATA['+shippingAddress.firstName+']]></ShipFirstName>\n');
+	xmlFileWriter.write('        <ShipLastName><![CDATA['+shippingAddress.lastName+']]></ShipLastName>\n');
+	xmlFileWriter.write('        <ShipAddress1><![CDATA['+shippingAddress.address1+']]></ShipAddress1>\n');
+	xmlFileWriter.write('        <ShipAddress2><![CDATA['+(!empty(shippingAddress.address2) ? shippingAddress.address2:'')+']]></ShipAddress2>\n');
+	xmlFileWriter.write('        <ShipCity><![CDATA['+shippingAddress.city+']]></ShipCity>\n');
+	xmlFileWriter.write('        <ShipState><![CDATA['+shippingAddress.stateCode+']]></ShipState>\n');
+	xmlFileWriter.write('        <ShipZip><![CDATA['+shippingAddress.postalCode+']]></ShipZip>\n');
+	xmlFileWriter.write('        <ShipCountry><![CDATA['+shippingAddress.countryCode.value+']]></ShipCountry>\n');
+	xmlFileWriter.write('        <ShipDayPhone><![CDATA['+(!empty(shippingAddress.phone) ? shippingAddress.phone:'')+']]></ShipDayPhone>\n');
+	xmlFileWriter.write('        <ShipEvePhone></ShipEvePhone>\n');
+	xmlFileWriter.write('        <ShipType>'+order.defaultShipment.shippingMethod.displayName+'</ShipType>\n');
+	xmlFileWriter.write('        <ShipSubTotal>'+order.defaultShipment.shippingTotalPrice.value+'</ShipSubTotal>\n');
+	xmlFileWriter.write('        <ShipAdditionalCharge></ShipAdditionalCharge>\n');
+	xmlFileWriter.write('          <Products>');
+	while(pLineItems.hasNext()){
+		addProduct(xmlFileWriter,pLineItems.next());
+	}
+	xmlFileWriter.write('          </Products>\n');
+	xmlFileWriter.write('         </Shipment>\n');
+	xmlFileWriter.write('      </ShipmentList>\n');
+	xmlFileWriter.flush();
+}
+
+function addProduct(xmlFileWriter : Writer, productLineItem : ProductLineItem){
+	xmlFileWriter.write('            <Product>');
+	xmlFileWriter.write('            	<Description><![CDATA['+StringUtils.stringToHtml(productLineItem.productName)+']]></Description>\n');
+	xmlFileWriter.write('            	<ProductCode>'+productLineItem.product.custom.itemCode+'</ProductCode>\n');
+	xmlFileWriter.write('            	<OfferCode>'+productLineItem.productID+'</OfferCode>\n');
+	xmlFileWriter.write('            	<Qty>'+productLineItem.quantity.value+'</Qty>\n');
+	xmlFileWriter.write('            	<PriceExtended>'+productLineItem.product.priceModel.price.value+'</PriceExtended>\n');
+	var shipAmtStr : String = "";
+	if(!empty(productLineItem.shippingLineItem)){
+		shipAmtStr = ""+(productLineItem.shippingLineItem.adjustedPrice.value / productLineItem.quantityValue);
+	}else{
+		shipAmtStr = ""+(productLineItem.shipment.shippingTotalPrice.value / productLineItem.quantityValue);
+	}
+	log.debug("ShipAmt = "+shipAmtStr);
+	xmlFileWriter.write('            	<ShipAmt>'+shipAmtStr+'</ShipAmt>\n');
+	xmlFileWriter.write('            </Product>\n');
+}
+
+function getCCNumber(paymentInstrument : dw.order.PaymentInstrument) {
+    var ccNumber : String = paymentInstrument.
+        getEncryptedCreditCardNumber(dw.order.PaymentInstrument.ENCRYPTION_ALGORITHM_RSA, 
+                                     getPublicKey());
+     ccNumber = (new dw.crypto.Cipher()).decrypt(ccNumber, 
+                                      getPrivateKey(),
+                                      dw.order.PaymentInstrument.ENCRYPTION_ALGORITHM_RSA,
+                                      '', 
+                                      0);
+	return ccNumber;
+}
+
+
+function getPrivateKey() {
+
+	
+	 var privateKeyPKS = ""+
+	
+		
+			"MIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQCeh7p7deW8UuCg"+
+			"vIoihG8HDa5xy7w9FwtZzd9AYocFnyyWfdoTYWEthkNvs0xavfQ+rrUTz6hrkouL"+
+			"3ot0FI8NiQL5z/8j78S2Cv/ivG2B8vX/+559adtRtxmBONfp3Nkuy6C6CVMkJZWd"+
+			"sPzgCzv6S1nsz8idL0uRJmsO4PiMEOLv4x7/x4vALU/EiqZSeRzhgNzedz9Jd5Ng"+
+			"PbxNeTdmMOFEhD80O4eZzJrwY+v1GcxgHdbLYPawWPDbCZRfyegpOBvr4Dv/9dWg"+
+			"vyYZiIocl1Y5c0KY+827wZVXaGIl9UNl9nOkG9sdjXYiWUcwn9lFkmWY7wsJN0t6"+
+			"LeavWyDbAgMBAAECggEACZCCzcQVMkGFz+zQILkAwdovdioml0D2rFphZ88J+mra"+
+			"E9JP/+9WH5sEIo8cwjTHsah0wFc9ABB9Xtj0bPJ4lwZ3KX9FE3P52Endml5n9Pkl"+
+			"omYZ79MdKlbzsPou/KsYZ1xdvBun6nxiBHuTJilHWxiEumbm4aTi2EULHICyPjEG"+
+			"Tkzcp53bhfqzITRiQ6J13Nq+T+rYAvqbJBlp20Y7Ik4n8UZ57y/E09fw0/lqz842"+
+			"81pONmXwdvIOPFM+6mCFbmrgn24i8TCgFO9fOuaoAC2wP9Sr3yPRAIcTvlFnqmDW"+
+			"vSZ6WDfuW7Ultl5I0Bky2Ir6h9Qywc1KEHHW0rA2wQKBgQDPh8Rn8+ic1bXb+HdQ"+
+			"Y5YClskM5zh3qikDlhGiWDSYQqG3xbmZIxlGBr+ZpBSpFcLWPYHGLhCJ+1yxgBsE"+
+			"Qt9f1e5PB0cnpdhZS0Y4oIQpIsiPkMeE5xB2GqKEgrl/GF8x7M7xPrn1RyViUH5L"+
+			"Kh34eqaA4EeUCSMZhJqPQOEFcQKBgQDDjj5gxo+cs2tWifAmJoVBcSMVVEXoAYyU"+
+			"RrR00J3xVGwvGaIrdmnc22Ku8tEWggqDkLk6ZNjZrfWRKuzMm9oZjSZh6j8PeZvq"+
+			"CiUjMWq/D3PY0Yeh/x1yBdvX5Q3Ns48A5jwhfjn6Ufif9VXsM/UP8YVEv/zjxWrV"+
+			"ANjssse1CwKBgHtsAyLPrEeZ0c5AtrTYhR6FDozd9nc0e6/mUBZ83squ1f61WOv6"+
+			"M82xtcFqE997UaSYb9WtD6kAFOB7j5W5L5+PW2skqOyrdT+lxN1omTDdvumi8QXZ"+
+			"ZbDXpk+obylnFTZb37cZ1v5IkbMmq/WH1sswJlX/DJK93GIQutr3etwBAoGBAKkn"+
+			"dHufpgAFDtcHcCx/64plA9TiVanPFTv5QQU+ozBqNz4yrR1tSzsYpe7w6L3QdKnD"+
+			"WQXSz+TTXfRZLgX61hh+CPJvfmazaZNzfRZJG63y/uFQtUMCewTzXmwMnPkO1acQ"+
+			"gHj0R9BocWhj/hPYCaXl48JJU8XuMW/YUMvGBYtrAoGBAMkM5z8s9yJqzNnIAuXp"+
+			"cX11Fxo+XRGuOWh+xg8FUqqIuG1KiCoRrM7TbsGVJDnDsDSaGOzrNYLFK+2rGdz3"+
+			"P8EYKf0Gqo7U0t2RqdLemHcrumCKJ7VmWTOXA2m2xm4A9mB6CTYewBpP3fnOTIZx"+
+			"v5NhXeLVNb/1WxysOC00Csjj";
+			
+				
+	return privateKeyPKS;
+  
+}
+
+function getPublicKey() {
+  var publicKey = ""+
+
+		"MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAnoe6e3XlvFLgoLyKIoRv"+
+		"Bw2uccu8PRcLWc3fQGKHBZ8sln3aE2FhLYZDb7NMWr30Pq61E8+oa5KLi96LdBSP"+
+		"DYkC+c//I+/Etgr/4rxtgfL1//uefWnbUbcZgTjX6dzZLsuguglTJCWVnbD84As7"+
+		"+ktZ7M/InS9LkSZrDuD4jBDi7+Me/8eLwC1PxIqmUnkc4YDc3nc/SXeTYD28TXk3"+
+		"ZjDhRIQ/NDuHmcya8GPr9RnMYB3Wy2D2sFjw2wmUX8noKTgb6+A7//XVoL8mGYiK"+
+		"HJdWOXNCmPvNu8GVV2hiJfVDZfZzpBvbHY12IllHMJ/ZRZJlmO8LCTdLei3mr1sg"+
+		"2wIDAQAB";
+
+  return publicKey;
+}
+
+// In order to switch-out GR1 and GR2 export schemes into a unified process, I am
+//  adding this function to differentiate.
+//
+// Currently it relies on the fact that GR2 has no credit card encryption.
+
+function getOrderExportStyle() : String {
+	var ccEncryptKey : String = Site.getCurrent().getCustomPreferenceValue("grCCEncryptionKey");
+	
+	return (empty(ccEncryptKey) ? "gr2" : "gr1" );
+}
+
+function writeGR1OrderExportToFile( args, xmlFileWriter, orders, startDate, endDate, ordersOut, failedOrders ) {
+	var startdate : Number = new Date().getTime();
+
+	// Write XML header to file
+	try {
+		xmlFileWriter.writeLine('<?xml version="1.0" encoding="UTF-8" ?>'); 
+		xmlFileWriter.writeLine('<orderReport reportId="'+args.ReportId+'" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="orderFeed_1-0.xsd">');
+		xmlFileWriter.writeLine('  <xsdVersion>v1.0</xsdVersion>');
+		xmlFileWriter.writeLine('  <clientId>Demandware</clientId>');
+		xmlFileWriter.writeLine('  <reportStartDate>'+StringUtils.formatCalendar( new Calendar(startDate), "yyyy-MM-dd'T'HH:mm:ss'Z'" )+'</reportStartDate>');
+		xmlFileWriter.writeLine('  <reportEndDate>'+StringUtils.formatCalendar( new Calendar(endDate), "yyyy-MM-dd'T'HH:mm:ss'Z'" )+ '</reportEndDate>');
+		xmlFileWriter.flush();
+	}
+	catch(e) {
+		trace("ExportGROrder: Could not write GR1 header for XML file");
+		Logger.getLogger("simplefeeds").error("ExportGROrder: Could not write header for XML file");
+		var enddate : Number = new Date().getTime();
+		Logger.getLogger("simplefeeds").error("ExportGROrder: Export Runtime:"+(startdate-enddate)/1000+"s");
+		args.Status = new Status(Status.ERROR,"IMPEX-130");
+		return PIPELET_ERROR;
+	}
+
+	var order : Order;
+	var orderWriter : StringWriter = new StringWriter();
+	
+	while(orders.hasNext()){
+		order = orders.next();
+		try {
+			addOrder( orderWriter, order );
+		}
+		catch(e) {
+			Logger.error(e);
+			trace("ExportGROrder: Could not write data for order number " + order.orderNo);
+			Logger.getLogger("simplefeeds").fatal("ExportGROrder: Could not write data for order number " + order.orderNo);
+
+			orderWriter.close();
+			orderWriter = new StringWriter();
+			failedOrders.add(order);
+			continue;
+		}
+		try {
+			xmlFileWriter.write(orderWriter.toString());
+			ordersOut.add(order);
+			Logger.getLogger("simplefeeds").info("ExportGROrder: Processed data for order number " + order.orderNo);
+		} catch(e) {
+			Logger.error(e);
+			trace("ExportGROrder: Could not write data for order number " + order.orderNo);
+			Logger.getLogger("simplefeeds").error("ExportGROrder: Could not write data for order number " + order.orderNo);
+		}
+		orderWriter.close();
+		orderWriter = new StringWriter();
+	}	
+	
+	orderWriter.close();
+	
+	// Write XML footer to file
+	try {
+		xmlFileWriter.writeLine('</orderReport>');
+		xmlFileWriter.flush();
+	}
+	catch(e) {
+		trace("ExportGROrder: Could not write footer for XML file");
+		Logger.getLogger("simplefeeds").error("ExportGROrder: Could not write footer for XML file");
+		var enddate : Number = new Date().getTime();
+		Logger.getLogger("simplefeeds").error("ExportGROrder: Export Runtime:"+(startdate-enddate)/1000+"s");
+		args.Status = new Status(Status.ERROR,"IMPEX-130");
+		return PIPELET_ERROR;
+	}
+	return PIPELET_NEXT;
+}	
+
+
+function addValidatorOrderReport(xmlWriter : Writer, order : Basket, orderNumber : String, userStatus : String) {
+	var startDate : Date = new Date();
+	var endDate : Date = new Date();
+
+	// Write XML header to file
+	xmlWriter.write('<orderReport xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="orderFeed_1-0.xsd" reportId="'+UUIDUtils.createUUID()+'"> \n');
+	xmlWriter.write('	<xsdVersion>v1.0</xsdVersion>\n');
+	xmlWriter.write('	<clientId>Demandware</clientId>\n');
+	xmlWriter.write('	<reportStartDate>'+StringUtils.formatCalendar( new Calendar(startDate), "yyyy-MM-dd'T'HH:mm:ss'Z'" )+'</reportStartDate>\n');
+	xmlWriter.write('	<reportEndDate>'+StringUtils.formatCalendar( new Calendar(endDate), "yyyy-MM-dd'T'HH:mm:ss'Z'" )+ '</reportEndDate>\n');
+
+	addOrder( xmlWriter, order, orderNumber, userStatus);
+	
+	xmlWriter.write('</orderReport>\n');
+}
+
+// Abstracted to use either Basket or Order as object of reference
+function addOrder(xmlWriter : Writer, order : LineItemCtnr, orderNumber : String, userStatus : String) {
+	var orderNo : String = 'dummy-order';
+	if( empty(orderNumber) && 'orderNo' in order && !empty(order.orderNo) ) {
+		orderNo = order['orderNo'];
+	} else {
+		orderNo = orderNumber;	
+	}
+	
+	xmlWriter.write('	<order orderId="'+orderNo+'">\n');
+			
+	if( 'validatorId' in order.custom ) {
+		xmlWriter.write('		<validationId>'+order.custom['validatorId']+'</validationId>\n');
+	} else {
+		xmlWriter.write('		<validationId></validationId>\n');
+		//log.fatal("Need to extend meta-data to include validatorId custom attribute.");
+	}
+	if( 'preAuthId' in order.custom ) {
+		xmlWriter.write('		<preAuthId>'+order.custom['preAuthId']+'</preAuthId>\n');
+	} else {
+		xmlWriter.write('		<preAuthId></preAuthId>\n');
+		//log.fatal("Need to extend meta-data to include preAuthId custom attribute.");
+	}
+	
+	addOrderDetails(xmlWriter, order);
+	addAccountInfo(xmlWriter, order, userStatus);
+	addUserInfo(xmlWriter, order);
+	
+	for each( var pi in order.getPaymentInstruments() ) {
+		addPaymentInstrument(xmlWriter, pi, order);
+	}
+	var coreItemId : String = getExclusiveProductId(order);
+	var pliCount : Number = 0;
+	var firstProductOfferCode = null;
+	//var orderKeyCode : String = ('keyCode' in order.custom && !empty(order.custom['keyCode'])) ? order.custom['keyCode'] : '' ;
+	for each( var pli in order.getProductLineItems() ) {
+		if(!pli.bonusProductLineItem){
+			addProductLineItem(xmlWriter, pli, coreItemId, order, pliCount, firstProductOfferCode);
+		}
+		if(pliCount == 0 && order.custom.cartID == '54'){
+			firstProductOfferCode = pli.productID;
+		}
+		pliCount++;
+	}
+	
+	addBillingAddress(xmlWriter, order);
+	
+	for each( var shipment in order.getShipments() ) {
+		addShipment(xmlWriter, shipment);	
+	}
+	
+	addRTSToken(xmlWriter, order);
+	
+	xmlWriter.write('	</order>\n');
+}
+
+function addRTSToken(xmlWriter : Writer, order : LineItemCtnr) {
+	if('rtsToken' in order.custom && !empty(order.custom['rtsToken'])){
+		xmlWriter.write('		<creditManagement>\n');
+		xmlWriter.write('			<rts>\n');
+		xmlWriter.write('				<token>'+order.custom['rtsToken']+'</token>\n');
+		xmlWriter.write('			</rts>\n');
+		xmlWriter.write('		</creditManagement>\n');
+	}
+}
+function addOrderDetails(xmlWriter : Writer, order : LineItemCtnr) {
+	xmlWriter.write('		<orderDetails>\n');
+	//xmlFileWriter.write('		<!--  order status (new, update) -->\n');
+	if( 'validatorId' in order.custom && !empty(order.custom.validatorId) ) {
+		xmlWriter.write('			<orderStatus>cooked</orderStatus>\n');
+	} else {
+		xmlWriter.write('			<orderStatus>raw</orderStatus>\n');
+	}
+	//xmlFileWriter.write('		<!--  siteID identifies order source -->\n');
+	xmlWriter.write('			<siteId>'+Site.current.ID+'</siteId>\n');
+	if( 'cartID' in order.custom && !empty(order.custom.cartID) ) {
+		xmlWriter.write('			<cartId>'+((order.custom['cartID'])-0).toFixed(0)+'</cartId>\n');
+	} else {
+		xmlWriter.write('			<cartId>1</cartId>\n');
+	}
+	// DW captures the referrrel URL as www.google.com/abc?...., GR wants host+path as referrel url and then the querystring separate
+	// first try to get it from the session in which case we are sending a validator api call otherwise we are running order export
+	var sessionRefUrl 		: String = (session && 'originalReferer' in session.privacy && !empty(session.privacy['originalReferer']) ? session.privacy['originalReferer']:'');
+	var referrerUrl 		: String = !empty(sessionRefUrl) ? sessionRefUrl: ('referrerUrl' in order.custom && !empty(order.custom.referrerUrl)? order.custom.referrerUrl:'');
+	var sessionQueryString 	: String = (session && 'originalQueryString' in session.privacy && !empty(session.privacy['originalQueryString']) ? session.privacy['originalQueryString']:'');
+	var queryString 		: String = !empty(sessionQueryString) ? sessionQueryString:('queryString' in order.custom && !empty(order.custom.queryString)? order.custom.queryString:'');
+	
+	log.info("referrerUrl "+referrerUrl);
+	log.info("queryString "+queryString);
+
+	if( 'renderingGroup' in order.custom && !empty(order.custom['renderingGroup']) ) {
+		xmlWriter.write('			<renderingExperience>'+order.custom.renderingGroup+'</renderingExperience>\n');
+	}
+	if( 'deviceCategory' in order.custom && !empty(order.custom['deviceCategory']) ) {
+		xmlWriter.write('			<deviceGroup>'+order.custom.deviceCategory+'</deviceGroup>\n');
+	}
+	if( 'device' in order.custom && !empty(order.custom['device']) ) {
+		xmlWriter.write('			<device>'+order.custom.device+'</device>\n');
+	}
+	
+	//xmlFileWriter.write('		<!--  queryString is the parameters passed by referrer when user landed onsite  -->\n');
+	xmlWriter.write('			<queryString><![CDATA['+queryString+']]></queryString>\n');
+
+	xmlWriter.write('			<orderDate>'+StringUtils.formatCalendar( new Calendar(order.creationDate), "yyyy-MM-dd'T'HH:mm:ss'Z'" )+ '</orderDate>\n');
+	xmlWriter.write('			<ipAddress>'+(empty(order.custom.customerIPAddress)? '127.0.0.1': order.custom.customerIPAddress)+'</ipAddress>\n'); 
+	
+	if( 'userId' in order.custom && !empty(order.custom['userId']) ) {
+		xmlWriter.write('			<visitorId>'+order.custom.userId+'</visitorId>\n');
+	} else if( !empty(request.httpCookies['cookie_uid']) && !empty(request.httpCookies['cookie_uid'].value) ) {
+		xmlWriter.write('			<visitorId>'+request.httpCookies['cookie_uid'].value+'</visitorId>\n');
+	} else {
+		xmlWriter.write('			<visitorId></visitorId>\n');
+	}
+	
+	xmlWriter.write('			<referrerUrl><![CDATA['+referrerUrl+']]></referrerUrl>\n');
+	
+	// Validator can use cookies, order export will have the values themselves on the order object
+	if( 'campaignCode' in order.custom && !empty(order.custom['campaignCode']) ) {
+		xmlWriter.write('			<campaignCode>'+order.custom['campaignCode']+'</campaignCode>\n');
+	} else if( !empty(request.httpCookies['campaign']) && !empty(request.httpCookies['campaign'].value) ) {
+		xmlWriter.write('			<campaignCode>'+request.httpCookies['campaign'].value+'</campaignCode>\n');
+	}
+	if( 'uciCode' in order.custom && !empty(order.custom['uciCode']) ) {
+		xmlWriter.write('			<uci>'+order.custom['uciCode']+'</uci>\n');		
+	} else if( !empty(request.httpCookies['uci']) && !empty(request.httpCookies['uci'].value) ) {
+		xmlWriter.write('			<uci>'+request.httpCookies['uci'].value+'</uci>\n');
+	}
+	if( 'secondaryUCI' in order.custom && !empty(order.custom['secondaryUCI']) ) {
+		xmlWriter.write('			<uci>'+order.custom['secondaryUCI']+'</uci>\n');		
+	} else if( !empty(request.httpCookies['secondaryuci']) && !empty(request.httpCookies['secondaryuci'].value) ) {
+		xmlWriter.write('			<uci>'+request.httpCookies['secondaryuci'].value+'</uci>\n');
+	}
+	if( 'authCode' in order.custom && !empty(order.custom['authCode']) ) {
+		xmlWriter.write('			<rafRefKey>'+order.custom['authCode']+'</rafRefKey>\n');		
+	} else if( !empty(session) && !empty(session.custom.ukey) ) {
+		xmlWriter.write('			<rafRefKey>'+session.custom.ukey+'</rafRefKey>\n');
+	}
+	
+	if( 'sessionID' in order.custom && !empty(order.custom['sessionID']) ) {
+		xmlWriter.write('			<customerSessionId>'+order.custom['sessionID']+'</customerSessionId>\n');
+	} else if( !empty(request.session.sessionID) ) {
+		xmlWriter.write('			<customerSessionId>'+request.session.sessionID+'</customerSessionId>\n');
+	}
+	
+	if( 'userId' in order.custom && !empty(order.custom['userId']) ) {
+		xmlWriter.write('			<customerUserId>'+order.custom.userId+'</customerUserId>\n');
+	} else if( !empty(request.httpCookies['cookie_uid']) && !empty(request.httpCookies['cookie_uid'].value) ) {
+		xmlWriter.write('			<customerUserId>'+request.httpCookies['cookie_uid'].value+'</customerUserId>\n');
+	} else {
+		xmlWriter.write('			<customerUserId></customerUserId>\n');
+	}
+	
+	//xmlWriter.write('			<campaignCode>'+order.custom['campaignCode']+'</campaignCode>\n');
+	//xmlWriter.write('			<uci>'+order.custom['uciCode']+'</uci>\n');
+	xmlWriter.write('			<currency>'+order.currencyCode+'</currency>\n');
+	if( 'affiliatePartnerID' in order && !empty(order.affiliatePartnerID)) {
+		xmlWriter.write('			<affiliateId>'+order['affiliatePartnerID']+'</affiliateId>\n');
+	} else {
+//		xmlWriter.write('			<affiliateId></affiliateId>\n');
+	}
+	xmlWriter.write('			<totalProductAmount>'+order.getAdjustedMerchandizeTotalNetPrice().value.toFixed(2)+'</totalProductAmount>\n');                                                            
+	xmlWriter.write('			<totalShippingAmount>'+order.getAdjustedShippingTotalNetPrice().value.toFixed(2)+'</totalShippingAmount>\n');                                                            
+	xmlWriter.write('			<totalTaxAmount>'+order.getTotalTax().value.toFixed(2)+'</totalTaxAmount>\n');                                                            
+	xmlWriter.write('			<totalOrderAmount>'+order.getTotalGrossPrice().value.toFixed(2)+'</totalOrderAmount>\n'); 
+	xmlWriter.write('		</orderDetails>\n');	
+}
+
+function generateTemporaryPassword() {
+	var dwgr = getGRUtils();
+	
+	return 	new dwgr.grutil.SystemGeneratedPassword().get();
+}
+
+function addAccountInfo(xmlWriter : Writer, order : Order, userStatus : String) {
+	var passwordType : String = null;
+	if(order.custom.cartID == "54" || order.custom.cartID == "55" || order.custom.cartID == "67"){ //means retention site
+		passwordType = order.custom['passwordType'] || "none";
+	}else{
+		passwordType = order.custom['passwordType'] || "permanent";
+	}
+	
+	var password : String = order.custom['accountPassword'];
+	
+	//refactor//
+	if( empty(password) && (order.custom.cartID == "1" || order.custom.cartID == "2" || order.custom.cartID == "3"  || order.custom.cartID == "4" || order.custom.cartID == "47" ||order.custom.cartID == "55" || order.custom.cartID=="59" || order.custom.cartID=="60" || order.custom.cartID == "15" || order.custom.cartID == "61" || order.custom.cartID == "46" ||order.custom.cartID == "90" || order.custom.cartID=="91" || order.custom.cartID == "48" || order.custom.cartID == "95" || order.custom.cartID == "96" || order.custom.cartID == "62" || order.custom.cartID == "100" || order.custom.cartID == "101" || order.custom.cartID == "102" || order.custom.cartID == "69" || order.custom.cartID == "68" || order.custom.cartID == "71" || order.custom.cartID == "105" || order.custom.cartID == "72" || order.custom.cartID == "74" || order.custom.cartID == "75"  ||  order.custom.cartID == "106" ||  order.custom.cartID == "202" || order.custom.cartID == "203" || order.custom.cartID == "210" || order.custom.cartID == "211" || order.custom.cartID == "204") ) {
+
+		if (order.custom.cartID == "55") {
+			password = "";
+			passwordType = "none";
+			order.custom['accountPassword'] = password;
+			//order.custom['passwordType'] = passwordType;
+		} else {
+			if(userStatus == "inactive"){
+				//adding code for CR for Proactiv Plus
+				if(Site.getCurrent().getCustomPreferenceValue("GRMProductLine") =="P4"){
+					passwordType = "none";
+					password="";
+				} else {
+					password = generateTemporaryPassword();
+					passwordType = "temporary";
+				}
+			} else if(userStatus == "active"){
+				password="";
+				passwordType="none";
+			}
+			order.custom['accountPassword'] = password;
+			order.custom['passwordType'] = passwordType;
+		}
+	} else if(order.custom.cartID == "70"){
+		passwordType="none";
+		password="";
+		order.custom['accountPassword'] = password;
+		order.custom['passwordType'] = passwordType;
+	} else if(!empty(password)){
+		if (order.custom.cartID != "55" || order.custom.cartID != "54") {//condition for not retention
+			if(userStatus == "inactive"){
+				passwordType="permanent";
+				order.custom['accountPassword'] = password;
+				order.custom['passwordType'] = passwordType;
+			}
+		}
+	}
+	
+	xmlWriter.write('		<accountInfo>\n');
+	
+	var email : String = order.customerEmail;
+	if( empty(email) && 'customerEmail' in order.custom) {
+		email = order.custom['customerEmail'];	
+	}
+	else if (empty(email)) {
+		// This is bad and should NOT happen i.e. validtor would fail with empty email
+		email = '';
+		log.fatal("No Email Address found!");
+	}
+	
+	xmlWriter.write('			<email>'+email+'</email>\n');
+	
+	// passwordType is temporary or permanent or none
+	xmlWriter.write('			<passwordType>'+passwordType+'</passwordType>\n');
+	
+	//if order is from retention then send empty password, as user is already logged in
+	if(order.custom.cartID == "54" || order.custom.cartID == "55"){
+		xmlWriter.write('			<password></password>\n');
+	}else{
+		xmlWriter.write('			<password><![CDATA['+password+']]></password>\n');
+	}
+	if( 'winbackAccountNumber' in order.custom && !empty(order.custom['winbackAccountNumber']) ) {
+		xmlWriter.write('			<accountNumber>'+order.custom['winbackAccountNumber']+'</accountNumber>\n');
+	} else {
+		if( 'accountNumber' in order.custom && !empty(order.custom['accountNumber']) ) {
+		xmlWriter.write('			<accountNumber>'+order.custom['accountNumber']+'</accountNumber>\n');
+	}else{
+		if( 'ffcTransactionId' in order.custom && !empty(order.custom['ffcTransactionId']) &&  'grcOrderId' in order.custom && !empty(order.custom['grcOrderId'] && order.custom.cartID == "54")){
+			xmlWriter.write('			<transactionId>'+order.custom['ffcTransactionId']+'</transactionId>\n');
+			xmlWriter.write('			<grcOrderId>'+order.custom['grcOrderId']+'</grcOrderId>\n');
+		}else{
+			xmlWriter.write('			<accountNumber></accountNumber>\n');
+		}
+	}
+	}
+	
+	//adding new fields mwid & fulfillmentInfo
+	if('mwid' in order.custom && !empty(order.custom.mwid)){
+		xmlWriter.write('			<mwid>'+order.custom.mwid+'</mwid>\n');
+	}else{
+		xmlWriter.write('			<mwid></mwid>\n');
+	}
+	if (order.custom['cartID'] != '55') {
+			xmlWriter.write('			<fulfillmentInfo>\n');
+			
+			if('customerStatus' in order.custom && !empty(order.custom['customerStatus'])){
+				xmlWriter.write('				<customerStatus>'+order.custom['customerStatus']+'</customerStatus>\n');
+			}else{
+				xmlWriter.write('				<customerStatus></customerStatus>\n');
+			}
+			
+			if('customerSegment' in order.custom && !empty(order.custom['customerSegment'])){
+				xmlWriter.write('				<customerSegment>'+order.custom['customerSegment']+'</customerSegment>\n');
+			}
+			
+			if('customerStatusCode' in order.custom && !empty(order.custom['customerStatusCode'])){
+				xmlWriter.write('				<customerStatusCode>'+order.custom['customerStatusCode']+'</customerStatusCode>\n');
+			}else{
+				xmlWriter.write('				<customerStatusCode></customerStatusCode>\n');
+			}
+			xmlWriter.write('			</fulfillmentInfo>\n');
+	 }
+	 xmlWriter.write('		</accountInfo>\n'); 
+}
+
+function addUserInfo(xmlWriter : Writer, order : LineItemCtnr) {
+	
+	if( 'userInfoAge' in order.custom && !empty(order.custom['userInfoAge']) ) {
+		xmlWriter.write('		<userInfo>\n');
+		xmlWriter.write('			<fieldName>age</fieldName>\n');
+		xmlWriter.write('			<fieldType>integer</fieldType>\n');
+		xmlWriter.write('			<fieldValue><![CDATA['+order.custom['userInfoAge']+']]></fieldValue>\n');
+		xmlWriter.write('		</userInfo>\n');
+	}
+	if( 'userInfoGender' in order.custom && !empty(order.custom['userInfoGender']) ) {
+		xmlWriter.write('		<userInfo>\n');
+		xmlWriter.write('			<fieldName>gender</fieldName>\n');
+		xmlWriter.write('			<fieldType>string</fieldType>\n');
+		xmlWriter.write('			<fieldValue><![CDATA['+order.custom['userInfoGender']+']]></fieldValue>\n');
+		xmlWriter.write('		</userInfo>\n');
+	}	
+	
+}
+
+// stub function for returning userInfo fieldType
+function fieldTypeForField( fieldName : String ) : String {
+	// TODO: Site pref based on JSON config?
+	var lookup = {
+		"custom.someProperty":"string"
+	};
+	var fieldType : String = lookup[fieldName];
+	if( empty(fieldType) ) {
+		fieldType = 'string';	
+	}
+	return fieldType;
+}
+
+function ifExistsPrint(something) {
+		var nothing = "";
+		if( !empty(something) ) {
+			return something;
+		} else {
+			return nothing;
+		}
+}
+
+function addBillingAddress(xmlWriter : Writer, order : LineItemCtnr ) {
+	var billingPhoneNumber = "";
+	if (!empty(order.billingAddress.phone)) {
+		billingPhoneNumber = order.billingAddress.phone;
+	}
+	xmlWriter.write('		<billingAddress>\n');
+	xmlWriter.write('			<title><![CDATA['+ifExistsPrint(order.billingAddress.title)+']]></title>\n');
+	xmlWriter.write('			<firstName><![CDATA['+ifExistsPrint(order.billingAddress.firstName)+']]></firstName>\n');                          
+	xmlWriter.write('			<lastName><![CDATA['+ifExistsPrint(order.billingAddress.lastName)+']]></lastName>\n');
+	xmlWriter.write('			<suffix><![CDATA['+ifExistsPrint(order.billingAddress.suffix)+']]></suffix>\n');
+	xmlWriter.write('			<address><![CDATA['+ifExistsPrint(order.billingAddress.address1)+']]></address>\n');         
+	if( !empty(order.billingAddress.address2) ) {       
+		xmlWriter.write('			<address><![CDATA['+order.billingAddress.address2+']]></address>\n');      
+	}          
+	xmlWriter.write('			<city><![CDATA['+ifExistsPrint(order.billingAddress.city)+']]></city>\n');                                          
+	xmlWriter.write('			<state><![CDATA['+ifExistsPrint(order.billingAddress.stateCode)+']]></state>\n');
+	xmlWriter.write('			<postalCode><![CDATA['+ifExistsPrint(order.billingAddress.postalCode)+']]></postalCode>\n');
+	xmlWriter.write('			<countryCode><![CDATA['+ifExistsPrint(order.billingAddress.countryCode)+']]></countryCode>\n'); 
+	xmlWriter.write('			<dayPhone><![CDATA['+ifExistsPrint(billingPhoneNumber)+']]></dayPhone>\n');
+
+	if( !empty(order.custom.eveningPhone) ) {
+		xmlWriter.write('			<eveningPhone><![CDATA['+order.custom.eveningPhone+']]></eveningPhone>\n'); 
+	}
+	xmlWriter.write('		</billingAddress>\n');	
+}
+
+function addPaymentInstrument(xmlWriter : Writer, pi : PaymentInstrument, order : LineItemCtnr) {
+	var payMethod : String = pi.getPaymentMethod();
+	
+	var ccEncryptKey : String = Site.getCurrent().getCustomPreferenceValue("grCCEncryptionKey");
+	var ccEncryptType : String = Site.getCurrent().getCustomPreferenceValue("grEncryptionType");
+	
+	var ccNum : String = null;
+	
+	if( !empty(ccEncryptKey) ) {
+		ccNum = pi.getEncryptedCreditCardNumber(ccEncryptType, ccEncryptKey);	
+	} else {
+		ccNum = getCCNumber(pi);
+	}
+
+	xmlWriter.write('		<payment>\n');
+		// TODO: Winback related
+	
+	if( payMethod==PaymentInstrument.METHOD_CREDIT_CARD ) {
+		if('sequenceNumber' in pi.custom && !empty(pi.custom['sequenceNumber']) && "null" != pi.custom['sequenceNumber']){ 
+			//checkout using continuity credit card File Payment
+			xmlWriter.write('			<onFile>\n');
+			if(pi.creditCardType == "Master"){
+				xmlWriter.write('				<paymentType>MasterCard</paymentType>\n');
+			}else{
+				xmlWriter.write('				<paymentType>'+pi.creditCardType+'</paymentType>\n');
+			}
+			xmlWriter.write('				<sequenceNumber>'+pi.custom['sequenceNumber']+'</sequenceNumber>\n');
+
+			if (!empty(pi.creditCardExpirationYear) && !empty(pi.creditCardExpirationMonth)) { 
+				var expireCal : dw.util.Calendar = new Calendar();
+				expireCal.set(pi.creditCardExpirationYear, pi.creditCardExpirationMonth, 0);
+			    xmlWriter.write('<expDate>'+StringUtils.formatCalendar( expireCal, "yyyy-MM-dd" )+'</expDate>\n');
+			} else {
+				Logger.debug("\nInvalid credit card Expiration Date Found.");				
+			}	
+
+			xmlWriter.write('				<ccLastFour>'+pi.getCreditCardNumberLastDigits(4)+'</ccLastFour>\n');
+			xmlWriter.write('			</onFile>\n');
+		}else{ // normal checkout
+			if( !empty(ccEncryptKey) ) {
+				ccNum = pi.getEncryptedCreditCardNumber(ccEncryptType, ccEncryptKey);	
+			} else {
+				ccNum = getCCNumber(pi);
+			}
+			xmlWriter.write('			<creditCard>\n');
+			if(pi.creditCardType == "Master"){
+			xmlWriter.write('				<paymentType>MasterCard</paymentType>\n');
+			}else{
+			xmlWriter.write('				<paymentType>'+pi.creditCardType+'</paymentType>\n');
+			}
+			xmlWriter.write('				<ccNumber>'+ccNum+'</ccNumber>\n');
+	
+			var expireCal : dw.util.Calendar = new Calendar();
+			expireCal.set(pi.creditCardExpirationYear, pi.creditCardExpirationMonth, 0);
+			xmlWriter.write('<expDate>'+StringUtils.formatCalendar( expireCal, "yyyy-MM-dd" )+'</expDate>\n');		
+	
+			xmlWriter.write('				<cvv2></cvv2>\n');
+			xmlWriter.write('				<ccLastFour>'+pi.getCreditCardNumberLastDigits(4)+'</ccLastFour>\n');
+			xmlWriter.write('			</creditCard>\n');
+		}
+	}else if( payMethod=="ONFILE" ) {
+		xmlWriter.write('			<onFile>\n');
+		if(pi.creditCardType == "Master"){
+			xmlWriter.write('				<paymentType>MasterCard</paymentType>\n');
+		}else{
+			xmlWriter.write('				<paymentType>'+pi.creditCardType+'</paymentType>\n');
+		}
+		xmlWriter.write('				<sequenceNumber>'+pi.custom.sequenceNumber+'</sequenceNumber>\n');
+		var expireCal : dw.util.Calendar = new Calendar();
+		expireCal.set(pi.creditCardExpirationYear, pi.creditCardExpirationMonth, 0);
+		xmlWriter.write('<expDate>'+StringUtils.formatCalendar( expireCal, "yyyy-MM-dd" )+'</expDate>\n');
+		xmlWriter.write('				<ccLastFour>'+pi.getCreditCardNumberLastDigits(4)+'</ccLastFour>\n');
+		xmlWriter.write('			</onFile>\n');
+	} else if( payMethod==PaymentInstrument.METHOD_GIFT_CERTIFICATE ) {
+// TODO: not defined yet 
+		xmlWriter.write('			<prePay>\n');
+		xmlWriter.write('				<prepayIssuer></prepayIssuer>\n');
+		xmlWriter.write('				<prepaySerialNumber></prepaySerialNumber>\n');
+		xmlWriter.write('				<prepayPin></prepayPin>\n');
+		xmlWriter.write('			</prePay>\n');
+	} else if( payMethod=="PayPal" ) {
+// TODO: not defined yet
+		xmlWriter.write('			<payPal>\n');
+		xmlWriter.write('				<billingAgreementId>'+pi.custom['paypalBillingAgreementID']+'</billingAgreementId>\n');
+		xmlWriter.write('			</payPal>\n');
+	}else if( payMethod == dw.web.Resource.msg('payMethods.echeck.ID', 'configuration', null)) {
+		
+		var pubKey = "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAk/bDEAA6PyW4I5fnoUMqNfIcf6AR71H7VzB4S9dj5eS/lHCTCpAbA9cYc/sgYeuCENY8w/cny18X5mo0nMi3PV9Fkqrn6ELYg1q5t5HUCEkMO5PhCV4qrqXwmfBu36Dr48GxWEbxghFlBDwXBxBkS7x+AFoFreOtTQ0VKpPLm7sVz56SzwQE5lw4lF4MxcDCbRD0haPoDbhssObEp0ZqISXOQil3zBWmqYTJmoqW6evgVYMPX94xeklAYHHNunC3vmcWxDffHPqdfU871cS5meuY6ZTjeo3H7sb1nqzYXK+j/SjbdRoORJ9evsRc4ud7t+fV3Z+AmSwGf8sSRGcouQIDAQAB";
+		var priKey = "MIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQCT9sMQADo/Jbgjl+ehQyo18hx/oBHvUftXMHhL12Pl5L+UcJMKkBsD1xhz+yBh64IQ1jzD9yfLXxfmajScyLc9X0WSqufoQtiDWrm3kdQISQw7k+EJXiqupfCZ8G7foOvjwbFYRvGCEWUEPBcHEGRLvH4AWgWt461NDRUqk8ubuxXPnpLPBATmXDiUXgzFwMJtEPSFo+gNuGyw5sSnRmohJc5CKXfMFaaphMmaipbp6+BVgw9f3jF6SUBgcc26cLe+ZxbEN98c+p19TzvVxLmZ65jplON6jcfuxvWerNhcr6P9KNt1Gg5En16+xFzi53u359Xdn4CZLAZ/yxJEZyi5AgMBAAECggEAOjXvYcElKSi2u9IMP4ZD+fspORCJXcS8A/4+pV+0noIS2Nw9DP/KkQUzSpW2lK9peSQ/vbzjfAAKUAzia/gPFub/YQc5u0dpFKxBujV13FiYpmu0MdJJKnKAKJ/Njs8pXm4aTieC5e/f9P2K9a1+N8mNLKg96b5TtKd790cz6CzksTH6Ab7p/NGyxF6LWi2yHap8aoyZFcpdultr+lRSNhSvdUSDlIV4rdxbuF8kDyf3rwfc45XdNN3JcqfxlupEkGI3dxKSdtbfsHqJZtNFJ1eFEpp5CKQ+g5o9+8UslztrWGTC+kOILupNYU3UeUnPZ2EO/c+82FGyTz7+HrHX/QKBgQDdJk4xRYVoMyEXoRZ9CXcqB0i2Q31dDKjE4U8N6m+4MaL6C8mEFjN1PoE3JWeH9+/wiNHJNXyyZVEDhSHl9AKWqMSPPK/UNcCpmE2TEY5wVyJiUnAa5VAVOwEkPG3Ogb/UJsfu+4RpBj8L47xbkd1aUh1jpxMTHCyIRq4lsul2KwKBgQCrR/kfbCe0va3uo6fWBpsR58bkXFVP88+1G85rXnDCIsF5ygyor7ogn+9uJln9y30xv4f10MEGjmHAFY1Ivky7sVqa5egKffcnqTYvWcvJpaH1ruN0Q7scKPAHwUZ92hpFxrWk90LVPvyu14tJ9MQu/RMiAfogf4EzFzturmyuqwKBgDaA8lSCZdbAgy9nrDs00gGxueHx0DvWmuGrBejQFqi20wv9S7UaI6SJux70QQfpu2D0139Xh1wQTF8puKkL8ndfMNJ8inkqpkkmGDhe41QcpYTF/IskaRBScn2TxxxWLgkDZdMoegHIYFF11z5aPMu94TBmRPU4xGDxyonQBmnxAoGAMJhxBAtJkKwoRwbDvaOOJ5xc/7l6sv53tei3vhrDXzFBN26t/MYuxsbZxaS375vmX1D6IDIkMdn/veHfff4QA0ikbkJAfYmTr/sAVprhiMqnku8VtYzp72lmAK1DdL2GqrlgG/fTTHFce7bH3CnH55UB8qog70t9uqMix5pRV5UCgYEAo/T1EDhNJEO4xEpq3U6FGx0Nz8poBnXoPo8iqLr+Si4D4fy6e6tOkRUFeUBQqNhfFdsXmTa8YtsmLFNQq10gK7SsIDsOgYAbS4KTqQS83fJggTf1Of65h7mJmUvCfTsOujM+rinl8ZacmvjCsXJhYQgQeSyAyHdqArQHUXrFuAg=";
+		var bankAccNum = pi.getEncryptedBankAccountNumber(pi.ENCRYPTION_ALGORITHM_RSA,pubKey);
+		bankAccNum = (new Cipher()).decrypt(bankAccNum,priKey,pi.ENCRYPTION_ALGORITHM_RSA,"",0);
+
+
+		xmlWriter.write('			<eCheck>\n');
+		xmlWriter.write('				<accountType>'+dw.web.Resource.msg("eCheck.bankAccountType","forms",null)+'</accountType>\n');
+		xmlWriter.write('				<accountNumber>'+bankAccNum+'</accountNumber>\n');
+		xmlWriter.write('				<routingNumber>'+pi.bankRoutingNumber+'</routingNumber>\n');
+		xmlWriter.write('			</eCheck>\n');
+	}else if( payMethod == dw.web.Resource.msg('payMethods.paylater.ID', 'configuration', null) ) {
+// TODO: not defined yet
+		xmlWriter.write('			<payLater>\n');
+		xmlWriter.write('				<payLaterId></payLaterId>\n');
+		xmlWriter.write('			</payLater>\n');
+	}
+	xmlWriter.write('		</payment>\n');
+	
+	xmlWriter.flush();
+}
+
+function addProductLineItem(xmlWriter : Writer, pli : ProductLineItem, coreItemId : String, order : Order, pliCount : Number, firstProductOfferCode : String) {
+	var product : Product = pli.product;
+	var markup : String = null;
+	
+	xmlWriter.write('		<product sequence="'+pli.getPosition().toFixed(0)+'">\n');
+	xmlWriter.write('			<offerCode>'+pli.productID+'</offerCode>\n');
+	xmlWriter.write('			<quantity>'+pli.quantityValue.toFixed(0)+'</quantity>\n');
+	var priceStr : String = '			<price>'+(pli.adjustedPrice / pli.quantityValue).toFixed(2)+'</price>\n';
+	log.debug(priceStr);
+	xmlWriter.write(priceStr);
+	/* Html encode the string otherwise cipher.encrypt will fail!!! e.g. ® will fail so it must be encoded into &reg;*/
+	//tempArr.push('<' + tag + '>' + ((false || encode) ? '<![CDATA[' + StringUtils.stringToHtml(value) + ']]>' : value) + '</' + tag + '>');
+	
+	xmlWriter.write('			<title><![CDATA['+StringUtils.stringToHtml(pli.productName)+']]></title>\n');
+	
+	markup = empty(product.shortDescription) ? "" : product.shortDescription.markup;
+	xmlWriter.write('			<shortDescription><![CDATA['+StringUtils.stringToHtml(markup)+']]></shortDescription>\n');
+	//xmlWriter.write('			<shipmentId>'+pli.shipment.ID+'</shipmentId>\n');
+	
+	markup = empty(product.longDescription) ? "" : product.longDescription.markup;
+	xmlWriter.write('			<longDescription><![CDATA['+StringUtils.stringToHtml(markup)+']]></longDescription>\n');
+	if('nwsRevision' in product.custom && !empty(product.custom.nwsRevision)){
+		xmlWriter.write('			<revisionId>'+product.custom.nwsRevision+'</revisionId>\n');
+	}else{
+		xmlWriter.write('			<revisionId></revisionId>\n');
+	}
+	
+	var cost : Number = 0.0, psl : ProductShippingLineItem = pli.getShippingLineItem();
+	var psc : Number = empty(psl)? 0: psl.getAdjustedNetPrice().value;
+	var pscStr : String = ""+(empty(psc)?0:(psc / pli.quantity.value).toFixed(2));
+	log.debug("shipAmt = "+pscStr);
+	//***HACK*** This is to accomodate shipping for WEN... Ram made me do it!
+	var shipAmt : String = "";
+	if (product.brand == "CD" && (Site.getCurrent().ID == 'Wen' || Site.getCurrent().ID == 'WenHairCare')) {
+		if (pliCount == 0) {
+			shipAmt = "" + (order.getAdjustedShippingTotalNetPrice().value/pli.quantityValue).toFixed(2);
+		} else {
+			shipAmt = "0.00";
+		}
+	} else {
+		//Proactiv original shipAmt calculator.
+		shipAmt = pscStr;
+	}
+	xmlWriter.write('			<shipAmt>'+shipAmt+'</shipAmt>\n');
+	xmlWriter.write('			<rushAvailable></rushAvailable>\n');
+	
+	// TODO: Not sure what to do with PLI addlShip
+	xmlWriter.write('			<addlShip>'+cost.toFixed(0)+'</addlShip>\n');
+	
+	var numberOfPayments : Number =  new Number(product.custom.numPay) || 0;
+	
+	// Getting the keycode value for Wen quick and dirty which is stored in the promotion.
+	var keycode;
+	/*var promotionsIter : Iterator = PromotionMgr.getPromotions().iterator();
+	while (promotionsIter.hasNext()) {
+		var promotion : Promotion = promotionsIter.next();
+		var sourceCodeGroupIter : Iterator = promotion.sourceCodeGroups.iterator();
+		while (sourceCodeGroupIter.hasNext()) {
+			var sourceCodeGroup : SourceCodeGroup = sourceCodeGroupIter.next();
+			if (sourceCodeGroup.ID == order.sourceCodeGroupID) {
+				keycode = promotion.custom.keyCode;
+			}
+		}
+	}
+	*/
+	if (keycode == null || keycode == "") {
+		keycode = product.custom.sourceKeyId;
+	}
+	xmlWriter.write('			<numPayments>'+numberOfPayments.toFixed(0)+'</numPayments>\n');
+	xmlWriter.write('			<productLine>'+pli.product.brand+'</productLine>\n');
+	var orderKeyCode : String = ('keyCode' in order.custom && !empty(order.custom['keyCode'])) ? order.custom['keyCode'] : '' ;
+	if(null != orderKeyCode && orderKeyCode != ''){
+		xmlWriter.write('			<keyCode>'+orderKeyCode+'</keyCode>\n');
+	}else{
+		xmlWriter.write('			<keyCode>'+keycode+'</keyCode>\n');
+	}
+	
+	xmlWriter.write('			<entryCode>'+product.custom.entryCode+'</entryCode>\n');
+	xmlWriter.write('			<itemCode>'+product.custom.itemCode+'</itemCode>\n');
+	
+	//var mpgmCode : Number = product.custom.mPgmCode || 0;
+	xmlWriter.write('			<mpgmCode>'+(('mPgmCode' in product.custom && !empty(product.custom.mPgmCode))?product.custom.mPgmCode:'')+'</mpgmCode>\n');
+	
+	var paymentInterval : Number = 0;
+	var paymentDeferred : Number = 0;
+	xmlWriter.write('			<paymentInterval>'+paymentInterval.toFixed(0)+'</paymentInterval>\n');
+	xmlWriter.write('			<paymentDeferred>'+paymentDeferred.toFixed(0)+'</paymentDeferred>\n');
+	xmlWriter.write('			<ffillItem>'+product.UPC+'</ffillItem>\n');
+	xmlWriter.write('			<venueCode>'+product.custom.venueCode+'</venueCode>\n');
+ 	xmlWriter.write('			<setupOfferHeirarchyCode>'+product.custom.setupOfferHierarchyCode+'</setupOfferHeirarchyCode>\n');
+	xmlWriter.write('			<setupOfferCode>'+product.custom.setupOfferCode+'</setupOfferCode>\n');
+	xmlWriter.write('			<setupSourceKeyCode>'+product.custom.setupSourceKeyCode+'</setupSourceKeyCode>\n');
+	xmlWriter.write('			<setupSourceKeyCodeSuffix></setupSourceKeyCodeSuffix>\n');
+	xmlWriter.write('			<setupPromoTemplateCode>'+product.custom.setupPromoTemplateCode+'</setupPromoTemplateCode>\n');
+
+	if(!("exclusive" in product.custom || "coreItem" in product.custom) || (product.custom.exclusive != true || product.custom.coreItem != true)){
+		xmlWriter.write('			<parentOffer>'+coreItemId+'</parentOffer>\n');
+	}else if(order.custom.cartID == "54" && firstProductOfferCode != null){
+		xmlWriter.write('			<parentOffer>'+firstProductOfferCode+'</parentOffer>\n');
+	}else {
+		xmlWriter.write('			<parentOffer></parentOffer>\n');
+	}
+	xmlWriter.write('		</product>\n');
+}
+
+
+function addShipment(xmlWriter : Writer, shipment : Shipment) {
+	xmlWriter.write('		<shipment shipmentId="'+shipment.ID+'">\n');
+	xmlWriter.write('			<shippingAddress>\n');
+	xmlWriter.write('				<title><![CDATA['+ifExistsPrint(shipment.shippingAddress.title)+']]></title>\n');
+	xmlWriter.write('				<firstName><![CDATA['+ifExistsPrint(shipment.shippingAddress.firstName)+']]></firstName>\n');                          
+	xmlWriter.write('				<lastName><![CDATA['+ifExistsPrint(shipment.shippingAddress.lastName)+']]></lastName>\n');
+	xmlWriter.write('				<suffix><![CDATA['+ifExistsPrint(shipment.shippingAddress.suffix)+']]></suffix>\n');
+	xmlWriter.write('				<address><![CDATA['+ifExistsPrint(shipment.shippingAddress.address1)+']]></address>\n');         
+	if( !empty(shipment.shippingAddress.address2) ) {       
+		xmlWriter.write('				<address><![CDATA['+shipment.shippingAddress.address2+']]></address>\n');      
+	}          
+	xmlWriter.write('				<city><![CDATA['+ifExistsPrint(shipment.shippingAddress.city)+']]></city>\n');                                          
+	xmlWriter.write('				<state><![CDATA['+ifExistsPrint(shipment.shippingAddress.stateCode)+']]></state>\n');
+	xmlWriter.write('				<postalCode><![CDATA['+ifExistsPrint(shipment.shippingAddress.postalCode)+']]></postalCode>\n');
+	xmlWriter.write('				<countryCode><![CDATA['+ifExistsPrint(shipment.shippingAddress.countryCode)+']]></countryCode>\n'); 
+	xmlWriter.write('			</shippingAddress>\n');
+	
+	var shipMethod : String = shipment.shippingMethodID;
+	
+	if (!empty(shipMethod)) {
+	  if( shipMethod.indexOf("Regular") >= 0 || shipMethod.indexOf("Standard") >= 0 || shipMethod.indexOf("350") >= 0 ) {       
+		shipMethod = "Standard";      
+	  } 
+	  if(shipMethod.indexOf("Two") >= 0 || shipMethod.indexOf("06") >= 0 ) {
+		shipMethod = "Two Day"; 
+	  } 
+	  if (shipMethod.indexOf("Rush") >= 0 || shipMethod.indexOf("15") >= 0 || shipMethod.indexOf("334") >= 0) {
+		shipMethod = "Rush"; 
+	  }
+	  if (shipMethod.indexOf("SDS") >= 0 ){
+		shipMethod = "Overnight";	
+	  }
+	} else {
+	    Logger.debug("\nShipping Method value is missing.");	
+	}
+	xmlWriter.write('			<shipMethod>'+shipMethod+'</shipMethod>\n'); 
+	//xmlWriter.write('			<shipSubTotal>'+shipment.shippingTotalPrice.value.toFixed(2)+'</shipSubTotal>\n');
+	xmlWriter.write('			<shipSubTotal>'+shipment.adjustedShippingTotalNetPrice.value.toFixed(2)+'</shipSubTotal>\n');
+	
+// TODO: verify that additional charge does not need to be calc'd from line items
+	var shipAdditionalCharge : Number = 0;	
+	xmlWriter.write('			<shipAdditionalCharge>'+shipAdditionalCharge.toFixed(2)+'</shipAdditionalCharge>\n');	
+	xmlWriter.write('		</shipment>\n');
+}
+
+// return core item ID 
+function getExclusiveProductId(order : Order){
+	var productLIItr : Iterator = order.getProductLineItems().iterator();
+	while(productLIItr.hasNext()){
+		var productLItem : ProductLineItem = productLIItr.next();
+		var product : Product = productLItem.product;
+		if(("exclusive" in product.custom && product.custom.exclusive == true) || ("coreItem" in product.custom && product.custom.coreItem == true)){
+			return product.ID;
+		}
+	}
+	return "";
+}
+
+function logInfo (logMessage : String){
+	 var enableInfo : Boolean = dw.system.Site.getCurrent().preferences.custom.logInfo;
+	 if( enableInfo == null ){
+	      enableInfo = false;
+	 }
+	 if( enableInfo ){
+	      Logger.info(logMessage);
+	 }
+}
+
+function logDebug (logMessage : String){
+	 var enableDebug : Boolean = dw.system.Site.getCurrent().preferences.custom.logDebug;
+	 if( enableDebug == null ){
+	      enableDebug = false;
+	 }
+	 if( enableDebug ){
+	      Logger.debug(logMessage);
+	 }
+}
+
+function logError(logMessage : String){	
+	 var enableError : Boolean = dw.system.Site.getCurrent().preferences.custom.logError;
+	 if( enableError == null ){
+	      enableError = false;
+	 }
+	 if( enableError ){
+	      Logger.error(logMessage);
+	 }
+}
+
+function encryptPassword(password : String) : String{
+	
+	var cryptKey : String =dw.system.Site.getCurrent().preferences.custom.grFileEncryptionKey;
+	var cryptType : String = dw.system.Site.getCurrent().preferences.custom.grEncryptionType;
+	var cipher : Cipher = new Cipher();
+	var passEncrypt = cipher.encrypt(password, cryptKey, cryptType, "", 0);
+	return passEncrypt;
+	
+}
+
+function getTransactionID(){
+	return UUIDUtils.createUUID();
+}

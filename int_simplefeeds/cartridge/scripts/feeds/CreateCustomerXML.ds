@@ -1,0 +1,56 @@
+/**
+*
+*    @input CustNoList : dw.util.ArrayList
+*    @input emailId : String
+*    @input Customer :dw.customer.Customer
+*    @input xmlWriter : dw.io.XMLStreamWriter
+*    @input InvalidCustomer : String 
+*    @input xmlMwid :  String
+*    @output customerNoList : dw.util.ArrayList
+*    @output xmlwriter : dw.io.XMLStreamWriter
+*   @output path : String 
+*/
+importPackage( dw.system );
+
+function execute( args : PipelineDictionary ) : Number
+{
+     var customer :dw.customer.Customer=args.Customer;
+     var CustNoList : dw.util.ArrayList =args.CustNoList;
+     var custNo : String;
+     
+     
+     
+     var invalidCust=args.InvalidCustomer;
+     var xmlWriter=args.xmlWriter;
+     
+     if(invalidCust!="true")
+     {  var xmlMwid=args.xmlMwid;
+   	    custNo = customer.profile.customerNo.toString();
+   	     var mwid= customer.profile.custom.mwid;
+   	     if(mwid==xmlMwid) {
+   	    	createDelCustXML(xmlWriter,args.emailId,custNo); }
+      } 
+
+     args.xmlwriter=xmlWriter;
+ 
+    return PIPELET_NEXT;
+
+}
+
+
+function createDelCustXML( xmlWriter:Writer , emailId:String , custNo: String ) {
+ try {
+   xmlWriter.writeRaw('<customer customer-no="'+custNo+'">\n');
+   xmlWriter.writeRaw('<credentials>\n');
+   xmlWriter.writeRaw('<login>'+emailId+'</login>\n');
+   xmlWriter.writeRaw('</credentials>\n');
+    xmlWriter.writeRaw('</customer>\n');
+
+ }
+  catch(e) {
+	return PIPELET_ERROR;
+	}
+	return PIPELET_NEXT;
+}
+ 
+

@@ -1,0 +1,46 @@
+/**
+*	Demandware Script File: to validate the captcha image 
+* 
+*	INPUT:
+*
+*	@input Challenge : String
+*	@input Response : String
+*   @input IP : String
+*   
+*   OUTPUT:
+*
+*	@output CaptchaSuccess : Number
+*	
+*/
+
+importPackage( dw.system );
+importPackage( dw.object);
+
+function execute( pdict : PipelineDictionary ) : Number
+{
+	var Challenge = pdict.Challenge;
+	var Response = pdict.Response;
+	var IP = pdict.IP;
+	var PrivateKey : CustomAttributes = dw.system.Site.getCurrent().preferences.custom.Recaptcha_PrivateKey;
+	var recaptchaVerifyURL : CustomAttributes = dw.system.Site.getCurrent().preferences.custom.Recaptcha_Verify;
+	try {
+			var httpSvc:dw.net.HTTPClient = new dw.net.HTTPClient();
+			var postURL = recaptchaVerifyURL;
+			httpSvc.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+			httpSvc.open( "POST", postURL);
+			httpSvc.send("privatekey="+PrivateKey+"&remoteip="+IP+"&challenge="+Challenge+"&response="+Response);
+		    
+			if (httpSvc.statusCode != "200") {
+				// Error communicating with ReCaptcha Server
+				return PIPELET_ERROR;
+			}
+			else {
+				pdict.CaptchaSuccess =  httpSvc.text.indexOf("success");
+			}		
+	}
+	catch (e) {
+		Logger.error("ReCaptcha server could not be connected. ", e);
+		return PIPELET_ERROR;
+	}
+	return PIPELET_NEXT;
+}

@@ -1,0 +1,70 @@
+<isinclude template="mobile/util/modules">
+<isif condition="${!empty(pdict.ContentSearchResult) && pdict.ContentSearchResult.count > 0}">
+	<!-- SCRIPT TO RUN THROUGH ODD/EVEN ROWS  -->
+	<isscript>
+		/*
+			Small function to realize odd and even recognition of rows across multiple
+		   	loops
+		*/
+		function RowClass()
+		{
+			// define the counter
+			var rowCounter = 0;
+
+			RowClass.prototype.getName = function()
+			{
+				// increase counter
+				rowCounter++;
+
+				if (rowCounter % 2 == 0)
+				{
+					return 'even';
+				}
+				else
+				{
+					return 'odd';
+				}
+			}
+		};
+	</isscript>
+	<isscript>
+		/* create a new instance to name our rows 'odd' or 'even' */
+		var rowNaming = new RowClass();
+	</isscript>
+<div>
+	<a name="relatedarticles"><!-- Articles Anchor --></a>
+	<h2>${Resource.msg('topcontenthits.relatedarticles','search',null)}</h2>
+	<iscomment>calculated correct index position to separate the result columns</iscomment>
+	<isscript>
+		var count = pdict.ContentSearchResult.count;
+		if(count > 6)
+		{
+			count = 6;
+		}
+		var cutIndex = Math.ceil( count / 2 ) - 1;
+		var endIndex = cutIndex + (cutIndex + 1);
+	</isscript>
+
+	<iscomment>render the results as two column layout</iscomment>
+	<isloop items="${pdict.ContentSearchResult.content}" var="asset" status="loopstate" end="${endIndex}">
+
+				<div>
+					<div>
+						<a href="${URLUtils.url('mPage-Show','cid', asset.ID)}" ><isprint value="${asset.name}"></a>
+					</div>
+					<div>
+						<isprint value="${asset.description}"><span ><a href="${URLUtils.url('mPage-Show','cid', asset.ID)}" >${Resource.msg('topcontenthits.readmore','search',null)}</a></span>
+					</div>
+				</div><!-- END: article -->
+
+	</isloop>
+
+
+	<div>
+		<form action="${pdict.ContentSearchResult.url('mSearch-ShowContent')}" method="get">
+			<input type="hidden" name="q" value="<isprint value="${pdict.ContentSearchResult.searchPhrase}">" />
+			<button type="submit" value="${Resource.msgf('topcontenthits.viewall','search',null,pdict.ContentSearchResult.count)}"><span>${Resource.msgf('topcontenthits.viewall','search',null,pdict.ContentSearchResult.count)}</span></button>
+		</form>
+	</div><!-- END: formactions -->
+</div><!-- END: contenthits -->
+</isif>

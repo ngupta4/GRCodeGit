@@ -1,0 +1,34 @@
+<!--- TEMPLATENAME: offer.isml --->
+<iscache status="off"/>
+
+<div class="sasForm">
+<form action="${URLUtils.https('COCart-AddProduct')}" method="GET" id="${pdict.formid}">
+<isscript>
+	var selected = "";
+	var checked = "";
+</isscript>
+<isloop items="${pdict.products}" var="product" status="status">
+	<isscript>
+		if (status.first == true) {
+			selected = "selected";
+			checked = "checked='checked'";
+		} else {
+		    selected = "";
+		    checked = "";
+		}
+	</isscript>
+	<div class="productChoice ${selected}">
+		<input type="radio" name="pid" value="${product.ID}" ${checked}/>
+		<isprint value="${product.custom.interstitialOfferTitle}" encoding="off"/>
+		<div class="popupDescriptionContainer">
+			<isprint value="${product.custom.interstitialOfferDescription}" encoding="off"/>
+		</div>
+	</div>
+</isloop>
+<div class="sasFormCTA ${pdict.formid}CTA"></div>
+</form>
+</div>
+
+
+
+

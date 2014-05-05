@@ -1,0 +1,56 @@
+/*
+*	Calls Bazaarvoice Platform API to fetch the profile of a community contributor based on id
+*
+*   @input CustomerID : String ID of the customer like customerNo
+*   @output CommunityUserProfile : Object
+*
+*/
+importPackage(dw.system);
+importPackage( dw.util );
+importScript("int_bvplatformapi:WebServiceInvoker.ds");
+importScript("int_bvplatformapi:userprofile/UserProfileJson.ds");
+
+function execute(pdict : PipelineDictionary) : Number
+{
+	//var id : String = "test";
+	var id : String = pdict.CustomerID;
+	var logMessage : String = "[FetchUserProfile.ds] [Type = {0}] [User = {"+id+"}] [Message = {1}]";
+	var userProfile : JSON = null; 
+	try {		
+		
+		//invoke webservice
+		var response : String = WebServiceInvoker.invoke("BazaarvoiceAPI", "fetchUserProfileById", id); 
+		
+		//Convert response to JSON response
+		if(response != null){
+			var responseJson : JSON = JSON.parse(response);
+			
+			if('httpClient-statusCode' in responseJson && responseJson.httpClient-statusCode != 200){
+				//Error calling the webservice
+				Logger.error(StringUtils.format(logMessage,"ERROR", JSON.stringify(responseJson)));
+				return PIPELET_ERROR;
+			}else if(responseJson.HasErrors){
+				//log error in response
+				Logger.error(StringUtils.format(logMessage,"ERROR", JSON.stringify(responseJson.Errors)));
+				return PIPELET_ERROR;
+			}else if(responseJson.TotalResults == 0){
+				//User Profile not found || User has never participated in community
+				Logger.info(StringUtils.format(logMessage,"INFO", "User is new or Not able to find user"));
+			}else{
+				//response is fine, fetch user profile into UserProfileJson
+				userProfile = this.UserProfileJson(responseJson.Results[0]);
+			}
+		}else{
+			//log error for response null
+			Logger.error(StringUtils.format(logMessage,"ERROR", JSON.stringify(responseJson.Errors)));
+			return PIPELET_ERROR;
+		}
+		
+	} catch (e) {
+		Logger.debug(e.toString());
+		return PIPELET_ERROR;
+	}
+	
+	pdict.CommunityUserProfile = userProfile;
+    return PIPELET_NEXT;
+}

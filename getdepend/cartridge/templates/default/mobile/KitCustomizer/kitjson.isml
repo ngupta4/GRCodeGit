@@ -1,0 +1,112 @@
+<iscontent type="application/json" charset="UTF-8" compact="true"/>
+<iscomment>
+	This template renders the attributes customer kit as JSON response.
+</iscomment>
+{
+	<isif condition="${pdict.kitProdIterator != null}">
+		<isset name="prodIter" value="${pdict.kitProdIterator}" scope="page"/>
+		<isif condition="${pdict.addOrDelete != null && pdict.addOrDelete == 'add'}">
+			<isset name="addProduct" value="true" scope="page"/>
+		<iselse>
+			<isset name="addProduct" value="false" scope="page"/>
+		</isif>
+		<isset name="status" value="member" scope="page"/>
+		<isif condition="${pdict.CurrentCustomer.authenticated}">
+			<isset name="status" value="${pdict.CurrentCustomer.profile.custom.customerStatus}" scope="page"/>
+		<iselseif condition="${pdict.rememberCustomer != null && 'profile' in pdict.rememberCustomer && pdict.rememberCustomer.profile != null && 'custom' in pdict.rememberCustomer.profile && pdict.rememberCustomer.profile.custom != null && !empty(pdict.rememberCustomer.profile.custom.customerStatus) && pdict.rememberCustomer.profile.custom.customerStatus != null}">
+			<isset name="status" value="${pdict.rememberCustomer.profile.custom.customerStatus}" scope="page"/>
+		</isif>
+		<isif condition="${!empty(status) && status == 'instantaccess'}">
+			<isset name="kitAvailable" value="false" scope="page"/>
+		<iselse>
+			<isset name="kitAvailable" value="true" scope="page"/>
+		</isif>
+		<isif condition="${pdict.CurrentCustomer.profile!=null}">
+			"userid" 			: "<isprint value="${pdict.CurrentCustomer.profile.custom.mwid}"/>",
+			"kitid"				: "<isprint value="${pdict.CurrentCustomer.profile.custom.kitName}"/>",
+			"lastshipmentdate"	: "<isprint value="${pdict.CurrentCustomer.profile.custom.lastShipDate}" style="DATE_SHORT" timezone="utc"/>", <iscomment>needs to be changed once the login api is updated</iscomment>
+			"nextshipmentdate"	: "<isprint value="${pdict.CurrentCustomer.profile.custom.shipdate}" style="DATE_SHORT" timezone="utc"/>",
+			"weeks" 			: "<isprint value="${pdict.CurrentCustomer.profile.custom.weeksBetweenShipments}"/>",
+			"maxproducts"		: "<isprint value="${pdict.CurrentCustomer.profile.custom.maxKitSize}" formatter="#"/>",
+			"trackingURL"		: "<isprint value="${pdict.CurrentCustomer.profile.custom.trackingID}"/>",
+		<iselseif condition="${pdict.rememberCustomer.profile!=null}">
+			"userid" 			: "<isprint value="${pdict.rememberCustomer.profile.custom.mwid}"/>",
+			"kitid"				: "<isprint value="${pdict.rememberCustomer.profile.custom.kitName}"/>",
+			"lastshipmentdate"	: "<isprint value="${pdict.rememberCustomer.profile.custom.lastShipDate}" style="DATE_SHORT" timezone="utc"/>", <iscomment>needs to be changed once the login api is updated</iscomment>
+			"nextshipmentdate"	: "<isprint value="${pdict.rememberCustomer.profile.custom.shipdate}" style="DATE_SHORT" timezone="utc"/>",
+			"weeks" 			: "<isprint value="${pdict.rememberCustomer.profile.custom.weeksBetweenShipments}"/>",
+			"maxproducts"		: "<isprint value="${pdict.rememberCustomer.profile.custom.maxKitSize}" formatter="#"/>",
+			"trackingURL"		: "<isprint value="${pdict.rememberCustomer.profile.custom.trackingID}"/>",
+		</isif>
+		"loggedin"			: "<isprint value="${pdict.CurrentCustomer.authenticated}"/>",
+		"loggedinsoft"		: "<isprint value="${!(pdict.CurrentCustomer.authenticated)}"/>",
+		"memberprice"		: "<isprint value="${pdict.memberPrice}"/>",
+		"kitcost" 			: "<isprint value="${pdict.kitPrice}"/>",
+		"shipping" 			: "<isprint value="${pdict.shipping}"/>",
+		"savings"			: "<isprint value="${pdict.youSave}"/>",
+		"kitavailable"		: "<isprint value="${kitAvailable}"/>",
+		"itemadded"			: "<isprint value="${addProduct}"/>",
+		"itemaddedindex"	: "<isprint value="${pdict.addIndex}" formatter="#"/>",
+		"products"			: [
+		<isif condition="${pdict.errorCode != ''}">
+			<isset name = "errorCode" value="${Resource.msg('kitcustomizer.'+pdict.errorCode,'account',null)}" scope="page"/>
+		</isif>
+		<isloop items="${pdict.kitProdIterator}" var="product" status="loopstate">
+			<isif condition="${product.custom.catalogDisplayNameTwo != null}">
+				<isset name="productName" value="${product.custom.catalogDisplayNameTwo}" scope="page"/>
+			<iselse>
+				<isset name="productName" value="${product.name}" scope="page"/>
+			</isif>
+			<isif condition="${!empty(product.thumbnail)}">
+				<isset name="imageURL" value ="${product.thumbnail}" scope="page"/>
+			<iselse>
+				<isset name="imageURL" value ="${URLUtils.staticURL('/images/kit/defaultkit.jpg')}" scope="page"/>
+			</isif>
+			<isif condition="${(product.custom.isEssentialProduct!=null)}">
+				<isset name="essential" value ="${product.custom.isEssentialProduct}" scope="page"/>
+			<iselse>
+				<isset name="essential" value ="false" scope="page"/>
+			</isif>
+			<isif condition="${product.custom.sceneSevenAssetId != null && product.custom.sceneSevenAssetId != ''}">
+				<isset name="assetID" value="${product.custom.sceneSevenAssetId}" scope="page"/>
+			<iselse>
+				<isset name="assetID" value="refiningMask_h" scope="page"/>
+			</isif>
+			<isif condition="${product.variant || product.master}">
+				<isset name="PVM" value="${product.variationModel}" scope="page"/>
+				<isloop items="${PVM.productVariationAttributes}" var="VA" >
+					<isset name="varName" value="${VA.displayName}" scope="page"/>
+					<isset name="varID" value="${VA.ID}" scope="page"/>
+					<isset name="varValue" value="${product.variationModel.getVariationValue(PVM.selectedVariant, VA)}" scope="page"/>
+					<isset name="variantVal" value="${varValue.ID}" scope="page"/>
+					<isif condition="${varName=='Color'}">
+						<isset name="variantVal" value="${'small_'+product.UPC+'_'+varValue.ID}" scope="page"/>
+					</isif>
+				</isloop>
+				<isif condition="${productName.indexOf('-')>0}">
+					<isset name="productName" value="${productName.split('-')[0]}" scope="page"/>
+				<iselseif condition="${productName.indexOf('(')>0}">
+					<isset name="productName" value="${productName.split('(')[0]}" scope="page"/>
+				</isif>
+			<iselse>
+				<isset name="varName" value="" scope="page"/>
+				<isset name="varID" value="" scope="page"/>
+				<isset name="varValue" value="" scope="page"/>
+				<isset name="variantVal" value="" scope="page"/>
+			</isif>
+			<isset name="scene7url" value="${Resource.msg('image.scene7url','common',null)+assetID}" scope="page"/>
+			{ 
+				"id" 				: "<isprint value="${product.ID}"/>", 
+				"name"				: "<isprint value="${productName}"/>",
+				"thumb" 			: "<isprint value="${scene7url+'?$kit$'}"/>", 
+				"productmodallink" 	: "<isprint value="${scene7url+'?$kitHover$'}"/>", 
+				"essentialproduct"	: "<isprint value="${essential}"/>",
+				"outofstockproduct"	: "<isprint value="${!(product.custom.isCustomizableFlag)}"/>",
+				"variant"			: "<isprint value="${(product.variant)||(product.master)}"/>",
+				"variantName"		: "<isprint value="${varName}"/>",
+				"variantValue"		: "<isprint value="${variantVal}"/>"
+			}<isif condition="${!loopstate.last}">,</isif>
+		</isloop>
+	]
+	</isif>
+}

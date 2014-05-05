@@ -1,0 +1,14 @@
+<!--- TEMPLATENAME: socialbar.isml --->
+<div id="socialBackground">
+		<div id="socialBar">
+				<isinclude url="${URLUtils.url('EmailSubscription-Show','ref',request.httpPath)}" />
+				 
+		  </div>
+		  <div class="socialMeta">
+				<div class="socialLinks"> <span style="float: left; padding-right: 5px;"><isprint value="${Resource.msg('social.connect','locale',null)}"/> </span> 
+					<a target="_blank" href="http://www.facebook.com/meaningfulbeauty" class="fbLink"><img src="${URLUtils.absStatic('images/social/fb.png')}"/></a> 
+					<a class="ytLink" target="_blank" href="http://www.youtube.com/meaningfulbeauty"><img src="${URLUtils.absStatic('images/social/yt.png')}"/></a>
+					<a target="_blank" href="http://www.twitter.com/meaningfulbeauty" class="twLink"><img src="${URLUtils.absStatic('images/social/tw.png')}"/></a>
+				</div>
+		  </div>
+</div>

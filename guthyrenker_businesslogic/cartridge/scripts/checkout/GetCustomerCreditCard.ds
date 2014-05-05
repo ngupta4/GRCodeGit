@@ -1,0 +1,44 @@
+/**
+ * Finds the credit card with the given UUID in the given customer payment instruments.
+ * If the credit card was not found, PIPELET_ERROR is returned.
+ *
+ * @input CreditCardUUID : String UUID of the credit card payment instrument to find
+ * @input CustomerPaymentInstruments : dw.util.Collection the payment instruments to search
+ * @output CreditCardPaymentInstrument : dw.customer.CustomerPaymentInstrument the payment instrument with the given UUID
+ */
+importPackage( dw.customer );
+importPackage( dw.system );
+importPackage( dw.util );
+importScript('int_gutheyrenker:common/libUtils.ds'); 
+
+function execute( pdict : PipelineDictionary ) : Number
+{
+	logInfo("Starting execution of file GetCustomerCreditCard.ds");
+	var uuid : String = pdict.CreditCardUUID;
+	var instruments : Collection = pdict.CustomerPaymentInstruments;
+	var creditCardInstrument : dw.customer.CustomerPaymentInstrument = null;
+	
+	// ensure mandatory parameter 'CreditCardUUID' and 'CustomerPaymentInstruments' 
+	// in pipeline dictionary and collection is not empty
+	if( uuid == null || instruments == null || instruments.empty)
+	{
+		logDebug("Error occured in file GetCustomerCreditCard.ds, uuid or instruments are null or empty ");
+		return PIPELET_ERROR;
+	}
+	
+	// find credit card in payment instruments
+	var instrumentsIter : Iterator = instruments.iterator();
+	while( instrumentsIter.hasNext() )
+	{
+		creditCardInstrument = instrumentsIter.next();
+		if( uuid.equals( creditCardInstrument.UUID ) )
+		{
+			pdict.CreditCardPaymentInstrument = creditCardInstrument;
+			return PIPELET_NEXT;
+		}
+	}
+
+	pdict.CreditCardPaymentInstrument = null;
+	logInfo("End of the execution of file GetCustomerCreditCard.ds");
+    return PIPELET_ERROR;
+}

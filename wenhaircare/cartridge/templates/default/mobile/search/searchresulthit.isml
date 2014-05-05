@@ -1,0 +1,300 @@
+<isset name="DecoratorTemplate" value="search/pt_productsearchresult" scope="page"/>
+
+<isif condition="${pdict.CurrentHttpParameterMap.format.stringValue == 'ajax'}">
+	<isset name="DecoratorTemplate" value="util/pt_empty" scope="page"/>
+</isif>
+
+
+<isset name="pagetitle" value="${'Search | ' + pdict.CurrentHttpParameterMap.q.stringValue}" scope="pdict">
+<input type="hidden" id="tagetPipeline" value="${pdict.TargetPipeline}"/>
+<input type="hidden" id="tagetParams" value="${pdict.TargetPipelineParams}"/>
+<isdecorate template="${DecoratorTemplate}">
+<div id="content">
+<iscomment>
+	Use the decorator template based on the requested output. If
+	a partial page was requested an empty decorator is used.
+	The default decorator for the product hits page is
+	search/pt_productsearchresult.
+</iscomment>
+
+<iscache type="relative" minute="30" varyby="price_promotion"/>
+<isinclude template="util/modules"/>
+
+<iscomment>
+	Configured as default template for the product search results.
+	Displays a global slot with static html and the product search
+	result grid.
+</iscomment>
+<div class="pdpContainer">
+<div class="content">
+<h2 class="search-result">${Resource.msg('search.results','search',null)}<strong>"${pdict.CurrentHttpParameterMap.q.value}"</strong></h2>
+</div>
+<div class="searchtap">
+  <ul>
+  	<isif condition="${pdict.ProductPagingModel.count > 0}">
+    <li class="active">
+     
+      <a href="JavaScript:void(0);" rel="products">
+        <span>${Resource.msg('search.products.number','search',null)}   </span>
+         <strong><span>
+         <isprint value="${pdict.ProductPagingModel.count}"/>
+         </span></strong>
+     
+      </a>
+   
+    </li>
+    </isif>
+    <isif condition="${pdict.VideoPagingModel.count > 0}">
+      <li   <isif condition="${pdict.ProductPagingModel.count == 0}"> class="active" </isif>>
+        <a href="JavaScript:void(0);" rel="video">
+          <span>${Resource.msg('search.video.number','search',null)}</span>
+          <strong><span>
+              <isprint value="${pdict.VideoPagingModel.count}"/>
+               </span></strong>
+          
+        </a>
+      
+      </li>
+    </isif>
+    <isif condition="${pdict.ContentPagingModel.count > 0}">
+      <li <isif condition="${pdict.ProductPagingModel.count == 0 && pdict.VideoPagingModel.count == 0}"> class="active" </isif>>        
+        <a href="JavaScript:void(0);" rel="articles">
+          <span>${Resource.msg('search.article.number','search',null)}</span>
+           <strong><span>
+              <isprint value="${pdict.ContentPagingModel.count}"/>
+               </span></strong>
+         
+        </a>
+       
+      </li>
+    </isif>
+    <iscomment>
+      <li>
+        <a href="#" rel="country4">Community</a>
+      </li>
+    </iscomment>
+  </ul>
+</div>
+
+
+
+
+	  
+	
+<iscomment>create reporting event</iscomment>
+<div class="content">
+<div class="producthits productsContainer">
+		<iscomment>
+			<isinclude template="search/components/productsearchbreadcrumbs"/>
+		</iscomment>
+		<iscomment>This template renders the products search resulr for Proactive Site</iscomment>
+		<div class="searchresultsheader">
+			<iscomment>[DE686]: commented out products label and added condition for not showing tabs if count is 0.</iscomment>		
+		<div id="products">
+				<div class="nav-container">
+				<iscomment>[DE1523]: commented Search Refinements
+				
+					<div class="subnav"><issearchrefinementvalues searchmodel="${pdict.ProductSearchResult}"/></div>
+				</iscomment>
+				<isif condition="${!pdict.ProductPagingModel.empty}">
+			<div class="sorthitscontainer gridpage">
+			    <iscomment>sort by</iscomment>
+			    <isproductsortingoptions productsearchmodel="${pdict.ProductSearchResult}" pagingmodel="${pdict.ProductPagingModel}"/>
+			    <iscomment><ispaginginformation pagingmodel="${pdict.ProductPagingModel}" pageurl="${pdict.ProductSearchResult.url('Search-Show')}"/></iscomment>
+			    <div class="clear"><!-- FLOAT CLEAR --></div>
+			</div>
+		</isif>
+		<div class="clear"></div>
+		</div>
+		<isinclude template="search/showproductsmoreresults"/>
+		</div><!-- END: productresultarea -->
+		</div>		
+		<div id="video">
+				<isinclude template="search/videogrid"/>
+		</div>
+				
+		<div id="articles">
+				<isinclude template="search/showarticlesmoreresults"/>
+		</div>
+				
+				<iscomment>FUTURE STATE
+				<div id="country4" class="tabcontent">
+				<isinclude template="search/showcommunitymoreresults"/>
+				</div>
+				</iscomment>
+	<isif condition="${pdict.ProductPagingModel.count > 0}">
+<script type="text/javascript">
+$('#articles').hide();	
+jQuery('#video').hide();
+</script>
+</isif>
+
+<isif condition="${pdict.VideoPagingModel.count > 0}">
+<isif condition="${pdict.ProductPagingModel.count == 0}">
+<script type="text/javascript">
+$('#articles').hide();	
+jQuery('#products').hide();
+</script>
+</isif>
+</isif>
+ <isif condition="${pdict.ContentPagingModel.count > 0}">
+<isif condition="${pdict.ProductPagingModel.count == 0 && pdict.VideoPagingModel.count == 0}">
+<script type="text/javascript">
+jQuery('#products').hide();
+jQuery('#video').hide();
+$('#articles').show();	
+</script>
+</isif>
+</isif>	
+		
+</div><!-- END: PRODUCTHITS -->
+</div></div>
+</div>
+
+<script type="text/javascript">
+jQuery(document).ready(function(){
+	$('.swatchesdisplay li:last-child').addClass("last");
+		equalHeight($(".productlisting .producttile .gr-bg-wraper .white-bg .description"));
+		equalHeightname($(".productlisting .producttile .gr-bg-wraper .white-bg .name"));
+	    equalHeightname($(".productlisting .producttile .gr-bg-wraper .white-bg .name"));
+        equalHeight($(".productlisting .producttile .producttilemain .white-bg"));
+        equalHeight($(".productlisting .producttile .gr-bg-wraper .white-bg"));
+       
+        if($.browser.mozilla){
+        	$('button span').css('margin-top','-1px')    }
+});
+
+
+jQuery('.searchtap li a').click( function() {
+	var relvalue = jQuery(this).attr('rel');
+	jQuery(this).parent().parent().find('.active').removeClass('active');
+	jQuery(this).parent().addClass('active');
+	if(relvalue=='products'){	
+		$(".pdpContainer").css("float","left");
+		$('#products').show();
+		$('#video').hide();
+		$('#articles').hide();		
+		}
+	if(relvalue=='video'){		
+		$(".pdpContainer").css("float","none");
+		$('#products').hide();
+		$('#video').show();
+		$('#articles').hide();
+		equalVideoHeight($(".articlerow .articlename"));
+		equalVideoHeight($(".articlerow .description"));
+		equalVideoHeight($(".articlerow .keyword"));
+		equalVideoHeight($(".articlerow .article"));
+		}
+	if(relvalue=='articles'){
+		$(".pdpContainer").css("float","none");
+		$('#products').hide();
+		$('#video').hide();
+		$('#articles').show();
+		}
+	
+})
+
+jQuery('#video .contentimage a,#video .articlename a,#video .v-sm-text-links a,#video .play a ').click( function(e) {
+	
+	jQuery("#VideoViewDialog").remove();
+	jQuery("<div/>").attr("id", "VideoViewDialog").html("").appendTo(document.body);
+	app.createDialog( {
+		id : 'VideoViewDialog',
+		options : {
+			bgiframe : true,
+			modal : true,
+			closeOnEscape : false,
+			width : 715,
+			title : '',
+			resizable : false
+		}
+	});
+	var urlvedio = jQuery(this).attr('href');
+	jQuery("#VideoViewDialog").parent().css('background','none');
+	jQuery("#VideoViewDialog").addClass('ui-corner-all');
+	var objtitle = jQuery("#VideoViewDialog").siblings('.ui-dialog-titlebar');
+	objtitle.find('.ui-dialog-titlebar-close').addClass('quickViewDialog-close').removeClass('ui-dialog-titlebar-close');
+	jQuery('#VideoViewDialog').load(urlvedio);
+	jQuery('#VideoViewDialog').dialog('open');
+
+	return false;
+});
+
+jQuery('div.ui-widget-overlay').live("click", function() {   
+	jQuery("#VideoViewDialog").remove();
+    jQuery('.ui-dialog-content').dialog('close');    
+   return false;
+	});
+
+
+function equalVideoHeight(group) {
+   var tallestVideo = 0;
+   group.each(function() {
+           var thisVideoHeight = $(this).height();
+           if(thisVideoHeight > tallestVideo) {
+           tallestVideo = thisVideoHeight;
+           }
+   });
+   group.height(tallestVideo);
+}
+function equalHeight(group) {
+       var tallest = 0;
+       group.each(function() {
+               var thisHeight = $(this).height();
+               if(thisHeight > tallest) {
+               tallest = thisHeight;
+               }
+       });
+       group.height(tallest);
+}
+
+function equalHeightname(group) {
+       var tallestname = 0;
+       group.each(function() {
+       var thisHeightname = $(this).height();
+       if(thisHeightname > tallestname) {
+       tallestname = thisHeightname;
+       }
+       });
+       group.height(tallestname);
+}
+
+/*function equalHeightswatch(group) {
+    var tallestswatch = 0;
+    group.each(function() {
+	       var thisHeightswatch = $(this).height();
+	       if(thisHeightswatch > tallestswatch) {
+	     	  tallestdswatch = thisHeightswatch;
+	       }
+    });
+    group.height(tallestswatch);
+}*/
+
+</script>
+<script type="text/javascript">
+
+	//Add To Bag for Variant Products
+	 jQuery(".white-bg .addtobag").each(function() {		
+		  jQuery(this).click(function() 
+		  {
+			  var parentObj = jQuery(this).siblings('.swatches');
+			  var productid=  parentObj.find('.addtocartvariation li.selected a').attr('id');
+			  var upsell =  parentObj.find('.addtocartvariation li.selected a').attr('upsell');
+			  app.minicart.addFromCLP(productid, '${Product.available}',upsell);
+		 });
+	 });
+	 
+	 jQuery(".white-bg .addtokitvar").each(function() {		
+		  jQuery(this).click(function() 
+		  {
+			  var parentObj = jQuery(this).parent().siblings('.swatches');
+			  var productid=  parentObj.find('.addtocartvariation li.selected a').attr('id');
+			  addProduct(productid);
+		 });
+	 });
+	 
+ </script>
+ </div>
+ <isset name="OmniturePage" value="searchresult" scope="pdict">
+</isdecorate>
+

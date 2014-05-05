@@ -1,0 +1,30 @@
+<?xml version="1.0"?>
+<form xmlns="http://www.demandware.com/xml/form/2008-04-19" secure="true">
+
+	
+    <!-- field for eCheck type -->
+	
+		<field formid="bankAccountType" label="eCheck.bankAccountType.label" type="string"  mandatory="true" binding="custom.bankAccountType">
+		<options>
+			<option optionid="Checking" label="eCheck.checking.label" value="Checking" />
+			<option optionid="Savings" label="eCheck.saving.label" value="Savings" />
+		</options>
+	</field>
+     	
+<!--      	<field formid="bankName" label="eCheck.bankName.label" type="string" mandatory="true"  -->
+<!--      missing-error="forms.paymentinf.eCheck.bankName.numbermissing" max-length="25"   binding="custom.bankName"/> -->
+     	
+     <field formid="routing" label="eCheck.routing.label" type="string" mandatory="true" 
+     missing-error="forms.paymentinf.eCheck.routing.numbermissing" parse-error="forms.paymentinf.eCheck.routing.numbervalueerror" regexp="^[0-9]{9}$" max-length="9"
+	    binding="custom.routingNumber"/>
+     	
+     <field formid="account" label="eCheck.account.label" type="string" mandatory="true" 
+     missing-error="forms.paymentinf.eCheck.account.numbermissing" range-error="forms.paymentinf.eCheck.account.lengtherror" parse-error="forms.paymentinf.eCheck.account.numbervalueerror" regexp="^[0-9]*$" masked="4" min-length="4" max-length="17"
+	    binding="custom.accountNumber"/>
+	    
+	  <field formid="agree" label="forms.checkout.agree.label" type="boolean" mandatory="true" value-error="forms.checkout.agree.value-error"/>
+	    
+	<!-- confirm action to save the card details -->
+    <action formid="save" valid-form="true"/>
+
+</form>

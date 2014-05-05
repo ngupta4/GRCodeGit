@@ -1,0 +1,45 @@
+<isdecorate template="mobile/pt_mobile">
+<iscache type="relative" minute="30">
+<isinclude template="mobile/util/modules">
+<iscomment>create reporting event</iscomment>
+<isinclude template="mobile/util/reporting/ReportSearch.isml">
+
+<div id="search" >
+	<div>
+		<h1>${Resource.msg('nohits.header','search',null)}</h1>
+		<div>
+			${Resource.msg('nohits.message','search',null)} <span ><!-- Search Term --><isprint value="${pdict.ProductSearchResult.searchPhrase}"/></span>
+		<iscomment>render a link to execute the search with an alternative suggested search phrase</iscomment>
+		<isif condition="${!empty(pdict.ProductSearchResult.getSuggestedSearchPhrase())}">
+			<div>
+				${Resource.msg('nohits.didyoumean','search',null)}
+				<a  href="mSearch-Show?q=<isprint value="${pdict.ProductSearchResult.suggestedSearchPhrase}"/>"><isprint value="${pdict.ProductSearchResult.suggestedSearchPhrase}"/></a>?
+			</div><!-- END: didyoumean -->
+		</isif>
+		<iscomment>render a link to content search results if any content was found</iscomment>
+		<isif condition="${!empty(pdict.ContentSearchResult) && pdict.ContentSearchResult.count > 0}">
+			<div>
+				${Resource.msg('nohits.found','search',null)} <a href="${pdict.ContentSearchResult.url('mSearch-ShowContent')}">${Resource.msgf('nohits.contenthits','search',null,pdict.ContentSearchResult.count)}</a>
+			</div><!-- END: contenthits -->
+		</isif>
+		</div><!-- END: nohitsmessage -->
+		<div>
+		 	<iscontentasset aid="noresults-help">
+		</div><!-- END: noresults-help -->
+		<div>
+		 	<form action="${URLUtils.url('mSearch-Show')}" method="get">
+				
+					<label>${Resource.msg('nohits.searchlabel','search',null)}</label>
+					<input type="text" name="q" value="" />
+					<button type="submit" value="${Resource.msg('global.go','locale',null)}" name="simplesearch"><span>${Resource.msg('global.go','locale',null)}</span></button>
+				
+			</form>
+		</div><!-- END: nohitssearch -->
+		<div>
+			<div>
+				<iscontentasset aid="noresults-bottom">
+			</div><!-- END: noresultsbottom -->
+		</div><!-- END: nohitsfooter -->
+	</div><!-- END: nohits -->
+</div><!-- END: search -->
+</isdecorate>

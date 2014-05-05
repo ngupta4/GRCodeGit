@@ -1,0 +1,183 @@
+<iscache status="off"/>
+<isdecorate template="content/home/pt_storefront">
+	<isinclude template="util/modules"/>
+	<isscript>
+		importPackage(dw.object);
+		importPackage(dw.catalog);
+		
+		var CCC : Object = pdict.CurrentCampaignConfig;
+	
+		var landingTemplate : String = CCC.landingTemplate;
+		var campaignCode : String = CCC.campaignCode;
+		
+		var showHeader : boolean = CCC.showHeader;
+		var showFooter : boolean = CCC.showFooter;
+		var showNav : boolean = CCC.showNav;
+		var showOrderButton : boolean = CCC.showOrderButton;
+		
+		var containerClasses : String = CCC.getContainerClasses();
+		
+		var category : dw.catalog.Category = CCC.getCampaignCategory();
+		var showsingup : boolean = false;
+		if('showsignup' in dw.system.Site.getCurrent().preferences.custom){
+			showsingup = dw.system.Site.getCurrent().preferences.custom.showsignup;
+		}
+	</isscript>
+
+<iscomment>this is the template rendering the homepage</iscomment>
+<div class="homepage">
+
+	<isslot id="S1" context="category" description="Main Content Area" context-object="${category}"/>
+	
+	<isif condition="${false}">
+		<isslot id="alternate-sas-offer-slot" context="category" description="Alternate Offer" context-object="${category}"/>    
+		<isslot id="cart-phone-number" context="category" description="Cart Phone Number Content Slot" context-object="${category}"/>
+	</isif>
+
+	
+</div>
+<div class="freeShippingMid"><center>FREE SHIPPING!</center></div>
+
+<script type="text/javascript">
+var _instanceNum = (function() { 
+	var count = 0; 
+	return function() {
+		 var c = count;
+		 ++count; 
+		 this.getInstanceNum = function() { 
+			 return c; 
+		 }
+	   }
+	 })();
+
+	function Paginator(elementId, theImageElement) {
+			
+		//private members
+		var pcount = (new _instanceNum()).getInstanceNum();
+		var className = "pager p" + pcount;
+		var selected = false;
+		var pagerElement = null; 
+		var ready   = false;
+		var yVal = pcount * (-32);
+		var imgElement = null;
+
+
+		var clearAll = function() {
+		
+			if(jQuery(".pager").length > 0){
+				var tmpCountPage = 0;
+				jQuery(".pager").each(function() { 
+					jQuery(this).removeClass('selected');
+					if(tmpCountPage == 0) jQuery(this).css('background-position','100% 0px');
+					if(tmpCountPage == 1) jQuery(this).css('background-position','100% -32px');
+					if(tmpCountPage == 2) jQuery(this).css('background-position','100% -64px');
+					tmpCountPage++;
+				});
+			}
+		}
+
+		var toggle=function(){
+			clearAll();
+			
+			if (!jQuery(pagerElement).hasClass('selected')) {
+				jQuery(pagerElement).css('background-position','0 ' + yVal  + 'px');
+				jQuery(pagerElement).addClass('selected');
+				jQuery(imgElement).siblings('img').fadeOut("fast", function() {
+					jQuery(imgElement).fadeIn("fast");
+				});
+
+				return (selected = !selected);
+			}
+
+			return selected;
+		}
+		
+
+		{
+			imgElement   = theImageElement;
+			pagerElement = jQuery(elementId).add('<li class="' + className + '"></li>')[1];
+			jQuery(pagerElement).css({ 'background-position' : '100% ' + yVal + 'px' });
+			jQuery(pagerElement).bind('click',toggle);
+			jQuery(pagerElement).appendTo(elementId);
+			jQuery(pagerElement).fadeIn("fast");
+
+			
+	
+		}
+
+
+		this.toggle = function(){ toggle(); };
+		this.getElement = function() { return pagerElement; };
+		
+	};
+
+	
+	function Rotator(elementId, rotationSpeed) {
+		
+		var pages      = new Array();
+		var timer      = 0;
+		var pageIndex  = 1;
+
+		var stopRotation = function() {
+			clearInterval(timer);
+		}
+
+		var rotateNext = function() {
+			pages[pageIndex].toggle();
+			if (++pageIndex >= pages.length) pageIndex=0;
+		}
+		
+
+		{
+			jQuery(elementId).bind('click',stopRotation);
+		}
+
+		return {
+			addPage : function(pageObject) {
+				pages.push(pageObject);
+			},
+			startRotation : function() {
+				timer = setInterval(rotateNext, rotationSpeed);	
+			},
+			stopRotation : function() {
+				stopRotation();
+			}
+		}
+	
+	};
+			
+	jQuery(document).ready( function() {
+
+		var banners = jQuery(".homeRotator img");
+		var numBanners = banners.length;
+		
+		if (banners && numBanners > 1) {
+			var rotator = new Rotator("#pagination", 5000);
+			jQuery(banners[0]).fadeIn("slow");
+			for (var i=0; i < numBanners; i++) {
+				var page = new Paginator("#pagination", banners[i]);
+
+				rotator.addPage(page);
+				
+				if (i==0) {
+					//jQuery(page.getElement).bind('click',function() {
+						page.toggle();
+					//});
+				}
+
+				
+			
+			}
+
+			rotator.startRotation();
+			
+		}
+
+	    
+	    		
+		
+	});
+</script>
+
+    <isset name="OmniturePage" value="Homepage" scope="pdict">
+</isdecorate>

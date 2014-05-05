@@ -1,0 +1,516 @@
+/*
+*   @input CurrentHttpParameterMap : dw.web.HttpParameterMap Http Parameter Map
+*   @input cartId : String
+*   @input sessionId : String
+*   @input remoteIP : String
+*   @input Request : dw.system.Request
+*	@output responseXMLObject:XML
+*	@output errorCodes:dw.util.ArrayList 
+*	@output errorStrings:dw.util.ArrayList
+*/
+importPackage( dw.customer );
+importPackage( dw.system );
+importPackage( dw.util );
+importPackage( dw.web );
+importPackage( dw.io );
+importPackage( dw.net );
+
+importScript( "grmiddleware/libGRMiddleware.ds" );
+importScript('common/libUtils.ds');
+function execute( args : PipelineDictionary ) : Number
+{		
+  		logInfo("GetRealTmScr : Inside Script");
+  	 var customerType:String=	dw.web.Resource.msg('customer.type','configuration',null);
+  	//	Code to create the Request XML
+   	//Get The UID from Request
+  	var request:Request = args.Request;
+    var uid:String = getCustomerUID(request);
+  	//Create URL
+  	var transactionID = getTransactionID();
+  	var requestXML:String ="";
+  	
+	requestXML = getServiceXMLForRts(args.CurrentHttpParameterMap,transactionID,uid,args.sessionId,args.cartId,args.remoteIP); 
+	var serviceURL : String = getServiceURL(uid, transactionID);
+	 	
+	logDebug ("RTS api URL :"+serviceURL);
+  	
+  	// Call GR API 
+	var http : HTTPClient = new HTTPClient();
+	var serviceTimeout : Number= dw.system.Site.getCurrent().preferences.custom.rtsServiceTimeout;
+	http = callMWAPI(http, "POST", serviceURL,requestXML,serviceTimeout);		
+	var responseText : String = http.text;
+	//Code to Parse Response XML
+	//var responseText1 : String = http.text;
+	//responseText=getResponseXMLForRts(customerType); 
+	var errorResponse : String = http.errorText;	
+	if( !empty(errorResponse) ) {
+                responseText = errorResponse;
+        }
+
+	logInfo ("RTS Customer response = "+ responseText);
+	logInfo ("RTS Customer errorResponse = "+ errorResponse);
+	
+	if( !empty(responseText) ) {		
+		responseText= responseText.replace("&", "&amp;", "g");
+		var responseXML=new XML (responseText);	
+		var status = responseXML.status.toString();
+		
+		if(status == '200'){
+		
+			args.responseXMLObject = responseXML;			
+		
+		}else{
+			var userErrors : XML = null;
+			var userError : XML = null;
+			var errorCodeList : ArrayList = new ArrayList();
+			var errorStringList : ArrayList = new ArrayList();
+			var userErrors = responseXML.errorData.error;
+			for ( var i=0, ii=userErrors.length(); i<ii; i++ ) {
+				userError = userErrors[i];
+				errorCodeList.add( userError.code);
+				errorStringList.add(dw.web.Resource.msg(userError.code,'errormessages',userError.message));
+			}
+			args.errorCodes = errorCodeList;
+			args.errorStrings = errorStringList;
+			//getErrorResponse (responseXML);	
+			return PIPELET_ERROR;		
+		}
+	}
+	
+	
+	logInfo("GetRealTmScr : Exit");
+    return PIPELET_NEXT;
+}
+
+
+function getServiceURL(uid : String, trans: String) {
+	var baseURL : String = Site.current.getCustomPreferenceValue("middlewareAPIURL");
+	var brandID= Site.current.getCustomPreferenceValue("GRMProductLine");
+	baseURL= baseURL + "/rts/payment-options/brand/"+brandID+"/uid/"+ uid +"/trans/"+trans ;
+	return baseURL;
+}
+
+function getServiceXMLForRts(CurrentHttpParameterMap : dw.web.HttpParameterMap,uid : String, transId : String, sessionId : String, cartId : String , remoteIP : String)
+{
+var serviceXml : StringWriter = new StringWriter();	
+	
+	serviceXml.write("<?xml version='1.0' encoding='UTF-8'?><rtsRequest xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' xsi:noNamespaceSchemaLocation='rtsPayOptionsRequest_0-1.xsd'>");
+
+	serviceXml.write("<clientId>"+"Demandware"+"</clientId>");
+	serviceXml.write("<sessionData>");
+	serviceXml.write("<sessionId>");
+	if(sessionId !=null  && !empty(sessionId))
+	serviceXml.write(sessionId);
+	serviceXml.write("</sessionId>");
+	serviceXml.write("<ipAddress>");
+	if(remoteIP !=null  && !empty(remoteIP))
+	serviceXml.write(remoteIP);
+	serviceXml.write("</ipAddress>");
+	serviceXml.write("<cartId>");
+	if(cartId !=null )
+	{
+	  serviceXml.write(cartId);
+	}
+	serviceXml.write("</cartId>");
+	serviceXml.write("</sessionData>");	
+	serviceXml.write("<rts>");
+	serviceXml.write("<offerCode>");
+	if('pid' in CurrentHttpParameterMap   && !empty(CurrentHttpParameterMap.pid))
+	{
+	serviceXml.write(CurrentHttpParameterMap.pid);
+	}
+	serviceXml.write("</offerCode>");
+	
+	serviceXml.write("<uci>");
+	if(!empty(request.httpCookies['uci']) && !empty(request.httpCookies['uci'].value))
+	{
+		serviceXml.write(request.httpCookies['uci'].value);
+	}
+	serviceXml.write("</uci>");	
+	
+	serviceXml.write("<email>");
+	if('dwfrm_personinf_contact_email' in CurrentHttpParameterMap   && !empty(CurrentHttpParameterMap.dwfrm_personinf_contact_email))
+	{
+	serviceXml.write(CurrentHttpParameterMap.dwfrm_personinf_contact_email);
+	}
+	serviceXml.write("</email>");
+	
+	serviceXml.write("<addresses>");
+	serviceXml.write("<shippingSameAsBilling>");
+	
+	if('dwfrm_personinf_useAsBillingAddress' in CurrentHttpParameterMap  && !empty(CurrentHttpParameterMap.dwfrm_personinf_useAsBillingAddress) && 
+	CurrentHttpParameterMap.dwfrm_personinf_useAsBillingAddress.value != "null" && !empty(CurrentHttpParameterMap.dwfrm_personinf_useAsBillingAddress.value) && CurrentHttpParameterMap.dwfrm_personinf_useAsBillingAddress.value != null)
+	{
+		serviceXml.write(CurrentHttpParameterMap.dwfrm_personinf_useAsBillingAddress);
+	}
+	else{
+		serviceXml.write("false");
+	}
+	serviceXml.write("</shippingSameAsBilling>");
+	
+	serviceXml.write("<billingAddress>");
+	
+	
+	if('dwfrm_personinf_billtoaddress_firstName' in CurrentHttpParameterMap  && !empty(CurrentHttpParameterMap.dwfrm_personinf_billtoaddress_firstName))
+	{
+		serviceXml.write("<firstName>");
+		serviceXml.write(CurrentHttpParameterMap.dwfrm_personinf_billtoaddress_firstName);
+		serviceXml.write("</firstName>");	
+	}
+	
+	
+	
+	if('dwfrm_personinf_billtoaddress_lastName' in CurrentHttpParameterMap  && !empty(CurrentHttpParameterMap.dwfrm_personinf_billtoaddress_lastName))
+	{
+		serviceXml.write("<lastName>");
+		serviceXml.write( CurrentHttpParameterMap.dwfrm_personinf_billtoaddress_lastName );
+		serviceXml.write("</lastName>");
+	}
+	
+	
+
+	if('dwfrm_personinf_billtoaddress_address1' in CurrentHttpParameterMap  && !empty(CurrentHttpParameterMap.dwfrm_personinf_billtoaddress_address1))
+	{	serviceXml.write("<address>");
+		serviceXml.write( CurrentHttpParameterMap.dwfrm_personinf_billtoaddress_address1);
+		serviceXml.write("</address>");
+	}
+	
+	
+	if('dwfrm_personinf_billtoaddress_address2' in CurrentHttpParameterMap  && CurrentHttpParameterMap.dwfrm_personinf_billtoaddress_address2.empty!=true)
+	{
+		serviceXml.write("<address>");
+		serviceXml.write( CurrentHttpParameterMap.dwfrm_personinf_billtoaddress_address2);
+		serviceXml.write("</address>");
+	}
+		
+	
+	
+	if('dwfrm_personinf_billtoaddress_city' in CurrentHttpParameterMap && !empty(CurrentHttpParameterMap.dwfrm_personinf_billtoaddress_city))
+	{
+		serviceXml.write("<city>");
+		serviceXml.write(CurrentHttpParameterMap.dwfrm_personinf_billtoaddress_city);
+		serviceXml.write("</city>");
+	}
+		
+	
+
+	if('dwfrm_personinf_billtoaddress_states_stateUS' in CurrentHttpParameterMap && !empty(CurrentHttpParameterMap.dwfrm_personinf_billtoaddress_states_stateUS))
+	{
+		serviceXml.write("<state>");
+		serviceXml.write( CurrentHttpParameterMap.dwfrm_personinf_billtoaddress_states_stateUS);
+		serviceXml.write("</state>");
+	}
+	
+	
+	
+	if('dwfrm_personinf_billtoaddress_zip' in CurrentHttpParameterMap  && !empty(CurrentHttpParameterMap.dwfrm_personinf_billtoaddress_zip))
+	{
+		serviceXml.write("<postalCode>");
+		serviceXml.write(CurrentHttpParameterMap.dwfrm_personinf_billtoaddress_zip );
+		serviceXml.write("</postalCode>");
+	}
+	
+		
+	
+	if('dwfrm_personinf_billtoaddress_country' in CurrentHttpParameterMap &&  !empty(CurrentHttpParameterMap.dwfrm_personinf_billtoaddress_country) )	
+	{
+		serviceXml.write("<countryCode>");
+		serviceXml.write( CurrentHttpParameterMap.dwfrm_personinf_billtoaddress_country);
+		serviceXml.write("</countryCode>");
+	}
+	
+		
+    serviceXml.write("<phones>");
+    
+    
+    if('dwfrm_personinf_contact_daytimephone' in CurrentHttpParameterMap &&  !empty(CurrentHttpParameterMap.dwfrm_personinf_contact_daytimephone ))	
+	{
+		serviceXml.write("<dayPhone>");
+		var dayphone : String = CurrentHttpParameterMap.dwfrm_personinf_contact_daytimephone.toString();
+		if(null != CurrentHttpParameterMap.dwfrm_personinf_contact_daytimephone){
+		var v1 = dayphone.substr(0,3);
+		var v2 = dayphone.substr(3,3);
+		var v3 = dayphone.substr(6,4);	
+		dayphone = v1 + '-' + v2 + '-' + v3;
+				}
+	
+		serviceXml.write(dayphone);
+		serviceXml.write("</dayPhone>");
+	}
+		
+	
+	
+	if('dwfrm_personinf_contact_eveningphone' in CurrentHttpParameterMap && !empty(CurrentHttpParameterMap.dwfrm_personinf_contact_eveningphone))	
+	{
+		serviceXml.write("<eveningPhone>");
+	var evePhone : String = CurrentHttpParameterMap.dwfrm_personinf_contact_eveningphone.toString();
+	if(null != evePhone && evePhone!=''){
+		var v1= evePhone.substr(0,3);
+		var v2= evePhone.substr(3,3);
+		var v3= evePhone.substr(6,4);	
+		evePhone = v1 + '-' + v2 + '-' + v3;
+	}
+		serviceXml.write(evePhone);
+		serviceXml.write("</eveningPhone>");
+	}
+	
+	
+	serviceXml.write("</phones>");
+	serviceXml.write("</billingAddress>");
+	serviceXml.write("<shippingAddress>");
+	
+			if ('dwfrm_personinf_useAsBillingAddress' in CurrentHttpParameterMap  && !empty(CurrentHttpParameterMap.dwfrm_personinf_useAsBillingAddress) && CurrentHttpParameterMap.dwfrm_personinf_useAsBillingAddress!="true")
+			{	
+					
+					if('dwfrm_personinf_shipptoaddress_firstName' in CurrentHttpParameterMap   && !empty(CurrentHttpParameterMap.dwfrm_personinf_shipptoaddress_firstName))
+						{
+							serviceXml.write("<firstName>");
+							serviceXml.write(CurrentHttpParameterMap.dwfrm_personinf_shipptoaddress_firstName);
+							serviceXml.write("</firstName>");
+						}
+					
+					
+					
+					if('dwfrm_personinf_shipptoaddress_lastName' in CurrentHttpParameterMap   && !empty(CurrentHttpParameterMap.dwfrm_personinf_shipptoaddress_lastName))
+					{
+						serviceXml.write("<lastName>");
+						serviceXml.write(CurrentHttpParameterMap.dwfrm_personinf_shipptoaddress_lastName );
+						serviceXml.write("</lastName>");
+					}
+					
+					
+					
+					if('dwfrm_personinf_shipptoaddress_address1' in CurrentHttpParameterMap   && !empty(CurrentHttpParameterMap.dwfrm_personinf_shipptoaddress_address1))
+					{
+						serviceXml.write("<address>");
+						serviceXml.write(CurrentHttpParameterMap.dwfrm_personinf_shipptoaddress_address1 );	
+						serviceXml.write("</address>");
+					}
+					
+					
+					
+					if('dwfrm_personinf_shipptoaddress_address2' in CurrentHttpParameterMap   && CurrentHttpParameterMap.dwfrm_personinf_shipptoaddress_address2.empty!=true)
+					{
+						serviceXml.write("<address>");
+						serviceXml.write(CurrentHttpParameterMap.dwfrm_personinf_shipptoaddress_address2 );
+						serviceXml.write("</address>");
+					}
+					
+					
+					
+					if('dwfrm_personinf_shipptoaddress_city' in CurrentHttpParameterMap  && !empty(CurrentHttpParameterMap.dwfrm_personinf_shipptoaddress_city))
+					{
+						serviceXml.write("<city>");
+						serviceXml.write(CurrentHttpParameterMap.dwfrm_personinf_shipptoaddress_city);
+						serviceXml.write("</city>");
+					}
+					
+					
+					
+					if('dwfrm_personinf_shipptoaddress_states_stateUS' in CurrentHttpParameterMap  && !empty(CurrentHttpParameterMap.dwfrm_personinf_shipptoaddress_states_stateUS))
+					{
+						serviceXml.write("<state>");
+					   serviceXml.write(CurrentHttpParameterMap.dwfrm_personinf_shipptoaddress_states_stateUS);
+					   serviceXml.write("</state>");
+					}
+					
+					
+					
+					if('dwfrm_personinf_shipptoaddress_zip' in CurrentHttpParameterMap  && !empty(CurrentHttpParameterMap.dwfrm_personinf_shipptoaddress_zip))
+					{
+						serviceXml.write("<postalCode>");
+						serviceXml.write(CurrentHttpParameterMap.dwfrm_personinf_shipptoaddress_zip);
+						serviceXml.write("</postalCode>");
+					}
+					
+					
+					
+					if('dwfrm_personinf_shipptoaddress_country' in CurrentHttpParameterMap  && !empty(CurrentHttpParameterMap.dwfrm_personinf_shipptoaddress_country))
+					{
+						serviceXml.write("<countryCode>");
+						serviceXml.write(CurrentHttpParameterMap.dwfrm_personinf_shipptoaddress_country );
+						serviceXml.write("</countryCode>");
+					}
+					
+					
+					serviceXml.write("<phones>");
+					
+					if('dwfrm_personinf_contact_daytimephone' in CurrentHttpParameterMap   && !empty(CurrentHttpParameterMap.dwfrm_personinf_contact_daytimephone))
+					{
+						serviceXml.write("<dayPhone>");
+							var dayphone : String = CurrentHttpParameterMap.dwfrm_personinf_contact_daytimephone.toString();
+						if(null != CurrentHttpParameterMap.dwfrm_personinf_contact_daytimephone){
+						var v1= dayphone.substr(0,3);
+						var v2= dayphone.substr(3,3);
+						var v3= dayphone.substr(6,4);	
+						dayphone = v1 + '-' + v2 + '-' + v3;
+								}
+					
+						serviceXml.write(dayphone);
+						serviceXml.write("</dayPhone>");
+					}
+					
+					
+					
+					if('dwfrm_personinf_contact_eveningphone'  in CurrentHttpParameterMap  && !empty(CurrentHttpParameterMap.dwfrm_personinf_contact_eveningphone))
+					{
+						serviceXml.write("<eveningPhone>");
+						var evePhone : String = CurrentHttpParameterMap.dwfrm_personinf_contact_eveningphone.toString();
+						if(null != CurrentHttpParameterMap.dwfrm_personinf_contact_eveningphone && !empty(evePhone)){
+						var v1= evePhone.substr(0,3);
+						var v2= evePhone.substr(3,3);
+						var v3= evePhone.substr(6,4);	
+						evePhone = v1 + '-' + v2 + '-' + v3;
+					}
+						serviceXml.write(evePhone);
+						serviceXml.write("</eveningPhone>");
+					}
+					
+					serviceXml.write("</phones>");
+			}else{
+					serviceXml.write("<firstName>");
+					if('dwfrm_personinf_billtoaddress_firstName' in CurrentHttpParameterMap  && !empty(CurrentHttpParameterMap.dwfrm_personinf_billtoaddress_firstName))
+					{
+						serviceXml.write(CurrentHttpParameterMap.dwfrm_personinf_billtoaddress_firstName);
+					}
+					serviceXml.write("</firstName>");	
+					
+					serviceXml.write("<lastName>");
+					if('dwfrm_personinf_billtoaddress_lastName' in CurrentHttpParameterMap  && !empty(CurrentHttpParameterMap.dwfrm_personinf_billtoaddress_lastName))
+					{
+						serviceXml.write( CurrentHttpParameterMap.dwfrm_personinf_billtoaddress_lastName );
+					}
+					serviceXml.write("</lastName>");
+					
+					
+					if('dwfrm_personinf_billtoaddress_address1' in CurrentHttpParameterMap  && !empty(CurrentHttpParameterMap.dwfrm_personinf_billtoaddress_address1))
+					{
+						serviceXml.write("<address>");
+						serviceXml.write( CurrentHttpParameterMap.dwfrm_personinf_billtoaddress_address1);
+						serviceXml.write("</address>");
+					}
+					
+					if('dwfrm_personinf_billtoaddress_address2' in CurrentHttpParameterMap  && CurrentHttpParameterMap.dwfrm_personinf_billtoaddress_address2.empty!=true)
+					{
+						serviceXml.write("<address>");
+						serviceXml.write( CurrentHttpParameterMap.dwfrm_personinf_billtoaddress_address2);
+						serviceXml.write("</address>");
+					}
+							
+					
+					if('dwfrm_personinf_billtoaddress_city' in CurrentHttpParameterMap && !empty(CurrentHttpParameterMap.dwfrm_personinf_billtoaddress_city))
+					{
+						serviceXml.write("<city>");
+						serviceXml.write(CurrentHttpParameterMap.dwfrm_personinf_billtoaddress_city);
+						serviceXml.write("</city>");
+					}
+						
+					
+					
+					if('dwfrm_personinf_billtoaddress_states_stateUS' in CurrentHttpParameterMap && !empty(CurrentHttpParameterMap.dwfrm_personinf_billtoaddress_states_stateUS))
+					{
+						serviceXml.write("<state>");
+						serviceXml.write( CurrentHttpParameterMap.dwfrm_personinf_billtoaddress_states_stateUS);
+						serviceXml.write("</state>");
+					}
+					
+					
+					
+					if('dwfrm_personinf_billtoaddress_zip' in CurrentHttpParameterMap  && !empty(CurrentHttpParameterMap.dwfrm_personinf_billtoaddress_zip))
+					{
+						serviceXml.write("<postalCode>");
+						serviceXml.write(CurrentHttpParameterMap.dwfrm_personinf_billtoaddress_zip );
+						serviceXml.write("</postalCode>");
+					}
+					
+						
+					
+					if('dwfrm_personinf_billtoaddress_country' in CurrentHttpParameterMap &&  !empty(CurrentHttpParameterMap.dwfrm_personinf_billtoaddress_country) )	
+					{
+						serviceXml.write("<countryCode>");
+						serviceXml.write( CurrentHttpParameterMap.dwfrm_personinf_billtoaddress_country);
+						serviceXml.write("</countryCode>");
+					}
+					
+						
+				    serviceXml.write("<phones>");
+				    
+				    serviceXml.write("<dayPhone>");
+				    if('dwfrm_personinf_contact_daytimephone' in CurrentHttpParameterMap &&  !empty(CurrentHttpParameterMap.dwfrm_personinf_contact_daytimephone ))	
+					{
+						
+						var dayphone : String = CurrentHttpParameterMap.dwfrm_personinf_contact_daytimephone.toString();
+						if(null != CurrentHttpParameterMap.dwfrm_personinf_contact_daytimephone){
+						var v1= dayphone.substr(0,3);
+						var v2= dayphone.substr(3,3);
+						var v3= dayphone.substr(6,4);	
+						dayphone = v1 + '-' + v2 + '-' + v3;
+							}
+					
+						serviceXml.write(dayphone);
+					}
+					serviceXml.write("</dayPhone>");	
+					
+					
+					if('dwfrm_personinf_contact_eveningphone' in CurrentHttpParameterMap && !empty(CurrentHttpParameterMap.dwfrm_personinf_contact_eveningphone))	
+					{
+						serviceXml.write("<eveningPhone>");
+						var evePhone : String = CurrentHttpParameterMap.dwfrm_personinf_contact_eveningphone.toString();
+						if(null != CurrentHttpParameterMap.dwfrm_personinf_contact_eveningphone  && !empty(evePhone)){
+						var v1= evePhone.substr(0,3);
+						var v2= evePhone.substr(3,3);
+						var v3= evePhone.substr(6,4);	
+						evePhone = v1 + '-' + v2 + '-' + v3;
+							}
+						serviceXml.write(evePhone);
+						serviceXml.write("</eveningPhone>");
+					}
+					serviceXml.write("</phones>");
+			}	
+	serviceXml.write("</shippingAddress>");
+	
+	serviceXml.write("</addresses>");
+	serviceXml.write("</rts>");
+	serviceXml.write("</rtsRequest>");
+	return serviceXml.toString();
+}
+/*function getResponseXMLForRts(customer_Type : String)
+{ 
+	 var subCustomerType:String=	dw.web.Resource.msg('sub.customer.type','configuration',null);
+	  if(customer_Type == Resource.msg('payMethods.paylater.ID', 'configuration', null))
+	  {
+	  	if(subCustomerType == "1")
+	  		return "<?xml version='1.0' encoding='UTF-8' ?><rtsResponse xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' xsi:noNamespaceSchemaLocation='rtsPayOptionsResponse_0-1.xsd'><status>200</status><requestData><method>paymentOptions</method><brand>PA</brand><uid>VHgNyZ</uid><trans>12233445514</trans></requestData><responseData><rts><token>RTS8R7D5BMd</token><screenLevel>2</screenLevel><payOptions><payOption>payLater</payOption></payOptions><group>303</group><options><option type='displayCartPopup'>true</option></options></rts></responseData></rtsResponse>";
+	  	
+	  	else if(subCustomerType == "2")
+			return "<?xml version='1.0' encoding='UTF-8' ?><rtsResponse xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' xsi:noNamespaceSchemaLocation='rtsPayOptionsResponse_0-1.xsd'><status>200</status><requestData><method>paymentOptions</method><brand>PA</brand><uid>VHgNyZ</uid><trans>12233445514</trans></requestData><responseData><rts><token>RTS8R7D5BMd</token><screenLevel>2</screenLevel><payOptions><payOption>payLater</payOption><payOption>creditCard</payOption></payOptions><group>303</group><options><option type='displayCartPopup'>true</option></options></rts></responseData></rtsResponse>";
+            
+	  	else if(subCustomerType == "3")
+	  		return "<?xml version='1.0' encoding='UTF-8' ?><rtsResponse xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' xsi:noNamespaceSchemaLocation='rtsPayOptionsResponse_0-1.xsd'><status>200</status><requestData><method>paymentOptions</method><brand>PA</brand><uid>VHgNyZ</uid><trans>12233445514</trans></requestData><responseData><rts><token>RTS8R7D5BMd</token><screenLevel>2</screenLevel><payOptions><payOption>payLater</payOption><payOption>creditCard</payOption><payOption>payPal</payOption></payOptions><group>303</group><options><option type='displayCartPopup'>true</option></options></rts></responseData></rtsResponse>";
+	  	  }
+	  
+	  else if(customer_Type == "PayPal")
+	  {
+	  	if(subCustomerType == "1")
+	  	  	return "<?xml version='1.0' encoding='UTF-8' ?><rtsResponse xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' xsi:noNamespaceSchemaLocation='rtsPayOptionsResponse_0-1.xsd'><status>200</status><requestData><method>paymentOptions</method><brand>PA</brand><uid>VHgNyZ</uid><trans>12233445514</trans></requestData><responseData><rts><token>RTS8R7D5BMd</token><screenLevel>2</screenLevel><payOptions><payOption>payPal</payOption></payOptions><group>303</group><options><option type='displayCartPopup'>true</option></options></rts></responseData></rtsResponse>";
+	
+		else if(subCustomerType == "2")
+		    return "<?xml version='1.0' encoding='UTF-8' ?><rtsResponse xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' xsi:noNamespaceSchemaLocation='rtsPayOptionsResponse_0-1.xsd'><status>200</status><requestData><method>paymentOptions</method><brand>PA</brand><uid>VHgNyZ</uid><trans>12233445514</trans></requestData><responseData><rts><token>RTS8R7D5BMd</token><screenLevel>2</screenLevel><payOptions><payOption>payPal</payOption><payOption>payLater</payOption></payOptions><group>303</group><options><option type='displayCartPopup'>true</option></options></rts></responseData></rtsResponse>";
+	
+		else if(subCustomerType == "3")
+		   return "<?xml version='1.0' encoding='UTF-8' ?><rtsResponse xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' xsi:noNamespaceSchemaLocation='rtsPayOptionsResponse_0-1.xsd'><status>200</status><requestData><method>paymentOptions</method><brand>PA</brand><uid>VHgNyZ</uid><trans>12233445514</trans></requestData><responseData><rts><token>RTS8R7D5BMd</token><screenLevel>2</screenLevel><payOptions><payOption>payPal</payOption><payOption>payLater</payOption><payOption>creditCard</payOption></payOptions><group>303</group><options><option type='displayCartPopup'>true</option></options></rts></responseData></rtsResponse>";
+		
+	  }
+	  
+	  else if(customer_Type == "CreditCard")
+	  {
+	   	if(subCustomerType == "1")
+	  		return "<?xml version='1.0' encoding='UTF-8' ?><rtsResponse xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' xsi:noNamespaceSchemaLocation='rtsPayOptionsResponse_0-1.xsd'><status>200</status><requestData><method>paymentOptions</method><brand>PA</brand><uid>VHgNyZ</uid><trans>12233445514</trans></requestData><responseData><rts><token>RTS8R7D5BMd</token><screenLevel>2</screenLevel><payOptions><payOption>creditCard</payOption></payOptions><group>303</group><options><option type='displayCartPopup'>true</option></options></rts></responseData></rtsResponse>";
+	  	else if(subCustomerType == "2")
+	  		return "<?xml version='1.0' encoding='UTF-8' ?><rtsResponse xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' xsi:noNamespaceSchemaLocation='rtsPayOptionsResponse_0-1.xsd'><status>200</status><requestData><method>paymentOptions</method><brand>PA</brand><uid>VHgNyZ</uid><trans>12233445514</trans></requestData><responseData><rts><token>RTS8R7D5BMd</token><screenLevel>2</screenLevel><payOptions><payOption>creditCard</payOption><payOption>payLater</payOption></payOptions><group>303</group><options><option type='displayCartPopup'>true</option></options></rts></responseData></rtsResponse>";
+	  	else if(subCustomerType == "3")
+	  	   return "<?xml version='1.0' encoding='UTF-8' ?><rtsResponse xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' xsi:noNamespaceSchemaLocation='rtsPayOptionsResponse_0-1.xsd'><status>200</status><requestData><method>paymentOptions</method><brand>PA</brand><uid>VHgNyZ</uid><trans>12233445514</trans></requestData><responseData><rts><token>RTS8R7D5BMd</token><screenLevel>2</screenLevel><payOptions><payOption>creditCard</payOption><payOption>payLater</payOption><payOption>payPal</payOption></payOptions><group>303</group><options><option type='displayCartPopup'>true</option></options></rts></responseData></rtsResponse>";
+	  }
+	  
+	  return "<?xml version='1.0' encoding='UTF-8' ?><rtsResponse xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' xsi:noNamespaceSchemaLocation='rtsPayOptionsResponse_0-1.xsd'><status>200</status><requestData><method>paymentOptions</method><brand>PA</brand><uid>VHgNyZ</uid><trans>12233445514</trans></requestData><responseData><rts><token>RTS8R7D5BMd</token><screenLevel>2</screenLevel><payOptions><payOption>eCheck</payOption><payOption>creditCard</payOption><payOption>payLater</payOption><payOption>payPal</payOption></payOptions><group>303</group><options><option type='displayCartPopup'>true</option></options></rts></responseData></rtsResponse>";
+}*/

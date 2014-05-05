@@ -1,0 +1,26 @@
+<iscache status="off"/>
+
+<iscomment>
+Renders categories for solution finder
+</iscomment>
+<div class="solution-finder-image"></div>
+<ul>
+	<isset name="solutionFinderCateg" value="${dw.catalog.CatalogMgr.getCategory('SolutionFinder')}" scope="page"/>
+	<isloop items="${solutionFinderCateg.getOnlineSubCategories()}" var="subCat">
+	
+      <li>
+	      	<isset name="image" value="${subCat.thumbnail}" scope="page"/>
+
+	      		<isset name="thumbnailUrl" value="${URLUtils.httpStatic('/images/noimagesmall.png')}" scope="page"/>
+
+		 	<isset name="imageTitle" value="${subCat.displayName}" scope="page"/>
+		  	<isset name="imageAlt" value="${subCat.displayName}" scope="page"/>
+	      	<a href="${URLUtils.http('Search-Show', 'cgid', subCat.getID())}" class="solution-img">
+	      		<img src="${thumbnailUrl}" alt="${imageAlt}" title="${imageTitle}"/>
+	      	</a>	
+	      	<a href="${URLUtils.http('Search-Show', 'cgid', subCat.getID())}">	      	
+				<isprint value="${subCat.getDisplayName()}"/>
+			</a>
+       </li>
+     </isloop>
+  </ul>

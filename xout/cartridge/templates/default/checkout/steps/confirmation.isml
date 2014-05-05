@@ -1,0 +1,131 @@
+<!--- TEMPLATENAME: complete.isml --->
+<isset name="cookiesDomain" value="${dw.system.Site.current.getCustomPreferenceValue("GRCookiesDomain")}" scope="page"/>
+<iscookie name="campaign" path="/" value="${}" domain="${cookiesDomain}" maxAge="0" />
+<iscookie name="uci" path="/" value="${}" domain="${cookiesDomain}" maxAge="0" />
+<iscookie name="secondaryuci" path="/" value="${}" domain="${cookiesDomain}" maxAge="0" />
+<isscript>		
+	var CCC : Object = pdict.CurrentCampaignConfig;
+</isscript>
+<iscomment>Clear out Order information that is no longer useful or required anymore</iscomment>
+<isscript>
+	delete pdict.CurrentSession.privacy.OrderNo;
+	delete pdict.CurrentSession.privacy.OrderNoDec;
+</isscript>
+
+<script language="javascript">
+	var orderPhone = '';
+</script>
+
+<iscomment>
+	This template visualizes the order confirmation page. Note, that it
+	uses a different decorator template.
+	It displays the order related information, such as the order number,
+	creation date, payment information, order totals and shipments of
+	the order.
+</iscomment>
+
+<div class="content_checkout">
+	<isslot id="confirmationleft" context="category" description="Confirmation Checkout Left" context-object="${cat}"/>
+	<isslot id="confirmationtop" context="category" description="Confirmation Checkout Top" context-object="${cat}"/>
+	<div class="checkout_right cart_single">
+	
+		<isif condition=${pdict.multiCheckout}>
+			<ischeckoutbreadcrumbs type="multi" step="3" />
+		<iselse>
+			<ischeckoutbreadcrumbs type="simple" step="2" paypal="${pdict.IsPaypalPayment}" />
+		</isif>
+		
+		<div class="content_box_outer_pdp">
+			<div class="content_box_inner_sp">
+				<isif condition="${(!empty(pdict.AVSError) && pdict.AVSError) ||!empty(pdict.PlaceOrderError)}">
+					<div class="errorform">${Resource.msg('global.unable.to.process','locale',null)}</div>
+				</isif>
+				
+				<div class="confirmation_header">
+					<h2>${Resource.msg('confirmation.thankyou','checkout',null)}</h2>
+					<p>${Resource.msg('orderdetails.ordernumber','rendering',null)} <isprint value="${pdict.Order.orderNo}"/></p>
+					<p>${Resource.msg('orderdetails.ship.text','rendering',null)}</p>
+					<p>${Resource.msgf('orderdetails.email.text','rendering',null)}</p> 
+				</div>
+				
+				<isorderdetails order="${pdict.Order}"/>
+				
+			</div>
+		</div>
+		
+		<div class="mcafee_logo">
+			<iscontentasset aid="cart-comfort-copy" />
+		</div>		
+		
+	</div><!-- END: checkout_right -->
+	
+</div><!-- END: content_checkout -->
+<script type="text/javascript">
+jQuery(document).ready(function () {
+	var imageUrl = jQuery('.navMenu').hide();
+	if (orderPhone == 'null') {
+		orderPhone = '${CCC.phone}';		 
+	}
+	jQuery('.orderPhone').html(orderPhone);	
+});
+</script>
+
+	<isset name="OmniturePage" value="COConfirmation" scope="pdict">
+
+<isscript>
+  var orderId = pdict.Order.orderNo;
+  var quantity = 0;
+  var iter = pdict.Order.getAllProductLineItems().iterator();
+  var brand = 'xout';
+  var kit = '';
+  var productName = '';
+  while (iter.hasNext()) {
+    var pli = iter.next();
+  	quantity = quantity + pli.quantityValue;
+  	brand = pli.product.brand;
+  	kit = pli.product.ID;
+  	productName= pli.product.name;
+  }
+  var revenue = 0;
+  if (pdict.Order.totalGrossPrice.available) {
+  	revenue = pdict.Order.totalGrossPrice.value;
+  } else {
+  	revenue = pdict.Order.getAdjustedMerchandizeTotalPrice(true).value + pdict.Order.giftCertificateTotalPrice.value + pdict.Order.totalTax + pdict.Order.shippingTotalPrice;
+  }
+  var primaryUCI : Cookie = request.httpCookies['uci'];
+</isscript>
+
+
+<isinclude template="common/mediaPixelsInit.isml"/>
+
+
+
+<iscomment>SeeWhy code, if not allowed in campaign level, then don't display here</iscomment>
+<isif condition="${session.custom.suppCY == null || session.custom.suppCY == 0}">
+  <isif condition="${dw.system.Site.current.preferences.custom.seeWhyIncluded}">
+	<script type="text/javascript">
+		cy.USERID='${pdict.CurrentForms.personinf.contact.email.value}';
+		cy.CUSTOM1='${pdict.CurrentForms.personinf.billtoaddress.firstName.value}';
+		cy.CUSTOM2='${pdict.CurrentForms.personinf.billtoaddress.lastName.value}';
+		cy.CUSTOM3='${pdict.CurrentForms.cart.shipments[0].items[0].object.product.ID}';
+		cy.CUSTOM4='${addressObj.states.stateUS.htmlValue}';
+		cy.CUSTOM5="";
+		cy.FUNNELLEVEL='7';
+	</script>
+	
+	<isinclude template="seewhy/variables/setcheckoutvariables.isml"/>
+  </isif>
+</isif>
+<iscomment>Media Pixel</iscomment>
+<isslot id="MediaPixelForConfirmation" context="global" description="MediaPixelForConfirmation" />
+
+<iscomment>ADDING CUSTOM OBJECT CHECKBOX TO DETERMINE SHOWING CONFIRMATION CROSS SELL - ASSUMES NAMING CONVENTION OF "-campaign"</iscomment>
+<isscript>
+	var showCrossSell:Boolean=false;
+	var campy:Object=dw.object.CustomObjectMgr.getCustomObject("CampaignConfiguration",pdict.originalCampaignCode+"-campaign");
+	if (campy!=null && campy.custom.showConfirmationCrossSell){ showCrossSell=true; }
+</isscript>
+ 
+<isif condition="${(!pdict.ServerError) && showCrossSell}">
+	<isslot id="confirmation-cross-sell" description="Cross-sell on confirmation page" context="global" />
+</isif>

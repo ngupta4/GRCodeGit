@@ -1,0 +1,65 @@
+<isdecorate template="rendering/folder/pt_contentpage">
+  <isinclude template="util/modules"/>
+  <iscomment>create reporting event</iscomment>
+  <isinclude template="util/reporting/ReportSearch.isml"/>
+        <div class="mainWrapper">
+		  <isscript>
+			  importPackage(dw.util);
+			  importScript('guthyrenker_core:common/libUtils.ds');
+			  var CCC : Object = pdict.CurrentCampaignConfig;
+			  var campaignCode : String = CCC.campaignCode;
+		  </isscript>
+		  <isscript>
+	importPackage(dw.web);
+	importPackage(dw.util);
+		
+	function getContentAssetMap(rootFolderId:String):HashMap{
+		var retentionRootFolder:Folder=dw.content.ContentMgr.getFolder(rootFolderId);
+		var contentMap:HashMap = getFolderContent(retentionRootFolder,new HashMap());
+	  	return contentMap;
+	}
+</isscript>
+		  <div class="pageWrapper">
+	            <isif condition="${empty(pdict.Content.custom.categoryName)}">
+	              	<isset name="folderName" value="${pdict.Content.classificationFolder.displayName}"/>
+	               	<isslot id="top-contentpage-banner" context="category" description="Top banner content pages" context-object="${dw.catalog.CatalogMgr.getCategory(folderName)}"/>
+	              <iselse/>            
+	              	<isslot id="top-contentpage-banner" context="category" description="Top  banner content pages" context-object="${dw.catalog.CatalogMgr.getCategory(pdict.Content.custom.categoryName)}"/>
+	            </isif>
+	       
+	         
+	          <div class="leftContent">  
+	            <isif condition="${'categoryName' in pdict.Content.custom && empty(pdict.Content.custom.categoryName)}">
+	              <isset name="folderName" value="${pdict.Content.classificationFolder.displayName}"/>
+	              <isslot id="left-side-contentpages" context="category" description="left navigation content pages" context-object="${dw.catalog.CatalogMgr.getCategory(folderName)}"/>
+	              <isslot id="left-side-contentpages1" context="category" description="left navigation content pages1" context-object="${dw.catalog.CatalogMgr.getCategory(folderName)}"/>
+	            <iselse/>
+		           <isslot id="left-side-contentpages" context="category" description="left navigation content pages" context-object="${dw.catalog.CatalogMgr.getCategory(pdict.Content.custom.categoryName)}"/>
+		           <isslot id="left-side-contentpages1" context="category" description="left navigation content pages1" context-object="${dw.catalog.CatalogMgr.getCategory(pdict.Content.custom.categoryName)}"/>
+		         </isif>
+	         
+	          </div>
+	           <div class="rightContent">
+	                <p class="sitemapText">This site map provides an organizational overview of all the pages on<br/>SheerCover.com.</p>
+			       <isinclude template="sitemap/smcontentloggedin"/>
+			        <isif condition="${pdict.CurrentCustomer.authenticated && pdict.CurrentCustomer.registered || (pdict.CurrentRequest.httpCookies['rememberMe']!=null)}">
+						<iscontentasset aid="sitemap-logged-links"/>
+					<iselse>
+						<iscontentasset aid="sitemap-links"/>
+					</isif>
+					<isinclude template="content/content/htmlcontentasset" />
+		            <isif condition="${empty(pdict.Content.custom.categoryName)}">
+		              	<isset name="folderName" value="${pdict.Content.classificationFolder.displayName}"/>
+		               	<isslot id="Order-CTA" context="category" description="Order CTA" context-object="${dw.catalog.CatalogMgr.getCategory(folderName)}"/>
+		              <iselse/>            
+		              	<isslot id="Order-CTA" context="category" description="Order CTA" context-object="${dw.catalog.CatalogMgr.getCategory(pdict.Content.custom.categoryName)}"/>
+		            </isif>
+	            </div>
+          </div>
+        </div>     
+         
+  <isset name="OmniturePage" value="StaticContent" scope="pdict">
+</isdecorate>
+
+
+

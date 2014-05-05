@@ -1,0 +1,19 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+		<iscomment>Add page specific header information here.</iscomment>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		<link href="${URLUtils.staticURL('/css/dialogbox.css')}" type="text/css" rel="stylesheet" />
+		<isif condition="${'customCSSFile' in pdict.Content.custom && !empty(pdict.Content.custom.customCSSFile)}">
+			<link href="${pdict.Content.custom.customCSSFile.URL}" type="text/css" rel="stylesheet" />
+		</isif>
+		<script type="text/javascript">
+			var authenticated= '${pdict.CurrentCustomer.authenticated}'
+			var	varhttpCookies ='${pdict.CurrentRequest.httpCookies["rememberMe"]}'
+		</script>		
+	</head>
+	
+	<body>
+		 <isinclude template="content/content/htmlcontentasset" />
+	</body>
+</html>

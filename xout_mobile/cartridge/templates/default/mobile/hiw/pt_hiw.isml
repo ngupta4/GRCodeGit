@@ -1,0 +1,36 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<isinclude template="mobile/util/modules"/>
+
+<iscomment>This page must be cachable. It inherits the caching attributes by the decorated template.</iscomment>
+
+<head>
+	<iscomment>Include all important information globally , e.g. meta-data, link information, and javascript.</iscomment>
+	<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <meta name="viewport" content="user-scalable=false; initial-scale=1.0; maximum-scale=1.0; minimum-scale=1.0" />
+	<meta name="viewport" content="width=320" />
+	
+	<isinclude template="mobile/components/header/htmlhead"/>
+
+	<iscomment>Add page specific header information here.</iscomment>
+	
+    <iscomment>Insert meta tag for the "Google-Verification" feature to verify that you are the owner of this site.</iscomment>
+    <isif condition="${'GoogleVerificationTag' in dw.system.Site.current.preferences.custom && dw.system.Site.current.preferences.custom.GoogleVerificationTag!=''}">
+        <meta name="verify-v1" content="<isprint value="${dw.system.Site.current.preferences.custom.GoogleVerificationTag}"/>" />
+    </isif>
+</head>
+<body>
+<div id="container" class="pt_hiw">
+    <isinclude template="mobile/components/header/header"/>
+    <div id="main">
+		<isreplace/>
+		<isinclude template="mobile/components/footer/footer"/>
+    </div>
+    
+</div><!-- END: container -->
+
+<script type="application/x-javascript">if (navigator.userAgent.indexOf('iPhone') != -1){addEventListener("load", function(){setTimeout(hideURLbar, 0);}, false);}function hideURLbar(){if (navigator.userAgent.indexOf('iPhone') != -1) window.scrollTo(0, 1);}</script>
+	
+<isinclude template="mobile/analytics/tags"/>
+</body>
+</html>

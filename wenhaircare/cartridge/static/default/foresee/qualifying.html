@@ -1,0 +1,80 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<HTML>
+    <HEAD>
+        <TITLE>Foresee Survey</TITLE>
+        <meta http-equiv="Content-Type" content= "text/html; charset=utf-8">
+        <link rel="stylesheet" href="foresee-qualifier.css" type="text/css" />
+        <script type="text/javascript" src="foresee-qualifier.js"></script>
+        <script type="text/javascript">
+            function gebid(){
+                if (arguments.length == 1) 
+                    return document.getElementById(arguments[0]);
+                else {
+                    var ids = Array();
+                    for (var i = 0; i < arguments.length; i++) {
+                        ids.push(document.getElementById(argument[i]));
+                    }
+                    return ids;
+                }
+            }
+            
+            function show(id){
+                var d = gebid(id);
+                d.style.display = "block";
+            }
+            
+            function hide(id){
+                var d = gebid(id);
+                d.style.display = "none";
+            }
+                     
+            function qualify(f){
+                FSR.qualified();
+                    return true;
+                }
+        </script>
+    </HEAD>
+    <BODY>
+        <form name="fsrform" style="margin: 0pt;" onsubmit="return false;">
+            <div id="fsrqualifier">
+                <div id="fsrcontainer">
+                    <div class="fsrq_top_ul">
+                        <img class="siteLogo" src="sitelogo.gif" alt="Site Logo">
+                    </div>
+                    <div class="fsrq_top_ur">
+                        <img class="fsrLogo" src="fsrlogo.gif" alt="Site Logo">
+                    </div>
+                </div>
+                <div class="fsrq_body">
+                    <b>Thank you for agreeing to share your opinions with us.</b>
+                    <br>
+                    <br>
+                   Your comments will help us improve the WEN website. Please click on Start Survey when you wish to begin the survey.
+                    <br>
+                </div>
+                <div>
+                </div>
+                <div class="fsrq_footer">
+                    <div>
+                        <input type='button' value='Start Survey' onclick='qualify(this.form);'>
+                        <br>
+                        <br>
+                    </div>
+                    <div>
+                    </div>
+                    Copyright 
+                    <script type="text/javascript">
+                        var today = new Date();
+                        document.write(today.getFullYear());
+                    </script>
+                    - all rights reserved
+                    <br>
+                    <a href="//www.foreseeresults.com" TARGET="_blank">ForeSee</a>
+                    &nbsp;<a href="//www.foreseeresults.com/Privacy.html" TARGET="_blank">Privacy</a>
+                    &nbsp;<a href="//www.foreseeresults.com/ContactUs.html" TARGET="_blank">Technical Support</a>
+                </div>
+            </div>
+            </div>
+        </form>
+    </BODY>
+</HTML>

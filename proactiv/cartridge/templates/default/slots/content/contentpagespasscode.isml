@@ -1,0 +1,34 @@
+<iscache status="off"/>
+<isinclude template="slots/content/contentpages">
+
+<isif condition="${!empty(session) && (null!=session.custom.campaignCode)}">
+	<isset name="campaignID" value="${session.custom.campaignCode}" scope="page"/> 
+</isif>
+
+<div class="passcode-form">
+   <form name="input" action='${URLUtils.http("Passcode-Verify","cid","order","grcid",campaignID)}' method="post">
+        <div class="left-container">
+        	<span><isprint value="${Resource.msg('naktest.enterpasscode','locale',null)}" encoding="off"/></span><br/>
+        	<input type="password" name="passcode" class="passcode required" value="" />
+        	<span class="errormessage errormessagesession"><isprint value="${session.custom.errorResponse}" encoding="off" /></span>
+        </div>
+        <div class="right-container">
+        	<button type="submit"><isprint value="${Resource.msg('naktest.enterbtn','locale',null)}" encoding="off"/></button>
+        </div>
+   </form>
+</div>
+<isscript> 
+	session.custom.errorResponse =null; 
+</isscript>
+<script>
+/* Hiding server error message on homepage*/
+ jQuery(document).ready(function() {
+	 jQuery(".passcode").blur(function (event) {
+		 jQuery(".passcode-form .errormessagesession").hide();
+	    }
+	 );
+	 jQuery(".passcode").keyup(function() {
+		 jQuery(".passcode-form .errormessagesession").hide();
+	 });
+ });
+</script>

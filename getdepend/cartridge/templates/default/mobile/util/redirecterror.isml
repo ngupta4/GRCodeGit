@@ -1,0 +1,53 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<isinclude template="util/modules"/>
+
+<isscript>
+	importScript('guthyrenker_core:common/libUtils.ds');
+	
+	var CCC : Object = pdict.CurrentCampaignConfig;
+	
+	var currentTemplate = 'redirecterror';
+</isscript>
+
+<iscomment>This page must be cachable. It inherits the caching attributes by the decorated template.</iscomment>
+
+<head>
+	<iscomment>Include all important information globally , e.g. meta-data, link information, and javascript.</iscomment>
+	<isinclude template="components/header/htmlhead"/>
+
+	<iscomment>Add page specific header information here.</iscomment>
+
+	<isif condition="${!empty(CCC) && !empty(CCC.cssStyle)}">
+		<link rel="stylesheet" type="text/css" href="${URLUtils.staticURL(URLUtils.CONTEXT_LIBRARY,null,CCC.cssStyle)}" />
+		<isset name="ContainerClasses" value="${CCC.getContainerClasses()}" scope="page" />
+	<iselse/>
+		<isset name="ContainerClasses" value="${''}" scope="page" />
+	</isif>
+	
+    <iscomment>Insert meta tag for the "Google-Verification" feature to verify that you are the owner of this site.</iscomment>
+    <isif condition="${'GoogleVerificationTag' in dw.system.Site.current.preferences.custom && dw.system.Site.current.preferences.custom.GoogleVerificationTag!=''}">
+        <meta name="google-site-verification" content="<isprint value="${dw.system.Site.current.preferences.custom.GoogleVerificationTag}"/>" />
+    </isif>
+</head>
+<body id="page_index3g_homepage" class="body_homepage3g home">
+
+<iscomment>Cookies and Javascript enabled check</iscomment>
+<isinclude template="components/browsertoolscheck"/>
+<isinclude template="components/header/header"/>
+<div class="page-outer-inner">
+	<div class="page-wrapper">		
+			<iscontentasset aid="404page"/>			
+			<iscomment>
+				<iscontentasset aid="sitemap"/>
+			</iscomment>
+		</div>
+	<a href="${URLUtils.home()}" id="currentURL"></a>
+</div><!-- END: container -->
+	<isinclude template="components/footer/footer"/>
+	<isinclude template="components/footer/pixels"/>
+	<isinclude template="common/google_analytics" />
+<div id="popupBG">&nbsp;</div>
+
+</body>
+</html>

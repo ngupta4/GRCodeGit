@@ -1,0 +1,282 @@
+<!--- TEMPLATENAME: selectasystem.isml --->
+<isdecorate template="search/pt_selectasystem_full">
+<isinclude template="util/modules"/>
+
+<iscomment>create reporting event</iscomment>
+<isinclude template="util/reporting/ReportSearch.isml"/>
+
+<isset name="showHeader" value="${true}" scope="page" />
+<isset name="showFooter" value="${true}" scope="page" />
+<isset name="showNav" value="${true}" scope="page" />
+<isset name="showOrderButton" value="${false}" scope="page" />
+<isset name="numGifts" value="0" scope="page" />
+<isset name="giftWidth" value="0" scope="page" />
+<isscript>
+	importPackage(dw.util);
+	importPackage(dw.catalog);
+	
+	var CCC : Object = pdict.CurrentCampaignConfig;
+
+	var offersListA : ArrayList = new ArrayList();
+	var offersListAGifts : ArrayList = new ArrayList();
+	var offersListB : ArrayList = new ArrayList();
+	var offersListBGifts : ArrayList = new ArrayList();
+	
+	var altSKUs:String = "";
+	var giftProducts:ArrayList;
+	var offerCodes : Array = null;
+	if( !empty(CCC) ) {
+		offerCodes = CCC.sasOfferCodes;
+		var aProduct : Product = null;
+		for( var i=0; i<offerCodes.length; i++ ) {
+			aProduct = ProductMgr.getProduct(offerCodes[i]);
+			if( !empty(aProduct) ) {
+				altSKUs = aProduct.custom.giftSelectSKUs.split(',');
+				if(i <2){
+					offersListA.add1(aProduct);
+					var skus_products = new ArrayList();
+					for( var j=0;j < altSKUs.length; j++ ) {
+						skus_products.add1(dw.catalog.ProductMgr.getProduct(altSKUs[j]));
+					}
+					offersListAGifts.add1(skus_products);
+				}else{
+					offersListB.add1(aProduct);
+					var skus_products = new ArrayList();
+					for( var j=0;j < altSKUs.length; j++ ) {
+						skus_products.add1(dw.catalog.ProductMgr.getProduct(altSKUs[j]));
+					}	
+					offersListBGifts.add1(skus_products);
+				}
+			}			
+		}
+	}
+	
+
+
+</isscript> 
+<div class="select2Module">	
+	<div style="float:right;margin-top:-20px;margin-right:-10px;">
+	<a href="${URLUtils.url('Page-Show','cid','guarantee')}" title="60-Day Money Back Guarantee"><img src="${URLUtils.staticURL('images/microsite/guaranteeBug.png')}" alt="60-Day Money Back guarantee. Shine to the Last Pump™" width="255" height="101" class="guarantee"></a>
+	</div><!-- end block -->
+	<h2><i><isprint value="${Resource.msg('sas.full.pageHead','sas',null)}"/></i></h2>
+	<div class="systemInfoContainer">
+	<p class="hilite">
+		<isprint value="${Resource.msg('sas.full.intro','sas',null)}"/><br/>
+		<br/>
+	</p>
+	<iscomment>Put Bizarre voice here</iscomment>
+	
+	<div class="systemInfo select2 clearFix"> 
+		<isslot id="SAS_B1" context="category" description="SAS Products Banner" context-object="${category}"/>
+		
+		<iscomment>Panel A</iscomment>
+		<isset name="panel" value="A" scope="page" />
+		 <div class="sideBySide first">
+		 	<iscomment>Use the first offer for images</iscomment>
+		 	<isset name="offer" value="${offersListA[0]}" scope="page" />
+		 	<isset name="kitProductImage" value="${offer.getImage('large',0)}" scope="page"/>
+            
+            <isif condition="${!kitProductImage}">
+              <isset name="thumbnailUrl" value="${URLUtils.absStatic('images/microsite/5pieceImg.png')}" scope="page"/>
+            <iselse/>
+              <isset name="thumbnailUrl" value="${kitProductImage.url}" scope="page"/>						
+            </isif>
+            
+		 	<h3 class="highlighted">WEN<sup class="radio_reg_mark">®</sup> Hair Care Basic Kit</h3>
+		 	<p class="sideBySideCopy">Created with a perfect balance of ingredients, WEN<sup class="radio_reg_mark">®</sup> helps you say goodbye to bad hair days!</p>
+				<img src="${thumbnailUrl}" alt="Wen Hair Care Basic Kit" width="286" height="218" class="productImageBasic" />
+				<p class="orderNowText"><a href="${URLUtils.https('COCart-AddProduct','pid',offer.ID)}" class="orderNowText panel${panel}OrderBtn">Order Now</a></p>
+				<div class="systemInfoCopy">
+				<isif condition="${!empty(offer.custom.offerTabCallout)&&!empty(offer.custom.offerTabCallout.markup)}">
+					<isprint value="${offer.custom.offerTabCallout.markup}" encoding="off"/>
+				<iselse/>
+				</isif>
+				</div>
+			<isscript>
+						numGifts = "";
+						altSKUs = offer.custom.giftSelectSKUs.split(',');
+						
+						giftProducts = new dw.util.ArrayList();
+						for( var i=0, ii=altSKUs.length; i<ii; i++ ) {
+							giftProducts.add1(dw.catalog.ProductMgr.getProduct(altSKUs[i]));
+						}	
+						switch(altSKUs.length){
+							case(1):
+								numGifts = Resource.msg('sas.full.one','sas',null);
+								break;
+							case(2):
+								numGifts = Resource.msg('sas.full.two','sas',null);
+								break;
+							case (3):
+								numGifts = Resource.msg('sas.full.three','sas',null);
+								break;
+							case (4):
+							default:
+								numGifts = Resource.msg('sas.full.four','sas',null);
+								break;
+							
+						}	
+						giftWidth = 	altSKUs.length * 95;			
+			</isscript>
+			<div class="fragHeading"><p><isprint value="${Resource.msgf('sas.full.fragranceSelector','sas',null,numGifts)}"/></p></div>
+			<div class="fragHeading2"><p><isprint value="${Resource.msg('sas.full.fragranceChoose','sas',null)}"/></p></div>
+			<div class="fragranceChoices30C" style="text-align:center;width:${giftWidth}px;margin:auto;">
+			<isloop items="${giftProducts}" var="aProduct" status="gift_status">
+				<div class="fragrance" style="cursor: pointer; cursor: hand;" onclick="$(this).find('input').attr('checked',true);selectasystemfull.setGift('${panel}','${gift_status.index}');">
+			    	<input  id="${panel}Left${gift_status.index}" class="noBorder" type="radio" name="ProductSelect${panel}" value="${aProduct.ID}" <isif condition="${gift_status.index==0}">checked="checked"</isif>/>
+			        <div class="selectImage"><img src="${aProduct.getImage('alternateSelect',0).url}" /></div>
+			         <div class="selectCopy" style="overflow:visible"><b>${aProduct.custom.altGiftName}</b><br></div>
+				</div>
+			</isloop>
+			</div>
+			 <div class="orderNowSideBySide">
+                <p class="basicOrderHeader">Basic Kit</p>
+                <p class="OrderSubline">Select your supply size:</p>
+                <div id="basic_optionsA"> <span class="select_hilite">
+                <isloop items="${offersListA}" var="upsell" status="offer_status">
+                    <div class="basic30top"><input onclick="selectasystemfull.setSupply('${panel}','${offer_status.index}');" class="noBorder" type="radio" name="order_basic${panel}" id="basic30day${panel}${offer_status.index}" value="" <isif condition="${offer_status.index==0}">checked="checked"</isif>/>
+                    ${upsell.custom.tabDescription} - <b>Only <isprint value="${upsell.priceModel.getPrice()}" style="MONEY_LONG" /></b></div>
+                 </isloop>
+                 </span>
+                <a href="${URLUtils.https('COCart-AddProduct','pid',offer.ID)}" class="buttonBasic panel${panel}OrderBtn"><p class="buttonBasic">Order Now</p></a>
+                <isslot id="SAS_B2" context="category" description="SAS Order Banner" context-object="${category}"/>
+                <p><span class="hilite"><img src="${URLUtils.absStatic('images/microsite/fs_ribbon.gif')}" width="170" height="23" alt="FREE SHIPPING"></span></p>
+             </div>
+			</div>
+		 </div>
+		<iscomment>Panel B</iscomment>
+		<isset name="panel" value="B" scope="page" />
+		 <div class="sideBySide second">
+		 	<iscomment>Use the first offer for images</iscomment>
+		 	<isset name="offer" value="${offersListB[0]}" scope="page" />
+		 	<isset name="kitProductImage" value="${offer.getImage('large',0)}" scope="page"/>
+		 	
+		 	<isif condition="${!kitProductImage}">
+              <isset name="thumbnailUrl" value="${URLUtils.absStatic('images/microsite/dlxRepKitImg.png')}" scope="page"/>
+            <iselse/>
+              <isset name="thumbnailUrl" value="${kitProductImage.url}" scope="page"/>						
+            </isif>
+		 	
+		 	<h3 class="highlighted">WEN<sup class="radio_reg_mark">®</sup> Hair Care Deluxe Kit</h3>
+		 	<p class="sideBySideCopy">Includes everything in the Basic Kit, plus <b>Replenishing Treatment Mist</b> and <b>Straightening Smoothing Gloss!</b></p>
+            <img src="${thumbnailUrl}" alt="Wen Hair Care Deluxe Replenishing Kit" width="382" height="218" class="productImageBasic" />
+		 	
+			<p class="orderNowText"><a href="${URLUtils.https('COCart-AddProduct','pid',offer.ID)}" class="orderNowText panel${panel}OrderBtn">Order Now</a></p>
+			<div class="systemInfoCopy">
+			<isif condition="${!empty(offer.custom.offerTabCallout)&&!empty(offer.custom.offerTabCallout.markup)}">
+				<isprint value="${offer.custom.offerTabCallout.markup}" encoding="off"/>
+			<iselse/>
+			</isif>
+			</div>
+			<isscript>
+						numGifts = "";
+						altSKUs = offer.custom.giftSelectSKUs.split(',');
+						
+						giftProducts = new dw.util.ArrayList();
+						for( var i=0, ii=altSKUs.length; i<ii; i++ ) {
+							giftProducts.add1(dw.catalog.ProductMgr.getProduct(altSKUs[i]));
+						}	
+						switch(altSKUs.length){
+							case(1):
+								numGifts = Resource.msg('sas.full.one','sas',null);
+								break;
+							case(2):
+								numGifts = Resource.msg('sas.full.two','sas',null);
+								break;
+							case (3):
+								numGifts = Resource.msg('sas.full.three','sas',null);
+								break;
+							case (4):
+							default:
+								numGifts = Resource.msg('sas.full.four','sas',null);
+								break;
+							
+						}	
+						giftWidth = altSKUs.length * 95;							
+			</isscript>
+			<div class="fragHeading"><p><isprint value="${Resource.msgf('sas.full.fragranceSelector','sas',null,numGifts)}"/></p></div>
+			<div class="fragHeading2"><p><isprint value="${Resource.msg('sas.full.fragranceChoose','sas',null)}"/></p></div>
+			<div class="fragranceChoices30C" style="text-align:center;width:${giftWidth}px;margin:auto;">
+
+			<isloop items="${giftProducts}" var="aProduct" status="gift_status">
+				<div class="fragrance" style="cursor: pointer; cursor: hand;" onclick="$(this).find('input').attr('checked',true);selectasystemfull.setGift('${panel}','${gift_status.index}');">
+			    	<input onclick="selectasystemfull.setGift('${panel}','${gift_status.index}');" id="${panel}Left${gift_status.index}" class="noBorder" type="radio" name="ProductSelect${panel}" value="${aProduct.ID}" <isif condition="${gift_status.index==0}">checked="checked"</isif>/>
+			        <div class="selectImage"><img src="${aProduct.getImage('alternateSelect',0).url}" /></div>
+			         <div class="selectCopy" style="overflow:visible"><b>${aProduct.custom.altGiftName}</b><br></div>
+				</div>
+			</isloop>
+			</div>
+			 <div class="orderNowSideBySide">
+                <p class="basicOrderHeader">${Resource.msg('sas.deluxekit','sas',null)}</p>
+                <p class="OrderSubline">Select your supply size:</p>
+                <div id="basic_optionsB"> <span class="select_hilite">
+                <isloop items="${offersListB}" var="upsell" status="offer_status">
+                    <div class="basic30top"><input onclick="selectasystemfull.setSupply('${panel}','${offer_status.index}');" class="noBorder" type="radio" name="order_basic${panel}" id="basic30day${panel}${offer_status.index}" value="" <isif condition="${offer_status.index==0}">checked="checked"</isif>/>
+                    ${upsell.custom.tabDescription} - <b class="redHilite">Only <isprint value="${upsell.priceModel.getPrice()}" style="MONEY_LONG" /></b></div>
+                 </isloop>
+                 </span>
+                <a href="${URLUtils.https('COCart-AddProduct','pid',offer.ID)}" class="buttonDeluxe panel${panel}OrderBtn"><p class="buttonDeluxe">Order Now</p></a>
+                <isslot id="SAS_B2" context="category" description="SAS Order Banner" context-object="${category}"/>
+                <p><span class="hilite"><img src="${URLUtils.absStatic('images/microsite/fs_ribbon.gif')}" width="170" height="23" alt="FREE SHIPPING"></span></p>
+             </div>
+			</div>
+		 </div>
+		<div style="clear:both;"/>
+		<isset name="acqPage" value="${true}" scope="pdict" />
+		<isinclude template="bv/display/rr/reviews" />
+		</div>
+	</div>
+	</div><!-- end sas -->
+</div>
+<isset name="OmniturePage" value="Offerpage" scope="pdict" />
+
+    <iscomment> SAS Page Pixels</iscomment>
+    <iscontentasset aid="selectasystem-mediapixel"/>
+
+
+
+<script type="text/javascript">
+	jQuery(document).ready(function(){ /*FORCE SELECTIONS TO DEFAULT FOR A PROBLEM IN CHROME WHEN YOU CLICK BACK*/
+		try{ document.getElementsByName("ProductSelectA")[0].checked="checked"; }catch(e){}
+		try{ document.getElementsByName("ProductSelectB")[0].checked="checked"; }catch(e){}
+		try{ document.getElementsByName("order_basicA")[0].checked="checked"; }catch(e){}
+		try{ document.getElementsByName("order_basicB")[0].checked="checked"; }catch(e){}
+	});
+
+
+var selectasystemfull = {
+
+	selectedGift : {'A':0,'B':0},
+	selectedSupply : {'A':0,'B':0},
+
+	//offers go here
+	offers: {'A':[['${offersListAGifts[0][0].ID}','${offersListAGifts[0][1].ID}','${offersListAGifts[0][2].ID}','${offersListAGifts[0][3].ID}'],['${offersListAGifts[1][0].ID}','${offersListAGifts[1][1].ID}','${offersListAGifts[1][2].ID}','${offersListAGifts[1][3].ID}']],'B':[['${offersListBGifts[0][0].ID}','${offersListBGifts[0][1].ID}','${offersListBGifts[0][2].ID}','${offersListBGifts[0][3].ID}'],['${offersListBGifts[1][0].ID}','${offersListBGifts[1][1].ID}','${offersListBGifts[1][2].ID}','${offersListBGifts[1][3].ID}']]},
+	
+	setGift: function(panel,gift){
+			var localObj = this;
+			//update the selected gift values
+			this.selectedGift[panel] = gift;
+			//update the order buttons to add to cart pipeline
+			$(".panel" + panel + "OrderBtn").attr('href','${URLUtils.https('COCart-AddProduct').abs()}?pid=' + this.offers[panel][this.selectedSupply[panel]][this.selectedGift[panel]]);
+	},
+	setSupply: function(panel,supply){
+			var localObj = this;
+			//update the selected gift values
+			this.selectedSupply[panel] = supply;
+			$(".panel" + panel + "OrderBtn").attr('href','${URLUtils.https('COCart-AddProduct').abs()}?pid=' + this.offers[panel][this.selectedSupply[panel]][this.selectedGift[panel]]);
+	},
+
+	init : function(){
+		var localObj = this;
+		$(document).ready(function(){
+		});
+	}
+};
+
+selectasystemfull.init();
+
+</script>
+
+
+	
+</isdecorate>

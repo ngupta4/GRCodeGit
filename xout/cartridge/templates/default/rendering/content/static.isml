@@ -1,0 +1,60 @@
+<!--- TEMPLATENAME: static.isml --->
+<iscache status="off"/>
+
+<iscomment>
+	This template is created before the 'wrapper' template, so we can set
+	up the template configuration for the 'pt_storefront' template right here.
+</iscomment>
+
+
+<isdecorate template="content/home/pt_static">
+	<isinclude template="util/modules"/>
+	<isscript>
+		importPackage(dw.content);
+		importPackage(dw.util);
+		importPackage(dw.object);
+		importPackage(dw.catalog);
+		
+		importScript('guthyrenker_core:common/libUtils.ds');
+	
+		var CurrentFolder : Folder = null;
+		var CurrentContent : Content = null;
+		
+		if( "fdid" in pdict.CurrentHttpParameterMap && !empty(pdict.CurrentHttpParameterMap.fdid.value) ) {
+			CurrentFolder = ContentMgr.getFolder(pdict.CurrentHttpParameterMap.fdid.stringValue);
+		}
+		
+		if( "cid" in pdict.CurrentHttpParameterMap && !empty(pdict.CurrentHttpParameterMap.cid.value) ) {
+			CurrentContent = ContentMgr.getContent(pdict.CurrentHttpParameterMap.cid.stringValue);
+		}
+		
+		if( empty(CurrentContent) && !empty(CurrentFolder) && !empty(CurrentFolder.onlineContent) ) {
+			CurrentContent = CurrentFolder.onlineContent[0];
+		}
+
+		
+		var CCC : Object = pdict.CurrentCampaignConfig;
+	
+		var campaignCode : String = CCC.campaignCode;
+		
+		var showHeader : boolean = CCC.showHeader;
+		var showFooter : boolean = CCC.showFooter;
+		var showNav : boolean = CCC.showNav;
+		var showOrderButton : boolean = CCC.showOrderButton;
+		
+		var category : dw.catalog.Category = CCC.getCampaignCategory();
+		
+	</isscript>
+	<div id="primary-content">
+		<div class="contents_details">
+			<!-- <img src="${URLUtils.staticURL('/images/footerStaticHeaderBack.png')}"/> -->
+			<iscontentasset aid="${CurrentContent.ID}" />
+		</div>		
+	</div><!-- END: content -->
+	<div id="static-footer"></div>
+<script type="text/javascript">
+jQuery(document).ready(function () {
+	jQuery('#header').css('height', '150px');
+});
+</script>			
+</isdecorate>

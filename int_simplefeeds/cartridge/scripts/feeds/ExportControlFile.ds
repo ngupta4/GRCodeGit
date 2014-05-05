@@ -1,0 +1,179 @@
+/**
+* Demandware Script File
+* Export an XML file for order place count in a day
+*
+*/
+importPackage( dw.system );
+importPackage( dw.util );
+importPackage( dw.io );
+importPackage( dw.order );
+importPackage( dw.net );
+importPackage( dw.web);
+
+importScript('int_simplefeeds:feeds/UploadFunctions.ds');
+
+
+function GMToffset(s0,s1,s2,timezone){ // example: GMToffset(2013,01,12,'PST')
+	if(!s0){
+		return (((dw.system.Site.getCurrent().getTimezoneOffset() / 1000) / 60) / 60) * -1;
+	}
+
+	var cal1 : Calendar = new Calendar(new Date(s0,s1,s2));
+		cal1.setTimeZone('GMT');
+		var cal1H = new Number(StringUtils.formatCalendar(cal1, 'HH'));
+	var cal2 : Calendar = new Calendar(new Date(s0,s1,s2));
+		cal2.setTimeZone(timezone);
+		var cal2H = new Number(StringUtils.formatCalendar(cal2, 'HH'));
+	var timeDiff : Number = cal1H - cal2H;
+	if(timeDiff < 0){
+		timeDiff = timeDiff + 24;
+	}
+	
+	return timeDiff;
+}
+
+
+function execute( args : PipelineDictionary ) : Number
+{
+
+	//var log : Log = Logger.getLogger("int_simplefeeds:feeds.ExportControlFile.ds");
+	//log.debug('start export control file'); 
+
+	var dwInstance = dw.system.Site.getCurrent().getHttpHostName();
+	var orgPrefs : OrganizationPreferences = dw.system.System.getPreferences();
+	var controlFileDateRange : String = orgPrefs.getCustom()["controlFileDateRange"];
+	var brand_siteID : String = dw.system.Site.getCurrent().ID;	
+	
+	// get brand code
+	var brandCode = false;
+	var brandCodes = new Array(); // to search brand code from site id
+	brandCodes['Proactiv'] = 'PA';
+	brandCodes['NaturalAdvantage'] = 'ND';
+	brandCodes['SheerCover'] = 'YB';
+	brandCodes['xout'] = 'DT';
+	brandCodes['skinnyswitch'] = 'RN';
+	brandCodes['MalibuPilates'] = 'MP';
+	brandCodes['WenHairCare'] = 'CD';
+	brandCodes['NewWen'] = 'CD';
+	brandCodes['Perricone'] = 'CP';
+	brandCodes['MeaningfulBeauty'] = 'MT';	
+	brandCodes['ProactivPlus'] = 'PA';
+	brandCodes['McKenna'] = 'PM';
+	brandCodes['CellCeuticals'] = 'CC';
+	brandCodes['ReclaimBotanical'] = 'VB';
+	brandCodes['GetDepend'] = 'DP';
+	//brandCodes['MaxMySpeed'] = 'PA';
+	//brandCodes['MyCleanPC'] = 'PA';
+	//brandCodes['UsTechSupport'] = 'PA';	
+	for (var key in brandCodes) {
+		if(dw.system.Site.getCurrent().ID == key){
+			brandCode = brandCodes[key];
+		}
+	}	
+	
+	// create unique str to append to filenames
+	// writing to tmp dirs seems to require unique filenames
+	// otherwise it will write content within the file from the frist write attempt (from cache)
+	var calToday : Calendar = new Calendar( new Date() );	
+	calToday.setTimeZone('PST');
+	var uniqueStr = StringUtils.formatCalendar( calToday, "yyyyMMddhhmmss" );
+	
+	// set to current date if no value is stored in preference
+	if(!empty(controlFileDateRange)){
+		var controlFileDateRange_b = controlFileDateRange.split(':');
+		var controlFileDateRange_start = controlFileDateRange_b[0];
+		var controlFileDateRange_end = controlFileDateRange_b[1];
+		
+		// adjust end date to apply the next day so the while loop runs through the actual end date applied
+			var adjustEndDate_split = controlFileDateRange_end.split('-');
+			var adjustEndDate_month : Number = new Number(adjustEndDate_split[1]);
+			var adjustEndDate_month = adjustEndDate_month -1;
+			var adjustEndDate : Date = new Date(adjustEndDate_split[0],adjustEndDate_month,adjustEndDate_split[2]);
+			var cal6 : Calendar = new Calendar( adjustEndDate );
+			//cal6.setTimeZone('PST');
+			cal6.add(Calendar.DATE, 1);
+			var adjustEndDate_arr = new Array();
+			adjustEndDate_arr[0] = StringUtils.formatCalendar( cal6, "yyyy" );
+			adjustEndDate_arr[1] = StringUtils.formatCalendar( cal6, "MM" );
+			adjustEndDate_arr[2] = StringUtils.formatCalendar( cal6, "dd" );				
+			controlFileDateRange_end = adjustEndDate_arr[0]+'-'+adjustEndDate_arr[1]+'-'+adjustEndDate_arr[2];
+
+	} else {
+		var calToday2 : Calendar = new Calendar( new Date() );
+		calToday2.setTimeZone('PST');
+		var controlFileDateRange_end = StringUtils.formatCalendar( calToday2, "yyyy-MM-dd" );
+		calToday2.add(Calendar.DATE, -1);
+		var controlFileDateRange_start = StringUtils.formatCalendar( calToday2, "yyyy-MM-dd" );
+	}
+
+	//log.debug('dates-2: '+controlFileDateRange_start+' - '+controlFileDateRange_end);
+
+
+
+	while(controlFileDateRange_start != controlFileDateRange_end){
+
+		// define queryStartDate
+		var ControlFileDateX = controlFileDateRange_start.split('-');	
+		var cMonth : Number = new Number(ControlFileDateX[1]);
+		var cMonthAdj = cMonth -1;
+		var timeOffset = GMToffset(new Number(ControlFileDateX[0]),new Number(cMonthAdj),new Number(ControlFileDateX[2]),'PST');	
+		//log.debug('timeOffset: '+timeOffset);	
+		var queryStartDate : Date = new Date(ControlFileDateX[0],cMonthAdj,ControlFileDateX[2],timeOffset,00,00);
+		//log.debug('startdate: '+queryStartDate);
+
+		// define queryEndDate and redefine the start date for next loop
+		var cal5 : Calendar = new Calendar( queryStartDate );
+		//cal5.setTimeZone('PST');
+		cal5.add(Calendar.DATE, 1);			
+		var CurrentDateY = new Array();
+		CurrentDateY[0] = StringUtils.formatCalendar( cal5, "yyyy" );
+		CurrentDateY[1] = StringUtils.formatCalendar( cal5, "MM" );
+		CurrentDateY[2] = StringUtils.formatCalendar( cal5, "dd" );	
+		var cMonth2 : Number = new Number(CurrentDateY[1]);
+		var cMonth2Adj = cMonth2 -1;	
+		var timeOffset = GMToffset(new Number(CurrentDateY[0]),new Number(cMonth2Adj),new Number(CurrentDateY[2]),'PST');
+		var queryEndDate : Date = new Date(CurrentDateY[0],cMonth2Adj,CurrentDateY[2],timeOffset,00,00);					
+		controlFileDateRange_start = CurrentDateY[0]+'-'+CurrentDateY[1]+'-'+CurrentDateY[2];
+
+		// totals	
+		//log.debug('xdates: '+queryStartDate+' - '+queryEndDate);
+		var orderIt : SeekableIterator = OrderMgr.queryOrders("(creationDate>={0} AND creationDate<{1})", "creationDate", queryStartDate, queryEndDate);
+		var orderCount = orderIt.count;	
+		
+		// write orderCount string to file in tmp dir, upload, then delete the tmp file
+		if(!empty(brandCode)){
+					
+			var cal3 : Calendar = new Calendar( queryStartDate );
+			cal3.setTimeZone('PST');				
+					
+			// if any file exists for this date and this brand, delete it before writing new files
+			var exportFileDir = new File( File.IMPEX + File.SEPARATOR + "src" );
+			for each ( var file in exportFileDir.listFiles() ){	
+
+				if(file.name.indexOf('tmp_controlFile_'+brand_siteID+'_'+StringUtils.formatCalendar( cal3, "yyyy-MM-dd" )) > -1){
+				// next line alt version for deleting all files in tmp dir
+				//if(file.name.substring(0, 16) == 'tmp_controlFile_' || file.name.substring(0, 12) == 'controlFile_'){
+				
+					var rmFile : File = new File(File.IMPEX+File.SEPARATOR+"src"+File.SEPARATOR+file.name);
+					rmFile.remove();
+				}
+			}			
+
+			//if(!empty(orderCount) && orderCount != 0){
+				var controlFileName : String = 'tmp_controlFile_'+brand_siteID+'_'+StringUtils.formatCalendar( cal3, "yyyy-MM-dd" )+'_'+uniqueStr+'.txt';
+				var exportFilePath : String = File.IMPEX + File.SEPARATOR +"src"+ File.SEPARATOR + controlFileName;
+				var tmpFile : File = new File(exportFilePath); 
+				var tmpFileWriter : FileWriter = new FileWriter(tmpFile);
+				tmpFileWriter.writeLine('DW,GW,'+StringUtils.formatCalendar( cal3, "MM/dd/yyyy" )+',O,'+brandCode+','+orderCount);
+				tmpFileWriter.flush();
+				tmpFileWriter.close();			
+			//}
+
+		}
+
+
+	}
+
+
+	return PIPELET_NEXT;
+}

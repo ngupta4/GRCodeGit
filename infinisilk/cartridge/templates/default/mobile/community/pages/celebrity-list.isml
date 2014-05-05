@@ -1,0 +1,52 @@
+<isdecorate template="community/successstories/pt_celebritylisting">
+<isinclude template="util/modules"/>
+<isinclude template="util/reporting/ReportSearch.isml"/>
+<div style="clear:both;"></div>
+<div class="mainWide celebrityList">
+	<isinclude template="content/content/htmlcontentasset" />	
+
+<isif condition="${(pdict.CurrentCustomer.authenticated && pdict.CurrentCustomer.registered || (pdict.CurrentRequest.httpCookies['rememberMe']!=null))}">	
+	<isif condition="${empty(pdict.Content.custom.categoryName)}">
+		<isset name="folderName" value="${pdict.Content.classificationFolder.displayName}" scope="page"/>
+		<isslot id="CelebrityListing" context="category" description="Celebrity Listing" context-object="${dw.catalog.CatalogMgr.getCategory(folderName)}"/>
+		<iscomment><isslot id="CelebrityCrousel" context="category" description="Celebrity Listing" context-object="${dw.catalog.CatalogMgr.getCategory('celebrity-listing')}"/></iscomment>
+		<isslot id="MediaPixel" context="category" description="MediaPixel" context-object="${dw.catalog.CatalogMgr.getCategory(folderName)}"/>
+	<iselse>
+		<isslot id="CelebrityListing" context="category" description="Celebrity Listing" context-object="${dw.catalog.CatalogMgr.getCategory(pdict.Content.custom.categoryName)}"/>
+		<iscomment><isslot id="CelebrityCrousel" context="category" description="Celebrity Listing" context-object="${dw.catalog.CatalogMgr.getCategory('celebrity-listing')}"/></iscomment>
+		<isslot id="MediaPixel" context="category" description="MediaPixel" context-object="${dw.catalog.CatalogMgr.getCategory(pdict.Content.custom.categoryName)}"/>
+	</isif>
+<iselse/>
+	<isif condition="${empty(pdict.Content.custom.categoryName)}">
+		<isset name="folderName" value="${pdict.Content.classificationFolder.displayName}" scope="page"/>
+		<isslot id="CelebrityListing" context="category" description="Celebrity Listing" context-object="${dw.catalog.CatalogMgr.getCategory(folderName)}"/>
+		<iscomment><isslot id="CelebrityCrousel" context="category" description="Celebrity Listing" context-object="${dw.catalog.CatalogMgr.getCategory('celebrity-listing')}"/></iscomment>
+		<isslot id="OrderButtonCTA" context="category" description="OrderButtonCTA" context-object="${dw.catalog.CatalogMgr.getCategory(folderName)}"/>
+		<isslot id="MediaPixel" context="category" description="MediaPixel" context-object="${dw.catalog.CatalogMgr.getCategory(folderName)}"/>
+	<iselse>
+		<isslot id="CelebrityListing" context="category" description="Celebrity Listing" context-object="${dw.catalog.CatalogMgr.getCategory(pdict.Content.custom.categoryName)}"/>
+		<iscomment><isslot id="CelebrityCrousel" context="category" description="Celebrity Listing" context-object="${dw.catalog.CatalogMgr.getCategory('celebrity-listing')}"/></iscomment>
+		<isslot id="OrderButtonCTA" context="category" description="OrderButtonCTA" context-object="${dw.catalog.CatalogMgr.getCategory(pdict.Content.custom.categoryName)}"/>
+		<isslot id="MediaPixel" context="category" description="MediaPixel" context-object="${dw.catalog.CatalogMgr.getCategory(pdict.Content.custom.categoryName)}"/>
+	</isif>
+</isif>
+	
+	<iscomment>	
+	
+	<isinclude url="${URLUtils.url('Community-CelebrityListing','start',pdict.CurrentHttpParameterMap.start.intValue)}"/>
+					
+		<isif condition="${pdict.CurrentHttpParameterMap.start.intValue!=null}">
+			<isinclude url="${URLUtils.url('Community-CelebrityListing','start',pdict.CurrentHttpParameterMap.start.intValue)}"/>
+		<iselse/>	
+			<isinclude url="${URLUtils.url('Community-CelebrityListing')}"/>
+		</isif>
+	</iscomment>								 		
+			<iscomment>Media Pixel</iscomment>
+            <isslot id="MediaPixelForContentPages" context="global" description="MediaPixelForContentPages" />	
+</div>
+</isdecorate>
+<script type="text/javascript">
+<!--
+jQuery('li#nav-stories').addClass('active');
+//-->
+</script>

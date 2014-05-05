@@ -1,0 +1,77 @@
+/**
+ * GetShippingMethods.ds
+ *
+ * This script returns all active shipping methods and 
+ * a shipping cost price map.
+ * Shipping cost are calculated based on the specified
+ * 'Shipment'.  
+ * 
+ * @input  Shipment : dw.order.Shipment
+ * @output ShippingMethods : dw.util.Collection
+ * @output PriceMap : dw.util.Map
+ */
+
+
+ importPackage( dw.system );
+ importPackage( dw.web );
+ importPackage( dw.value );
+ importPackage( dw.util );
+ importPackage( dw.order ); 
+ importPackage( dw.campaign ); 
+ importPackage( dw.catalog ); 
+ importPackage( dw.customer );
+
+
+/**
+ * Function: execute
+ *
+ * Main function of the calculation script. 
+ */
+function execute( pdict : PipelineDictionary ) : Number
+{
+	// input parameters
+	var shipment : Shipment = pdict.Shipment;
+
+	var shippingCostMap : Map = new LinkedHashMap();
+	var shippingModel : ShipmentShippingModel = ShippingMgr.getShipmentShippingModel(shipment);
+	var productShippingModel : ProductShippingModel = null;
+	var shippingMethodsIt : Iterator = shippingModel.getApplicableShippingMethods().iterator();
+	var productLineItemIt : Iterator = null;
+	
+		var shippingMethod : ShippingMethod = null;
+		var shipmentShippingCost : ShipmentShippingCost = null;
+		var productShippingCost : ProductShippingCost = null;
+		var totalShippingCost : Money = null;
+
+	var pli : ProductLineItem = null;
+
+	while(shippingMethodsIt.hasNext())
+	{
+		totalShippingCost = new Money(0.0,Site.current.currencyCode);
+		shippingMethod = shippingMethodsIt.next();
+		shipmentShippingCost = shippingModel.getShippingCost(shippingMethod);
+		if (shipmentShippingCost!=null)
+		{
+			 totalShippingCost = totalShippingCost.add(shipmentShippingCost.getAmount());
+		}
+		// Adding in pli fixed price values
+		productLineItemIt = shipment.productLineItems.iterator();
+		while( productLineItemIt.hasNext() ) {
+			pli = productLineItemIt.next();
+			
+			productShippingModel = ShippingMgr.getProductShippingModel(pli.product);
+			productShippingCost = productShippingModel.getShippingCost(shippingMethod);	
+			if (productShippingCost!=null)
+			{
+				totalShippingCost = totalShippingCost.add(productShippingCost.getAmount());
+			}
+		}
+		shippingCostMap.put(shippingMethod, totalShippingCost);
+	}
+	
+	pdict["PriceMap"] = shippingCostMap;
+	
+	return PIPELET_NEXT;
+}
+
+

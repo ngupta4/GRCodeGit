@@ -1,0 +1,12 @@
+<!--- TEMPLATENAME: singleproduct.isml --->
+<isdecorate template="search/pt_singleproductlanding">
+	<iscomment>Main content slot</iscomment>
+	<div id="splcontentslot">
+		<isslot id="single-product-landing" description="Single Product Landing Page" context="category" context-object="${pdict.Category || pdict.Product.classificationCategory || null}" />
+	</div>
+	
+	<iscomment>Footer content slot</iscomment>
+	<div id="splfooterslot">
+		<isslot id="single-product-landing-footer" description="Single Product Landing Page Footer" context="category" context-object="${pdict.Category || pdict.Product.classificationCategory || null}" />
+	</div>
+</isdecorate>

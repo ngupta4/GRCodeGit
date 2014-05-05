@@ -1,0 +1,548 @@
+#page_customer #main #primaryContent .contain {
+	padding:0pt 0px 20px 0px;
+	overflow:visible;
+}
+
+#page_customer #content_testimonials {display: block;}
+
+#page_customer #main #primaryContent .searchHeader {
+	background: #eee;
+	border-bottom: 1px solid #ccc;
+	height: 30px;
+	padding: 8px 0 0 15px;
+}
+
+#page_customer #main #primaryContent .contain form {
+	display: inline;
+}
+
+
+#page_customer #main #primaryContent .contain form select {
+	float: left;
+	margin: 1px 5px 0 0;
+}
+
+#page_customer #main #primaryContent .contain form select,
+#page_customer #main #primaryContent .contain form select option {
+	font-size: 0.94em;
+	color: #4e6780;
+}
+
+#filterSet button.btnStoriesFind{
+	text-indent: -99999em;
+	background: url(../images/interface/btn-find.png) bottom no-repeat;
+	height: 22px;
+	width:74px;
+	border: 0;	
+	margin: 0 8px 0 0;float: left;
+}
+
+#filterSet button.btnStoriesFind:hover{
+	background-position: top;
+}
+
+#page_customer #main #primaryContent .contain form div.buttonOr {
+	background: transparent url(../images/stories-75.png) no-repeat scroll 0pt -295px;
+	text-indent: -99999em;
+	height: 15px;
+	width: 12px;
+	float: left;
+	margin: 0 8px 0 0;
+}
+
+#page_customer #main #primaryContent .contain a.btnStoriesAll {
+	display: block;
+	background: url(../images/interface/btn-w-5.0.png) 0 -100px no-repeat;
+	height: 22px;
+	width:123px;
+	text-indent: -99999em;
+	border: 0;
+	float: left;
+}
+
+
+#page_customer #main #primaryContent .contain a.btnStoriesAll:hover {
+	background-position: -300px -100px;
+}
+
+/*ie6*/
+* html #page_customer #main #primaryContent .contain form{
+	height: 20px;
+}
+
+
+/*No Results*/
+#page_customer #main #primaryContent .contain #noResults {
+	padding: 60px 0;
+	text-align: center;
+	border-bottom: 1px solid #ccc;
+	position: relative;
+	
+}
+
+#page_customer #main #primaryContent .contain #noResults strong {
+	display: block;
+	font-size: 1.1em;
+}
+
+#main #primaryContent #filterSet h3{
+	float:left;
+	width: 113px;
+	height: 13px;
+	border-bottom: none;
+	margin:3px 15px 0px 0px;
+	padding:0px;
+	font-size:14px;
+	color:#4e4d4b;
+	font-weight:normal;
+}
+
+.galleryController{
+	left:0pt;
+	position:static;
+	top:0pt;
+	width:675px;
+	
+	/* No JS 
+	border-bottom:0pt none;
+	height:1px;
+	margin:0pt 0pt 19px;
+	padding:0px; */
+
+    border-bottom: 1px solid #CCCCCC;
+    height: 17px;
+    margin: 0 0 20px;
+    padding: 6px 0;
+}
+.galleryController li{
+	float: left;
+	margin: 0 3px;
+}
+
+.galleryController li a{
+	display: block;
+	width: 10px;
+	height: 10px;
+	background:  #eee url(../images/interface/btn-circles.png) no-repeat 0 -700px;
+	text-indent: -9999px;
+}
+
+.galleryController li a:hover,
+/*highlight set dots*/
+.s0 .galleryController #set0 a,
+.s1 .galleryController #set1 a,
+.s2 .galleryController #set2 a,
+.s3 .galleryController #set3 a,
+.s4 .galleryController #set4 a,
+.s5 .galleryController #set5 a,
+.s6 .galleryController #set6 a,
+.s7 .galleryController #set7 a,
+.s8 .galleryController #set8 a,
+.s9 .galleryController #set9 a,
+.s10 .galleryController #set10 a,
+.s11 .galleryController #set11 a,
+.s12 .galleryController #set12 a{
+	background-position: -300px -700px;	
+}
+
+
+/*ie6*/
+* html .galleryController{
+	width:auto;
+	height:17px;
+}
+
+.galleryController.bottom{
+	border-top:1px solid #ccc;
+	margin-top: 15px;
+}
+
+.galleryController div.positionSet{
+	display: none;
+}
+
+
+/*ie6*/
+* html .galleryController div{
+
+}
+
+.galleryController .previous{
+	text-indent:-9999px;
+	background: url(../images/interface/btn-circles.png) no-repeat 0 -800px;
+	display:block;
+	width: 18px;
+	height: 18px;
+	float:left;
+}
+
+.galleryController a.previous:hover{
+	background-position: -300px -800px;
+}
+
+.galleryController .next{
+	text-indent:-9999px;
+	background: url(../images/interface/btn-circles.png) no-repeat 0 -200px;
+	display:block;
+	width: 18px;
+	height: 18px;
+	float:left;
+}
+
+.galleryController a.next:hover{
+	background-position: -300px -200px;
+}
+
+.galleryController ul{
+	margin: 4px 26px 0px 26px;
+	float:left;
+}
+
+/*ie6*/
+* html .galleryController ul{
+	display:inline;	
+}
+#galleryHolder ul.set10 {display:none}
+
+.galleryController ul li a {
+	background-color: transparent;
+}
+
+#page_customer #galleryMask{
+	overflow:hidden;
+	position: relative;width: 665px;margin-top:0px;
+}
+
+/*ie6*/
+* html #page_customer #galleryMask{
+	width: 670px;
+	#width:675px;
+}
+
+#galleryMask #galleryHolder{
+	/* No JS */
+	margin-left:0pt;
+	width:10000px;
+}
+
+#galleryHolder ul{
+	/* No JS 
+	float:none;*/
+	margin-right:0pt;
+	width:680px;
+	
+	#display:inline;
+}
+
+* html #galleryHolder ul {
+	margin-right: 95px;
+}
+
+#galleryHolder ul li{
+	float: left;
+		
+	/* No JS 
+	width:165px;
+	margin:0pt 5px 0px 0pt; */
+}
+
+#galleryHolder ul li .blockContent {
+	overflow: hidden;
+	/*Fix style inheritance from .blockContent for PC FF*/
+	
+	/* No JS 
+	height:171px;
+	position:relative;*/
+}
+
+#page_customer #galleryMask #galleryHolder ul li h3{
+	border-bottom:none;
+	color:#67BACB;
+	font-weight:bold;
+	line-height:18px;
+	margin:0px 0px 2px;
+	padding: 0;
+	float:left;
+}
+#page_customer #galleryMask #galleryHolder ul li h3 img {
+	display:block;
+	margin: 3px 0 0 5px;
+	float:left;
+	
+	_position:relative !important;
+}
+
+/*fixes height issue in IE6*/
+* html #page_customer #galleryMask #galleryHolder ul li h3 img {
+	position: absolute;
+}
+
+#page_customer #galleryMask #galleryHolder ul li h3 span{
+	font-weight: 100;
+	
+	/* No JS 
+	display:block;
+	float:left;
+	cursor:default; */	
+}
+
+#galleryHolder ul p{
+	clear:left;
+	font-size: 11px;
+	line-height:13px;
+	overflow: hidden;
+	
+	/* No JS 
+	min-width:136px;
+	height:40px;*/
+}
+
+#galleryHolder .profileImg{
+	/* No JS 	
+	margin:0pt 0px 6px 0px;
+	bottom: 0px;
+	position: absolute;*/
+}
+
+.note{
+	font-style: italic;
+}
+
+.note .legend{
+	color:#999999;
+	background: url(../images/interface/camera.jpg) left top no-repeat;
+	padding-left: 26px;
+}
+
+#primaryContent .note p{
+	margin-bottom: 0;
+}
+
+/*FULL STORY CSS*/
+
+#main #primaryContent.realStory {
+	overflow:hidden;
+	width:675px;
+}
+
+#main #primaryContent.realStory .pageHead {
+	float:left;
+	margin:103px 0pt 0pt 14px;
+	padding:0px;
+	width:185px;
+	
+}
+
+* html #main #primaryContent.realStory .pageHead {
+	display:inline;
+}
+
+#main #primaryContent.realStory h1 {
+	width: 180px;
+	margin-bottom:9px;
+	font-size:20px;
+}
+
+
+
+
+/*new*/
+
+
+
+
+.donnaire-gunter #main #primaryContent.realStory h1 {
+}
+
+.erin-hungerford #main #primaryContent.realStory h1 {
+}
+
+.faith-oliver-robertson #main #primaryContent.realStory h1 {
+}
+
+.jannie-yan #main #primaryContent.realStory h1 {
+}
+
+.jodie-culcasi #main #primaryContent.realStory h1 {
+}
+
+.joey-young #main #primaryContent.realStory h1 {
+}
+
+.kara-richardson #main #primaryContent.realStory h1 {
+}
+
+.kariyushi-rao #main #primaryContent.realStory h1 {
+}
+
+.kesiah-arnold #main #primaryContent.realStory h1 {
+}
+
+.lisie-rosenberg #main #primaryContent.realStory h1 {
+}
+
+
+.mcconnell-franklin #main #primaryContent.realStory h1 {
+}
+
+.megan-kado #main #primaryContent.realStory h1 {
+}
+
+
+.meghan-bain #main #primaryContent.realStory h1 {
+}
+
+.melanie-klos #main #primaryContent.realStory h1 {
+}
+
+.michael-briggs #main #primaryContent.realStory h1 {
+}
+
+.michelle-flowers #main #primaryContent.realStory h1 {
+}
+
+.michelle-hoffman #main #primaryContent.realStory h1 {
+}
+
+.nicole-delma #main #primaryContent.realStory h1 {
+}
+
+.randi-mccuistion #main #primaryContent.realStory h1 {
+}
+
+.suzyn-siebert #main #primaryContent.realStory h1 {
+}
+
+.silvia-mendoza #main #primaryContent.realStory h1 {
+}
+
+.tanya-gaudino #main #primaryContent.realStory h1 {
+}
+
+.wendy-romine #main #primaryContent.realStory h1 {
+}
+
+.casey-farr #main #primaryContent.realStory h1 {
+}
+
+.donna-carlson #main #primaryContent.realStory h1 {
+}
+
+.michelle-daniels #main #primaryContent.realStory h1 {
+}
+
+.kristin-ness #main #primaryContent.realStory h1 {
+}
+
+.johanna-dong #main #primaryContent.realStory h1 {
+}
+
+.jacqueline-bittner #main #primaryContent.realStory h1 {
+}
+
+
+
+
+
+
+
+
+#main #primaryContent.realStory .contain {
+	float:right;
+	margin-right:32px;
+	padding:20px 0 0 0;
+	position:relative;
+	width:418px;
+	margin-bottom: 50px;
+}
+
+* html #main #primaryContent.realStory .contain {
+	display:inline;
+}
+
+#main #primaryContent.realStory .contain .primaryBody {
+	margin:0px;
+}
+
+.realStory .multimedia {
+	margin-bottom:30px;
+	overflow:auto;
+	width: 418px;
+}
+
+.realStory .multimedia img,
+.realStory .multimedia .video{
+	float:left;
+}
+
+.realStory .multimedia .video{
+	margin-left:14px;
+}
+
+.realStory .footerNav{
+	width: 100%;
+	clear:both;
+	border-top: 1px solid #ccc;
+	border-bottom: 1px solid #ccc;
+	padding: 10px 0;
+	overflow:auto;
+	position: relative;
+}
+
+.realStory .backToGallery{
+	margin-left: 15px;
+	float:left;
+}
+
+.realStory .previous{
+	float:left;
+	background-image:url(../images/interface/btn-circles.png);
+	background-position: 0px -800px;	
+	margin-left:225px;
+	padding-left:22px;
+}
+
+* html .realStory .previous{
+	position: absolute;
+	top: 9px;
+	left:94px;
+}
+
+* html .realStory .next{
+	position: absolute;
+	top:9px;
+	right:-1px;
+}
+
+.realStory a.previous:hover{
+	background-position: -300px -800px;
+}
+
+.realStory .next{
+	background-image:url(../images/interface/btn-circles.png);
+	background-position:91px -200px;
+	float:right;
+	margin-right:115px;
+	padding-right:24px;
+	text-align:right;
+	width:85px;
+}
+
+.realStory a.next:hover{
+	background-position: -209px -200px;
+}
+
+#gallerynomatches{padding: 4em 0px; text-align: center; border-bottom: 1px solid #CCC; margin-bottom: 1em; display: none;}
+#page_customer #main #primaryContent .searchHeader {background: none repeat scroll 0 0 transparent;}
+#main #primaryContent #filterSet h3{font-weight: bold;    width: 128px;}
+.blockgrey .block a.dotted{ background: none repeat scroll 0 0 transparent;    border-bottom: 1px dotted #E05C09;    color: #F45F00 !important;    font-size: 12px;    font-weight: bold;}
+#age_selector{  height: 21px;        width: 83px; margin: 1px 5px 0 0;}
+#gender_selector{  height: 21px;      width: 130px; margin: 1px 5px 0 0;}
+#skin_tone_selector{  height: 21px;    width: 130px;margin: 1px 5px 0 0;}
+#page_customer .galleryController.bottom{float: left;}
+#page_customer .note{ float: left;}
+#page_customer .note .legend{ display: block;    float: left;  width: 626px;}
+#beforeAfterGallery #age_selector{width: 80px;}
+#beforeAfterGallery #skin_tone_selector,#beforeAfterGallery #gender_selector{width: 97px;}
+#primaryContent span{color: #4E4D4B;font-size:20px;}
+#primaryContent div{font-size: 20px;line-height: 25px;margin-top: 5px;}

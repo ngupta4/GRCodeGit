@@ -1,0 +1,21 @@
+{
+    "stores": [
+    <isloop items="${pdict.Stores}" var="Store" status="loopstatus">
+    {
+        "UUID" : "<isprint value="${Store.UUID}"/>",
+        "ID" : "<isprint value="${Store.ID}"/>",
+        "name" : "<isprint value="${Store.name}"/>",
+        "address1" : "<isprint value="${Store.address1}"/>",
+        "address2" : "<isprint value="${Store.address2}"/>",
+        "city" : "<isprint value="${Store.city}"/>",
+        "state" : "<isprint value="${Store.stateCode}"/>", 
+        "postalCode" : "<isprint value="${Store.postalCode}"/>",
+        "countryCode" : "<isprint value="${Store.countryCode}"/>",
+        "phone" : "<isprint value="${Store.phone}"/>",
+        "longitude" : "<isprint value="${Store.longitude}" formatter="###.######"/>",
+        "latitude" : "<isprint value="${Store.latitude}" formatter="###.######"/>",
+        "distance" : "<isprint value="${pdict.NearestStores.get(Store)}"/>"
+    },
+    </isloop>
+    ] 
+}

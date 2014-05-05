@@ -1,0 +1,75 @@
+<isdecorate template="mobile/pt_mobile">
+<isinclude template="mobile/util/modules">
+
+<isscript>
+	//test the errors
+	var status = pdict.status;	
+</isscript>
+
+<iscomment>Builds a registration page for the user. It provides all input fields for names and address</iscomment>
+<div id="registration" class="mobilecontent">		
+	<div>
+	<form action="${URLUtils.https('mAccount-CheckRegistration')}" method="post" id="RegistrationForm">		
+			<h3>${Resource.msg('registration.loginheader','account',null)}</h3>			
+			<iscomment>manage the errors</iscomment>
+			<isinclude template="mobile/components/display_status">			
+			<div>
+				<div><span class="requiredindicator">*</span><span >${Resource.msg('global.requiredfield','locale',null)}</span></div>
+			</div>					
+			<div>
+				<div>	
+					<span class="requiredindicator">*</span>${Resource.msg('forms.profile.001','forms',null)}:<br>
+					<isinputfield formfield="${pdict.CurrentForms.profile.customer.firstname}" type="input" label="false">
+			    </div>
+			    <div>
+					<span class="requiredindicator">*</span>${Resource.msg('forms.profile.002','forms',null)}:<br>
+					<isinputfield formfield="${pdict.CurrentForms.profile.customer.lastname}" type="input" label="false">
+			    </div>
+			    <div>
+					<span class="requiredindicator">*</span>${Resource.msg('label.username','forms',null)}:<br>
+					<isinputfield formfield="${pdict.CurrentForms.profile.customer.email}" type="input" label="false">
+			    </div>
+			    <div>
+					<span class="requiredindicator">*</span>${Resource.msg('registration.profile.emailconfirm','locale',null)}:<br>
+					<isinputfield formfield="${pdict.CurrentForms.profile.customer.emailconfirm}" type="input" label="false" attribute1="autocomplete" value1="off">
+			    </div>
+			    <div>
+					<span class="requiredindicator">*</span>${Resource.msg('label.password','forms',null)}:<br>
+					<isinputfield formfield="${pdict.CurrentForms.profile.login.password}" type="password" label="false" attribute1="autocomplete" value1="off">
+			    </div>
+			    <div>
+					<span class="requiredindicator">*</span>${Resource.msg('forms.profile.015','forms',null)}:<br>
+					<isinputfield formfield="${pdict.CurrentForms.profile.login.passwordconfirm}" type="password" label="false" attribute1="autocomplete" value1="off">
+					
+			    </div>
+   				<div>
+   					<span class="requiredindicator">*</span>${Resource.msg('forms.profile.018','forms',null)}:<br>
+					<isinputfield formfield="${pdict.CurrentForms.profile.login.question}" type="select" label="false">
+				</div>
+				<div>
+					<span class="requiredindicator">*</span>${Resource.msg('forms.profile.024','forms',null)}:<br>
+					<isinputfield formfield="${pdict.CurrentForms.profile.login.answer}" type="input" label="false">
+				</div>
+			    <div style="margin: 10px 0px 5px 0px;"><!-- email signup -->
+		    		<input type="checkbox" name="opted_in" checked/><span>${Resource.msg('global.email.policy','locale',null)}</span>
+		    	</div>
+				<div>
+					<button type="submit" value="Register"><span>${Resource.msg('registration.register','account',null)}</span></button>
+				</div>
+			</div>		
+	</form>
+	</div><!-- END: registrationform -->
+</div><!-- END: registration -->
+
+<div  id="privacypolicy" style="display:none;overflow:auto;">
+	<iscontentasset aid="privacy-policy">
+</div>
+	
+<script type="text/javascript"><!--
+	
+	jQuery(document).ready(function() {	
+	       
+	});
+//--></script>
+	
+</isdecorate>

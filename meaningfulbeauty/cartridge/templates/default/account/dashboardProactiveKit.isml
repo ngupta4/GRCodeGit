@@ -1,0 +1,9 @@
+         <div class="title">
+            <isprint value="${Resource.msg('account.mbkit','account',null)}"/>
+          </div>
+          <div class="panel-wraper2">          
+            <div class="row">                        <isif condition="${'kitProducts' in pdict.CurrentCustomer.profile.custom && !empty(pdict.CurrentCustomer.profile.custom.kitProducts)}"> 	            <isscript>	    			var products : Array = pdict.CurrentCustomer.profile.custom.kitProducts;					var pidArray : Array = new Array();						if(products != null && !empty(products)){						for(var i=0; i<products.length; i++){							var tempArray : Array = new Array();							if(products[i].indexOf(dw.web.Resource.msg('symbol.kit.split','common',null))>=0){								tempArray = products[i].split(dw.web.Resource.msg('symbol.kit.split','common',null));							}							if(tempArray[1] != null)								pidArray[i] = tempArray[1].toString();							//quantityArray[i] = tempArray[2];						}					}												            </isscript>	         	   						<isloop items="${pidArray}" var="test" status="loopstate">				 <isif condition="${null!=test}">					<isprint value="${loopstate.count}"  formatter="#"/>. <isprint value="${test}" encoding="off"/>					<br/>				  </isif>				</isloop>			<iselse/>					No products in kit. Please customize your kit.            </isif>                          </div>
+            <div class="btn-wraper">            <a href="${URLUtils.url('KitCustomizer-LearnMore','showKit','true')}" title="Customize Your Kit" class="blue-btn bl-btn-a">            <span class="blc"></span>            <span>
+              <isprint value="${Resource.msg('account.customize.kit','account',null)}"/>
+              </span></a></div>
+          </div>

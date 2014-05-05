@@ -1,0 +1,29 @@
+<isinclude template="util/modules"/>
+
+	<iscomment>	<isif condition="${!pdict.ProductPagingModel.empty}"></iscomment>
+		<iscomment>This template renders the products search resulr for Proactive Site</iscomment>
+		<div class="searchresultsheader">
+		
+				<iscomment>${Resource.msg('search.results','search',null)}${pdict.CurrentHttpParameterMap.q.value} ${Resource.msg('search.products','search',null)}</iscomment>
+		
+
+		       <iscomment>render compare controls if we present in a category context</iscomment>
+		       <isif condition="${!empty(pdict.ProductSearchResult) && !empty(pdict.ProductSearchResult.category)}">
+		       	<iscomparecontrols category="${pdict.ProductSearchResult.category}"/>
+		       	
+		       </isif>
+		
+		          <iscomment>pagination
+			<ispagingbar pageurl="${pdict.ProductSearchResult.url('Search-Show')}" pagingmodel="${pdict.ProductPagingModel}"/>
+		          <div class="clear"><!-- FLOAT CLEAR --></div></iscomment>
+		</div><!-- END: searchresultsheader -->
+		
+		<div class="productresultarea">
+		   	<isproductgrid producthits="${pdict.ProductPagingModel.pageElements}" productrows="${1000}" productstoskip="${0}" productsperrow="${4}" pagingmodel="${pdict.ProductPagingModel}" scope="search"/>
+		</div><!-- END: productresultarea -->
+		<div class="clear"><!-- FLOAT CLEAR --></div>
+		<iscomment></isif></iscomment>
+
+<iscomment>Include inline JS to update the refinements</iscomment>
+<isinclude template="search/components/jsrefinementsupdate"/>
+

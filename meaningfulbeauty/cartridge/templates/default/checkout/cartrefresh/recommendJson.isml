@@ -1,0 +1,20 @@
+<!--- TEMPLATENAME: test.isml --->
+
+<iscontent type="application/json" charset="UTF-8" compact="true">
+{
+	<isif condition=${empty(pdict.ErrorStatus)}>
+	"success": true,
+	"update": {
+	    "SubTotal" : {
+	        stringValue: "<isprint value="${pdict.Basket.getAdjustedMerchandizeTotalPrice(false)}">",
+	        number: <isprint value="${pdict.Basket.getAdjustedMerchandizeTotalPrice(false).value}" formatter="###0.00">
+	    },
+	    "pageReload" : {
+	    	stringValue: "${pdict.BasketEmpty}"
+	    	}
+	}
+    <iselse/>
+		"success": false,
+		"error":"<isprint value="${pdict.ErrorCode}"/>"
+    </isif>
+} 

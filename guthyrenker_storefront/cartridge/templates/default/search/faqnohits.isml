@@ -1,0 +1,22 @@
+<isset name="pagetitle" value="${'Search | ' + pdict.CurrentHttpParameterMap.q.stringValue}" scope="pdict">
+<isdecorate template="search/pt_faqcontentsearchresult">
+<iscache type="relative" minute="30" varyby="price_promotion" />
+<isinclude template="util/modules"/>
+<iscomment>create reporting event</iscomment>
+<isinclude template="util/reporting/ReportSearch.isml"/>
+
+<isobject object="${pdict.ProductSearchResult}" view="none">
+
+<div class="content" id="content">
+<p style="padding-top:10px;">${Resource.msg('nohits.faqmessage','search',null)}</p>
+<div id="search" class="search">
+	<isslot id="noresult-banner" description="Banner for searches with no hits" context="global"/>
+	<div class="nohits">
+		<div class="nohitssearch">
+			
+		</div><!-- END: nohitssearch -->
+	</div><!-- END: nohits -->
+</div><!-- END: search -->
+</div>
+<isset name="OmniturePage" value="faqSearchnohits" scope="pdict"/>
+</isdecorate>

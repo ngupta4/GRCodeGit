@@ -1,0 +1,24 @@
+/*----------------------------
+  Video Player Styles
+  ----------------------------*/
+div.playButton { 
+	background: url('../images/videoRollover.png') no-repeat scroll 0 0 transparent;
+	width:48px;
+	height:48px;
+	display:block;
+	position:absolute;
+	cursor:pointer;
+}
+div.playButton:hover { background-position: 0 100%; }
+
+video {
+	-webkit-transition: opacity 1s ease-in-out;
+	-moz-transition: opacity 1s ease-in-out;
+	-o-transition: opacity 1s ease-in-out;
+	-ms-transition: opacity 1s ease-in-out;	
+	transition: opacity 1s ease-in-out;
+	opacity:1.0;
+}
+video.loading {
+	opacity:0.0;	
+}

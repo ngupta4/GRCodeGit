@@ -1,0 +1,150 @@
+
+/**
+* Demandware Script File
+* To define input and output parameters, create entries of the form:
+*
+* @<paramUsageType> <paramName> : <paramDataType> [<paramComment>]
+*
+* where
+*   <paramUsageType> can be either 'input' or 'output'
+*   <paramName> can be any valid parameter name
+*   <paramDataType> identifies the type of the parameter
+*   <paramComment> is an optional comment
+*
+* For example:
+*
+*
+*/
+importPackage( dw.system );
+importPackage( dw.object );
+importPackage( dw.catalog );
+importPackage( dw.util );
+importPackage( dw.order);
+
+function getAllRecommendation(CCC : Object, recommendationType : Number){
+	var recomendationsSet : LinkedHashSet = new LinkedHashSet();
+	var offerCodes : Array = null;
+	if( !empty(CCC) ) {
+		offerCodes = CCC.sasOfferCodes;
+		var aProduct : Product = null;
+		for( var i=0, ii=offerCodes.length; i<ii; i++ ) {
+			aProduct = ProductMgr.getProduct(offerCodes[i]);
+			if( !empty(aProduct) && aProduct.getAvailabilityModel().isOrderable().valueOf() ) {
+				getProductRecommendation(aProduct, recommendationType , recomendationsSet, true );
+			}
+		}
+	}
+	return recomendationsSet;
+}
+
+function getAllRecommendationsForBasket(Basket : dw.order.Basket, recommendationType : Number){
+	var recomendationsSet : LinkedHashSet = new LinkedHashSet();
+	
+	if (empty(Basket)) {
+		return;
+	}
+	
+	// Create lookup to check for product existence in basket
+	var pidHash : HashMap = new HashMap();
+	var plis : Collection = Basket.getProductLineItems();
+	for( var i=0, ii=plis.length; i<ii; i++ ) {
+		pidHash.put(plis[i].product.ID, plis[i].product.ID);
+	}
+
+	// Lookup recommendations from the Basket
+	if( !empty(Basket) ) {
+		var coreOffer : Product = getCoreOfferFromBasket( Basket );
+		
+		if (!empty(coreOffer)) {
+			getProductRecommendation( coreOffer, recommendationType, recomendationsSet, true );
+		}
+	}
+	
+	// Remove recommended objects already in the Basket
+	recomendationsSet.removeAll(plis);
+	
+	/*var iRS : Iterator = recomendationsSet.iterator();
+	var aProduct : Product = null;
+	while( iRS.hasNext() ) {
+		aProduct = iRS.next();
+	
+		// If the pidHash returns something, then remove the recommended product
+		if( !empty(pidHash.get(aProduct.ID)) ) {
+			recomendationsSet.remove(aProduct);
+		}	
+	}*/
+	
+	return recomendationsSet;
+}
+
+function getProductRecommendation(product : Product, recommendationType : Number, recomendationsSet :  LinkedHashSet , incluedExclusiveProduct : Boolean){
+	 var recommendations : Iterator = product.getRecommendations(recommendationType).iterator();
+	 while (recommendations.hasNext()){
+		var recommendation : Recommendation = recommendations.next();
+		var recommendedProduct : Product = recommendation.getRecommendedItem();
+		if (recommendedProduct != null && recommendedProduct.getAvailabilityModel().isOrderable().valueOf()){
+			if(incluedExclusiveProduct && "coreItem" in recommendedProduct.custom && recommendedProduct.custom.coreItem == true){
+				recomendationsSet.add(recommendedProduct);
+				//getProductRecommendation(recommendedProduct, recommendationType , recomendationsSet,incluedExclusiveProduct);
+			}else if(!incluedExclusiveProduct && "coreItem" in recommendedProduct.custom && recommendedProduct.custom.coreItem == true){
+				continue;
+			}else{
+				recomendationsSet.add(recommendedProduct);
+			}
+		}
+	}
+}
+
+function getCoreOffer(CCC : Object){
+	var coreOffer : Product = null;
+	var offersList : ArrayList = new ArrayList();
+	var offerCodes : Array = null;
+	if( !empty(CCC) ) {
+		offerCodes = CCC.sasOfferCodes;
+		var aProduct : Product = null;
+		for( var i=0, ii=offerCodes.length; i<ii; i++ ) {
+			aProduct = ProductMgr.getProduct(offerCodes[i]);
+			if( !empty(aProduct) && aProduct.getAvailabilityModel().isOrderable().valueOf()  ) {
+				 coreOffer = aProduct;
+				 break;
+			}
+		}
+	}
+	return coreOffer;
+}
+
+function getCoreOfferFromBasket(Basket : dw.order.Basket){
+	var coreOffer : Product = null;
+	var plis : Collection = null;
+	if( !empty(Basket) ) {
+		plis = Basket.productLineItems;
+		var aProduct : Product = null;
+		for( var i=0, ii=plis.length; i<ii; i++ ) {
+			aProduct = plis[i].product;
+			if( "coreItem" in aProduct.custom && aProduct.custom['coreItem'].valueOf() == true  ) {
+				 coreOffer = aProduct;
+				 break;
+			}
+		}
+	}
+	return coreOffer;
+}
+
+function savePutBackOfferIDToBasket(basket : Basket, products : Iterator){
+	while(products.hasNext()){
+		var product: Product = products.next();
+		if(!empty(basket.describe().getCustomAttributeDefinition("upgradedOffer"))){
+			basket.custom.upgradedOffer = product.ID;
+			break;
+		}
+	}
+}
+
+function getPutBackOfferFromBasket(basket : Basket){
+	var product : Product = null;
+	if(!empty(basket.describe().getCustomAttributeDefinition("upgradedOffer"))){
+		var  productID : String = basket.custom.upgradedOffer;
+		product = ProductMgr.getProduct(productID);
+	}
+	return product;
+}

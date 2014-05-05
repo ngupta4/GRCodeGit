@@ -1,0 +1,116 @@
+<iscache type="relative" minute="60" varyby="price_promotion" />
+<isset name="CCC" value="${pdict.CurrentCampaignConfig}" scope="page" />
+<isscript>
+		importPackage(dw.object);
+		importPackage(dw.catalog);
+		
+		importScript('int_gutheyrenker:common/libEncoding.ds');
+		
+		if(pdict.CurrentCampaignConfig!=null) {
+			var CCC : Object = pdict.CurrentCampaignConfig;
+			if(CCC !=null ){
+				var category : dw.catalog.Category = CCC.getCampaignCategory();
+			}
+		}
+</isscript>
+<isslot id="campaign-css" context="category" description="Campaign CSS" context-object="${category}"/>
+<iscomment>Check the htmlhead.isml for the server side tracking pixel</iscomment>
+<isif condition="${dw.system.Site.getCurrent().getCustomPreferenceValue('GRMVisitorLogPixelEnabled') == true}">
+    <img src="${URLUtils.url('GRMiddleware-VisitorLog', 'urlpath', request.httpPath, 'urlquery', request.httpQueryString)}" width="1" height="1"/>
+</isif>
+
+<isif condition="${('showNav' in this && !!showNav) || empty(CCC) || empty(CCC.showNav) }">
+	<isset name="showNav" value="${true}" scope="page" />
+<iselse/>
+	<isset name="showNav" value="${CCC.showNav}" scope="page" />
+</isif>
+
+<isscript>
+      importScript('guthyrenker_core:common/libUtils.ds');
+      var contentInfo    = getCurrentContentInfo(pdict.CurrentHttpParameterMap);
+      var CurrentContent : Content = contentInfo.content;
+      
+      if (pdict.CurrentHttpParameterMap.enableSearch.value == 'true') {
+      		pdict.CurrentSession.custom.enableSearch = true;
+      }
+</isscript>
+
+<isif condition="${!empty(CurrentContent) && CurrentContent.ID == 'rightnow-header'}">
+  <isif condition = "${request.httpCookies['PHPSESSID'] == null}">
+    <iscookie name="PHPSESSID" value="${pdict.CurrentSession.sessionID}" path="/" maxAge="-1" />
+  </isif>
+  
+  <script type="text/javascript">
+    var session_id = "<isprint value="${pdict.CurrentSession.sessionID}">";
+  </script>
+  <link href="${URLUtils.absStatic('/css/cust_care/global.css')}" media="screen" rel="stylesheet" type="text/css" />
+  <link href="${URLUtils.absStatic('/css/cust_care/main.css')}" media="screen" rel="stylesheet" type="text/css" />  
+  <link href="${URLUtils.absStatic('/css/cust_care/js_on_styles.css')}" media="screen" rel="stylesheet" type="text/css">
+  
+</isif>
+  
+
+<isif condition="${showNav}">
+	<script type="text/javascript">
+	jQuery(document).ready(function () {
+		$("#search").submit(function () {
+			var q = $(this).find("#searchQ").attr("value");
+			var qurl = "${URLUtils.url('Search-Redirect')}?q=" + q;
+			jQuery.ajax({
+				type: "GET",
+				url: qurl,
+				success: function(data){
+					data = $.trim(data);
+					if (data.length > 0) {
+						data=(data.split("<")[0]).split("/n")[0];
+					}
+					if (data.length > 0 && data[0] != "<") {				
+						window.location=data;
+					} else {
+						$("#searchError").html("No Results Found.");
+					}
+				},
+				failure: function(data){}
+			});
+			return false;
+		});
+	});
+	</script>
+	<div id="lyt_topHeader">
+		<!--header.php Include-->
+		<div class="headerWide">
+			<div id="headerTop"></div>
+			<div id="header">
+				
+				<div id="SearchContainer">
+					<form id="search">
+					<span>Site Search</span>
+					<input name="searchQ" id="searchQ" type="text"/> <input type="submit" value="Go"/>
+					</form>
+					<div class="error" id="searchError"></div>
+				</div>
+				  
+			  	<isif condition="${!empty(pdict.CurrentHttpParameterMap.pactvid) && !empty(pdict.CurrentHttpParameterMap.pactvid.stringValue)}">
+					<iscomment>INCLUDE: category menu bar at the bottom of the header (it's computing intensive, it's cached)</iscomment>
+					<isinclude url="${URLUtils.url('Home-IncludeHeaderMenuOld','pactvid',pdict.CurrentHttpParameterMap.pactvid.stringValue)}"/>
+					<isinclude url="${URLUtils.url('Home-IncludeHeaderCustomerInfoOld','pactvid',pdict.CurrentHttpParameterMap.pactvid.stringValue)}"/>
+				<iselse/>
+					<iscomment>INCLUDE: category menu bar at the bottom of the header (it's computing intensive, it's cached)</iscomment>
+					<isinclude url="${URLUtils.url('Home-IncludeHeaderMenuOld')}"/>
+					<isinclude url="${URLUtils.url('Home-IncludeHeaderCustomerInfoOld')}"/>
+				</isif>
+			</div>
+		</div>
+	</div><!-- END: header -->
+
+<iselse/>
+
+	<div id="header">
+		<a id="paLogo" class="logo" href="${URLUtils.httpHome()}">Proactiv Solution</a>  
+		<div id="callnumber"><strong>Questions?</strong> Call toll-free ${CCC.phone}</div>
+	</div>
+
+</isif>
+
+<iscomment>Cookies and Javascript enabled check</iscomment>
+<isinclude template="components/browsertoolscheck"/>

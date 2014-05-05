@@ -1,0 +1,50 @@
+<!--- TEMPLATENAME: teenchooser.isml --->
+<isscript>
+  var teenArr = dw.system.Site.getCurrent().preferences.custom.teens2Show;
+  var queryString : String = '';
+  var cnt = 0;
+  for (var x=0;x<teenArr.length;x++) {
+  	  queryString = queryString + "custom.teenName='" + teenArr[x] + "'";
+  	  if (cnt < teenArr.length-1) {
+  		  queryString = queryString + ' or ';
+  	  } 
+  	  cnt = cnt + 1
+  }
+  var teens : dw.util.SeekableIterator = dw.object.CustomObjectMgr.queryCustomObjects("teen", queryString, "custom.teenPosition asc",'');		  
+</isscript>
+
+<iscomment>
+<div id="teenChooserContainer">
+	<div id="teenImages">
+		<isloop items="${teens}" alias="teenIter">
+			<div class="teenNav">
+				<a href="${URLUtils.url('Proof-Show', 'teen', teenIter.custom.teenName)}">
+					<img id="${teenIter.custom.teenName}" src="${URLUtils.staticURL('/images/proof/' + teenIter.custom.teenName + '_regular.png')}"/>
+				</a>
+			</div>
+		</isloop>
+	</div>
+</div>
+</iscomment>
+
+<isif condition="${pdict.Teen != null}">
+	<script type="text/javascript">
+	jQuery(document).ready(function () {
+		var selectedTeenSrc = jQuery('.teenNav img[id="${pdict.Teen.custom.teenName}"]').attr('src');
+		selectedTeenSrc = selectedTeenSrc.replace('_regular', '_selected');
+		jQuery('.teenNav img[id="${pdict.Teen.custom.teenName}"]').attr('src', selectedTeenSrc);
+		jQuery('.teenNav').hover(
+			function() {
+				var imageUrl = jQuery('img', this).attr('src');
+				imageUrl = imageUrl.replace('_regular', '_rollover');
+				jQuery('img', this).attr('src', imageUrl);
+			},
+			function() {
+				var imageUrl = jQuery('img', this).attr('src');
+				imageUrl = imageUrl.replace('_rollover', '_regular');
+				jQuery('img', this).attr('src', imageUrl);
+			}
+		);
+	});
+	</script>
+</isif>

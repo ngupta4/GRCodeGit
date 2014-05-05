@@ -1,0 +1,34 @@
+/**
+* Demandware Script File
+* removes spaces from credit card number
+*
+* @input cc_number : String
+* @output CleanCCNumber : String
+* @output tmp : Number
+*
+*/
+importPackage( dw.system );
+
+function execute( pdict : PipelineDictionary ) : Number
+{
+
+	var card_number : String;
+	
+    try{
+    	card_number = pdict.cc_number;
+    	//card_number = card_number.split(' ').join('');
+    	
+    	pdict.CleanCCNumber = card_number;
+    	
+    	return PIPELET_NEXT;
+    	
+    } catch(e){
+    	
+    	//pdict.CleanCCNumber = pdict.cc_number;
+    	
+    }
+
+	pdict.CleanCCNumber = card_number;
+
+    return PIPELET_NEXT;
+}

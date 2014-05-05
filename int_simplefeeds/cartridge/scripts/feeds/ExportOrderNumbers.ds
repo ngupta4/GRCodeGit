@@ -1,0 +1,141 @@
+/**
+* Demandware Script File
+* Export an XML file of customer metadata, not included in standard customer export (e.g. create and last-mod dates)
+*
+*   @input TempDir : String
+*	@input Orders : dw.util.Iterator mandatory, Orders of interest, in an Iterator
+*/
+importPackage( dw.system );
+importPackage( dw.util );
+importPackage( dw.io );
+importPackage( dw.order );
+importPackage( dw.catalog );
+
+importScript('int_gutheyrenker:common/libUtils.ds');
+
+function execute( args : PipelineDictionary ) : Number {
+	
+ 	// get input vars
+ 	var orders : dw.util.Iterator = args.Orders;
+    var tempDir : String = !empty( args.TempDir ) ? args.TempDir : "temp";
+	
+	// create temp folder
+	if ( !createTempFolder( tempDir ) )
+	{
+		return PIPELET_ERROR; // couldn't create folder
+	}
+
+	// create timestamp for file name
+	var calendar : Calendar = new Calendar();
+	calendar.timeZone = "PST";
+	var runTimestamp : String = StringUtils.formatCalendar( calendar, "yyyyMMdd" );
+
+	// determine current brand code by site id
+	var brand_siteID : String = dw.system.Site.getCurrent().ID;	
+	var brandCode = false;
+	var brandCodes = new Array(); // to search brand code from site id
+	brandCodes['Proactiv'] = 'PAO';
+	brandCodes['NaturalAdvantage'] = 'ND';
+	brandCodes['SheerCover'] = 'YB';
+	brandCodes['xout'] = 'DT';
+	brandCodes['skinnyswitch'] = 'RN';
+	brandCodes['MalibuPilates'] = 'MP';
+	brandCodes['WenHairCare'] = 'CD';
+	brandCodes['NewWen'] = 'CD';
+	brandCodes['Perricone'] = 'CP';
+	brandCodes['MeaningfulBeauty'] = 'MT';
+	brandCodes['ProactivPlus'] = 'PA'; // temp request- re-verify upon control file updates
+	brandCodes['McKenna'] = 'PM';
+	brandCodes['CellCeuticals'] = 'CC';
+	brandCodes['ReclaimBotanical'] = 'VB';
+	brandCodes['GetDepend'] = 'DP';
+	for ( var key in brandCodes ) {
+		if( dw.system.Site.getCurrent().ID == key ){
+			brandCode = brandCodes[key];
+			break;
+		}
+	}
+	
+	// create export file
+	var exportFile : File = new File( File.IMPEX + File.SEPARATOR + "src" + File.SEPARATOR + tempDir + File.SEPARATOR + "DWOrders_" + runTimestamp + "_" + brandCode + ".csv" );
+
+	try {
+		
+		// setup export file to be written to
+		var fileWriter : FileWriter = new FileWriter( exportFile );
+		var writer : CSVStreamWriter = new CSVStreamWriter( fileWriter, ",", '"' );
+		
+		// loop on each order
+		while ( orders.hasNext() ) {
+			
+			// get current order
+			var order : dw.order.Order = orders.next();
+			
+			// get all products from order
+			var products : dw.util.Iterator = order.allProductLineItems.iterator();
+			
+			// loop on each product
+			while( products.hasNext() ) {
+				
+				// get current product as a product line item
+				var pli : dw.order.ProductLineItem = products.next();				
+				
+				// setup new array to hold order details
+				var orderDetails : Array = new Array();
+				
+				// order date
+				var orderDate : Date = order.getCreationDate();
+				var orderDateCal : Calendar = new Calendar( orderDate );
+				var orderDateFormatted : String = StringUtils.formatCalendar( orderDateCal, "MM/dd/yyyy" );
+				orderDetails.push( orderDateFormatted );
+				
+				// order number
+				orderDetails.push( order.orderNo );
+				
+				// brand code
+				if( brandCode == "PAO" ) {
+					orderDetails.push( "PA" );
+				} else {
+					orderDetails.push( brandCode );
+				}
+				
+				// cart id
+				orderDetails.push( order.custom.cartID );
+				
+				// item code
+				orderDetails.push( pli.product.custom.itemCode );
+				
+				// product id (offer code)
+				orderDetails.push( pli.product.ID );
+				
+				// write data to file
+				writer.writeNext( orderDetails );
+			}		
+		}
+	} catch( e ) {
+		var errorMsg : String = e.message;
+		Logger.error( "Unable to complete Order Number export: " + errorMsg );
+		return PIPELET_ERROR;
+	} finally {
+		if ( writer ) writer.close();
+	}
+		
+	return PIPELET_NEXT;
+}
+
+function createTempFolder( tempFolder : String ) : boolean {
+	
+	var folder : File = new File( File.IMPEX + File.SEPARATOR + "src" + File.SEPARATOR + tempFolder );
+
+	if ( folder.exists() ) {
+		return true; // nothing to do
+	}
+
+	// create folder	
+	var result : boolean = folder.mkdirs();
+	if ( !result ) {
+		return false;
+	}
+	
+	return true;
+}

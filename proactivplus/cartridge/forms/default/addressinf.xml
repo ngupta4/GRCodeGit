@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<form xmlns="http://www.demandware.com/xml/form/2008-04-19">
+	<field formid="firstName" label="profile.firstname" type="string" mandatory="true" binding="firstName" max-length="50" missing-error="forms.addressinf.firstname.missing" range-error="forms.address.field.invalid" regexp="^[a-zA-Z- ]+$" parse-error="forms.firstname.valid" />
+	<field formid="lastName" label="profile.lastname" type="string" mandatory="true" binding="lastName" max-length="50" missing-error="forms.addressinf.lastname.missing" range-error="forms.address.field.invalid" regexp="^[a-zA-Z- ]+$" parse-error="forms.lastname.valid" />
+	<field formid="address1" label="forms.address1" type="string" mandatory="true" binding="address1"  max-length="30" regexp="^(([0-9A-Za-z\+\.\-\ &amp;\/]){1,30})$" missing-error="forms.addressinf.address1.missing" range-error="forms.address.field.invalid.range" parse-error="forms.addressinf.address1.parse-error" />
+	<field formid="address2" label="forms.address2" type="string" mandatory="false" binding="address2" max-length="30" regexp="^(([0-9A-Za-z\+\.\-\ &amp;\/]){1,30})$" range-error="forms.address.field.invalid.range" parse-error="forms.addressinf.address1.parse-error" />
+	<field formid="city" label="forms.city" type="string" mandatory="true" binding="city" min-length="2" max-length="50" missing-error="forms.addressinf.city.missing" range-error="forms.address.field.invalid" />
+	<field formid="zip" label="forms.zippostalcode" type="string" mandatory="true" min-length="5" max-length="10" regexp="^(\d{5})(-\d{4})?$" binding="postalCode" missing-error="forms.errorzip" range-error="forms.address.field.invalid" parse-error="forms.address.field.invalid" />
+
+	<!-- use set of supported billing countries -->
+	<field formid="country" label="forms.country" type="string" default-value="US" mandatory="true" binding="countryCode" missing-error="forms.address.country.missing" value-error="forms.address.field.invalid">
+		<options>
+			<option optionid="" 	label="forms.select"	value=""/>
+			<option optionid="US" 	label="country.unitedstates"	value="US"/>
+		</options>	
+	</field>
+
+	<!-- use global state list -->
+	<include formid="states" name="states"/>
+
+	<!-- actions provided by the edit billing address dialog -->
+	<action formid="apply" valid-form="true"/>
+</form>

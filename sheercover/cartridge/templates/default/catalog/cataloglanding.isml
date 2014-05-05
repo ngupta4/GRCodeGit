@@ -1,0 +1,38 @@
+<!--- TEMPLATENAME: cataloglanding.isml --->
+<isset name="rootCategory" value="${dw.catalog.CatalogMgr.getCategory(Resource.msg('search.retention','search',null))}" scope="page"/>
+<div class="categoryRight">
+
+		<isloop items="${rootCategory.getOnlineSubCategories()}" var="subCat">
+		<div class="categorybox">
+		<a href="${URLUtils.url('Search-Show','cgid', subCat.getID())}">	
+		<isprint value="${subCat.getDisplayName()}" encoding="off"/> </a>
+		<div class="dec"><isprint value="${subCat.getDescription()}"></div>
+			<isset name="image" value="${subCat.getImage()}" scope="page"/>	
+							<isset name="imageURL" value="${image.httpURL}" scope="page"/>	
+							<isif condition="${!empty(image)}">
+								<isset name="thumbnailUrl" value="${imageURL}" scope="page"/>
+								<isset name="imageAlt" value="${image.alt}" scope="page"/>
+								<isset name="imageTitle" value="${image.title}" scope="page"/>
+							<iselse>
+								<isset name="thumbnailUrl" value="${URLUtils.httpStatic('/images/noimagesmall.png')}" scope="page"/>
+								<isset name="imageTitle" value="${p_productli.product.name}" scope="page"/>
+								<isset name="imageAlt" value="${p_productli.product.name}" scope="page"/>
+							</isif>
+							
+							<img src="${thumbnailUrl}" alt="${imageAlt}" title="${imageTitle}"/>
+			
+			</div>
+			<iscomment> <isset name="products" value="${subCat.getOnlineProducts()}" scope="page"/>
+			<div class="productsDetails">	
+				<isloop items="${products}" var="Product">		
+					<isinclude template="product/producttiledetailed"/>
+				</isloop>
+			</div>  </iscomment>
+		</isloop>
+	
+</div><!--END: categoryContainer -->
+<isif condition="${!empty(dw.web.Resource.msg('bazaarvoice.isenabled','bazaarvoice',null)) 
+						&& dw.web.Resource.msg('bazaarvoice.isenabled','bazaarvoice',null) == 'true'}">
+		<isinclude template="bv/display/headerincludes"/>
+</isif>
+

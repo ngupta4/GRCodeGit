@@ -1,0 +1,56 @@
+<div class="selectKit freeGiftSelector PanelB kitType">
+	<h2 class="pageTitle">${Resource.msg('step1.title.panelc','locale', null)}</h2>
+	<div class="selectKit">
+	
+		<ul class="sasKits">
+		
+		
+			<isloop items="${offersList}" var="offer" status="offers_status">
+			<isscript>
+			importScript('infinisilk:product/GetProductMap.ds');
+			importPackage(dw.util);
+			importPackage(dw.catalog);
+			
+			if( !empty(product) ) {
+				var upsellProductsMale : dw.util.ArrayList = getProductDetails(offer.ID,"Gender","male");
+				var upsellProductsFemale : dw.util.ArrayList = getProductDetails(offer.ID,"Gender","female");
+				}	
+			var productID:String="";
+			
+			if(!empty(upsellProductsFemale))
+			   productID = upsellProductsFemale.get(0).ID;
+			else
+			   productID = upsellProductsMale.get(0).ID;
+			</isscript>
+				<li id="system${offers_status.count}" class="${productID} ${offer.ID} updatecartbtn">
+				<span class="selected">${offer.ID}</span>
+					<div class="giftBlockSAS">
+						<div class="selectKit_Img">
+							<iscomment>For customer favourite</iscomment>
+							<isif condition="${!empty(offer.custom.offerTabCallout)&&!empty(offer.custom.offerTabCallout.markup)}">
+								<isprint value="${offer.custom.offerTabCallout.markup}" encoding="off"/>
+							<iselse/>
+							</isif>
+							<img src="${offer.getImage('small',0).url}" alt="${offer.getImage('small',0).alt}"/>
+						</div>
+						<div class="sasLongDescription">
+							<isprint value="${offer.longDescription}" encoding="off"/>
+						</div>
+						<div class="kitIncludes">
+							<isif condition="${!empty(offer.custom.tabDescription)&&!empty(offer.custom.tabDescription.markup)}">
+								<isprint value="${offer.custom.tabDescription.markup}" encoding="off"/>
+							<iselse/>
+							</isif>
+						</div>
+					</div>
+				</li>
+			</isloop>
+		</ul>
+	</div>
+	
+	<isslot id="sas-bottom" context="category" description="compare table" context-object="${category}"/>
+	
+	<div class="bottomPanel">
+			<a href="#Step2" class="medOrngBtn" id="step2">${Resource.msg('next.select','locale',null)}</a>
+	</div>
+</div>

@@ -1,0 +1,17 @@
+<!--- TEMPLATENAME: daily.isml --->
+
+<isscript>
+	var subCategory : dw.catalog.Category = CatalogMgr.getCategory(category.ID + '-daily');
+</isscript>
+<isslot id="HIW_Step5_TopLeft" context="category" description="How It Works Step 5 Slot Top Left" context-object="${subCategory}"/>	
+<div class="right">
+	<div id="dailyMovie"></div>
+	<div id="AlternativeContent"></div>
+</div>
+<div class="hiw5Banner">
+<isslot id="HIW_Step5_Band context" context="category" description="How it Works Step 5 Slot Band" context-object="${subCategory}"/>
+</div>
+<isslot id="HIW_Step5_BottomLeft" context="category" description="How It Works Step 5 Slot Bottom Left" context-object="${subCategory}"/>	
+<div class="right">
+<isslot id="HIW_Step5_BottomRight" context="category" description="How It Works Step 5 Slot Bottom Right" context-object="${subCategory}"/>							
+</div>

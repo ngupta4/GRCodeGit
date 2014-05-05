@@ -1,0 +1,52 @@
+		<script type="text/javascript" src="https://guthyrenker.inq.com/chatskins/launch/inqChatLaunch149.js"></script>
+		<script type="text/javascript">
+		function closeWalkThrough(){
+			jQuery('#DrWalkthrough').hide(); 
+			jQuery('.ui-widget-overlay').dialog('close');			
+			window.location.href="${URLUtils.url('Home-Show')}";
+			return false;
+			}
+
+		function popChatBox(pageid,inqCustData)
+		{
+			Inq.launchChatNowByPageID(pageid);
+			//document.getElementById('DrWalkthrough').style.display="none";
+			//jQuery('.ui-widget-overlay').hide();
+		  return true;
+		}
+
+		</script>
+		<script src="${URLUtils.staticURL('/js/swfobject.js')}" type="text/javascript"></script>
+				<script type="text/javascript">
+			           var flashvars = {
+	                        data_url:"${URLUtils.http('','')}/default/",
+	                        path_url:"${URLUtils.http('','')}/default/",
+	                        pathto:"${URLUtils.absStatic(URLUtils.CONTEXT_LIBRARY,null,'/retention/swf/')}",
+	                        uid:"${pdict.CustomerEmail}",
+	                        url_dayone: "${URLUtils.http('Page-Show','cid','proactiv-day-one')}/default/",
+	                        url_adjustDetails:"${URLUtils.url('KitCustomizer-LearnMore')}"    
+	                    };
+	                  var params = {};
+	                  var attributes ={};
+	                  params.allowscriptaccess = "always";
+	                  params.play="true";
+	                  params.loop="true";
+	                  params.wmode="transparent";  
+	                   swfobject.embedSWF("${URLUtils.staticURL('/swf/proactiv1.swf')}", "myContent", "765", "705", "9.0","expressInstall.swf",flashvars,params,attributes);
+				 </script>
+
+<div id="myContent">
+			<h1>Alternative content</h1>
+			<p><a href="http://www.adobe.com/go/getflashplayer"><img src="http://www.adobe.com/images/shared/download_buttons/get_flash_player.gif" alt="Get Adobe Flash player" /></a></p>
+</div>
+
+<isset name="OmniturePage" value="DiagnosticTool" scope="pdict">
+<isinclude template="analytics/omniture/omniture"/>
+<iscomponent pipeline ="Tealium-FooterInclude"
+pid=${pdict.CurrentHttpParameterMap.pid.stringValue}
+searchterm=${pdict.CurrentHttpParameterMap.q.stringValue}
+searchresultscount=${pdict.ProductSearchResult.count+''}
+orderno=${pdict.OrderNo}
+contentsearchresultscount=${pdict.ContentSearchResult.count+''}
+pagecgid=${pdict.CurrentHttpParameterMap.cgid.stringValue} />
+

@@ -1,0 +1,92 @@
+<!--- TEMPLATENAME: proof.isml --->
+<iscache status="off"/>
+
+<isdecorate template="content/home/pt_storefront">
+	<script type="text/javascript" src="${URLUtils.staticURL('lib/jquery/js/fancybox/jquery.fancybox-1.3.4.pack.js')}"></script>
+	<link rel="stylesheet" href="${URLUtils.staticURL('lib/jquery/js/fancybox/jquery.fancybox-1.3.4.css')}" type="text/css" />
+	<isinclude template="util/modules"/>
+	<isscript>
+		importPackage(dw.object);
+		importPackage(dw.catalog);
+		
+		var CCC : Object = pdict.CurrentCampaignConfig;
+	
+		var landingTemplate : String = CCC.landingTemplate;
+		var campaignCode : String = CCC.campaignCode;
+		
+		var showHeader : boolean = CCC.showHeader;
+		var showFooter : boolean = CCC.showFooter;
+		var showNav : boolean = CCC.showNav;
+		var showOrderButton : boolean = CCC.showOrderButton;
+		
+		var containerClasses : String = CCC.getContainerClasses();
+		
+		var category : dw.catalog.Category = CatalogMgr.getCategory(campaignCode + '-proof');
+		var showsingup : boolean = false;
+		if('showsignup' in dw.system.Site.getCurrent().preferences.custom){
+			showsingup = dw.system.Site.getCurrent().preferences.custom.showsignup;
+		}
+	</isscript>	
+	<div id="proofContainer">
+		<isset name="subNav" value="${dw.content.ContentMgr.getFolder('proof')}" scope="page"/>
+		<isif condition="${!empty(subNav)}">
+		<ul class="sub-navigation">
+			<isloop items="${subNav.getOnlineSubFolders()}" var="aFolder" status="navstat">
+				<li id="${aFolder.ID}" class="subNav">
+					<isif condition="${'linkPipeline' in aFolder.custom && !empty(aFolder.custom.linkPipeline)}">
+						<isset name="LinkParts" value="${aFolder.custom.linkPipeline.split(',')}" scope="page" />
+						<isset name="Pipeline" value="${LinkParts[0]}" scope="page" />
+						<isif condition="${LinkParts.length>5}">
+							<isset name="FolderLinkURL" value="${URLUtils.url(Pipeline,LinkParts[1],LinkParts[2],LinkParts[3],LinkParts[4],LinkParts[5],LinkParts[6])}" scope="page" />
+						<iselseif condition="${LinkParts.length>3}">
+							<isset name="FolderLinkURL" value="${URLUtils.url(Pipeline,LinkParts[1],LinkParts[2],LinkParts[3],LinkParts[4])}" scope="page" />
+						<iselseif condition="${LinkParts.length>1}">
+							<isset name="FolderLinkURL" value="${URLUtils.url(Pipeline,LinkParts[1],LinkParts[2])}" scope="page" />
+						<iselse/>
+							<isset name="FolderLinkURL" value="${URLUtils.url(Pipeline)}" scope="page" />
+						</isif>				
+					<iselse/>
+						<isset name="FirstContentAsset" value="${!empty(aFolder.onlineContent)?aFolder.onlineContent[0].ID:aFolder.ID}" scope="page" />
+						<isset name="FolderLinkURL" value="${URLUtils.url('Page-Show','cid',FirstContentAsset)}" scope="page"/>
+					</isif>
+					<a href="<isprint value="${FolderLinkURL}" encoding="off"/>" class="alt-img">${aFolder.displayName}</a>		
+				</li>
+			</isloop>
+		</ul>
+		</isif>
+		
+		<isif condition="${!empty(pdict.Content) && !empty(pdict.Content.custom.body)}">
+			<div class="diffVideos">
+				<isprint value="${pdict.Content.custom.body}" encoding="off"/>
+			</div>
+		</isif>
+		
+		
+		
+		<div id="proofBreadCrumb">
+		</div>	
+		
+		<div id="proofMoviesContainer">
+			<isinclude template="content/proof/teenchooser"/>
+		</div>
+		
+		
+		<a href="${URLUtils.url('COCart-Show')}">
+			<div id="proofOrder" >
+				<img src="${URLUtils.staticURL('/images/proof/orderProof.png')}" onClick="javascript:location.href='${URLUtils.url('COCart-Show')}'"/>
+			</div>
+		</a>
+		
+		<isinclude template="content/proof/topicslist" /> 
+		
+		<isinclude template="content/proof/beforeaftergallery" />
+		
+	<isset name="OmniturePage" value="Proofpage" scope="pdict"/>
+	<isscript>
+	var primaryUCI : Cookie = request.httpCookies['uci'];
+	</isscript>
+
+	<script>document.write('<s'+'cript language="JavaScript" src="http://view.atdmt.com/jaction/grkout_XOUTProof_6"></s'+'cript>')</script><noscript><iframe src="http://view.atdmt.com/iaction/grkout_XOUTProof_6" width="1" height="1" frameborder="0" scrolling="No" marginheight="0" marginwidth="0" topmargin="0" leftmargin="0"></iframe></noscript>
+	<script language="javascript" src="http://delivery.mgplatform.com/gr/307landing.js"></script>
+	</div>
+</isdecorate>

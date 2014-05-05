@@ -1,0 +1,90 @@
+<!--- TEMPLATENAME: offer_a_right.isml --->
+<isscript>
+importPackage( dw.system );
+importPackage( dw.util );
+importPackage( dw.object );
+importPackage( dw.web );
+importPackage( dw.catalog );
+importPackage( dw.content );
+importScript('guthyrenker_core:common/libUtils.ds');
+importScript("sas/offergrab.ds");
+
+var rightOffers : Array = getRightOffersA(pdict.Product.ID);
+
+</isscript>
+
+<iscomment> Debug div
+<div style="position:absolute;top:200px;left:0px;">
+right ${rightOffers}
+</div>
+</iscomment>
+<iscomment>
+<div class="pdpTag pdpRightBase">
+<iscomment>Start fixing your face and<br/>freeing up your life.</iscomment>
+</div>
+<div class="pdpRightBase pdpRightCopyContainer">
+  
+  <span class="bigHeadline"><b>X Out&trade; 60-Day Supply</b></span><br/>
+  
+  <span class="pdpDesc">
+  	Your 60-day supply of X Out&trade; Wash-In Treatment includes <b>2 BONUS ounces!</b>
+  </span><br/>
+  
+  <span class="smallHeadline">Your 60-Day Supply Includes:</span><br/>
+  <ul><li>Acne Wash-In Treatment, the 1-step acne
+      fighter that works as a face wash, spot 
+      treatment, and mask.</li></ul><br/>
+  
+  <span class="smallHeadline">FREE BONUS</span><br/>
+  <ul><li>Cleansing Bar to treat blemishes on the chest, 
+      back and shoulders by gently washing away 
+      dirt, impurities, oil and dead skin cells.</li></ul>
+</div>
+  <div class="popupContainer washInCommentBRight" style="display:none;">
+	<div class="popupTitle">X Out&trade; Acne Wash-In Treatment</div>
+	<div class="popupDesc">The all-in-one X Out Wash-In Acne Treatment that works as a face wash, a spot treatment, and a mask.</div>
+	<a class="popupClose" onclick="jQuery('.washInCommentBRight').hide();">x close</a>
+  </div> 
+
+<div class="otherOfferBRight feb2012">
+	<div class="offerBorderRight">
+		<input type="radio" name="offerRight" value="${rightOffers[1]}"/>
+        <span class="otherOffersText"><b>One time delivery</b> <a onclick="showPopup('subscribeAndSaveOneRight');" class="pdpHighlight" style="font-size:12px">Details</a><br/>
+			<div class="priceText">Only $39<sup><span style="font-size:12px;">90 + s/h</span></sup></div>
+        </span>
+	</div>
+  	<div class="popupContainer subscribeAndSaveOneRight" style="display:none;">
+		<div class="popupTitle">Subscribe & Save Program</div>
+		<div class="popupDesc">Choose this if you want to try X Out&trade; for just two months with the option to reorder.</div> 
+		<a class="popupClose" onclick="jQuery('.subscribeAndSaveOneRight').hide();">x close</a>
+  	</div>	
+	<div class="offerBorderRight selected">
+		<input type="radio" name="offerRight" value="${rightOffers[0]}" checked/> 
+        <span class="otherOffersText"><b>Subscribe & Save:</b> <a onclick="showPopup('subscribeAndSaveTwoRight')" class="pdpHighlight" style="font-size:12px">Details</a><br/>
+		  	<div class="priceText">Only $39<sup><span style="font-size:12px;">90</span></sup> + <span style="color:#9d008c"><b>FREE SHIPPING</b></span></div>
+        </span>
+        <span class="subscribeAndSave">Choose to Subscribe & Save for best value and convenient automatic shipments that you control!</span>
+	</div>
+  	<div class="popupContainer subscribeAndSaveTwoRight" style="display:none;">
+		<div class="popupTitle">Subscribe & Save Program<br/><span style="font-size:10px">Available to Web Customers Only</span></div>
+		<div class="popupDesc">After 60 days you'll receive a new 2 month supply of X Out&trade; every 60-days.  You will always be notified by email prior to shipment. Need your X Out&trade; sooner? Got you covered. Want to delay your next shipment? No problem!</div>
+		<a class="popupClose" onclick="jQuery('.subscribeAndSaveTwoRight').hide();">x close</a>
+  	</div>	
+</div>
+</iscomment>
+<script type="text/javascript">
+  /*jQuery(document).ready(function() {
+    jQuery('input[name="offerRight"]').click(function() {
+      var url = jQuery(this).parent().parent().parent().children('.productLink').attr('href');
+	  var urlParts = url.split('?');
+	  jQuery(this).parent().parent().parent().children('.productLink').attr('href', urlParts[0] + '?pid=' + jQuery(this).val());
+      jQuery('.offerBorderRight').removeClass('selected');
+      jQuery(this).parent().addClass('selected'); 
+    });
+    jQuery('.offerBorderRight input[type=radio]')[1].click()
+  });
+  function showPopup(divName) {
+	  jQuery('.popupContainer').hide();
+	  jQuery('.' + divName).show();
+  } */   
+</script>

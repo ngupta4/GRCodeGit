@@ -1,0 +1,82 @@
+/**
+*   @input  AuthCode:String
+*   @input Request : dw.system.Request
+*   @output ResponseCode:String
+*/
+
+importPackage( dw.system );
+importPackage( dw.net );
+
+importScript( "grmiddleware/libGRMiddleware.ds" );
+importScript( "common/libOAuth.ds" );
+importScript('common/libUtils.ds');
+
+function assertErrorCode(client:HTTPClient, responseCode:Array, url:String):Boolean{
+    if(!(responseCode instanceof Array)){
+        responseCode = [responseCode]; 
+    }
+    
+    var text:String = client.text || client.errorText;
+    
+    if(text == null){
+        Logger.debug("AuthCode responsed with " + client.statusCode + " and response content is empty; " + client.statusMessage + ", url is '"  + url + "'");
+        return false;
+    }
+    
+    var xmlText:XML = new XML(text);
+    if(responseCode.indexOf(xmlText.errorCode.toString()) == -1){
+        Logger.debug(text);
+        Logger.debug("Unexpected Auth Code errorCode: error code: " + xmlText.errorCode +", " + xmlText.errorMessage + "; http response: " + client.statusCode + ", " + client.statusMessage + ", url is '"  + url + "'");
+        return false;
+    }
+    
+    return true;
+}
+
+function execute( args : PipelineDictionary ) : Number
+{
+    //var url = normalizeURL(pref("GRMAuthCodeURL", "http://staging.grdev.com/auth-code")) +  "/" + args.AuthCode;
+    var baseURL : String = Site.current.getCustomPreferenceValue("middlewareAPIURL");
+	
+	var brand : String= Site.current.getCustomPreferenceValue("GRMProductLine");
+	
+	var url= baseURL + "/customer/auth-code/code/"+ args.AuthCode +"/brand/"+brand+"/uid/"+ getCustomerUID(args.Request) +"/trans/"+getTransactionID();	
+	
+    var client : HTTPClient = openOAuthUrl("GET", url);
+    
+    client.send();
+    
+    Logger.debug("AuthCode response: " + client.text || client.errorText);
+    Logger.debug("AuthCode responsed with " + client.statusCode + " - " + client.statusMessage + "; Response message is empty; Url is '"  + url + "'");
+    
+    if(client.statusCode == 200){
+        args.ResponseCode = "OK";
+        return PIPELET_NEXT;
+    }
+    else if(   client.statusCode == 404
+            || client.statusCode == 400)
+    {
+        if(!assertErrorCode(client, ["404.1", "400.3"], url)){
+            return PIPELET_ERROR;
+        }
+        args.ResponseCode = "INVALID";
+    }
+    else if (client.statusCode == 410)
+    {
+        if(!assertErrorCode(client, "410.1", url)){
+            return PIPELET_ERROR;
+        }
+        args.ResponseCode = "EXPIRED";
+    }
+    else
+    {
+        if(!empty(client.text || client.errorText)){
+            Logger.debug(client.text || client.errorText);
+        }
+        Logger.debug("AuthCode responsed with " + client.statusCode + " - " + client.statusMessage + "; Url is '"  + url + "'");
+        return PIPELET_ERROR;
+    }
+    
+    
+    return PIPELET_NEXT;
+}

@@ -1,0 +1,38 @@
+body{margin: 100px auto; font-size: 12px; font-family: Arial, Helvetica, sans-serif; background-color: white; color: #222; line-height: normal;}
+
+#container{margin: 0 auto; width: 1168px; color: white;}
+#leftColumn{float: left; width: 409px; height: 570px; background: url(../images/cet/bgLeft.jpg) no-repeat scroll 0 0 white;}
+#rightColumn{float: left; width: 759px; height: 570px; background: url(../images/cet/bgRight.jpg) no-repeat scroll 0 0 white;}
+
+#redirect{margin: 30px auto; font-size: 20px; width: 500px; display: none;}
+
+#leftColumn h2, #leftColumn p{margin-left: 30px;}
+#leftColumn h2{font-size: 36px; margin-top: 120px; width: 300px; font-weight: bold;}
+#leftColumn p{font-size: 12px; line-height: 20px; width: 365px;}
+
+#confirmPopup{display: none; color: #484848; background-color: white; font-size: 17px; border: 1px solid #CFCFCF; width: 562px; height: 282px; position: absolute; z-index: 200; top: 200px; left: 0; overflow: hidden; border-radius: 10px; -moz-border-radius: 10px; -webkit-border-radius: 10px; text-align: center; z-index: 1100;}
+#loader{background: url(../images/cet/ajax-loader.gif) center center no-repeat; height: 100%;}
+#popupContent{display: none; margin: 50px auto; width: 400px; line-height: 24px; text-align: left;}
+.popupclose{text-align: right; font-weight: bold;}
+.popupclose a{float: right; color: black; width: 54px; height: 11px; background: url(../images/cet/close.gif) left top no-repeat; position: relative; left: -10px; top: 5px;}
+.popupclose a span{display: none;}
+
+#errors{color: red; float: left; margin-left: 110px; margin-top: 10px; display: none;}
+#errors span{display: block;}
+
+#cetform{width: 710px; margin-top: 75px;}
+#cetform .label{width: 100px; text-align: right; float: left; margin-right: 10px;}
+#cetform .value{float: left; margin-bottom: 20px; padding-left: 2px;}
+#cetform .requiredindicator{display: none;}
+#cetform .error, #cetform .errorlabel{color: red;}
+#cetform .errormessage, #cetform span.errorclient{display: none !important;}
+#cetform input, #cetform select{width: 236px; margin: 0; padding: 0;}
+#cetform .addressfield input{width: 586px;}
+#cetform .complaintfield{width: 584px; margin-left: 110px; margin-top: 30px; text-align: left; float: left; margin-right: 0;}
+#cetform .complaintfield .label{float: none; width: auto; margin: 0; text-align: left;}
+#cetform .complaintfield div.label{display: none;}
+#cetform .complaintfield textarea{width: 586px; height: 83px;}
+#cetform .submitbtn{width: 342px; height: 42px; margin-left: 31px; margin-bottom: 10px; background: url(../images/cet/submit.jpg) left top no-repeat; border: none;}
+#cetform .submitbtn span{display: none;}
+
+#rightColumn p{float: left; margin: 0 31px;}

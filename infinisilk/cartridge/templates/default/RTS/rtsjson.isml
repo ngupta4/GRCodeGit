@@ -1,0 +1,17 @@
+<iscontent type="application/json" charset="UTF-8" compact="true"/>
+{
+		"rtsresponse": {
+			"showPopUp":"<isprint value="${pdict.showPopUp}"/>",
+			"payoption":"<isprint value="${pdict.PayOption}"/>",
+			"screenLevel":"<isprint value="${pdict.ScreenLevel}"/>",
+			"token":"<isprint value="${pdict.CurrentSession.custom.rtsToken}"/>",
+			"RTSerrors":[
+					<isloop items="${pdict.errorCode_Array}" var="Ecode" status="loopstate">
+						{
+							"code":"${Ecode}",
+							"message":"${pdict.errorString_Array[loopstate.count-1]}"
+						}<isif condition="${!loopstate.last}">,</isif>
+					</isloop>
+			]	
+		}
+}

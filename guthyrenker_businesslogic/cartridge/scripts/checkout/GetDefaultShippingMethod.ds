@@ -1,0 +1,57 @@
+/**
+ * This script returns the default shipping method applicable to the basket, for retention. For retention, we do not rely on
+ * BM default setting, since that is used for acquisition methods
+ * 
+ * @input Shipment: dw.order.Shipment The shipment to update the shipping method for.
+ * @input ShippingMethods : dw.util.Collection The list of applicable shipping methods.
+ * @output ShippingMethod : dw.order.ShippingMethod The default shipping method to set for the shipment.
+ */
+importPackage( dw.customer );
+importPackage( dw.order );
+importPackage( dw.system );
+importPackage( dw.util );
+importPackage( dw.web );
+
+function execute( pdict : PipelineDictionary ) : Number
+{
+	var shipment : dw.order.Shipment = pdict.Shipment;
+	var shippingMethod : dw.order.ShippingMethod = pdict.ShippingMethod;
+	
+	// Determine the list of applicable shipping methods.
+	var shippingMethods : Collection = pdict.ShippingMethods;
+	if (shippingMethods == null)
+	{
+		shippingMethods = ShippingMgr.getShipmentShippingModel(shipment).getApplicableShippingMethods();
+	}
+
+	var shippingMethodsIter : Iterator = shippingMethods.iterator();
+	while( shippingMethodsIter.hasNext() )
+	{
+		var method : ShippingMethod = shippingMethodsIter.next();
+		
+		if('isDefaultRetention' in method.custom && method.custom.isDefaultRetention == true)
+		{
+			shippingMethod = method;
+			shipment.setShippingMethod( method );
+			break;
+		}
+		
+		// set this shipping method
+		//shipment.setShippingMethod( method );
+		//return PIPELET_NEXT;
+	}
+	
+	if(shippingMethod==null){
+		
+		if(shippingMethods.size()>0){
+			shippingMethod = shippingMethods[0];
+			shipment.setShippingMethod( shippingMethod );
+		}
+		else
+		{
+			return PIPELET_ERROR;
+		}
+	}
+
+	return PIPELET_NEXT;
+}

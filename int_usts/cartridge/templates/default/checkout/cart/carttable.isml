@@ -1,0 +1,24 @@
+<!--- TEMPLATENAME: carttable.isml --->
+<iscomment>Show Products a single items</iscomment>
+
+<isloop items="${pdict.Basket.getProductLineItems()}" var="lineItem" status="status">
+	<isset name="productImage" value="${lineItem.product.getImage('large', 0)}" scope="page" />
+
+	<isif condition="${!empty(productImage)}">
+		<img src="${productImage.url}" alt="${productImage.alt}" title="${productImage.title}"/>
+		<iscomment><div class="productDescription"><isprint value="${lineItem.product.shortDescription}"/>	</div>
+		</iscomment>
+	</isif>
+	
+
+</isloop>
+
+<isif condition="${empty(request.custom.slp_cart) || request.custom.slp_cart == ''}">
+  <div class="orderTotal">
+	 <div class="cocartContainer">
+		<span class="totalPrice cocartPrice" id="orderTotal_1">					
+			<b>Total:</b> $<isprint value="${pdict.Basket.getTotalNetPrice().value}" style="MONEY_LONG"/> USD
+		</span>
+	  </div>
+  </div>
+</isif>  		

@@ -1,0 +1,66 @@
+<iscache type="relative" hour="24"/>
+
+<isinclude template="util/modules" />
+<iscomment>
+	This template displays a 3-level category tree as top navigation.
+	Only categories marked with showInMenu are shown.
+</iscomment>
+
+<isset name="primaryNav" value="${dw.content.ContentMgr.getFolder('primary-navigation')}" scope="page"/>
+<isif condition="${!empty(primaryNav)}">
+	<ul class="primary-navigation">
+		<li class="home"><a href="${URLUtils.httpHome()}">Home</a></li>
+		<isloop items="${primaryNav.getOnlineSubFolders()}" var="aFolder" status="navstat">
+			<li class="${aFolder.ID}">
+				<isif condition="${'linkPipeline' in aFolder.custom && !empty(aFolder.custom.linkPipeline)}">
+					<isset name="LinkParts" value="${aFolder.custom.linkPipeline.split(',')}" scope="page" />
+					<isset name="Pipeline" value="${LinkParts[0]}" scope="page" />
+					<isif condition="${LinkParts.length>5}">
+						<isset name="FolderLinkURL" value="${URLUtils.url(Pipeline,LinkParts[1],LinkParts[2],LinkParts[3],LinkParts[4],LinkParts[5],LinkParts[6])}" scope="page" />
+					<iselseif condition="${LinkParts.length>3}">
+						<isset name="FolderLinkURL" value="${URLUtils.url(Pipeline,LinkParts[1],LinkParts[2],LinkParts[3],LinkParts[4])}" scope="page" />
+					<iselseif condition="${LinkParts.length>1}">
+						<isset name="FolderLinkURL" value="${URLUtils.url(Pipeline,LinkParts[1],LinkParts[2])}" scope="page" />
+					<iselse/>
+						<isset name="FolderLinkURL" value="${URLUtils.url(Pipeline)}" scope="page" />
+					</isif>				
+				<iselse/>
+					<isset name="FirstContentAsset" value="${!empty(aFolder.onlineContent)?aFolder.onlineContent[0].ID:aFolder.ID}" scope="page" />
+					<isset name="FolderLinkURL" value="${URLUtils.url('Page-Show','cid',FirstContentAsset)}" scope="page"/>
+				</isif>
+				<isif condition="${aFolder.ID=='order'}">
+					<a href="<isprint value="${FolderLinkURL}" encoding="off"/>"><iscontentasset aid="nav-order-button" /></a>
+				<iselse/>
+					<a href="<isprint value="${FolderLinkURL}" encoding="off"/>" class="alt-img">${aFolder.displayName}</a>
+				</isif>
+			</li>
+		</isloop>
+	</ul>
+</isif>
+
+<isset name="secondaryNav" value="${dw.content.ContentMgr.getFolder('secondary-navigation')}" scope="page"/>
+<isif condition="${secondaryNav != null}">
+	<ul class="secondaryNavigation">
+		<isloop items="${secondaryNav.getOnlineSubFolders()}" var="aFolder" status="navstat">
+			<li class="${aFolder.ID}">
+				<isif condition="${'linkPipeline' in aFolder.custom && !empty(aFolder.custom.linkPipeline)}">
+					<isset name="LinkParts" value="${aFolder.custom.linkPipeline.split(',')}" scope="page" />
+					<isset name="Pipeline" value="${LinkParts[0]}" scope="page" />
+					<isif condition="${LinkParts.length>5}">
+						<isset name="FolderLinkURL" value="${URLUtils.url(Pipeline,LinkParts[1],LinkParts[2],LinkParts[3],LinkParts[4],LinkParts[5],LinkParts[6])}" scope="page" />
+					<iselseif condition="${LinkParts.length>3}">
+						<isset name="FolderLinkURL" value="${URLUtils.url(Pipeline,LinkParts[1],LinkParts[2],LinkParts[3],LinkParts[4])}" scope="page" />
+					<iselseif condition="${LinkParts.length>1}">
+						<isset name="FolderLinkURL" value="${URLUtils.url(Pipeline,LinkParts[1],LinkParts[2])}" scope="page" />
+					<iselse/>
+						<isset name="FolderLinkURL" value="${URLUtils.url(Pipeline)}" scope="page" />
+					</isif>				
+				<iselse/>
+					<isset name="FirstContentAsset" value="${!empty(aFolder.onlineContent)?aFolder.onlineContent[0].ID:aFolder.ID}" scope="page" />
+					<isset name="FolderLinkURL" value="${URLUtils.url('Page-Show','cid',FirstContentAsset)}" scope="page"/>
+				</isif>
+				<a href="<isprint value="${FolderLinkURL}" encoding="off"/>" class="alt-img">${aFolder.displayName}</a>
+			</li>
+		</isloop>
+	</ul>
+</isif>

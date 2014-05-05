@@ -1,0 +1,10 @@
+<iscache status="off"/>
+
+<isif condition="${pdict.CurrentCustomer.authenticated || (!empty(pdict.CurrentRequest.httpCookies['rememberMe']) && !empty(pdict.CurrentRequest.httpCookies['rememberMe'].value))}">
+<isredirect location="${pdict.LocationOut}" permanent="true"/>
+<iselse/>
+<isinclude url="${pdict.LocationOut}" />
+</isif>
+
+
+

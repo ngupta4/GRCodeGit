@@ -1,0 +1,120 @@
+.header {height: 75px;overflow: hidden;}
+.header .topNav {display:none;}
+.cart {
+	width:100%;
+	color: #022c43;
+}
+.cart .productDescription {
+	font-weight:bold;
+	color: #0192d7;
+	padding: 15px 0;
+	float: left;
+}
+.cart .cocartContainer {
+	padding-top: 10px;
+}
+
+.cart .orderTotal {
+	float:right;
+	padding-top: 5px;
+}
+.cart .orderTotal .totalPrice  {
+	font-weight:bold;
+}
+.requiredindicator {color:red;}
+.errorclient{color:red;}
+.row {clear:both;}
+.cart .orderTotal .cocartLabel  {}
+.cart .label {font-size:16px;font-weight:bold;}
+.cart .personInfform{clear:both;}
+.cart .personInfform h4 {
+	font-size:29px;
+}
+.label{width:100%;float:left;padding: 0px 0 5px 0;}
+.cart .personInfform .formfield input{width:90%; border: 1px solid #d3d3d3; margin-bottom: 10px;}
+.cart .personInfform .formfield select{width:90%; border: 1px solid #d3d3d3; margin-bottom: 10px;}
+
+.cart .personInfform .billing {border-right: 2px solid #d3d3d3;}
+.cart .personInfform .billing .formfield {width:50%;float: left;}
+.cart .personInfform .billing {
+	width:63%;
+	float:left;
+}
+.cart .personInfform .paymentInfo {
+	width:31%;
+	float:left;
+	padding-left: 4%;
+}
+.cart .personInfform .paymentInfo .month{width:50%;float:left;}
+.cart .personInfform .paymentInfo .year{width:50%;float:left;}
+
+.cart .checkoutBottom {width:50%;text-align: left; padding: 60px 0; color: #4b4c4c; display: block; clear: both; margin: 0 auto;}
+.cart .checkoutBottom .agreeBox {width: 80%;margin: 0 auto;}
+.cart .checkoutBottom .agreeBox p {float:left;}
+.cart .checkoutBottom .agreeBox .checkbox {float:left; padding-right: 5px; padding-top: 3px;}
+
+.cart .checkoutBottom placeOrder {}
+.satifaction {font-size:11px;color:#555555;float:left;width:35%; float: right; display: none;}
+.placeOrder {
+	text-align: center;
+}
+.placeOrder .greenButton {
+	width: 243px;
+	height: 59px;
+	border: none;
+	background: url(../images/place-order.jpg);
+}
+#agreeTerms {
+	font-size: .75em;
+	text-decoration: underline;
+	color: #2084c2;
+	display: block;
+	padding-left: 18px;
+}
+.personInfform {
+	border-top: 1px solid #ccc;
+	padding-top: 20px;
+}
+.requiredIndicator  {
+	display: none;
+}
+#contYourOrder {
+	margin: 10px 0;
+}
+
+.errorform {
+	color:red;
+	font-weight:bold;
+	padding: 10px;
+	border: 1px solid grey;
+}
+
+.orderConfimationContainer .thankyoumessage{color: #414a53; padding-top:40px;}
+.orderConfimationContainer .thankyoumessage h2 {font-size:30px; font-weight:bold;}
+.orderConfimationContainer .thankyoumessage .orderConfirmNum{font-size:22px; font-weight:bold;}
+.orderConfimationContainer .thankyoumessage #orderConfirmNum{color:#f89b00;}
+.orderConfimationContainer .thankyoumessage .orderno{font-weight: bold; font-size: 22px; padding-top:15px;}
+.confirmemail {font-size:16px;padding-top: 5px; padding-bottom:12px; }
+.confirmNote {font-size: 13px; padding: 10px 0 25px; }
+.orderConfimationContainer .thankyoumessage hr{padding: 20px 0 20px;}
+.orderConfimationContainer .ordersummary {width:500px;float:left; padding-bottom:40px;}
+.orderConfimationContainer .ordersummary .productInfo {width:32%;float:right; padding-top:25px;}
+.orderConfimationContainer .ordersummary h3 {font-weight:bold;font-size:22px;color:#414a53; padding-bottom: 15px;}
+.orderConfimationContainer .ordersummary .productbox {float:left;width:68%;}
+.orderConfimationContainer .ordersummary .productDesc {font-weight:bold;font-size:16px;color:#414a53;}
+.orderConfimationContainer .ordersummary .productName {font-size:16px;color:#414a53;}
+.orderConfimationContainer .ordersummary .orderTotal {font-weight:bold;font-size:20px;color:#414a53; padding-top:10px;}
+.orderConfimationContainer .phoneContainer {width:463px;height: 189px;padding-top:30px;float:right; background: url('../images/phoneContainerConfirmBtn.png')0 0 no-repeat; text-align: center; margin: 0 auto;}
+.orderConfimationContainer .phoneContainer .phoneTop {font-weight:bold;font-size:22px;color:#414a53;}
+.orderConfimationContainer .phoneContainer .phoneNumber {font-weight:bold;font-size:52px;color:#f89b00;}
+.orderConfimationContainer .phoneContainer .phoneBottom {font-weight:bold;font-size:16px;color:#414a53; padding-right:10px; padding-left: 10px;}
+
+/* Phone Number, hide all but default */
+.callus .default {display:none;}
+.callus .order {display:none;}
+.callus .confirm {display:inline;}
+.callus .support {display:none;}
+.phoneNumber .default {display:none;}
+.phoneNumber .order {display:none;}
+.phoneNumber .confirm {display:inline;}
+.phoneNumber .support {display:none;}

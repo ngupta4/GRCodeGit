@@ -1,0 +1,35 @@
+<!--- TEMPLATENAME: upsellinlinebreadcrumbs.isml --->
+<div class="breadcrumb <isif condition="${!isFrequencySection}">breadcrumbCore</isif> panelC">
+		<div class="refreshLogo"><a href="${URLUtils.httpHome()}" title="Wen Hair Care"><img src="${URLUtils.staticURL('images/wenhaircare/wen-logo.png')}" alt="${Resource.msg('cart.logo.alttext', 'rendering', null)}" /></a></div>
+		<isscript>
+		var orderStep : Number = 1;
+		</isscript>
+		<ul>
+			<li class="step1 <isif condition="${orderStep == 1}"> active</isif>">
+				<a <isif condition="${orderStep > 1}"> href="${URLUtils.https('Page-Show','cid','order')}" <iselse> href="javascript:void(0)"  </isif>><span class="count">1</span>
+				<span class="title">${Resource.msg('cart.breadcrumbs.selectsystem.label.inline2', 'rendering', null)}</span></a>
+			</li>
+			<li class="step2 <isif condition="${orderStep == 2}"> active</isif>">
+				<a <isif condition="${orderStep > 2}"> href="${URLUtils.http('Airline-Show','step','02','pid',pdict.CurrentSession.custom.pid1)}" <iselse> href="javascript:void(0)"  </isif>><span class="count">2</span>
+				<span class="title">${Resource.msg('cart.breadcrumbs.selectfreegift.label.inline2', 'rendering', null)}</span></a>
+			</li>
+			<li class="step3 <isif condition="${orderStep == 3}"> active</isif>">
+				<a <isif condition="${orderStep > 3}"> href="${URLUtils.http('Airline-Show','step','03','pid',pdict.CurrentSession.custom.pid2)}" <iselse> href="javascript:void(0)"  </isif>><span class="count">3</span>
+				<span class="title">${Resource.msg('cart.breadcrumbs.variant.label.inline2', 'rendering', null)}</span></a>
+			</li>
+			<li class="step4 <isif condition="${orderStep == 4}"> active</isif>">
+				<a <isif condition="${orderStep > 3}"> href="${URLUtils.http('Airline-Show','step','03','pid',pdict.CurrentSession.custom.pid2)}" <iselse> href="javascript:void(0)"  </isif>><span class="count">4</span>
+				<span class="title">${Resource.msg('cart.breadcrumbs.selectsupply.label.inline2', 'rendering', null)}</span></a>
+			</li>
+			<isif condition="${isFrequencySection}">
+				<li class="step5 <isif condition="${orderStep == 5}"> active</isif>">
+					<a href="javascript:void(0)" ><span class="count">5</span>
+					<span class="title">${Resource.msg('cart.breadcrumbs.frequency.label.inline2', 'rendering', null)}</span></a>
+				</li>
+			</isif>
+			<li class="step6 <isif condition="${orderStep == 6}"> active</isif>">
+				<a href="javascript:void(0)" ><span class="count"><isif condition="${isFrequencySection}">6<iselse/>5</isif></span>
+				<span class="title">${Resource.msg('cart.breadcrumbs.checkout.label.inline2', 'rendering', null)}</span></a>
+			</li>
+		</ul>
+</div>

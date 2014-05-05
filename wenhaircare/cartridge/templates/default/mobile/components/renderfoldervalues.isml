@@ -1,0 +1,21 @@
+<!--- TEMPLATENAME: renderfoldervalues.isml --->
+
+
+<isif condition="${Folder.getOnlineSubFolders().size() != 0}">
+<div class="accordion">
+    <isloop items="${Folder.getOnlineSubFolders()}" var="aFolder">
+        <div class="sectionBreak"></div>
+        <h3 class="accordion-header" data-folderid="${aFolder.ID}"><a href="#stub">${aFolder.displayName}</a></h3>
+        <div class="accordion-content">
+            <isset name="Folder" value="${aFolder}" scope="page"/>
+	        <isinclude template="components/renderfoldervalues"/>
+	        <isloop items="${aFolder.getOnlineContent()}" var="aContent">
+	            <a class="contentpage" href="${URLUtils.url('Page-Show', 'cid', aContent.ID)}">&ndash; ${aContent.name}</a>
+                <br/>
+	        </isloop>
+        </div>
+        
+    </isloop>
+</div>
+</isif>
+

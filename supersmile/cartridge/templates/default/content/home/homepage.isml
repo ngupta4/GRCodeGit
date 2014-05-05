@@ -1,0 +1,87 @@
+<isdecorate template="content/home/pt_storefront">
+<iscache status="off"/>
+<isinclude template="util/modules"/>
+<isset name="OmniturePage" value="Homepage" scope="pdict">	
+
+<iscomment>
+	This template is created before the 'wrapper' template, so we can set
+	up the template configuration for the 'pt_storefront' template right here.
+</iscomment>
+<isscript>t
+
+		importPackage(dw.object);
+		importPackage(dw.catalog);
+		
+		importScript('int_gutheyrenker:common/libEncoding.ds');
+		
+		var CCC : Object = pdict.CurrentCampaignConfig;
+	
+		var landingTemplate : String = CCC.landingTemplate;
+		var campaignCode : String = CCC.campaignCode;
+		
+		var showHeader : boolean = CCC.showHeader;
+		var showFooter : boolean = CCC.showFooter;
+		var showNav : boolean = CCC.showNav;
+		var showOrderButton : boolean = CCC.showOrderButton;
+		
+		var containerClasses : String = CCC.getContainerClasses();
+		
+		var category : dw.catalog.Category = CCC.getCampaignCategory();
+		pdict.CurrentSession.custom.omnSasPage = false;
+		
+		<!-- Logic to traverse url & find out the fragrance. -->
+		var httpQuery = empty(pdict.CurrentRequest.httpQueryString) ? "" : (pdict.CurrentRequest.httpQueryString);
+		
+		var fragVal : String = null;
+		
+		if(! empty(httpQuery)){
+			if(httpQuery.indexOf('fragrance')>-1){
+				var splitedString = httpQuery;
+				
+				if(splitedString.indexOf("&")<0){
+					var fragrance = splitedString.split('=');
+					if(fragrance.length > 1){
+						fragVal = fragrance[1];
+					}
+				} else if(splitedString.indexOf("&")>=0){
+					var queryStrings = splitedString.split('&');
+					for(var i=0; i < queryStrings.length; i++){
+						if(queryStrings[i].indexOf('fragrance')>-1){
+							var fragrance = queryStrings[i].split('=');
+							if(fragrance.length > 1){
+								fragVal = fragrance[1];
+							}
+						}
+					}
+				}
+				fragVal = unescape(fragVal);
+				
+				if(fragVal.indexOf("/") >=0){
+					fragVal=fragVal.replace("/","");
+				}				
+			}
+		}
+</isscript>
+
+<isset name="showOrderButton" value="${true}" scope="pdict" />
+<iscomment><isif condition="${pdict.CurrentCustomer.authenticated || pdict.CurrentCustomer.registered || pdict.CurrentSession.custom.cRememberMe || pdict.CurrentRequest.httpCookies['rememberMe']}">
+ 	
+
+
+  
+   
+<iselse/>
+</iscomment>
+<div class="mainWrapper">
+	
+			<isslot id="S1" context="category" description="Main Content Area" context-object="${category}"/>
+		
+	
+	
+</div>
+
+    
+	
+	
+</isdecorate>
+

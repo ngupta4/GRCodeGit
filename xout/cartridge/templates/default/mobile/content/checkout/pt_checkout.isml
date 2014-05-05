@@ -1,0 +1,63 @@
+
+
+<isinclude template="util/modules"/>
+
+<isscript>
+	importScript('guthyrenker_core:common/libUtils.ds');
+</isscript>
+
+<iscomment>This page must be cachable. It inherits the caching attributes by the decorated template.</iscomment>
+
+<!DOCTYPE html>
+<html>
+	<head>
+		<iscomment>Include all important information globally , e.g. meta-data, link information, and javascript.</iscomment>
+		<isinclude template="mobile/components/header/htmlhead"/>
+	
+		
+	    <iscomment>Insert meta tag for the "Google-Verification" feature to verify that you are the owner of this site.</iscomment>
+	    <isif condition="${'GoogleVerificationTag' in dw.system.Site.current.preferences.custom && dw.system.Site.current.preferences.custom.GoogleVerificationTag!=''}">
+	        <meta name="google-site-verification" content="<isprint value="${dw.system.Site.current.preferences.custom.GoogleVerificationTag}"/>" />
+	    </isif>
+	    <isif condition="${'MSValidateTag' in dw.system.Site.current.preferences.custom && dw.system.Site.current.preferences.custom.MSValidateTag!=''}">
+	    	<meta name="msvalidate.01" content="${dw.system.Site.current.preferences.custom.MSValidateTag}" />
+	    </isif>
+	    
+		
+		<isset name="showNav" value="${false}" scope="page" />
+	</head>
+	<body >
+  <isinclude template="mobile/components/header/header"/>
+  <isset name="acquisitionstep" value="confirmation" scope="pdict"/>
+		<iscomment>  Test for Homepage - and place page-specific mBox  </iscomment>	
+		<isif condition="${pdict.CurrentRequest.httpPath.indexOf('Home-Show') > 0}">
+			<div class="mboxDefault"></div>
+			<script type="text/javascript">mboxCreate("DT_Homepage");</script>
+		</isif>
+	
+		<iscomment>  Test for SAS page - and place page-specific mBox  </iscomment>	
+		<isif condition="${!empty(pdict.Content) && pdict.Content.ID == 'order'}">
+			<div class="mboxDefault"></div>
+			<script type="text/javascript">mboxCreate("DT_SAS_Tracker");</script>
+		</isif>
+
+
+		<isinclude template="components/mbox"/>
+		<iscomment>Cookies and Javascript enabled check</iscomment>
+		<isinclude template="components/browsertoolscheck"/>
+		<isinclude template="util/reporting/ReportOrder.isml"/>
+		<div id="container" >	
+			<div id="main">		
+  				<isreplace/>
+				
+			</div><!-- END: main -->
+		</div><!-- END: container -->
+
+
+	<isinclude template="mobile/components/footer/footer"/>
+
+<isinclude template="common/google_analytics" />
+
+<!-- code to drive the banner rotation effect -->
+</body>
+</html>

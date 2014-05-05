@@ -1,0 +1,34 @@
+/**
+* This script file is for getting the credit card details
+* based on UUID.
+*
+*   @input applicableCreditCards : dw.util.Collection  All applicable credit cards
+*   @input customer : dw.customer.Customer current customer
+*   @output defaultCreditCard : dw.order.PaymentInstrument credit card detail
+*
+*/
+importPackage( dw.system );
+importPackage( dw.customer );
+importPackage( dw.object );
+importPackage( dw.order );
+importPackage( dw.util);
+importPackage( dw.value );
+
+function execute( args : PipelineDictionary ) : Number
+{
+	
+	// All credit card associated with current user
+	var allCreditCards : Collection = args.applicableCreditCards;
+	
+	if(null != allCreditCards){
+		var creditCard : PaymentInstrument = null;
+	    for each( creditCard in allCreditCards )
+		{
+			if(creditCard.UUID == args.customer.profile.custom.defaultCreditCardID){
+				args.defaultCreditCard = creditCard;
+				break;
+			}
+		}
+	}
+   return PIPELET_NEXT;
+}

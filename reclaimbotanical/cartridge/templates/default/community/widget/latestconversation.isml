@@ -1,0 +1,18 @@
+<div class="gr-bg-wraper">
+	<div class="white-bg">
+		<iscomment>Renders two Latest conversations for the default conversation category.</iscomment>
+		<isif condition="${'Questions' in pdict && !empty(pdict.Questions)}">
+			<div class="title">Latest Conversations</div>
+			<div class="panel-wraper">
+				<isloop iterator="${pdict.Questions}" alias="question" end="1">
+				<div class="quesblock">
+					<h4><isprint value="${question.SubmittedBy}"/>:</h4>
+					<p><isprint value="${question.QuestionDetails}"/></p>
+					<a href="#" class="anslink"><span>Read Answer</span></a>
+				</div>
+				</isloop>
+			</div>
+			<div class="convlink"><a href="#" class="grybtn"><span>Go to Conversation</span></a></div>
+		</isif>
+	</div>
+</div>

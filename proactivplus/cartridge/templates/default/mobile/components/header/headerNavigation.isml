@@ -1,0 +1,123 @@
+<!--- TEMPLATENAME: headerNavigation.isml --->
+<isscript>
+	importPackage(dw.web);
+	importPackage(dw.util);
+	importScript("guthyrenker_core:common/libUtils.ds")
+	
+	function getContentAssetMap(rootFolderId:String):HashMap{
+		var retentionRootFolder:Folder=dw.content.ContentMgr.getFolder(rootFolderId);
+		var contentMap:HashMap = getFolderContent(retentionRootFolder,new HashMap());
+	  	return contentMap;
+	}
+</isscript>
+
+<isset name="OnlineSubFolders" value="${getPrimaryNavigation(loggedInFlag,'primary-navigation')}" scope="page" />
+<isset name="ContentMap" value="${getContentAssetMap('primary-navigation')}" scope="page"/>
+<isloop items="${OnlineSubFolders}" var="aFolder1" status="navstat1">
+	<isif condition="${true || !empty(getCustomerUID(request)) || aFolder1.ID != 'community'}">
+	  <isif condition="${ContentMap.get(aFolder1.ID)!=null}">
+	  	<isset name="FolderLinkURL1" value="${URLUtils.http('Page-Show','cid',ContentMap.get(aFolder1.ID))}" scope="page" />
+	  <iselse>
+	  	<isset name="FolderLinkURL1" value="${URLUtils.http('Page-Show','cid',aFolder1.ID)}" scope="page" />
+	  </isif>	  
+	  <isif condition="${'linkHref' in aFolder1.custom && !empty(aFolder1.custom.linkHref)}">
+	  		<isset name="FolderLinkURL1" value="${aFolder1.custom.linkHref}" scope="page" />	  		
+	  </isif>
+	  <isif condition="${'linkPipeline' in aFolder1.custom && !empty(aFolder1.custom.linkPipeline)}">
+		<isset name="FolderLinkURL1" value="${URLUtils.http({aFolder1.custom.linkPipeline})}" scope="page" />	  		
+	  </isif>
+		 <li id="nav-${aFolder1.ID}">
+		 		<a href='<isprint value="${FolderLinkURL1}" encoding="off" />' >${aFolder1.displayName} <span>+</span></a> 
+		
+				<isset name="SecondaryNav" value="${aFolder1.ID}" scope="page" />
+				<isset name="SecFolders" value="${getPrimaryNavigation(loggedInFlag,SecondaryNav)}"  scope="page"/>
+				<div class="header-sub-menu">
+					<isif condition="${SecFolders.length>0}">
+						<div class="subnav">					   
+					
+					
+				 	 <isloop items="${SecFolders}" var="aFolder2" status="navstat2">					 	  
+   					     	<isset name="FolderLinkURL2" value="" scope="page" />							 
+							<isif condition="${ContentMap.get(aFolder2.ID)!=null}">
+								<isset name="FolderLinkURL2" value="${URLUtils.http('Page-Show','cid',ContentMap.get(aFolder2.ID))}" scope="page" />
+							<iselse>
+								<isset name="FolderLinkURL2" value="${URLUtils.http('Page-Show','cid',aFolder2.ID)}" scope="page" />
+							</isif>
+							
+							<isif condition="${'linkHref' in aFolder2.custom && !empty(aFolder2.custom.linkHref)}">					  	  		
+							 	<isset name="FolderLinkURL2" value="${aFolder2.custom.linkHref}" scope="page" />	  		
+							</isif>
+							
+							<isif condition="${'linkPipeline' in aFolder2.custom && !empty(aFolder2.custom.linkPipeline)}">
+								<isset name="FolderLinkURL2" value="${URLUtils.http(aFolder2.custom.linkPipeline)}" scope="page" />	  		
+							</isif>
+
+   					     <isset name="showInMenu" value="${true}" scope="page"/>
+						 <isset name="showDescriptionInMenu" value="${true}" scope="page" />
+					     <isset name="TertiaryNav" value="${aFolder2.ID}" scope="page" />
+				         <isset name="TertiaryFolders" value="${getPrimaryNavigation(isLoggedIn,TertiaryNav)}" scope="page" />
+							
+	 						<isif condition="${TertiaryFolders.length>0}">
+							  	<div class="category">
+							<iselse>
+							  	<div class="category pad0">
+							</isif>
+						  	     
+
+		   					     <isif condition="${TertiaryFolders.length>0}">
+								  <iscomment> <div class="heading">	
+								  	 <a href='<isprint value="${FolderLinkURL2}" encoding="off" />'><isprint value="${aFolder2.displayName}" encoding="off"/></a>
+								   </div></iscomment>
+								 <iselse>
+								 	 <a href='<isprint value="${FolderLinkURL2}" encoding="off" />'><isprint value="${aFolder2.displayName}" encoding="off"/></a>								
+								 </isif>							 
+								 
+						         
+							     <isif condition="${TertiaryFolders.length>0}">
+							     	<isset name="countNotInMenu" value="${0}" scope="page"/>
+								     <ul>
+								     	<isloop items="${TertiaryFolders}" var="aFolder3" status="navstat3">												 
+											 <isif condition="${'htmlID' in aFolder3.custom && (aFolder3.custom.htmlID == 'DontShowInMenu' || aFolder3.custom.htmlID == 'ShowOnlyInSiteMap')}">
+											  	<isset name="showInMenu" value="${false}" scope="page"/>
+											  	<isset name="countNotInMenu" value="${countNotInMenu + 1}" scope="page"/>
+											 <iselse/>
+											 	<isset name="showInMenu" value="${true}" scope="page"/>    
+											 </isif>
+								       		<iscomment>The menuContext is checked to display in header and if menu
+								       		context is null, display in footer sitemap only</iscomment>
+								       		<isif condition="${aFolder3.custom.menuContext != null && showInMenu}">
+									       		<li>
+									       		    <isif condition="${ContentMap.get(aFolder3.ID)!=null}">
+												  	   <isset name="FolderLinkURL3" value="${URLUtils.http('Page-Show','cid',ContentMap.get(aFolder3.ID))}" scope="page" />
+												    <iselse>
+												  	   <isset name="FolderLinkURL3" value="${URLUtils.http('Page-Show','cid',aFolder3.ID)}" scope="page" />
+												    </isif>
+													<isif condition="${'linkHref' in aFolder3.custom && !empty(aFolder3.custom.linkHref)}">
+  													   <isset name="FolderLinkURL3" value="${aFolder3.custom.linkHref}" scope="page" />	  		
+  													</isif>	
+  													<isif condition="${'linkPipeline' in aFolder3.custom && !empty(aFolder3.custom.linkPipeline)}">
+														<isset name="FolderLinkURL3" value="${URLUtils.http({aFolder3.custom.linkPipeline})}" scope="page" />	  		
+														</isif>	 															
+									       		  	<a href='<isprint value="${FolderLinkURL3}" encoding="off" />'>${aFolder3.displayName}</a>
+									       		</li>
+								       		</isif>
+								       </isloop>
+								     </ul>
+								     <isif condition="${TertiaryFolders.length != countNotInMenu}">
+								     	<isset name="showDescriptionInMenu" value="${false}" scope="page" />
+								     </isif>
+							     </isif>
+							     <iscomment>
+							     <isif condition="${showDescriptionInMenu}">
+							     	<div class="subnav-content"><isprint value="${aFolder2.description}" encoding="off" /></div>
+							     </isif>
+							     </iscomment>
+							  </div>		
+					  </isloop>
+					 
+ 			</div>
+ 			 </isif>
+ 			 </div>
+	</isif>
+	 </li>
+</isloop>

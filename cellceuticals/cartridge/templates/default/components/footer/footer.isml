@@ -1,0 +1,17 @@
+<isinclude template="util/modules"/>
+<div id="footer">
+	<iscontentasset aid="footer-global"/>
+</div>
+<iscomment>
+	Customer registration can happen everywhere in the page flow. As special tag in the pdict
+	is indicating it. So we have to check on every page, if we have to report this event for
+	the reporting engine.
+</iscomment>
+<isinclude template="util/reporting/ReportUserRegistration.isml"/>
+
+<isinclude template="common/google_analytics" />
+
+<!---  Omniture tracking  --->
+<isinclude template="analytics/omniture/omniture"/>
+<div id="tracking">
+</div>

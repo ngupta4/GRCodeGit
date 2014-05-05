@@ -1,0 +1,56 @@
+<!--- TEMPLATENAME: referafriend.isml --->
+<!-- Begin Extole Bootstrap Code -->
+<script src="//media.extole.com/channel/bootstrap.min.js" init="media.extole.com/channel/extole.min.js" host="wenhaircare.extole.com" type="text/javascript">
+
+</script>
+<!-- End Extole Bootstrap Code -->
+<isif condition="${null == pageName || empty(pageName) }">
+	<isset name="pageName" value="ReferAFriend" scope="page"/>
+</isif>
+<isset name="fname" value="" scope="page"/>
+<isset name="lname" value="" scope="page"/>
+<isset name="email" value="" scope="page"/>
+<isset name="orderId" value="" scope="page"/>
+<isset name="orderUCI" value="" scope="page"/>
+<isset name="orderDate" value="" scope="page"/>
+<isset name="orderUID" value="" scope="page"/>
+
+<isif condition="${(null != pdict.Order) && !empty(pdict.Order)}">
+	<isset name="fname" value="${pdict.Order.billingAddress.firstName}"  scope="page"/>
+	<isset name="lname" value="${pdict.Order.billingAddress.lastName}" scope="page"/>
+	<isset name="email" value="${pdict.Order.customerEmail}" scope="page"/>
+	
+	<isset name="orderId" value="${pdict.Order.orderNo}" scope="page"/>
+	<isif condition="${'uciCode' in pdict.Order.custom}">
+		<isset name="orderUCI" value="${pdict.Order.custom.uciCode}" scope="page"/>
+	</isif>	
+	<isscript>		
+		var orderCreatedDate = StringUtils.formatDate(pdict.Order.creationDate,"yyyy-MM-dd'T'HH:mm:ss'Z'");
+	</isscript>
+	<isset name="orderDate" value="${orderCreatedDate}" scope="page"/>
+	<isif condition="${'userId' in pdict.Order.custom}">
+		<isset name="orderUID" value="${pdict.Order.custom.userId}" scope="page"/>
+	</isif>
+</isif>
+
+<!-- Begin Extole Widget (ID: 691478863) -->
+<script type="extole/widget">{
+    "name": "${pageName}",
+    "display": {
+        "type": "lightBox",
+        "modal": true,
+        "fixed": false,
+		"closeable":true,
+		"width": 350,
+        "height": 350
+    },
+	"src": "/o/691478863",
+    "autoLoad": true,
+	"showOnLoad": false,
+	"params":{
+		"f":"${fname}",
+		"l":"${lname}",
+		"email":"${email}" 
+	}
+}</script>
+<!-- End Extole Widget -->

@@ -1,0 +1,10 @@
+<!--- TEMPLATENAME: kitinclude.isml --->
+<isif condition="${!empty(dw.web.Resource.msg('kitcustomizer.isenabled','common',null)) && dw.web.Resource.msg('kitcustomizer.isenabled','common',null)=='true'}">
+	<iscomment>js for kit customizer from producto</iscomment>
+	<script src="${URLUtils.staticURL('/js/kitcustomizer/kitSessionDataManager.js')}" type="text/javascript"></script>
+	<script src="${URLUtils.staticURL('/js/kitcustomizer/kit.js')}" type="text/javascript"></script>
+	<script src="${URLUtils.staticURL('/js/kitcustomizer/kitwidget.js')}" type="text/javascript"></script>
+	<script src="${URLUtils.staticURL('/js/kitcustomizer/jstorage.min.js')}"></script>
+	
+	<isinclude url="${URLUtils.url('KitCustomizer-RenderKitDetail')}"/>
+</isif>

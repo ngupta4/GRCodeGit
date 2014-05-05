@@ -1,0 +1,68 @@
+<isinclude template="util/modules"/>
+<isdecorate template="community/pt_community">
+<isscript>importPackage(dw.content);
+  importPackage(dw.util);
+  importPackage(dw.catalog);
+  
+  importScript('guthyrenker_core:common/libUtils.ds');
+  
+  var contentInfo    = getCurrentContentInfo(pdict.CurrentHttpParameterMap);
+  var folderPathInfo = getRetentionFolderPathInfo(contentInfo);
+  
+  var CurrentFolder  : Folder = contentInfo.folder;
+  var CurrentContent : Content = contentInfo.content;
+  
+  var CurrentFolderPath : String = folderPathInfo.folderPath;
+  var RootFolder        : Folder = folderPathInfo.rootFolder;
+  
+  CurrentFolderPath += " body_"+RootFolder.ID+" "+RootFolder.ID;
+  
+  var PageID : String = "page_";
+  
+  var customContentID : String = null;
+  
+  if( empty(CurrentContent) ) {
+  	PageID += CurrentFolder.ID;
+  } else {
+  	PageID += CurrentContent.ID;
+  	if(CurrentContent.ID.indexOf('Retn') > -1){
+  		customContentID = CurrentContent.ID.substr(4);
+  	}
+  }
+  
+  var CCC : Object = pdict.CurrentCampaignConfig;</isscript>
+
+
+	<isinclude template="util/modules"/>
+<iscomment>create reporting event</iscomment>
+<isinclude template="util/reporting/ReportSearch.isml"/>
+
+<div class="center">
+	<div class="leftsection">
+		<div class="success-stories real-stories">
+		
+			<isinclude template="content/content/htmlcontentasset" />
+<isinclude url="${URLUtils.url('Community-RealStories', 'storyCategory', customContentID)}"/>
+ </div>
+	</div>
+	 <div class="rightsection">
+  <isif condition="${empty(pdict.Content.custom.categoryName)}">
+              <isset name="folderName" value="${pdict.Content.classificationFolder.displayName}"/>
+              <isslot id="right-side-contentpages" context="category" description="right navigation content pages" context-object="${dw.catalog.CatalogMgr.getCategory(folderName)}"/>
+               <isslot id="right-side-contentpages1" context="category" description="right navigation content pages1" context-object="${dw.catalog.CatalogMgr.getCategory(folderName)}"/>
+                <isslot id="right-side-contentpages2" context="category" description="right navigation content pages2" context-object="${dw.catalog.CatalogMgr.getCategory(folderName)}"/>
+                <isslot id="MediaPixel" context="category" description="MediaPixel" context-object="${dw.catalog.CatalogMgr.getCategory(folderName)}"/>
+                
+              <iselse>
+              <isslot id="right-side-contentpages" context="category" description="right navigation content pages" context-object="${dw.catalog.CatalogMgr.getCategory(pdict.Content.custom.categoryName)}"/>
+              <isslot id="right-side-contentpages1" context="category" description="right navigation content pages1" context-object="${dw.catalog.CatalogMgr.getCategory(pdict.Content.custom.categoryName)}"/>
+              <isslot id="right-side-contentpages2" context="category" description="right navigation content pages2" context-object="${dw.catalog.CatalogMgr.getCategory(pdict.Content.custom.categoryName)}"/>
+              <isslot id="MediaPixel" context="category" description="MediaPixel" context-object="${dw.catalog.CatalogMgr.getCategory(pdict.Content.custom.categoryName)}"/>
+            </isif>
+          </div>
+          	</div>
+	<div class="clear"></div>
+<script type="text/javascript">
+jQuery('#realStories').parent().addClass('active');
+</script>
+</isdecorate>

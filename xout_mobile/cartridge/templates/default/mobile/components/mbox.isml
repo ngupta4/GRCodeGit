@@ -1,0 +1,29 @@
+<!--- TEMPLATENAME: mbox.isml --->
+<div class="mboxDefault"></div>
+<script type="text/javascript">mboxCreate("DT_Global_Mobile");</script>
+
+<isif condition="${pdict.CurrentRequest.httpPath.indexOf('COCart-AddProduct') > 0}">
+	<isif condition="${pdict.Order == null}">
+		<script type="text/javascript">mboxCreate("DT_Checkout_Mobile");</script>
+	<iselse/>	
+<isscript>
+  var iter = pdict.Order.getAllProductLineItems().iterator();
+  var kit = '';
+  while (iter.hasNext()) {
+    var pli = iter.next();
+  	kit = pli.product.ID;
+  }
+  var revenue = 0;
+  if (pdict.Order.totalGrossPrice.available) {
+  	revenue = pdict.Order.totalGrossPrice.value;
+  } else {
+  	revenue = pdict.Order.getAdjustedMerchandizeTotalPrice(true).value + pdict.Order.giftCertificateTotalPrice.value;
+  }
+
+</isscript>	
+
+	<script type="text/javascript">mboxCreate('DT_Confirm_Mobile','productPurchasedId=${kit}', 'orderTotal=${revenue}', 'orderId=${orderId}');</script>
+
+	</isif>
+
+</isif>

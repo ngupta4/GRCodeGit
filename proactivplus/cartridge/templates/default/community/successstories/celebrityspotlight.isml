@@ -1,0 +1,28 @@
+	<isif condition="${pdict.CelebritySearchResultList.length < 7}">
+		<ul>
+	<iselse>
+		<ul id="celebrity-carousel-scroll">
+	</isif>
+		<isloop items="${pdict.CelebritySearchResultList}" var="crouselContent">	
+			<isif condition="${'afterImgThumb' in crouselContent.custom && !empty(crouselContent.custom.afterImgThumb)}">
+				<isset name="thumbnailUrl" value="${crouselContent.custom.afterImgThumb.url}" scope="page"/>
+			<iselse/>
+				<isset name="thumbnailUrl" value="${URLUtils.staticURL('/images/noimagemedium.png')}" scope="page"/>
+			</isif>
+			
+				<isset name="contentUrl" value="${URLUtils.http('Search-ShowSlotOnlyCategory','cgid',crouselContent.ID)}" scope="page"/>
+				<isif condition="${crouselContent.ID == pdict.Content.ID}">
+				<li class="active">
+					<a href="${contentUrl}"><img src="${thumbnailUrl}" alt="${crouselContent.name}"/></a> 
+					<h3>${crouselContent.name}</h3>
+				</li>	
+				<iselse/>
+				<li>
+					<a href="${contentUrl}"><img src="${thumbnailUrl}"/></a> 
+					<h3>${crouselContent.name}</h3>
+				</li>	
+				</isif>
+		</isloop>	
+	</ul>
+
+						

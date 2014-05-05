@@ -1,0 +1,24 @@
+<isif condition="${'afterImg' in content.custom && !empty(content.custom.afterImg)}">
+	<isset name="thumbnailUrl" value="${content.custom.afterImg.url}" scope="page"/>
+<iselse/>
+	<isset name="thumbnailUrl" value="${URLUtils.staticURL('/images/noimagemedium.png')}" scope="page"/>
+</isif>
+
+<isset name="thumbnailAlt" value="${content.name}" scope="page"/>
+<isset name="thumbnailTitle" value="${content.name}" scope="page"/>
+<a href="${URLUtils.http('Page-Show','cid',content.ID)}" title="${content.name}" class="thumb">
+	<img src="${thumbnailUrl}" alt="${thumbnailAlt}" title="${thumbnailTitle}" />
+</a>
+
+<div class="desc">
+<h2 class="celebName">
+	<a href="${URLUtils.http('Page-Show','cid',content.ID)}" title="${content.name}">
+	<isprint value="${content.name}"/></a>
+</h2>
+
+
+<p><isprint value="${content.description}"/>
+<a href="${URLUtils.http('Page-Show','cid',content.ID)}">Read More ></a></p>
+
+</div>
+

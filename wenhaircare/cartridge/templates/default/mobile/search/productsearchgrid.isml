@@ -1,0 +1,42 @@
+<iscomment>This template renders the products search resulr for Wen Site</iscomment>
+<div class="searchresultsheader">
+	<div class="sorthitscontainer">
+              <iscomment>sort by</iscomment>
+              <div class="clear"><!-- FLOAT CLEAR --></div>
+          </div><!-- END: sorthitscontainer -->
+
+       <iscomment>render compare controls if we present in a category context</iscomment>
+       <isif condition="${!empty(pdict.ProductSearchResult) && !empty(pdict.ProductSearchResult.category)}">
+       	<iscomparecontrols category="${pdict.ProductSearchResult.category}"/>
+       </isif>
+
+          <iscomment>pagination
+	<ispagingbar pageurl="${pdict.ProductSearchResult.url('Search-Show')}" pagingmodel="${pdict.ProductPagingModel}"/>
+			</iscomment>        
+          <div class="clear"><!-- FLOAT CLEAR --></div>
+</div><!-- END: searchresultsheader -->
+
+<isif condition="${!pdict.ProductPagingModel.empty}">
+	<div class="sorthitscontainer gridpage">
+	    <iscomment>sort by</iscomment>
+	    <isproductsortingoptions productsearchmodel="${pdict.ProductSearchResult}" pagingmodel="${pdict.ProductPagingModel}"/>
+	    <iscomment><ispaginginformation pagingmodel="${pdict.ProductPagingModel}" pageurl="${pdict.ProductSearchResult.url('Search-Show')}"/></iscomment>
+	    <div class="clear"><!-- FLOAT CLEAR --></div>
+	</div>
+</isif>
+
+<div class="productresultarea">
+ 	<isif condition="${pdict.CurrentHttpParameterMap.q.value != null}">
+ 	   	<isproductgrid producthits="${pdict.ProductPagingModel.pageElements}" productrows="${2}" productstoskip="${0}" productsperrow="${4}" pagingmodel="${pdict.ProductPagingModel}" scope="search"/>
+ 	<iselseif condition="${!empty(pdict.ProductSearchResult.category) && pdict.ProductSearchResult.category.parent.ID== 'SolutionFinder'}">
+   		<issolutionfinderproductgrid producthits="${pdict.ProductPagingModel.pageElements}" productrows="${1000}" productstoskip="${0}" productsperrow="${4}" pagingmodel="${pdict.ProductPagingModel}" scope="search"/>
+ 	<iselse>
+   		<isproductgrid producthits="${pdict.ProductPagingModel.pageElements}" productrows="${1000}" productstoskip="${0}" productsperrow="${4}" pagingmodel="${pdict.ProductPagingModel}" scope="search"/>
+   	</isif>
+</div><!-- END: productresultarea -->
+<div style="clear:both;"><!-- FLOAT CLEAR --></div>
+<iscomment>More Results</iscomment>
+<isset name="URL" value="${pdict.ProductSearchResult.url(URLUtils.url('Search-MoreResults','countrytabs','1'))}" scope="page"/>
+	<isif condition="${pdict.CurrentHttpParameterMap.q.value != null && pdict.ProductSearchResult.count>8}">
+		<span class="articlelink"><a href="${URL}" class="readmore">${Resource.msg('foldercontenthits.readmore','rendering',null)}</a></span>
+	</isif>

@@ -1,0 +1,85 @@
+<!--- TEMPLATENAME: cartinformation.isml --->
+<div data-role="content">
+	<form action="${URLUtils.httpsContinue()}" method="post" id="${pdict.CurrentForms.cart.htmlName}" class="checkoutform" data-ajax="false">
+		<isif condition="${!empty(pdict.CurrentHttpParameterMap.ExistingData.stringValue)}">
+			<script type="text/javascript">
+				jQuery(function(){
+					var existingData = "<isprint value="${pdict.CurrentHttpParameterMap.ExistingData.stringValue}" encoding="off"/>".split('&'), key, value, kv;
+					for( var i=0, ii=existingData.length; i<ii; i++ ) {
+						kv = existingData[i].split('=');
+						key = kv[0];
+						value = kv[1];
+						
+						if(key != "dwfrm_cart_shippingMethodID"){
+							jQuery("[name='"+key+"']").val(decodeURIComponent(value));
+						}
+					}
+				});
+			</script>
+		</isif>
+		<iscomment>Include a customer cart</iscomment>
+		<isinclude template="mobile/checkout/cart/cocart" />
+	
+		<iscomment>Include a details form</iscomment>
+		<isinclude template="mobile/checkout/personinformation/personinformation" />
+		
+	</form>
+	<script type="text/javascript">
+		//Set hidden fields since we aren't showing them for mobile on form submittion
+	 	$("#dwfrm_cart").submit(function(){
+	 		var email = $("input[name=dwfrm_personinf_contact_email]").val();
+	 		$("input[name=dwfrm_personinf_contact_emailconfirm]").attr("value",email);
+	 	});
+	 	
+	 	//setup shipping and qty updates here for now:
+	 	jQuery(".shippingmethodslist :radio").change(function () {
+			jQuery('#totalshippingprice').addClass('loading');
+			
+			jQuery.getJSON(
+				app.URLs.updateShippingPriceUrl,
+				{
+					shippingID : jQuery('.shippingmethodslist :radio:checked').val(),
+					qty : jQuery('#coreOffer select').val() || 1
+			}).done(function(price) {
+					if (price.success) {
+						jQuery('#shipTotal').text(price.update.shipping.stringValue);
+						jQuery('.totalPrice').text(price.update.totalPrice.stringValue);
+					}
+					
+					jQuery('#totalshippingprice').removeClass('loading');
+			});
+		});
+	 	jQuery('#coreOffer select').change(function () {
+			jQuery('#totalshippingprice').addClass('loading');
+			var updateQtyUrl = '${URLUtils.url("MBCart-UpdateProductQty")}';
+			var pid = jQuery('#coreOffer .coreid').val();
+			var shippingID = jQuery('.shippingmethodslist :radio:checked').val();
+			var qty = jQuery('#coreOffer select').val() || 1;
+			
+			updateQtyUrl = updateQtyUrl +"?pid="+pid+"&qty="+qty+"&shippingID="+shippingID;
+						
+			jQuery.ajax({
+				type: "POST",
+				url: updateQtyUrl,
+				dataType: 'text',
+				success: function(data){
+			
+				data = data.replace("{","")
+				            .replace("}","");
+								
+				var returnObject = data.split(",");
+				
+				jQuery('#subTotal').text(returnObject[1]);
+				jQuery('#shipTotal').text(returnObject[2]);
+				jQuery('.totalPrice').text(returnObject[3]);
+					
+				},
+				failure: function(data) {
+					alert("An error was encountered while processing your request");		
+				}
+			});
+			
+		});
+	 	
+	</script>
+</div>

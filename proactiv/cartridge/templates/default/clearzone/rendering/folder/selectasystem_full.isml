@@ -1,0 +1,367 @@
+<!--- TEMPLATENAME: selectasystem.isml --->
+<isdecorate template="clearzone/search/pt_selectasystem_full">
+<isinclude template="util/modules"/>
+
+<iscomment>create reporting event</iscomment>
+<isinclude template="util/reporting/ReportSearch.isml"/>
+
+<isset name="showHeader" value="${true}" scope="page" />
+<isset name="showFooter" value="${true}" scope="page" />
+<isset name="showNav" value="${true}" scope="page" />
+<isset name="showOrderButton" value="${false}" scope="page" />
+
+<isscript>
+	importPackage(dw.util);
+	importPackage(dw.catalog);
+	
+	var CCC : Object = pdict.CurrentCampaignConfig;
+
+	var offersList : ArrayList = new ArrayList();
+	var offerCodes : Array = null;
+	if( !empty(CCC) ) {
+		offerCodes = CCC.sasOfferCodes;
+		var aProduct : Product = null;
+		for( var i=0, ii=offerCodes.length; i<ii; i++ ) {
+			aProduct = ProductMgr.getProduct(offerCodes[i]);
+			if( !empty(aProduct) ) {
+				offersList.add1(aProduct);
+			}
+		}
+	}
+	var kitQtyClass = "";
+	var kitQty = 0;
+	if( !empty(offersList) ) {
+		kitQty = offersList.size();
+		switch(kitQty) {
+		case 1:
+			kitQtyClass="oneKit";
+			break;
+		case 2:
+			kitQtyClass="twoKits";
+			break;
+		case 3:
+			kitQtyClass="threeKits";
+			break;
+		case 4:
+			kitQtyClass="fourKits";
+			break;
+		case 5:
+			kitQtyClass="fiveKits";
+			break;
+		}
+	}
+</isscript> 
+
+<isset name="KitQtyClass" value="${kitQtyClass}" scope="page" />
+<div class="sasTop"></div>
+<div class="pageHead sasPage">
+    
+	<h1 style="text-transform:none;"><isprint value="${Resource.msg('sas.full.pageHead','sas',null)}"/></h1>
+	<p class="intro">
+		<isprint value="${Resource.msg('sas.full.intro','sas',null)}"/><br>
+	</p>
+	
+	<!-- <div class="c2c">
+		<div id="inqC2CImgContainer"></div>
+	</div>	 -->
+	
+	<div style="margin:0 auto 5px auto;text-align:center;"><img src="${URLUtils.staticURL('/images/order/select3G/click.png')}"></div>
+            
+	<div id="SaS">
+		<div class="selectKit rounded5" >
+			<ul class="${kitQtyClass} sasKits">
+				<isloop items="${offersList}" var="offer" status="offers_status">
+					<isscript>
+						var classes = "tab tab";
+						var imageClasses = "tab"+offers_status.count+"image tabImage";
+						classes+=offers_status.count;
+						if( offers_status.first ) {
+							classes+=" activated";
+						} else {
+							imageClasses+=" underlined";
+						}
+					</isscript>
+					<li class="${classes}" id="system_${offers_status.count}">
+						<h3 class="highlighted">${offer.getName()}</h3>
+						<div class="${imageClasses}">
+							<img src="${offer.getImage('tab',0).url}" />
+							<isif condition="${!empty(offer.custom.offerTabCallout)&&!empty(offer.custom.offerTabCallout.markup)}">
+								<isprint value="${offer.custom.offerTabCallout.markup}" encoding="off"/>
+							<iselse/>
+							</isif>
+						</div>
+					</li>
+				</isloop>
+			</ul>
+			<br clear="all" />
+		</div>
+		<div class="selectedKit rounded5">
+			<ul class="theKits">
+				<isloop items="${offersList}" var="offer" status="offers_status">
+					<isscript>
+						var classes = "tab tab";
+						var imageClasses = "tab"+offers_status.count+"image tabImage";
+						classes+=offers_status.count;
+						if( offers_status.first ) {
+							classes+=" activated";
+						} else {
+							imageClasses+=" underlined";
+						}
+						var titleString = offer.getName();
+						var lastIndex = titleString.lastIndexOf(" ",24);
+						if( titleString.length>23 && lastIndex>0 ) {
+							titleString = titleString.substring(0,lastIndex);
+						}
+						
+						var altSKUsString = offer.ID;
+						if( !empty(offer.custom.giftSelectSKUs) ) {
+							altSKUsString = offer.custom.giftSelectSKUs;
+						} 
+						var altSKUs = altSKUsString.split(',');
+						
+						var giftProducts : dw.util.ArrayList = new dw.util.ArrayList();
+						for( var i=0, ii=altSKUs.length; i<ii; i++ ) {
+							giftProducts.add1(dw.catalog.ProductMgr.getProduct(altSKUs[i]));
+						}						
+					</isscript>
+					<li id="offer-${offer.ID}" class="tab${offers_status.count} system_${offers_status.count} qty-${altSKUs.length.toFixed(0)}<isif condition="${offers_status.first}"> first</isif>">
+						<h4>Clearzone&trade;<br>&amp; ${titleString}</h4>
+						<!-- <div class="deluxeBadge">
+							<isif condition="${!empty(offer.custom.shippingPromoText)}">
+								<isprint value="${offer.custom.shippingPromoText}" encoding="off" />
+							</isif>
+						 
+	          </div>-->
+	          <img class="kitImage" src="${offer.getImage('large',0).url}" />
+						<div class="SelectSidePanel">
+							<div class="DetailDescription">
+								<h5>${offer.getName()}</h5>
+								<isif condition="${!empty(offer.shortDescription)&&!empty(offer.shortDescription.markup)}">
+									<isprint value="${offer.shortDescription.markup}" encoding="off"/>
+								</isif>
+								<div class="left">
+									<isif condition="${!empty(offer.custom.tabDescription)&&!empty(offer.custom.tabDescription.markup)}">
+										<isprint value="${offer.custom.tabDescription.markup}" encoding="off"/>
+									<iselse/>
+									</isif>
+								</div>
+		                                
+								<div class="right">
+									<isif condition="${!empty(offer.custom.tabDetails)&&!empty(offer.custom.tabDetails.markup)}">
+										<isprint value="${offer.custom.tabDetails.markup}" encoding="off"/>
+									<iselse/>
+									</isif>
+								</div>
+								<br clear="all" />
+		                            
+							</div>
+							<isif condition="${!empty(offer.custom.giftSelectSKUs)}">
+								<div class="GiftSelector">
+									<h5><isprint value="${Resource.msg('sas.full.giftselector','sas',null)}"/></h5>									
+									<isloop items="${giftProducts}" var="aProduct" status="gift_status">
+										<div class="giftOption<isif condition="${gift_status.first}"> giftSelected</isif>" id="r${gift_status.index.toFixed(0)}">
+											<div class="checkBox"></div>
+											<br clear="all" />
+											<div class="giftTitle">${aProduct.custom.altGiftName}</div>
+											<div class="giftImage">
+												<img src="${aProduct.getImage('alternateSelect',0).url}" />
+											</div>
+											<br clear="all" />
+											<div class="giftLink1">
+												<a class="openOverlay" href="${URLUtils.url('Page-Show','cid',aProduct.custom.altAssetID)}">${Resource.msg('sas.full.learn','sas',null)} &gt;&gt;&gt;</a>
+											</div>
+										</div>
+									</isloop>
+								</div>
+							</isif>
+							<div class="kitPriceBox">
+								<iscomment><div class="orderValue">A <isprint value="${offer.priceModel.getPriceBookPrice('list-prices-us')}" style="MONEY_LONG" /> <isprint value="${Resource.msg('sas.full.value','sas',null)}"/></div></iscomment>
+								<div class="kitPrice"><isprint value="${offer.priceModel.getPrice()}" style="MONEY_LONG" /></div>
+								<div class="orderMeta"></div>
+								
+								<isloop items="${giftProducts}" var="aProduct" status="gift_status">
+									<a href="${URLUtils.https('COCart-AddProduct','pid',aProduct.ID)}" class="orderButton<isif condition="${gift_status.first}"> selected</isif> r${gift_status.index}" id="order-${aProduct.ID}"></a>
+								</isloop>	
+								
+								<div class="freeshipping_sas" style="display: none;"><img class="freeshipping_sas" src="${URLUtils.staticURL('/images/freeshipping_sas.png')}"></div>
+																
+							</div>
+						</div>
+						<br clear="all" />
+					</li>
+				</isloop>
+	
+	    </div>
+	    <iscomment><isinclude template="product/components/sendtofriend" /></iscomment>
+		</div>
+        
+        
+<iscomment><a href="http://newreviews.proactiv.com/0570pa/011114/writereview.htm?format=embedded&amp;campaignid=BV_RATING_SUMMARY&amp;return=http%3A%2F%2Fwww.proactiv.com%2Forder%2Fselect.php%3Ftt%3D1&amp;innerreturn=http%3A%2F%2Fnewreviews.proactiv.com%2F0570pa%2F011114%2Freviews.htm%3Fformat%3Dembedded%26sort%3Drating&amp;user=__USERID__&amp;submissionparams=__BVSUBMISSIONPARAMETERS__&amp;submissionurl=http%3A%2F%2Fwww.proactiv.com%2Fclubcatalog%2Freview-submit.php" onclick="bvShowContentOnReturnPRR('0570pa', '011114', 'BVRRWidgetID');" target="BVFrame" name="BV_TrackingTag_Rating_Summary_1_WriteReview_011114" title="Write a review"><isprint value="${Resource.msg('sas.full.write.review','sas',null)}"/></a> <span class="BVRRRatingSummaryLinkWriteSuffix"></span>
+</iscomment>
+        
+        
+		<br clear="all" />
+		<isset name="acqPage" value="${true}" scope="pdict" />
+		<isinclude template="bv/display/rr/reviews" />
+	</div>
+<isset name="OmniturePage" value="Offerpage" scope="pdict" />
+
+    <iscomment> SAS Page Pixels</iscomment>
+    <iscontentasset aid="selectasystem-mediapixel"/>
+
+
+
+<script type="text/javascript">
+
+<iscomment>
+// if the number tabs is equal to the number of gifts, this means only 1 gift will appear per tab
+// the following code adjusts the styles around the  button
+// it compensates for empty space when only 1 gift selection is available
+// also if only 2 gifts exist, additional style adjustments apply
+</iscomment>
+
+var adjustStylesInSAS = {
+
+	selectedTab : 1,
+
+	setKitPrice : function(equalGifts){
+	
+			var localObj = this;
+		
+			//var str1 = '<div class="disc_sh">+S&amp;H</div>';	
+			
+			$('.ValueLRG').remove();
+			
+			if(localObj.selectedTab == 1) var str2 = '<div class="ValueLRG"><isprint value="${Resource.msgf('sas.full.value','sas',null,'$99.00')}"/></div>';	
+			if(localObj.selectedTab == 2) var str2 = '<div class="ValueLRG"><isprint value="${Resource.msgf('sas.full.value','sas',null,'$102.00')}"/></div>';	
+			if(localObj.selectedTab == 3) var str2 = '<div class="ValueLRG"><isprint value="${Resource.msgf('sas.full.value','sas',null,'$72.00')}"/></div>';	
+			$('.kitPriceBox .kitPrice').append(str2); // append(str1).
+			
+			/*
+			$('.kitPriceBox .disc_sh')
+				.css('position','absolute')
+				.css('top','25px')
+				.css('left','93px')
+				.css('color','#666')
+				.css('fontSize','10px');
+			*/		
+
+			if(equalGifts == 1){
+				$('.kitPriceBox')
+					.css('position','relative')
+					.css('width','220px')
+					.css('padding','20px 5px 5px 5px')
+					.css('height','80px')
+					.css('margin','10px 0px 10px 5px');			
+				
+				$('.kitPriceBox .ValueLRG')
+					.css('position','absolute')
+					.css('top','55px')
+					.css('left','7px')
+					.css('color','#666');
+			} else {
+				$('.kitPriceBox').css('padding','5px').css('width','370px');
+			}
+			
+			$('.kitPriceBox .ValueLRG').css('fontSize','10px');	
+	},
+
+	init : function(){
+
+		var localObj = this;
+
+		$(document).ready(function(){
+			
+			$('.kitPriceBox').css('position','relative');
+			
+			var equalGifts = 0;
+			if($('.tab').length == $('.giftImage').length){
+				equalGifts++;	
+			}
+			
+			// count visible free gifts
+			var countVisibleGifts = 0;
+			$('.giftOption').each(function(){			
+				if($(this).is(':visible')){
+					countVisibleGifts++;
+				}
+			});
+			if(countVisibleGifts == 2){
+				$('.SelectSidePanel').css('width','409px');
+				$('.overnightpromo_fs').css('marginLeft','-30px');
+				$('.GiftSelector').css('float','left').css('marginLeft','10px').css('width','95%');
+				$('.DetailDescription').css('width','95%');
+			}
+	
+			if(equalGifts == 1){
+		
+				$('.SelectSidePanel').css('width','383px');
+				$('.GiftSelector').css('float','none').css('marginLeft','10px');
+
+				$('a[id^=-]').css('marginTop','0px');
+					
+				$('.giftOption').css('position','relative');
+				
+				$('.giftLink1').css('top','75px');
+				
+				$('.SelectSidePanel .DetailDescription')
+					.css('float','')
+					.css('display','inline');
+					
+				$('.SelectSidePanel .GiftSelector')
+					.css('float','')
+					.css('width','150px');
+				$('.GiftSelector').css('float','none').css('height','');
+				$('.SelectSidePanel .GiftSelector h5').remove();
+
+				var h5str = '<h5>Select Your Free Gift</h5>';
+				
+				$('.DetailDescription')
+					.append(h5str)
+					.css('float','left')
+					.css('width','95%');	
+					
+				$('.freeshipping_sas')
+					.css('position','absolute')
+					.css('top','30px')
+					.css('right','10px');	
+				
+
+			} else {
+				$('a[id^=-]').css('marginTop','-10px');
+
+				$('.freeshipping_sas')
+					.css('position','absolute')
+					.css('top','17px')
+					.css('right','10px');			
+				
+			}
+			
+			localObj.setKitPrice(equalGifts);
+
+			$('.tab').click(function(){ 
+				if($('.activated .highlighted').text() == 'Proactiv Deluxe System'){ localObj.selectedTab = 1; }
+				if($('.activated .highlighted').text() == 'Proactiv for Teens'){ localObj.selectedTab = 2; }
+				if($('.activated .highlighted').text() == 'Proactiv 3-Step System'){ localObj.selectedTab = 3; }
+				localObj.setKitPrice(equalGifts);
+				
+				if(countVisibleGifts == 0){
+					$('.kitPriceBox').css('width','290px');
+				}
+			});			
+
+			if(countVisibleGifts == 0){
+				$('.kitPriceBox').css('width','290px');
+			}
+			
+		});
+	}
+};
+
+adjustStylesInSAS.init();
+
+</script>
+
+
+       <isinclude template="bv/display/rr/reviews" />
+</isdecorate>

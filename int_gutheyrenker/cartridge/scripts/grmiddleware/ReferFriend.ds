@@ -1,0 +1,172 @@
+/**
+* Demandware Script File
+* To define input and output parameters, create entries of the form:
+*
+* @<paramUsageType> <paramName> : <paramDataType> [<paramComment>]
+*
+* where
+*   <paramUsageType> can be either 'input' or 'output'
+*   <paramName> can be any valid parameter name
+*   <paramDataType> identifies the type of the parameter
+*   <paramComment> is an optional comment
+*
+* For example:
+*
+*   @input Request     		: dw.system.Request
+*   @input session     		: dw.system.Session
+*   @input order          	: dw.order.Order
+*	@output statusMessage 	: String
+*   @output ErrorContainer 	: Array
+*
+*/						
+
+importPackage( dw.system );
+importPackage( dw.order );
+importPackage( dw.net );
+importPackage( dw.crypto );
+importPackage( dw.util );
+importPackage( dw.io );
+importPackage( dw.web );
+importScript( "grmiddleware/libGRMiddleware.ds" );
+importScript("common/libUtils.ds");
+
+
+function execute( args : PipelineDictionary ) : Number
+{
+	 try {
+			logInfo ("Entering  ReferFriend.ds>>>>>>");
+		  	var xmlWriter : StringWriter = new StringWriter();
+			var sessioId= args.session.sessionID;		
+			
+			//create refer a friend request xml.
+			createRAFReqXML(xmlWriter, args.Request.httpRemoteAddress, args.session, args.order);
+			var referFriendXML: String = xmlWriter.toString();
+			logDebug("referFriendXML>>>>>"+referFriendXML);
+			//Get UID
+			var request:Request = args.Request;
+		    var uid:String = getCustomerUID(request);   
+		    var transactionID = getTransactionID();
+
+			// Figure out service URL
+			var serviceURL : String = getServiceURL(uid,transactionID);
+						
+		   //Refer a Friend Freq---Web service call
+			var http : HTTPClient = new HTTPClient();
+		    try {
+		    	// Send XML data
+			    http.setRequestHeader('Content-Type','text/xml');				    
+			    http = callMWAPI(http, "POST", serviceURL, referFriendXML); 			   
+			 }catch (e){	
+				Logger.error("Error while calling Refer a friend MW API: "+e);
+			}
+		   
+		    // Capture response
+			var response : String = http.text;
+			logDebug("referFriendXML response>>>>>"+response);
+			var errorResponse : String = http.errorText;
+			logDebug("referFriendXML errorResponse>>>>>"+errorResponse);
+			var responseXML : XML = null;
+			var errorContainer : Array = [];
+			var error = null;
+			var status:String=null;
+					
+			/****
+			* Handle error responses
+			* Empty response (no XML) or non-empty error response
+			****/
+			
+			if( !empty(errorResponse) ) {
+					response = errorResponse;
+			}
+			responseXML = new XML(response);																		
+	     	status = responseXML.status;
+			
+			if(status == 200){				
+			   var method = responseXML.requestData.method;
+			   var  statMessage= responseXML.responseData.statusMessage;
+		       if(statMessage=="OK") { 
+			       	 logDebug ("Refer a friend details Logged.....");
+		       }else{
+			    	logError ("Error Occurred while calling refer a friend log API.....");
+			   }   
+		   	}else{
+				getErrorResponse (responseXML);   //This function extracts the error details from the passed XML and sets them in the session.
+				logInfo("Exiting Refer a Friend with Error status " + status);
+				args.statusMessage = status.toString();
+				args.ErrorContainer=errorContainer;
+				return PIPELET_ERROR;
+			}
+				
+			args.statusMessage = status.toString();
+			args.ErrorContainer=errorContainer;
+			logInfo ("Exiting  ReferFriend.ds>>>>>");
+			return PIPELET_NEXT;
+	}catch(e){		
+		return PIPELET_ERROR;
+	}
+}
+
+
+
+function getServiceURL(uid : String, trans: String) {	
+	//https://grws.grdev.com/customer/refer-friend/brand/<brandId>/uid/<uid>/trans/<transactionId>
+	var baseURL : String = Site.current.getCustomPreferenceValue("middlewareAPIURL");
+	var brand : String= Site.current.getCustomPreferenceValue("GRMProductLine");	
+	baseURL= baseURL + "/customer/refer-friend/brand/"+ brand+"/uid/"+ uid +"/trans/"+trans ;		
+	return baseURL
+}
+
+
+function createRAFReqXML (xmlWriter:Writer, ipAddress:String, session:dw.system.Session, order:dw.order.Order) {	
+	var servicer = dw.system.Site.current.getCustomPreferenceValue("ReferAFriendServicer");
+	var servicerID = session.custom.rafServicerID;
+	var sessionID = session.sessionID;
+	var referrerEmail = session.custom.referrerEmail;
+	var referrerFName = session.custom.referrerFName;
+	var referrerLName = session.custom.referrerLName;
+	var referrerOrderId = session.custom.referrerOrderId;
+	var referrerOrderDate = session.custom.referrerOrderDate;	
+	var offerCode = session.custom.offerCode;
+	var friendSource = session.custom.friendSource;
+	var friendUid = session.custom.referrerUid;
+	var referrerUCI = session.custom.referrerUCI;
+	var friendUCI = "";
+	if('uciCode' in order.custom && order.custom.uciCode!=null){
+    	friendUCI=order.custom.uciCode;  
+	}
+	var rafCampaignName=dw.system.Site.current.getCustomPreferenceValue("rafCampaignName");
+	var referrerRewardType=dw.system.Site.current.getCustomPreferenceValue("referrerRewardType");
+	var referrerRewardValue=dw.system.Site.current.getCustomPreferenceValue("referrerRewardValue");
+	
+	
+	// Write XML header to file
+	xmlWriter.write('<?xml version="1.0" encoding="UTF-8"?> \n');
+	xmlWriter.write('<customerRequest xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="customerShippingFrequencyRequest_0-1.xsd"> \n');
+	xmlWriter.write('	<clientId>Demandware</clientId>\n');
+	xmlWriter.write('	<sessionData>\n');
+	xmlWriter.write('		<sessionId><![CDATA['+sessionID+']]></sessionId>\n');
+	xmlWriter.write('		<ipAddress><![CDATA['+ipAddress+']]></ipAddress>\n');
+	xmlWriter.write('	</sessionData>\n');	
+	xmlWriter.write('	<referFriend>\n');
+	xmlWriter.write('		<servicer><![CDATA['+servicer+']]></servicer>\n');
+	xmlWriter.write('		<servicerId><![CDATA['+servicerID+']]></servicerId>\n');
+	xmlWriter.write('		<referrerEmail><![CDATA['+referrerEmail+']]></referrerEmail>\n');
+	xmlWriter.write('		<referrerFirstName><![CDATA['+referrerFName+']]></referrerFirstName>\n');
+	xmlWriter.write('		<referrerLastName><![CDATA['+referrerLName+']]></referrerLastName>\n');
+    if(referrerOrderId!=null && referrerOrderId!="" && referrerOrderDate!=null && referrerOrderDate!=""){
+	    xmlWriter.write('	<referrerOrderId><![CDATA['+referrerOrderId+']]></referrerOrderId>\n');
+    	xmlWriter.write('	<referrerOrderDate><![CDATA['+referrerOrderDate+']]></referrerOrderDate>\n');  
+    }		
+	xmlWriter.write('		<referrerUci><![CDATA['+referrerUCI+']]></referrerUci>\n');
+	xmlWriter.write('		<friendEmail><![CDATA['+order.customerEmail+']]></friendEmail>\n');
+    xmlWriter.write('		<friendFirstName><![CDATA['+order.billingAddress.firstName+']]></friendFirstName>\n');
+    xmlWriter.write('		<friendLastName><![CDATA['+order.billingAddress.lastName+']]></friendLastName>\n');
+    xmlWriter.write('		<friendOrderId><![CDATA['+order.orderNo+']]></friendOrderId>\n');
+    xmlWriter.write('		<friendOrderDate><![CDATA['+order.creationDate.toISOString()+']]></friendOrderDate>\n');
+    xmlWriter.write('		<friendOfferCode><![CDATA['+offerCode+']]></friendOfferCode>\n');    
+    xmlWriter.write('		<friendUci><![CDATA['+friendUCI+']]></friendUci>\n');   
+    xmlWriter.write('		<friendSource><![CDATA['+friendSource+']]></friendSource>\n');
+    //xmlWriter.write('		<friend_uid><![CDATA['+friendUid+']]></friend_uid>\n');     
+	xmlWriter.write('	</referFriend>\n');
+	xmlWriter.write('</customerRequest>\n');
+}

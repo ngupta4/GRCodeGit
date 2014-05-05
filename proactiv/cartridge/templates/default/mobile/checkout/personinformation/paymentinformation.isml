@@ -1,0 +1,193 @@
+<!--- TEMPLATENAME: paymentinformation.isml --->
+<isinclude template="util/modules"/>
+<div data-role="content" class="checkout_box payment_info pay_method_section" >
+	<div data-role="fieldcontain payment_method">
+		<isinputfield formfield="${pdict.CurrentForms.personinf.creditcard.selectedPaymentMethodID}" type="hidden" />
+		
+		<isif condition="${!empty(pdict.CurrentForms.personinf.creditcard.type.options)}">
+			<isset name="selectedOption" value="${pdict.CurrentForms.personinf.creditcard.type.selectedOption}" scope="page"/>
+		<iselse/>
+			<isset name="selectedOption" value="${null}" scope="page"/>
+		</isif>
+		
+		<isscript>
+			importScript("int_gutheyrenker:common/libConvertJSON.ds");  
+			var echeckFailedVarAcq: Number; 
+		</isscript>
+		
+		<isif condition="${'echeckFailedAcq' in pdict.CurrentSession.custom && null != pdict.CurrentSession.custom.echeckFailedAcq}" >
+			<isscript> var echeckFailedVarAcq = getCampaignCounter(campaignCode); </isscript>isscript>
+		<iselse/>
+			<isset name="echeckFailedVarAcq" value="${null}" scope="page" />
+		</isif>
+		<isset name="eCheckFailCount" value="${echeckFailedVarAcq}" scope="page" />
+		<isset name="echeckMaxAttempt" value="${dw.system.Site.getCurrent().getCustomPreferenceValue('BAMaxAttemptLimit')}" scope="page" />
+		<isif condition="${echeckFailedVarAcq == echeckMaxAttempt}">
+			<span class="errormessage">${Resource.msg('error.echeck.maxattempt', 'errormessages', null)}</span>
+		</isif>
+		<div class="label">
+			<span class="${(!pdict.CurrentForms.personinf.creditcard.valid && !pdict.CurrentForms.personinf.creditcard.type.value) ? "errorlabel" : "labeltext"}">${Resource.msg('paymentinformation.paymentmethod.label','rendering',null)}</span>
+			<span class="requiredindicator">*</span>
+		</div>			
+		
+        <div class="value">
+			<isscript>
+				// winback pre populate card type select
+				var ccSelected = (function(){
+					var cct='';
+					
+					try {
+						if(session.privacy.wbShowCCinfo && session.privacy.wbShowCCinfo == true ) {
+							cct=pdict.CustomerInfo.creditcard.type.cardType;
+						}
+					}
+					catch(e){};
+					
+					return cct;
+				})();
+			</isscript>
+			<div class="checkoutimgs">
+	   			<select tabindex="16" id="paymentMethod" name="${pdict.CurrentForms.personinf.creditcard.type.htmlName}" class="selectbox required paymentmethodselector" requiredmesage="${Resource.msg('personinformation.paymenttypeerror.label', 'rendering', null)}">
+	   				<option value="">${Resource.msg("personinformation.paymentinformation.choose", "rendering", null)}</option>	   				
+	   				<isloop items="${pdict.CurrentForms.personinf.creditcard.type.options}" var="creditCard">
+	   					<option class="paymentmethod-${creditCard.object['methodID']}" value="${creditCard.value}"<isif condition="${(selectedOption && selectedOption.value == creditCard.value) || creditCard.value == ccSelected }"> selected="selected"</isif>>${creditCard.label}</option>
+	   				</isloop>
+	   			</select>
+	   		</div>
+   			
+   			<isif condition="${!pdict.CurrentForms.personinf.creditcard.valid && !pdict.CurrentForms.personinf.creditcard.type.value}">
+   				<span class="errormessage">${Resource.msg('personinformation.paymenttypeerror.label', 'rendering', null)}</span>
+   			</isif>
+        </div>
+  			
+  			<iscomment>
+			<isinputfield formfield="${pdict.CurrentForms.personinf.creditcard.type}" type="select" attribute1="requiredmesage" value1="${Resource.msg('forms.paymentinf.creditcard.type.typemissing','forms',null)}">
+			</iscomment>
+    </div>
+    <div class="checkout_box_inner">
+		<div class="card_details"
+			<isif condition="${(session.privacy.wbShowCustomerInformation && session.privacy.wbShowCCinfo == true) || (pdict.CurrentForms.personinf.creditcard.type.value == 'PayPal' || pdict.CurrentForms.personinf.creditcard.type.value == 'BANK_ACCOUNT')}">
+				style="display:none;"
+			</isif>
+		>
+		<div id="card_number" data-role="fieldcontain">
+		    <isinputfield id="creditCardNumber" formfield="${pdict.CurrentForms.personinf.creditcard.number}" type="input" attribute1="requiredmesage" value1="${Resource.msg('forms.paymentinf.creditcard.number.numbermissing','forms',null)}" attribute2="tabindex" value2="17"  attribute3="pattern" value3="[0-9]*">
+		</div>
+
+	<label<isif condition="${!pdict.CurrentForms.personinf.creditcard.month.valid || !pdict.CurrentForms.personinf.creditcard.year.valid}"> class="errorlabel"</isif>>${Resource.msg('paymentinformation.expiration.label','rendering',null)}<span class="requiredindicator">*</span></label>
+
+	<fieldset class="ui-grid-a">
+	
+	  <div class="ui-block-a">
+	    
+		<select tabindex="18" class="selectbox required" name="${pdict.CurrentForms.personinf.creditcard.month.htmlName}" id="creditCardMonth" requiredmesage="${Resource.msg('forms.paymentinf.creditcard.month.monthmissing','forms',null)}">
+		<isloop items="${pdict.CurrentForms.personinf.creditcard.month.options}" var="option">
+  				<isscript>
+				// code to avoid empty option tags, because this causes an XHTML warning
+				var label = Resource.msg(option.label,'forms',null);
+				var displayValue = label;
+
+				if (displayValue == null || displayValue == '')
+				{
+					displayValue = "<!-- Empty -->";
+				}
+				else
+				{
+					// encode it already, because in case of empty, we want to
+					// avoid encoding
+					displayValue = StringUtils.stringToHtml(displayValue);
+				}
+			</isscript>
+  				<option value="${option.htmlValue}"<isif condition="${option.selected}"> selected="selected"</isif>>${displayValue}</option>
+  			</isloop>
+  			</select>
+  		</div>
+		<div class="ui-block-b">
+	   		<select tabindex="19" class="selectbox required" name="${pdict.CurrentForms.personinf.creditcard.year.htmlName}" id="creditCardYear" requiredmesage="${Resource.msg('forms.paymentinf.creditcard.year.yearmissing','forms',null)}">
+	   			<isloop items="${pdict.CurrentForms.personinf.creditcard.year.options}" var="option">
+	   				<isscript>
+						// code to avoid empty option tags, because this causes an XHTML warning
+						var label = Resource.msg(option.label,'forms',null);
+						var displayValue = label;
+	
+						if (displayValue == null || displayValue == '')
+						{
+							displayValue = "<!-- Empty -->";
+						}
+						else
+						{
+							// encode it already, because in case of empty, we want to
+							// avoid encoding
+							displayValue = StringUtils.stringToHtml(displayValue);
+						}
+					</isscript>
+	   				<option value="${option.htmlValue}"<isif condition="${option.selected}"> selected="selected"</isif>>${displayValue}</option>
+	   			</isloop>
+	   		</select>
+	   	</div>
+  </fieldset>
+    <div style="clear:both;"></div>	
+	<div id="paymentinfoerrors">
+		<isscript>
+		var cc_errors = [];
+		
+		if (!empty(pdict.CurrentForms.personinf.creditcard.month.error)) {
+			cc_errors.push(Resource.msg(pdict.CurrentForms.personinf.creditcard.month.error, 'forms', null));
+		}
+		
+		if (!empty(pdict.CurrentForms.personinf.creditcard.year.error)) {
+			cc_errors.push(Resource.msg(pdict.CurrentForms.personinf.creditcard.year.error, 'forms', null));
+		}
+		</isscript>
+		
+		<isloop items="${cc_errors}" var="error">
+			<div class="errormessage"><isprint value="${error}" /></div>
+		</isloop>
+	</div> 
+		<isif condition="${!empty(pdict.CurrentForms.personinf.creditcard.error)}">
+			<p class="errormessage">${pdict.CurrentForms.personinf.creditcard.error}</p>
+		</isif>
+	</div>
+	
+	<!--    Code for E-Check Start Here     -->
+		<isif condition="${CCC.echeckEnabled}">
+		    <div class="formfield echeck_number" style="display: none;">
+		 	<isinclude template="mobile/checkout/personinformation/eCheckpaymentinformation"/>
+		    </div>
+		</isif>
+		
+		<!-- Code End Here -->
+	</div>	
+	
+	<isif condition="${echeckFailedVarAcq == echeckMaxAttempt}">
+		<isscript>
+			//var echeckCount = pdict.CurrentSession.custom.echeckFailedAcq.get(campaignCode);
+			var echeckCount = getCampaignCounter(campaignCode);
+			echeckCount++;
+			//pdict.CurrentSession.custom.echeckFailedAcq.put(campaignCode,echeckCount);
+			setCampaignCounter(campaignCode,echeckCount);
+		</isscript>
+	</isif>
+	<div class="checkout_bottom clearfix">	
+	    <div class="agree_box"">
+			<isinputfield id="termsAndConditions" formfield="${pdict.CurrentForms.personinf.agree}" type="checkbox" attribute1="requiredmesage" value1="${Resource.msg('forms.checkout.agree.value-error','forms',null)}" attribute2="tabindex" value2="20">
+			<iscomment><label for="termsAndConditions">${Resource.msg('cart.agreetext', 'rendering', null)}</label></iscomment>
+			<iscontentasset aid="termsAndConditionCreditCard"/>				
+			<iscontentasset aid="termsAndConditionBankAccount"/>
+		</div>
+	</div>
+
+</div>
+	
+	<script type="text/javascript">
+	var echeckMaxAttempt = "${dw.system.Site.getCurrent().getCustomPreferenceValue('BAMaxAttemptLimit')}";
+	var echeckAttemptError = "${eCheckFailCount}";
+	if(parseInt(echeckAttemptError) == parseInt(echeckMaxAttempt)){
+		$(".checkout_box_inner .card_details").css("display","block");
+		disableAgreeCheckbox();
+	}
+	<!--
+	enableSelectedCards();
+	//-->
+	</script>
+

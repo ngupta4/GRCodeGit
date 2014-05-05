@@ -1,0 +1,110 @@
+<!--- TEMPLATENAME: selectasystemUpgradedkit.isml --->
+<isdecorate template="checkout/cartrefresh/pt_checkoutcartrefresh">
+<isinclude template="util/modules"/>
+
+<isscript>
+	importPackage(dw.util);
+	var CCC : Object = pdict.CurrentCampaignConfig;	
+</isscript>
+
+<div class="mboxDefault"></div>
+<script type="text/javascript">
+var g_mboxUCIcode = "${dwUCI}";
+mboxCreate("PA_SAS_AirlinePanel",'sasCampaign=' + '${CCC.campaignCode}','sasUCI=' + g_mboxUCIcode,'renderingExperience=' +"${session.custom.renderingGroup.ID}",'deviceGroup=' +"${session.custom.deviceCategory}",'device=' +"${session.custom.device}");
+</script>
+
+<isset name="orderStep" value="3" scope="page" />
+<isset name="product" value="${pdict.Product}" scope="page" />
+<isset name="pid2" value="${product.ID}" scope="session" />
+<isinclude template="checkout/cartrefresh/airlinemodelbreadcrumbs" />
+
+<div class="upsellRecommendation">
+	<h2 class="pageTitle"><isprint value="${Resource.msg('upgradeKit.pageTitle','rendering',null)}" encoding="off"/></h2>
+	<isif condition="${pdict.CurrentForms.advertise.recommendation.childCount > 0}">
+		<ul class="productList">
+			<isloop items="${pdict.CurrentForms.advertise.recommendation}" alias="recommendation" status="loopstate">
+				<isset name="offer" value="${recommendation.object}" scope="page"/>	
+				<li id="${offer.ID}">					
+					<h4><span class="custChkbox"></span><isprint value="${Resource.msg('upgradeKit.freeShipLabel','rendering',null)}" encoding="off"/></h4>
+					<div class="kitImg"><img class="kitImage" src="${offer.getImage('large',0).url}" alt="image not found" /></div>
+					<div class="kitDesc"><isprint value="${offer.getLongDescription()}" encoding="off"/></div>
+
+					<div class="pdata">
+						<span class="pname"><isprint value="${offer.getName()}" encoding="off"/></span>
+						<span class="pprice"><isprint value="${offer.priceModel.getPrice()}" /></span>
+						<span class="pimg"><isprint value="${offer.getImage('swatch',0).url}" /></span>
+					</div>
+				</li>
+			</isloop>
+			<li id="${product.ID}" class="noThanks">
+				<span class="custChkbox"></span>
+				<p class="label"><isprint value="${Resource.msg('upgradeKit.noThanksLabel','rendering',null)}" encoding="off"/></p>
+				
+				<div class="pdata">
+					<span class="pname"><isprint value="${product.getName()}" encoding="off"/></span>
+					<span class="pprice"><isprint value="${product.priceModel.getPrice()}" /></span>
+					<span class="pimg"><isprint value="${product.getImage('swatch',0).url}" /></span>
+				</div>
+			</li>
+		</ul>
+	</isif>
+</div>
+
+	<iscomment>Bottom panel
+	<div class="bottomPanel">
+		<a href="${URLUtils.https('COCart-AddProduct','pid',product.ID)}" class="medOrngBtn"><span><isprint value="${Resource.msg('selectKit.nextBtn','rendering',null)}" encoding="off"/></span></a>
+	</div>
+	</iscomment>
+	<div class="bottomPanel panelC">
+		<iscomment>Code not needed Change request
+		<iscontentasset aid="money-back-guarantee-airline"/>
+			<div class="orderSummaryBottom">
+				<h4><isprint value="${Resource.msg('cart.title.order.summary','locale',null)}" encoding="off"/></h4>
+				<div id="prodSummary">
+					<div class="swatchImg"><img src="${product.getImage('swatch',0).url}" /></div>
+					<div class="swatchDesc">
+						<strong class="kitName"><isprint value="${product.name}" encoding="off"/></strong>					
+						<span class="freeLink"><isprint value="${Resource.msg('selectfreeGift.freeTag','rendering',null)}" encoding="off"/></span>
+						<span class="kitTab"><isprint value="${product.custom.altGiftName}" encoding="off"/></span>
+						<span class="kitPrice"><isprint value="${product.priceModel.getPrice()}" encoding="off"/></span>
+					</div>
+				</div>
+			</div>
+		</iscomment>
+		<a href="${URLUtils.https('COCart-AddProduct','pid',product.ID)}" class="medOrngBtn" onClick="javascript:omnCheckoutButton();"><span><isprint value="${Resource.msg('selectKit.nextBtn','rendering',null)}" encoding="off"/></span></a>
+	</div>
+<iscomment>Media Pixel</iscomment>
+	<isslot id="MediaPixelAirlinepanelFreeShipping" context="global" description="MediaPixelAirlinepanelFreeShipping" />
+	<isset name="OmniturePage" value="Airline_selectsupply" scope="pdict">
+</isdecorate>
+
+<script type="text/javascript">
+$(".productList li").click( function(){
+	$(this).addClass('active');
+	$(this).siblings().removeClass('active');
+	
+	var linkorderbtn='<isprint value="${URLUtils.https('COCart-AddProduct','pid','')}" encoding="off"/>';
+    var pidattached = $(this).attr('id'); 
+    $(this).parents('#container').find('.medOrngBtn').attr('href',linkorderbtn+pidattached);
+    
+    /* Code not needed Change request */
+    /* $(".bottomPanel #prodSummary .kitName, .bottomPanel #prodSummary .kitPrice").empty();
+    $(".bottomPanel #prodSummary .kitName").append($(this).find(".pdata .pname").html());
+    $(".bottomPanel #prodSummary .kitPrice").append($(this).find(".pdata .pprice").html());
+    $(".bottomPanel #prodSummary .swatchImg img").attr('src',$(this).find(".pdata .pimg").html()); */
+});
+
+$(document).ready(function(){
+	jQuery(".productList li.noThanks").trigger('click');
+})
+
+ function omnCheckoutButton(){
+		
+	s.linkTrackVars='prop56,eVar56';
+	var campaignCode = '${pdict.CurrentCampaignConfig['campaignCode']}';
+	s.prop56=campaignCode+":Checkout";
+	s.eVar56=s.prop56;
+    s.tl(this,'o',"Checkout");
+	}
+
+</script>

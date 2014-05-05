@@ -1,0 +1,9 @@
+<isif condition="${empty(CurrentContent)}">
+	<isset name="catID" value="${CurrentFolder.ID}" scope="pdict"/>
+<iselse>
+	<isset name="catID" value="${CurrentContent.ID}" scope="pdict"/>
+</isif>
+<isset name="old_display" value="true" scope="pdict" />
+<div class="success_bvWrapper">
+<isinclude template="bv/display/sy/stories"/>
+</div>

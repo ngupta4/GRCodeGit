@@ -1,0 +1,46 @@
+<isdecorate template="content/pt_sitemap">
+<isinclude template="util/modules"/>
+
+<isscript>
+	importPackage(dw.web);
+	importPackage(dw.util);
+		
+	function getContentAssetMap(rootFolderId:String):HashMap{
+		var retentionRootFolder:Folder=dw.content.ContentMgr.getFolder(rootFolderId);
+		var contentMap:HashMap = getFolderContent(retentionRootFolder,new HashMap());
+	  	return contentMap;
+	}
+	
+	if(('contentPageCounter' in pdict.CurrentSession.custom) && (null != pdict.CurrentSession.custom.contentPageCounter)){
+	  	pdict.CurrentSession.custom.contentPageCounter = pdict.CurrentSession.custom.contentPageCounter + 1;
+	  }else{
+	  	pdict.CurrentSession.custom.contentPageCounter = 0;
+	  }
+</isscript>
+
+  	
+<div class="leftPanel">
+	<div class="widgetBox">
+		<div class="widgetTop">
+			<div class="widgetBottom">				    
+		    	<isslot id="left-side-contentpages" context="global" description="left navigation content pages" />
+	      		<isslot id="left-side-contentpages1" context="global" description="left navigation content pages1" />
+	      		<isslot id="left-side-contentpages2" context="global" description="left navigation content pages2"/>
+			</div>
+		</div>
+	</div>
+</div>
+<!-- leftPanel section end -->
+
+<div class="sitemap rightPanel">
+	<h1>${Resource.msg('proactivplus.site.map.title', 'rendering', null)}</h1>
+	<p class="intro">${Resource.msg('proactivplus.site.map.note', 'rendering', null)}</p>
+	<isif condition="${pdict.CurrentCustomer.authenticated && pdict.CurrentCustomer.registered || (pdict.CurrentRequest.httpCookies['rememberMe']!=null)}">
+		<isinclude template="sitemap/smcontentloggedin"/>
+	<iselse>
+		<isinclude template="sitemap/smcontentnotloggedin"/>		
+	</isif>
+	
+</div><!-- END: sitemap -->
+<isset name="OmniturePage" value="SiteMap" scope="pdict">
+</isdecorate>

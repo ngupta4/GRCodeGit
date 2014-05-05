@@ -1,0 +1,20 @@
+<!--- TEMPLATENAME: faqs.isml --->
+<isdecorate template="search/pt_browsefoldercontents">
+<isinclude template="util/modules"/>
+
+<iscomment>create reporting event</iscomment>
+<isinclude template="util/reporting/ReportSearch.isml"/>
+<isscript>
+	var currentCampaignCode : String = pdict.CurrentSession.privacy['campaignID'];
+	var CCC : CustomObject = getCampaignForID(currentCampaignCode);
+</isscript>
+
+<h2>Customer Care</h2>
+<div class="pageHead">
+	<h1>${pdict.Content.name}</h1>
+</div>
+<div class="contain">
+	<isinclude template="content/content/htmlcontentasset"/>
+</div>
+
+</isdecorate>

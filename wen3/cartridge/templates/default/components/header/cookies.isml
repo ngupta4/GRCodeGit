@@ -1,0 +1,33 @@
+<!--- TEMPLATENAME: cookies.isml --->
+<isscript>
+	importScript('int_gutheyrenker:common/libEncoding.ds');
+	
+	var sessionID = null;
+	
+	if( !empty(pdict.CurrentHttpParameterMap.pactvid) && !empty(pdict.CurrentHttpParameterMap.pactvid.stringValue) ) {
+		sessionID = pdict.CurrentHttpParameterMap.pactvid.stringValue;
+	}
+</isscript>
+<isset name="cookiesDomain" value="${dw.system.Site.current.getCustomPreferenceValue("GRCookiesDomain")}" scope="page"/>
+
+<iscomment>
+<isif condition="${!empty(sessionID)}">
+	<iscookie name="PHPSESSID" value="${sessionID}" path="/" domain="${cookiesDomain}" maxAge="-1" />
+</isif>
+</iscomment>
+
+<isif condition="${empty(pdict.CurrentRequest.httpCookies['cookie_uid'])}">
+<iscomment>	
+<iscookie name="PHPSESSID" value="${pdict.CurrentSession.sessionID}" path="/" domain="${cookiesDomain}" maxAge="-1" />
+</iscomment>
+
+	<isscript>
+	  var dwgr = getGRUtils();
+		var SUID = new dwgr.grutil.SystemGeneratedUniqueID();
+		var cookie_uid = SUID.getIntUID();
+		var b62_cookie_uid = SUID.get();
+		
+	</isscript>	
+	<iscookie maxAge="31540000" domain="${cookiesDomain}" path="/" value="${cookie_uid}" name="${'b62_cookie['+b62_cookie_uid+']'}" />
+	<iscookie name="cookie_uid" value="${b62_cookie_uid}" path="/" domain="${cookiesDomain}" maxAge="-1" />
+</isif>

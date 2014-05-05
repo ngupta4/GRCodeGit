@@ -1,0 +1,38 @@
+<!--- TEMPLATENAME: checkoutbreadcrumbs.isml --->
+<iscomment>
+Displays breadcrumbs for checkout
+Parameters:
+	type : String - 'simple' or 'multi' depending on the type of checkout (1-step or 2-step checkout)
+	step : String - step identifier; possible values: 'cart', 'details', 'cartanddetails', 'review', 'confirm'
+	paypal : Boolean - true or false depending on that customer uses PayPal as payment method
+</iscomment>
+<isif condition="${!pdict.BasketIsEmpty}">
+	<isset name="type" value="${pdict.type || 'simple'}" scope="page"/>
+	<isset name="step" value="${pdict.step || 'cartanddetails'}" scope="page"/>
+	<isset name="paypal" value="${!!pdict.paypal}" scope="page" />
+
+	<iscomment>Collect step names</iscomment>
+	<isscript>
+	var stepNames : dw.util.ArrayList = new dw.util.ArrayList();
+	
+	stepNames.add('cartanddetails');
+	
+	if (paypal)
+	{
+		stepNames.add('review');
+	}
+	
+	stepNames.add('confirm');
+	</isscript>
+	
+	<div class="checkoutSteps${paypal?' paypal':''}">
+		<ul>
+			<isloop items="${stepNames}" var="orderStep" status="status">
+				<li class="step${orderStep}<isif condition="${'multi' == type}"> multi</isif> ${orderStep} ${step}" title="${Resource.msg('cart.breadcrumbs.' + orderStep + '.label', 'rendering', null)}">
+					<span><isprint value="${status.count}" style ="INTEGER"></span>
+					<p <isif condition="${orderStep == step || (orderStep=='cartanddetails' && step=='details')}">class="active"</isif>>${Resource.msg('cart.breadcrumbs.' + orderStep + '.label', 'rendering', null)}</p>
+				</li>
+			</isloop>
+		</ul>
+	</div>
+</isif>

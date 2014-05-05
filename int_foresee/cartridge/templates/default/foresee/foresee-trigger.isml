@@ -1,0 +1,55 @@
+<!--- TEMPLATENAME: foresee-trigger.isml --->
+<isscript>
+	importPackage( dw.system );
+	importPackage( dw.util );
+	
+	var foreseeQId = "6sJmheP5LU9igNllgCIbDg==";
+
+	if(!empty(Site.getCurrent().getCustomPreferenceValue("foreseeID"))){
+		foreseeQId = Site.getCurrent().getCustomPreferenceValue("foreseeID");
+	}
+	
+	var ForeseeIsOn = false;
+	if(!empty(Site.getCurrent().getCustomPreferenceValue("isForeseeIncluded"))){
+		ForeseeIsOn = Site.getCurrent().getCustomPreferenceValue("isForeseeIncluded");
+	}
+	
+	var foreseeDomain = "proactiv.com";
+	if(!empty(Site.getCurrent().getCustomPreferenceValue("siteDomain"))){
+		foreseeDomain = Site.getCurrent().getCustomPreferenceValue("siteDomain");
+	}
+</isscript>
+<isif condition="${ForeseeIsOn}">
+	<script type="text/javascript">
+	var $$FSR = {
+    'timestamp': 'September 28, 2012 @ 11:07 AM',
+    'version': '15.1.6',
+    'enabled': true,
+    'sessionreplay': true,
+    'auto': true,
+    'encode': false,
+    'files': '/foresee/',
+    //'swf_files': '__swf_files_' needs to be sef when foresee-transport.swf is not located at 'files'
+    'id': '${foreseeQId}', //Ben: pull this from custom site var
+    'definition': 'foresee-surveydef.js',
+    'embedded': false,
+    'replay_id': '${foreseeDomain}', //Ben: pull this from custom site var
+    'renderer': 'W3C', // or "ASRECORDED"
+    'layout': 'CENTERFIXED', // or "LEFTFIXED" or "LEFTSTRETCH" or "CENTERSTRETCH"
+    'pools': [{
+        path: '.',
+        sp: 10 // CHANGE ONLY WHEN INCLUDING SESSION REPLAY
+    }],
+    'sites': [{
+        path: /\w+-?\w+\.(com|org|edu|gov|net|co\.uk)/
+    }, {
+        path: '.',
+        domain: 'default'
+    }],
+    storageOption: 'cookie'
+        };
+	</script>
+	
+	<script language="JavaScript" type="text/javascript" src="${URLUtils.staticURL('foresee/foresee-alive.js')}"></script>
+	<script language="JavaScript" type="text/javascript" src="${URLUtils.staticURL('foresee/foresee-trigger.js')}"></script>
+</isif>

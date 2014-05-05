@@ -1,0 +1,92 @@
+<script type="text/javascript">
+var siteurl='${URLUtils.url('Page-Show','cid','shareyourstory')}';
+$(document).ready(function() {
+
+	/* This is basic - uses default settings */
+	
+	$("a.proof_images").fancybox({
+		'cyclic' : 'true',
+		'overlayColor' : '#fff',
+		'onComplete' : function () {$("#fancybox-img").mousedown(function(){ return false;});}
+	});
+
+
+	jQuery('#fancybox-title').click(function() {
+    	location.href=siteurl;
+	});
+
+});
+
+
+</script>
+
+<div id="zoombeforeafter" style="display:none"></div>
+<div id="photos">
+	<!-- 
+	<div id="title">
+		<img src="${URLUtils.staticURL('/images/proof/beforeafter/photosLabel.png')}"/>
+	</div>
+	 -->
+	<div id="shareTxt">
+		You can <strong>Share Your Story</strong>, too! Nothing says "WOW" like a good before and after. 
+		That's why we encourage you to take a photo now, before you start using X Out. With it, 
+		you can track your progress and witness your success! So get started, and we'll send you an exclusive 
+		<strong>FREE GIFT</strong>. If you're interested, we may even ask you to <strong>share your story on TV!</strong>
+	</div>
+	<div id="shareBTN">
+		<a href="${URLUtils.url('Page-Show','cid','shareyourstory')}">
+			<img src="${URLUtils.staticURL('/images/shareyourstoryBTN.png')}"/>
+		</a>
+	</div>
+	<div class="row">
+		<div class="beforeafter">
+			<a class="proof_images" rel="group1" href="${URLUtils.staticURL('/images/proof/beforeafter/zoom/img-madeline-lrg.jpg')}">
+				<img src="${URLUtils.staticURL('/images/proof/beforeafter/small/img-madeline-sml.jpg')}"/>
+			</a>
+		</div>
+		<div class="beforeafter">
+			<a class="proof_images" rel="group1" href="${URLUtils.staticURL('/images/proof/beforeafter/zoom/img-luis-lrg.jpg')}">
+				<img src="${URLUtils.staticURL('/images/proof/beforeafter/small/img-luis-sml.jpg')}"/>
+			</a>
+		</div>
+		<div class="beforeafter">
+			<a class="proof_images" rel="group1" href="${URLUtils.staticURL('/images/proof/beforeafter/zoom/img-jacob-lrg.jpg')}">
+				<img src="${URLUtils.staticURL('/images/proof/beforeafter/small/img-jacob-sml.jpg')}"/>
+			</a>
+		</div>
+	</div>
+	<div class="row">
+	 	<div class="beforeafter">
+			<a class="proof_images" rel="group1" href="${URLUtils.staticURL('/images/proof/beforeafter/zoom/img-brandon-lrg.jpg')}">
+				<img src="${URLUtils.staticURL('/images/proof/beforeafter/small/img-brandon-sml.jpg')}"/>
+			</a>
+		</div>
+		<div class="beforeafter">
+			<a class="proof_images" rel="group1" href="${URLUtils.staticURL('/images/proof/beforeafter/zoom/img-camryn-lrg.jpg')}">
+				<img src="${URLUtils.staticURL('/images/proof/beforeafter/small/img-camryn-sml.jpg')}"/>
+			</a>
+		</div>
+		<div class="beforeafter">
+			<a class="proof_images" rel="group1" href="${URLUtils.staticURL('/images/proof/beforeafter/zoom/img-marley-lrg.jpg')}">
+				<img src="${URLUtils.staticURL('/images/proof/beforeafter/small/img-marley-sml.jpg')}"/>
+			</a>
+		</div>
+	</div>
+	<div class="row">
+		<div class="beforeafter">
+			<a class="proof_images" rel="group1" href="${URLUtils.staticURL('/images/proof/beforeafter/zoom/img-savannah-lrg.jpg')}">
+				<img src="${URLUtils.staticURL('/images/proof/beforeafter/small/img-savannah-sml.jpg')}"/>
+			</a>
+		</div>
+		<div class="beforeafter">
+			<a class="proof_images" rel="group1" href="${URLUtils.staticURL('/images/proof/beforeafter/zoom/img-cameo-lrg.jpg')}">
+				<img src="${URLUtils.staticURL('/images/proof/beforeafter/small/img-cameo-sml.jpg')}"/>
+			</a>
+		</div>
+		<div class="beforeafter">
+			<a class="proof_images" rel="group1" href="${URLUtils.staticURL('/images/proof/beforeafter/zoom/img-harmony-lrg.jpg')}">
+				<img src="${URLUtils.staticURL('/images/proof/beforeafter/small/img-harmony-sml.jpg')}"/>
+			</a>
+		</div>
+	</div>
+</div>

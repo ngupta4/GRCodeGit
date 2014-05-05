@@ -1,0 +1,149 @@
+<!--- TEMPLATENAME: form.isml --->
+
+
+<isdecorate template="content/pt_cet">
+<isinclude template="util/modules" />
+	<div id="confirmPopup">
+		<div class="popupclose"><a href="#close"><span>Close</span></a></div>
+		<div id="popupContent">
+			${Resource.msg('cet.submitted.text', 'rendering', null)}
+		</div>
+		<div id="loading"></div>
+	</div>
+
+	<div id="errors">
+		${Resource.msg('cet.error.label', 'rendering', null)}
+		<span></span>
+	</div>
+	
+	<form action="${URLUtils.httpContinue()}" method="post" id="cetform">
+		<isinputfield formfield="${pdict.CurrentForms.cet.firstname}" type="input" />
+		<isinputfield formfield="${pdict.CurrentForms.cet.lastname}" type="input" />
+		
+		<div class="emailfields">
+			<isinputfield formfield="${pdict.CurrentForms.cet.email}" type="input" />
+			<isinputfield formfield="${pdict.CurrentForms.cet.retypeemail}" type="input" />
+		</div>
+		
+		<div class="addressfield">
+			<isinputfield formfield="${pdict.CurrentForms.cet.address}" type="input" />
+			<div class="clearfix"></div>
+		</div>
+		
+		<isinputfield formfield="${pdict.CurrentForms.cet.city}" type="input" />
+		<isinputfield formfield="${pdict.CurrentForms.cet.states.state}" type="select" />
+		<isinputfield formfield="${pdict.CurrentForms.cet.zip}" type="input" />
+		<isinputfield formfield="${pdict.CurrentForms.cet.phone}" type="input" />
+		<isinputfield formfield="${pdict.CurrentForms.cet.accountnumber}" type="input" />
+		
+		<div class="complaintfield">
+			<label id="complaintdescription">${Resource.msg('forms.cet.complaint.description', 'forms', null)}</label>
+			<isinputfield formfield="${pdict.CurrentForms.cet.complaint}" type="textarea" attribute1="class" value1="complaintfielditem" />
+			<div class="clearfix"></div>
+		</div>
+		
+		<button type="submit" class="submitbtn" value="Submit" name="${pdict.CurrentForms.cet.submit.htmlName}" id="${pdict.CurrentForms.cet.submit.htmlName}"><span>Submit your case</span></button>
+	</form>
+	
+	<div class="clearfix"></div>
+	
+	<p>OUR CORPORATE ESCALATION TEAM WILL CONTACT YOU WITHIN ONE BUSINESS DAY.</p>
+	
+	<script type="text/javascript"><!--
+	jQuery(function() {
+		jQuery('.labeltext').each(function() {
+			var item = jQuery(this);
+
+			item.text(item.text().replace(/:$/, ''));
+		});
+		
+		var validatorSettings = jQuery.extend(app.validatorSettings, {
+			/**
+			 * Rules
+			 */
+			rules : {
+				'${pdict.CurrentForms.cet.email.htmlName}' : {email : true},
+				'${pdict.CurrentForms.cet.retypeemail.htmlName}' : {
+					email : true,
+					equalTo : 'input[name="${pdict.CurrentForms.cet.email.htmlName}"]'
+				},
+				'${pdict.CurrentForms.cet.zip.htmlName}' : {digits : true},
+				'${pdict.CurrentForms.cet.accountnumber.htmlName}' : {digits : true}
+			},
+			
+			/**
+			 * Handle invalid field values
+			 */
+			invalidHandler : function(form, validator) {
+				var errors = validator.numberOfInvalids();
+				var invalidItems = [];
+				
+				if (errors) {
+					jQuery('.labeltext, #complaintdescription').removeClass('error');
+					
+					jQuery(':input.errorclient').each(function() {
+						invalidItems.push(jQuery(this).parent().prev().find('.labeltext').addClass('error').text());
+
+						if (jQuery(this).hasClass('textbox')) {
+							jQuery('#complaintdescription').addClass('error');
+						}
+					});
+					
+					jQuery('#errors').show().find('span').html(invalidItems.join(', '));
+				}
+				else {
+					jQuery('#errors').hide();
+				}
+			},
+
+			/**
+			 * Handle submit action
+			 */
+			submitHandler : function(form) {
+				var popup = jQuery('#confirmPopup');
+				popup.css({
+					left : (jQuery(document).width() - popup.width()) / 2,
+					top : (jQuery(document).height() - popup.height()) / 2
+				});
+				jQuery('#overlay').css('opacity', 0).show().animate({opacity : .5}, 'fast');
+				jQuery('#confirmPopup').fadeIn('fast');
+
+				jQuery('.popupclose a', popup).click(function() {
+					jQuery('#overlay, #container').fadeOut('slow', function() {
+						jQuery('#redirect').fadeIn('fast');
+
+						var timer = 10, intrv, timerValue = jQuery('#redirect span');
+						intrv = setInterval(function() {
+							timerValue.text(--timer);
+
+							if (timer <= 0) {
+								clearInterval(intrv);
+								
+								location.href = '${URLUtils.home()}';
+							}
+						}, 1000);
+					});
+
+					return false;
+				});
+				
+				jQuery(form).ajaxSubmit({
+					url : '${URLUtils.url("CustomerService-CetSubmitJson")}',
+					data : {'format' : 'json'},
+					dataType : 'json',
+					success : function(data) {
+						jQuery('#loading').fadeOut('fast', function() {
+							jQuery('#popupContent').fadeIn('fast');
+						});
+					}
+				});
+
+				return false;
+			}
+		});
+		
+		jQuery('#cetform').data('validator', '').validate(validatorSettings);
+	});
+	//-->
+	</script>
+</isdecorate>

@@ -1,0 +1,65 @@
+<iscontent type="application/json" charset="UTF-8" compact="true"/>
+<iscomment>
+	This template renders the attributes customer kit as JSON response.
+</iscomment>
+{
+	<isif condition="${pdict.kitProdIterator != null}">
+		<isset name="prodIter" value="${pdict.kitProdIterator}" scope="page"/>
+		<isif condition="${pdict.addOrDelete != null && pdict.addOrDelete == 'add'}">
+			<isset name="addProduct" value="true" scope="page"/>
+		<iselse>
+			<isset name="addProduct" value="false" scope="page"/>
+		</isif>
+
+		<isif condition="${pdict.fetchedCustomer.profile!=null}">
+			"userid" 			: "<isprint value="${pdict.fetchedCustomer.profile.custom.mwid}"/>",
+			"kitid"				: "<isprint value="${pdict.fetchedCustomer.profile.custom.kitName}"/>",
+			"lastshipmentdate"	: "<isprint value="${pdict.fetchedCustomer.profile.custom.lastShipDate}" style="DATE_SHORT" timezone="utc"/>", <iscomment>needs to be changed once the login api is updated</iscomment>
+			"nextshipmentdate"	: "<isprint value="${pdict.fetchedCustomer.profile.custom.shipdate}" style="DATE_SHORT" timezone="utc"/>",
+			"weeks" 			: "<isprint value="${pdict.fetchedCustomer.profile.custom.weeksBetweenShipments}"/>",
+			"maxproducts"		: "<isprint value="${pdict.fetchedCustomer.profile.custom.maxKitSize}" formatter="#"/>",
+			"trackingURL"		: "<isprint value="${pdict.fetchedCustomer.profile.custom.trackingID}"/>",
+		</isif>
+		"loggedin"			: "<isprint value="${pdict.CurrentCustomer.authenticated}"/>",
+		"loggedinsoft"		: "<isprint value="${!(pdict.CurrentCustomer.authenticated)}"/>",
+		"memberprice"		: "<isprint value="${pdict.memberPrice}"/>",
+		"kitcost" 			: "<isprint value="${pdict.kitPrice}"/>",
+		"shipping" 			: "<isprint value="${pdict.shipping}"/>",
+		"savings"			: "<isprint value="${pdict.youSave}"/>",
+		"itemadded"			: "<isprint value="${addProduct}"/>",
+		"itemaddedindex"	: "<isprint value="${pdict.addIndex}" formatter="#"/>",
+		"products"			: [
+		<isif condition="${pdict.errorCode != ''}">
+			<isset name = "errorCode" value="${Resource.msg('kitcustomizer.'+pdict.errorCode,'account',null)}" scope="page"/>
+		</isif>
+		<isloop items="${pdict.kitProdIterator}" var="product" status="loopstate">
+			<isif condition="${(product.isEssentialProduct!=null)}">
+				<isset name="essential" value ="${product.isEssentialProduct}" scope="page"/>
+			<iselse>
+				<isset name="essential" value ="false" scope="page"/>
+			</isif>
+			
+			<isif condition="${product.sceneSevenAssetId != null && product.sceneSevenAssetId != ''}">
+				<isset name="assetID" value="${product.sceneSevenAssetId}" scope="page"/>
+			<iselse>
+				<isset name="assetID" value="refiningMask_h" scope="page"/>
+			</isif>
+			<isset name="scene7url" value="${Resource.msg('image.scene7url','common',null)+assetID}" scope="page"/>
+			{ 
+				"id" 				: "<isprint value="${product.ID}"/>", 
+				"name"				: "<isprint value="${product.name}"/>",
+				"thumb" 			: "<isprint value="${scene7url+'-KC?$kitwidget$'}"/>", 
+				"productmodallink" 	: "<isprint value="${scene7url+'-KC?$kitHover$'}"/>", 
+				"essentialproduct"	: "<isprint value="${essential}"/>",
+				"outofstockproduct"	: "<isprint value="${product.limitedSupply}"/>",
+				"variant"			: "<isprint value="${(product.variant)||(product.master)}"/>",
+				"variantName"		: "<isprint value="${product.variationType}"/>",
+				"variantValue"		: "<isprint value="${product.variantVal}"/>",
+				"essentialStep"		: "<isprint value="${product.essentialStep}"/>",
+				"size"				: "<isprint value="${product.size}"/>",
+				"productLine"		: "<isprint value="${product.productLine}"/>"
+			}<isif condition="${!loopstate.last}">,</isif>
+		</isloop>
+	]
+	</isif>
+}

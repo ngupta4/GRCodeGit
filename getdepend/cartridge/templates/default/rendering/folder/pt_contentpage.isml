@@ -1,0 +1,68 @@
+<!doctype html>
+<!--[if lt IE 7]> <html class="ie6 oldie" lang="en"> <![endif]-->
+<!--[if IE 7]>    <html class="ie7 oldie" lang="en"> <![endif]-->
+<!--[if IE 8]>    <html class="ie8 oldie" lang="en"> <![endif]-->
+<!--[if gt IE 8]><!--> <html lang="en"> <!--<![endif]-->
+<isinclude template="util/modules"/>
+<isscript>importPackage(dw.content);
+  importPackage(dw.util);
+  importPackage(dw.catalog);
+  
+  importScript('guthyrenker_core:common/libUtils.ds');
+  
+  var contentInfo    = getCurrentContentInfo(pdict.CurrentHttpParameterMap);
+  var folderPathInfo = getRetentionFolderPathInfo(contentInfo);
+  
+  var CurrentFolder  : Folder = contentInfo.folder;
+  var CurrentContent : Content = contentInfo.content;
+  
+  var CurrentFolderPath : String = folderPathInfo.folderPath;
+  var RootFolder        : Folder = folderPathInfo.rootFolder;
+  
+  CurrentFolderPath += " body_"+RootFolder.ID+" "+RootFolder.ID;
+  
+  var PageID : String = "page_";
+  
+  if( empty(CurrentContent) ) {
+  PageID += CurrentFolder.ID;
+  } else {
+  PageID += CurrentContent.ID;
+  }
+  
+  var CCC : Object = pdict.CurrentCampaignConfig;</isscript>
+<iscomment>This page must be cachable. It inherits the caching attributes by the decorated template.</iscomment>
+
+<head>
+	<iscomment>
+	Include all important information globally , e.g. meta-data, link information, and javascript.
+	</iscomment>
+	<isinclude template="components/header/htmlhead"/>
+	
+	<iscomment>Add page specific header information here.</iscomment>	
+	
+	<isif condition="${'customCSSFile' in pdict.Content.custom && !empty(pdict.Content.custom.customCSSFile)}">
+		<link href="${pdict.Content.custom.customCSSFile.URL}" type="text/css" rel="stylesheet" />
+	</isif>
+</head>
+
+<body  <isif condition="${!empty(pdict.Content.ID)}"> id="${pdict.Content.ID}" </isif> class="bodybg">
+	<iscomment>Cookies and Javascript enabled check</iscomment>
+	<isinclude template="components/browsertoolscheck"/>
+	
+	<isset name="showNav" value="${true}" scope="page" />
+	<isset name="showOrderButton" value="${true}" scope="page" />
+	
+	<isinclude template="components/header/header"/>
+	
+	 <isreplace/>
+	
+	 <isinclude template="components/footer/footer"/>
+	
+	 <isinclude template="components/footer/pixels"/>
+	 <isinclude template="common/google_analytics" />
+	  
+	
+	
+	<!-- END: container -->
+</body>
+</html>

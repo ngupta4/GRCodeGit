@@ -1,0 +1,111 @@
+/**
+*    testimonyUpload.ds
+*
+*-   @input ExampleIn : String This is a sample comment.
+*-   @output ExampleOut : Number
+*
+*/
+
+importPackage( dw.system );
+importPackage( dw.web );
+importPackage( dw.io );
+importPackage( dw.util );
+importPackage( dw.object );
+importPackage( dw.net );
+
+function execute( args : PipelineDictionary ) : Number {
+
+	// these should all be custom site preferences and not hard coded here
+    if (!empty(dw.system.Site.getCurrent().getCustomPreferenceValue("scene7Host"))){
+	var ftp_host: String = dw.system.Site.getCurrent().getCustomPreferenceValue("scene7Host");
+   }
+
+	if (!empty(dw.system.Site.getCurrent().getCustomPreferenceValue("scene7User"))){
+	var ftp_user: String = dw.system.Site.getCurrent().getCustomPreferenceValue("scene7User");
+   }
+
+   	if (!empty(dw.system.Site.getCurrent().getCustomPreferenceValue("scene7Pwd"))){
+	var ftp_pass: String = dw.system.Site.getCurrent().getCustomPreferenceValue("scene7Pwd");
+   }
+	
+	var testimonyDir : File = new File( File.IMPEX+File.SEPARATOR+'testimony' );
+
+	//connect to scene7
+	var ftpClient : FTPClient = new FTPClient();
+	var result : boolean;
+	
+	try {
+		result = ftpClient.connect( ftp_host, ftp_user, ftp_pass );
+		
+	} catch ( ex ) {
+		Logger.getLogger("testimony").error( "Testimony: Error while connecting to " +
+			remoteHost + ": " + ex );		
+		return PIPELET_ERROR;
+	}
+	
+	if ( !result ) {
+		Logger.getLogger("testimony").error( "Testimony: Error while connecting to " +
+			remoteHost + ": " + ftpClient.getReplyCode() + " | " + ftpClient.getReplyMessage() );		
+		return PIPELET_ERROR;
+	}
+	
+	
+	//create a testimony folder on the ftp server
+	ftpClient.mkdir("testimony");
+	ftpClient.cd("testimony");
+	
+	//list of folders on ftp server under /testimony/
+	var ftpFolderList : Array = ftpClient.list();
+	
+
+
+	//loop thru all the testimony folders on DW
+	for each ( var currentDir : File in testimonyDir.listFiles() ) {
+		if (currentDir.isDirectory() && checkRemoteDir(currentDir.name, ftpFolderList) ) {
+
+			ftpClient.mkdir(currentDir.name);
+			
+			//list of images              
+			var fileList : Array = currentDir.listFiles();
+		             
+	        //loop thru all images in a testimony folder     
+			for each( var imgFile : File in fileList ){
+				if (imgFile.isFile()) {
+					
+					// upload
+					try {
+						var imgPath: String = currentDir.name+File.SEPARATOR+imgFile.name;
+						result = ftpClient.putBinary( imgPath, imgFile );   
+
+					} catch ( ex ) {
+						Logger.getLogger("simplefeeds").error( "Testimony: Error while uploading " + 
+						imgPath + ": " + ex );		
+					}
+		
+					if ( !result ) {
+						Logger.getLogger("simplefeeds").error( "Testimony: Error while uploading " + 
+						imgPath + ": " + ftpClient.getReplyCode() + " | " + ftpClient.getReplyMessage() );		
+					}
+				}
+			}//end of files loop
+		}
+	}//end of folder loop
+	
+	// disconnect
+	ftpClient.disconnect();
+	
+    return PIPELET_NEXT;
+}
+
+function checkRemoteDir(dir : String, folderList : Array) : Boolean {
+	
+	for each ( var ftpFolder : File in folderList ) {
+		if (ftpFolder.directory && ftpFolder.name === dir) {
+			//testimony already exists on ftp server
+			return false;
+		}
+	}
+		
+	//testimony does not exist on ftp server
+	return true;	
+}

@@ -1,0 +1,27 @@
+<!--- TEMPLATENAME: nakedContent.isml --->
+<iscache status="off"/>
+
+<isif condition="${slotcontent != null}">
+	<isif condition="${!empty(slotcontent.content)}">
+		<div class="sasContentContainer">
+			<div class="sasContentTop">
+				<div class="container">
+					<isprint value="${slotcontent.content[0].custom.body}" encoding="off"/>
+				</div>
+			</div>
+			<div class="sasContentLeft">
+				<div class="container">
+					<isprint value="${slotcontent.content[1].custom.body}" encoding="off"/>
+				</div>
+			</div>
+			<div class="sasContentRight">
+				<div class="container">
+					<isprint value="${slotcontent.content[2].custom.body}" encoding="off"/>
+				</div>
+			</div>
+			<div style="clear: both;"></div>
+		</div>
+	</isif>
+</isif>
+
+

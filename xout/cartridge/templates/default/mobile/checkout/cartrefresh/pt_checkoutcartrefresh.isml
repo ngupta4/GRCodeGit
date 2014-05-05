@@ -1,0 +1,57 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<meta http-equiv="x-ua-compatible" content="IE=8">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<iscomment>This includes global utilities into the pages</iscomment>
+<isinclude template="util/modules"/>
+<isinclude template="common/mediaPixelsInit.isml"/>
+<iscomment>This page must be cachable. It inherits the caching attributes by the decorated template.</iscomment>
+<head>
+	<iscomment>
+		Include all important information globally , e.g. meta-data, link information, and javascript.
+	</iscomment>
+	<link rel="canonical" href="${Resource.msg('url.canonical.tag', 'rendering', null)}" />
+	<title><isprint value="${Resource.msg('checkout.page.title', 'rendering', null)}" encoding="off" /></title>
+	<isinclude template="mobile/components/header/htmlhead"/>	
+	
+	<meta name="description" content="${Resource.msg('checkout.page.meta.description', 'rendering', null)}"/>
+	<meta name="keywords" content="${Resource.msg('checkout.page.meta.keywords', 'rendering', null)}"/>
+	
+	
+	<iscomment>Page specific js file</iscomment>	
+	<script type="text/javascript" src="${URLUtils.staticURL('js/airline.js')}"></script>
+	<script src="${URLUtils.staticURL('/js/checkout.js')}" type="text/javascript"></script>
+	<iscomment>including see why js & setting up initial variables</iscomment>
+	<isif condition="${'seeWhyIncluded' in dw.system.Site.current.preferences.custom && dw.system.Site.current.preferences.custom.seeWhyIncluded}">
+		<isinclude template="checkout/steps/initseewhy" />
+	</isif>
+	<iscomment>Add page specific header information here.</iscomment>	
+	<!--[if IE 8]><link href="${URLUtils.staticURL('/css/ie8.css')}" type="text/css" rel="stylesheet" /><![endif]-->
+	<!--[if IE 9]><link href="${URLUtils.staticURL('/css/ie9.css')}" type="text/css" rel="stylesheet" /><![endif]-->
+	<meta name="ROBOTS" content="NOINDEX,NOFOLLOW" />
+	<script type="text/javascript" src="//use.typekit.net/tfa6btc.js"></script>
+	<script type="text/javascript">try{Typekit.load();}catch(e){}</script>
+</head>
+<body class="cartid-${pdict.CurrentCampaignConfig['cartID']}">
+<isinclude template="mobile/components/header/header"/>	
+<isset name="acquisitionstep" value="inlineshoppingcart" scope="pdict"/>
+<isinclude template="common/mboxglobal"/>
+
+<div id="container" class="pt-checkout-refresh">
+	<div class="mainWide" id="idMainWide">
+		<div id="main" class="pt_checkout">
+			<isreplace/>
+		</div> <!-- END: main -->
+	</div>
+
+</div><!-- END: container -->	
+<isinclude template="mobile/components/footer/footer"/>
+<script type="text/javascript">
+	jQuery(document).ready(function () {
+	// Initialize the Checkout API
+	var redirectUrl = "${URLUtils.url('Checkout-Show')}";
+	app.airline.checkout.init();
+	});
+</script>
+
+</body>
+</html>

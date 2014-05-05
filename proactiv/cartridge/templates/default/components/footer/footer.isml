@@ -1,0 +1,162 @@
+<isscript>
+  importPackage( dw.object );
+  importScript('guthyrenker_core:common/libCalendar.ds');
+ 
+  var paaffURL = pdict.CurrentHttpParameterMap.paaff.stringValue;
+  var showLiveChat : CustomObject = CustomObjectMgr.getCustomObject("CampaignConfiguration", getCurrentCampaignCode()).custom.showLiveChat;
+</isscript>
+ 
+<isif condition="${!empty(session.custom.deviceCategory) && session.custom.deviceCategory == 'tablet'}"> 
+  <isset name="chat_disable" value="true" scope="session">
+</isif>
+ 
+<iscomment>
+       This is the footer for all pages. Be careful caching it if it contains
+       user dependent information. Cache its elements instead if necessary (do not forget
+       to change the isinclude into a pipeline include for that).
+</iscomment>
+<isinclude template="util/modules"/>
+ 
+<isif condition="${ !empty(pdict.CurrentHttpParameterMap.loggedin) && pdict.CurrentHttpParameterMap.loggedin.stringValue=='true'}">
+   <isset name="loggedin" value="${true}" scope="page"/>
+<iselse>
+      <isset name="loggedin" value="${false}" scope="page"/>
+</isif>
+ 
+<script src="${URLUtils.absStatic('/js/common.js')}" type="text/javascript"></script>
+<isif condition="${pdict.CurrentCustomer.authenticated || pdict.CurrentCustomer.registered || pdict.CurrentSession.custom.cRememberMe || loggedin}">
+       <iscontentasset aid="footer-toplink"/>
+       <div class="footer-customerservice">
+         <div class="footer">
+         <iscontentasset aid="footer-customerservice"/>
+           <!--Start Footer For Logged In / Cookied Members - B-->
+           <iscomment>
+           <isif condition="${!(pdict.CurrentCustomer.authenticated || pdict.CurrentCustomer.registered || pdict.CurrentSession.custom.cRememberMe) }">
+                  <div class="emailsignup">
+                    <isinclude template="components/emailsubscribe"/>
+                  </div>
+           </isif>
+          </iscomment>
+         </div>
+       </div>
+</isif>      
+       <isif condition="${pdict.CurrentCustomer.authenticated || pdict.CurrentCustomer.registered || pdict.CurrentSession.custom.cRememberMe || loggedin}">
+                     <isinclude template="util/dualProfilePopup"/>
+              <iscontentasset aid="footer-bottomlinks"/>
+       <iselse>
+              <iscomment><iscontentasset aid="footer-bottomlinks-nonmember"/></iscomment>
+              <iscontentasset aid="lp-footer-test"/>
+       </isif>
+       <iscomment>File for Dr. WalkThrough </iscomment>
+       <isinclude template="drwalkthrough/drWalkThroughJSCode"/>
+ 
+<isinclude template="common/persistantcartdialog.isml"/>
+ 
+ 
+<iscomment>
+       Customer registration can happen everywhere in the page flow. As special tag in the pdict
+       is indicating it. So we have to check on every page, if we have to report this event for
+       the reporting engine.
+</iscomment>
+<isinclude template="util/reporting/ReportUserRegistration.isml"/>
+ 
+<isif condition="${request.locale == 'default' && dw.system.Site.getCurrent().getCustomPreferenceValue('enableLiveChat') == true}">
+  <!-- LIVE CHAT INCLUDE SCRIPT -->
+  <!--  Allow chat if chat_disable is not defined or 0 in session variable -->
+  <isif condition="${session.custom.chat_disable == null || session.custom.chat_disable == 0}">
+    <isif condition="${showLiveChat == true}">
+      <isif condition="${!empty(pdict.CheckoutStep) && 'confirmation' == pdict.CheckoutStep}">
+        <iscomment>Confirmation page, Add inq chat confirmation information, rm9084</iscomment>
+        <script type="text/javascript" language="javascript">
+          var inqSalesProducts = mainOfferCode;
+          var inqSalesQuantities = mainItemQty;
+          var inqSalesPrices = subTotal;
+          var inqClientOrderNum = orderID;
+          var inqCustomerName = '<isprint value="${pdict.CurrentForms.personinf.billtoaddress.firstName.value}" encoding="off">' + " " + '<isprint value="${pdict.CurrentForms.personinf.billtoaddress.lastName.value}" encoding="off">';
+          var inqOtherInfo = "TYP:Proactiv~CNF:" + '<isprint value="${pdict.CurrentForms.personinf.billtoaddress.firstName.value}" encoding="off">' + "~CNL:" + '<isprint value="${pdict.CurrentForms.personinf.billtoaddress.lastName.value}" encoding="off">' + "~CST:New~CMP:" + uci + "~OVO:" + orderTotal;
+        </script>
+      </isif>
+ 
+      <script type='text/javascript' src="${dw.system.Site.getCurrent().getCustomPreferenceValue('liveChatJSUrl')}"></script>
+ 
+    </isif>
+  </isif>
+</isif>
+ 
+<iscomment>
+       <isif condition="${dw.system.Site.current.preferences.custom.seeWhyIncluded && pdict.CurrentCustomer.authenticated}">
+              <isinclude url="${URLUtils.url('SeeWhy-Include')}"/>  
+       </isif>
+</iscomment>
+<isinclude template="common/google_analytics" />
+<isif condition="${request.locale == 'default' && dw.system.Site.getCurrent().getCustomPreferenceValue('isForeseeIncluded') == true}">
+       <iscomment><script type="text/javascript" src="${URLUtils.staticURL('/foresee/foresee-trigger.js')}"></script></iscomment>
+       <isinclude template="foresee/foresee-trigger"/>
+</isif>
+<!---  Omniture tracking  --->
+<isinclude template="analytics/omniture/omniture"/>
+ 
+<isif condition="${request.locale == 'default' && dw.system.Site.getCurrent().getCustomPreferenceValue('isForeseeIncluded') == true}">
+  <isif condition="${pdict.CurrentCustomer.authenticated}">
+    <isif condition="${!empty(pdict.CurrentCustomer.profile.custom.firstOrderDate) && pdict.CurrentCustomer.profile.custom.firstOrderDate != null}">
+      <isscript>
+        var curDate = new Date();
+        var numDays : Number = calcNumDaysBetween2Dates(pdict.CurrentCustomer.profile.custom.firstOrderDate, curDate);
+      </isscript>
+ 
+      <script type="text/javascript">
+        FSR.CPPS.set('memberSinceDate',<isprint value="${numDays}" formatter="###0">);
+        FSR.CPPS.set('brand','PA3G');
+      </script>
+      
+    </isif>
+  </isif>
+</isif>
+<iscomment> Log File Fix (Null check for ContentSearchResult as well as ProductSearchResult )</iscomment>
+<isset name="contentSearchResult" value="" scope="page"/>
+<isset name="productSearchResult" value="" scope="page"/>
+<isif condition=" ${'ProductSearchResult' in pdict &&  'count' in pdict.ProductSearchResult && pdict.ProductSearchResult.count!=null }">
+    <isset name="productSearchResult" value="${pdict.ProductSearchResult.count+''}" scope="page"/>
+</isif>
+<isif condition=" ${'ContentSearchResult' in pdict &&  'count' in pdict.ContentSearchResult && pdict.ContentSearchResult.count!=null }">
+    <isset name="contentSearchResult" value="${pdict.ContentSearchResult.count+''}" scope="page"/>
+</isif>
+ 
+<isinclude template="/tealium/include_tealium_pixel.isml">
+ 
+<script type="text/javascript">
+ 
+jQuery('.facebook').click( function(e) {
+       s.linkTrackVars='prop33,eVar33';
+       s.prop33="us:PA+:facebook";
+    s.eVar33= "us:PA+:facebook";
+//    s.tl(this,'o',"facebook");
+});
+jQuery('.youtube').click( function(e) {
+       s.linkTrackVars='prop33,eVar33';
+       s.prop33="us:PA+:youtube";
+    s.eVar33= "us:PA+:youtube";
+//    s.tl(this,'o',"youtube");
+});
+jQuery('.gplus').click( function(e) {
+       s.linkTrackVars='prop33,eVar33';
+       s.prop33="us:PA+:googleplus";
+    s.eVar33= "us:PA+:googleplus";
+//    s.tl(this,'o',"googleplus");
+});
+ 
+jQuery('.twitter').click( function(e) {
+       s.linkTrackVars='prop33,eVar33';
+       s.prop33="us:PA+:twitter";
+    s.eVar33= "us:PA+:twitter";
+//    s.tl(this,'o',"twitter");
+});
+ 
+jQuery('.pinterest').click( function(e) {
+       s.linkTrackVars='prop33,eVar33';
+       s.prop33="us:PA+:pinterest";
+    s.eVar33= "us:PA+:pinterest";
+//    s.tl(this,'o',"pinterest");
+});
+</script>
+ 

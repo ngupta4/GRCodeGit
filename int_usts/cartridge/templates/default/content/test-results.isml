@@ -1,0 +1,8 @@
+<!--- TEMPLATENAME: test-results.isml --->
+<h1>Display request information here:</h1>
+<h2>Headers:</h2>
+<ul> 
+<isloop items="${request.httpHeaders.keySet()}"  var="key">
+	<li>${key}:${request.httpHeaders[key]}</li>
+</isloop>
+</ul>

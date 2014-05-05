@@ -1,0 +1,19 @@
+<!--- TEMPLATENAME: customredirectwishlist.isml --->
+<iscontent type="text/html" charset="UTF-8" compact="true">
+<isscript>
+	importPackage( dw.system );
+	importPackage( dw.util );
+	
+	var pageName : String = pdict.pageName;	
+	var pageParameters : String = pdict.pageParameters;
+	var url : String = URLUtils.https(pageName);
+	if(pageParameters != null && pageParameters!='')
+		url=url+'?'+pageParameters+'&targetpipeline='+pageName;
+	else
+		url= url+'?targetpipeline='+pageName;
+	url = escape(url);
+</isscript>	
+<script type="text/javascript">
+	var url = "${url}";
+	javascript:top.location.href = unescape(url);
+</script>

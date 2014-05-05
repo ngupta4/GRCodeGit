@@ -1,0 +1,50 @@
+/**
+* Demandware Script File
+* To get the recommendations for a product.
+*	
+* @input  Product : dw.catalog.Product product for which recommendation to be got
+* @input  RecommendationType : Number the type of recommendation to filter by.
+* @input  MaxRecommendationsPerProduct : Number Maximum number of recommendations returned by this script for an item in the basket
+* @output ExplicitRecommendations : dw.util.Collection A set of recommended products or null if the feature is disabled or an error occurred
+*/
+importPackage( dw.system );
+
+/*
+* To get the recommended products for the recommendation type passed.
+*/
+function execute( pdict: PipelineDictionary) : Number
+{
+	
+	var product: dw.catalog.Product = pdict.Product;
+	var recommendationType: Number = pdict.RecommendationType;
+	
+	var recProducts : dw.util.Collection = new dw.util.ArrayList();
+		// get all orderable cross sell recommendations (1 = cross sell)
+		if( null != product){
+			var recommendations : dw.util.Iterator = product.getOrderableRecommendations(recommendationType).iterator();
+		
+			// display 20 recommendations at maximum 
+			var maxRecs = pdict.MaxRecommendationsPerProduct, counter = 0;
+			while( recommendations.hasNext() )
+			{
+				var recommendation : dw.catalog.Recommendation = recommendations.next();
+				var recommendedProduct : dw.catalog.Product = recommendation.getRecommendedItem();
+				
+				if (recommendedProduct == null || !recommendedProduct.isSearchable() ) //issearchable condition added
+				{
+					// Null target product.  Should never happen.
+					continue;
+				}
+				
+				recProducts.add( recommendedProduct );
+				
+				if(++counter >= maxRecs)
+				{
+					break;
+				}
+			}
+		}
+	pdict.ExplicitRecommendations = recProducts; 
+	
+   return PIPELET_NEXT;
+}

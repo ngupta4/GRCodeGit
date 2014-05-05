@@ -1,0 +1,16 @@
+<iscomment>
+	Renders Current Customer's profile page
+</iscomment>
+<isscript>
+	var hostName = dw.system.Site.current.getCustomPreferenceValue("bvAPIHostname");
+	var bvStaging = dw.system.Site.current.getCustomPreferenceValue("bvStaging");
+	var displayCode = dw.system.Site.current.getCustomPreferenceValue("bvRRDefaultDisplayCode");
+	var accountNumber = pdict.CurrentCustomer.profile.custom.accountNumber;
+	var profileUrl = null;
+	if(bvStaging != '/'){
+		profileUrl = 'http://'+hostName+bvStaging+'/profiles/'+displayCode+'/'+accountNumber+'/profile.htm';
+	}else{
+		profileUrl = 'http://'+hostName+'/profiles/'+displayCode+'/'+accountNumber+'/profile.htm';
+	}
+</isscript>
+<isredirect location="${profileUrl}"/>

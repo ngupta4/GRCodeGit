@@ -1,0 +1,92 @@
+<isdecorate template="mobile/pt_mobile">
+<isinclude template="mobile/util/modules"/>
+
+<div>
+
+	<iscomment>render a slot with a banner at the top of the page</iscomment>
+	
+
+	<div>
+		<p><iscontentasset aid="gift-details"></p>
+		<div>
+			<form method="post" id="GiftCertificateForm" action="">
+				
+					<isinputfield formfield="${pdict.CurrentForms.giftcert.purchase.lineItemId}" type="hidden">
+					<div>
+						<div>
+							<isinputfield formfield="${pdict.CurrentForms.giftcert.purchase.from}" type="input">
+							<div><!-- FLOAT CLEAR --></div>
+							<div id="${pdict.CurrentForms.giftcert.purchase.from.htmlName}_message" class="errorform" style="display:none;"></div>
+						</div><!-- END: from -->
+						<div>
+							<isinputfield formfield="${pdict.CurrentForms.giftcert.purchase.recipient}" type="input">
+							<div><!-- FLOAT CLEAR --></div>
+							<div id="${pdict.CurrentForms.giftcert.purchase.recipient.htmlName}_message" class="errorform" style="display:none;"></div>
+						</div><!-- END: recipient -->
+						<div>
+							<isinputfield formfield="${pdict.CurrentForms.giftcert.purchase.recipientEmail}" type="input">
+							<div><!-- FLOAT CLEAR --></div>
+							<div id="${pdict.CurrentForms.giftcert.purchase.recipientEmail.htmlName}_message" class="errorform" style="display:none;"></div>
+						</div><!-- END: recipientemail -->
+						<div>
+							<isinputfield formfield="${pdict.CurrentForms.giftcert.purchase.confirmRecipientEmail}" type="input">
+							<div><!-- FLOAT CLEAR --></div>
+							<div id="${pdict.CurrentForms.giftcert.purchase.confirmRecipientEmail.htmlName}_message" class="errorform" style="display:none;"></div>
+						</div><!-- END: confirmrecipientemail -->
+						<div>
+							<div>&nbsp;</div>
+							<isinputfield formfield="${pdict.CurrentForms.giftcert.purchase.message}" type="textarea" label="false" attribute1="rows" value1="5" attribute2="cols" value2="50">
+							<div><!-- FLOAT CLEAR --></div>
+							<div id="${pdict.CurrentForms.giftcert.purchase.message.htmlName}_message" class="errorform" style="display:none;"></div>
+						</div><!-- END: message -->
+					</div><!-- END: giftcertificatepurchaseinformation -->
+
+					<div id="AddToBasketMessage" class="errorform" style="display:none;"><iscomment>Error Message Display</iscomment></div><!-- END: errorform -->
+
+					<div>
+						<table summary="Gift Certificate Amount" >
+							<tr>
+								<td>
+									<span >${Resource.msg('giftcertpurchase.amount', 'checkout', null)}</span>
+									<span >${Resource.msg('giftcertpurchase.minimumamount', 'checkout', null)}</span>
+								</td>
+								<td>
+									<isinputfield formfield="${pdict.CurrentForms.giftcert.purchase.amount}" type="input" label="false">
+								</td>
+								<td>
+									<span >${Resource.msg('giftcertpurchase.cents', 'checkout', null)}</span>
+									<button type="button" id="AddToBasketButton"><span><isif condition="${pdict.GiftCertificateLineItem == null}">${Resource.msg('global.addtocart', 'locale', null)}<iselse/>${Resource.msg('global.updatecart', 'locale', null)}</isif></span></button>
+								</td>
+							</tr>
+						</table>
+						<div><!-- FLOAT CLEAR --></div>
+					</div><!-- END: addtocartbar -->
+				
+			</form>
+		</div><!-- END: giftcertpurchaseform -->
+		<div><iscontentasset aid="gift-additional-details"></div><!-- END: giftadditionaldetails -->
+	</div><!-- END: giftcertcolumn -->
+	
+	<div>
+		<div><iscontentasset aid="gift-check-balance"></div><!-- END: giftcheckbalance -->
+		<div>
+			<form action="${URLUtils.continueURL()}" method="post" >
+				
+					<isinputfield formfield="${pdict.CurrentForms.giftcert.balance.giftCertID}" type="input" label="false">
+					<button type="button" id="CheckBalanceButton" value="${Resource.msg('global.checkbalance', 'locale', null)}"><span>${Resource.msg('global.checkbalance', 'locale', null)}</span></button>
+				
+			</form>
+			<div><!-- contains the balance information on a successful balance check --></div>
+		</div><!-- END: gift-check-balance-form -->
+	</div><!-- END: giftcertcolumn -->
+</div><!-- END: giftcertpurchase -->
+
+<script type="text/javascript"><!--
+
+
+jQuery(document).ready(function() {
+
+});
+//--></script>
+
+</isdecorate>

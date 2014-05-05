@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<form xmlns="http://www.demandware.com/xml/form/2008-04-19">
+	<field formid="email" label="forms.contactinf.email.label" type="string" mandatory="true" regexp="(?i)^[a-z0-9!#$%&amp;&apos;*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&amp;&apos;*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+(?:[a-z]{2}|aero|arpa|asia|biz|cat|com|coop|edu|gov|info|int|jobs|mil|mobi|museum|name|net|org|pro|tel|travel)$" parse-error="forms.contactinf.email.parse-error" binding="email" max-length="50"/>	
+	<field formid="emailconfirm" label="forms.contactinf.emailconfirm.label" type="string" mandatory="true" regexp="(?i)^[a-z0-9!#$%&amp;&apos;*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&amp;&apos;*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+(?:[a-z]{2}|aero|arpa|asia|biz|cat|com|coop|edu|gov|info|int|jobs|mil|mobi|museum|name|net|org|pro|tel|travel)$" parse-error="forms.contactinf.email.parse-error" max-length="50" value-error="forms.contactinf.email.value-error" binding="emailconfirm"/>
+	<field formid="daytimephone" label="forms.contactinf.daytimephone.label" type="string" mandatory="true" regexp="^[\w\s\-\+\(\)\.]{10,}$" binding="daytimephone" max-length="50" missing-error="forms.contactinf.daytimephone.parse-error" parse-error="forms.contactinf.daytimephone.parse-error"/>
+	<!-- Old RegExp: ^(1[-\s]?)?(\([2-9]\d{2}\)|[2-9]\d{2})[-\s]?[2-9]\d{2}[-\s]?\d{4}$ //-->		
+ 	<field formid="eveningphone" label="forms.contactinf.eveningphone.label" type="string" mandatory="false" regexp="^[\w\s\-\+\(\)\.]{10,}$" binding="eveningphone" max-length="50" parse-error="forms.contactinf.daytimephone.parse-error"/>		
+	<action formid="save" valid-form="true"/>
+</form>

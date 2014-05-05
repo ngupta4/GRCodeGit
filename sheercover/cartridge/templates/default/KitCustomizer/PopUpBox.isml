@@ -1,0 +1,17 @@
+
+<isif condition="${'triggerElement' in  pdict.CurrentHttpParameterMap && null!=pdict.CurrentHttpParameterMap.triggerElement}">
+
+<isif condition="${pdict.CurrentHttpParameterMap.triggerElement.stringValue=='ShipNowBtn'}">
+	<isset name="PopUpName" value="${'KitPopUp.dialogue.'+pdict.CurrentHttpParameterMap.triggerElement.stringValue} " scope="page"/>
+	<div id="dialogbox-kit" class="kitbox">
+		<p><strong>${Resource.msg('customizekit.popupdesc.shipnow','account',null)}</strong>
+		<br/>
+		${Resource.msg('customizekit.popupdesc.shipnow.note','account',null)}
+		</p>
+		<div class="btn"><a id="shipnow" class="btnColorB aButton kitModalPopUp" value="OK"  href="${URLUtils.url('KitCustomizer-KitShipNow')}">OK</a>
+		<a class="aButton cancel">Cancel</a>
+		</div>
+		
+	</div>
+</isif>
+</isif>

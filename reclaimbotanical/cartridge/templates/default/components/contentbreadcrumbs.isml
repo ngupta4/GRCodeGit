@@ -1,0 +1,44 @@
+<div class="breadcrumb">
+	<div class="pageWrapper">
+		<iscomment>HOME BREADCRUMB</iscomment>
+		<a href="${URLUtils.httpHome()}" class="home" title="${Resource.msg('global.home','locale',null)}">${Resource.msg('global.home','locale',null)}</a>
+		
+		<iscomment> SHOW CONTENT NAME </iscomment>
+		<isif condition="${pdict.Content != null}">
+			<isscript>
+				var contentObj: dw.content.Content = pdict.Content;
+				var prevContentFolder: dw.content.Folder=null; 
+				var tempContent : dw.content.Folder=null;
+				var path : dw.util.ArrayList = new dw.util.ArrayList();
+				var folderContentMap : dw.util.HashMap = new dw.util.HashMap();
+				if( null != contentObj){
+					tempContent = dw.content.ContentMgr.getFolder(contentObj.ID).parent;
+					while( tempContent.ID != 'primary-navigation'){
+							path.addAt(0, tempContent); 
+						if(tempContent.onlineContent.length>0  ){
+							prevContentFolder = tempContent;
+						}else{
+							prevContentFolder = tempContent.onlineSubFolders[0];
+						}
+						folderContentMap.put(tempContent.ID, prevContentFolder.ID);
+						tempContent = tempContent.parent;
+					}	
+				}
+						
+			</isscript>
+			
+			<isloop items="${path}" var="content" status="loopstate">
+			<isif condition="${loopstate.count==1}">
+				<span class="divider">&nbsp;</span><a href="${URLUtils.http('Page-Show','cid', folderContentMap.get(content.ID))}"><isprint value="${content.displayName}" encoding="off"/></a>
+			<iselse>
+				<span class="divider">&nbsp;</span><a href="${URLUtils.http('Page-Show','cid', folderContentMap.get(content.ID))}"><isprint value="${content.displayName}" encoding="off"/></a>
+			</isif>
+			<script type="text/javascript">
+			var	contentid ='nav-${content.ID}'
+			$('#'+contentid).addClass('active');
+			</script>
+			</isloop>
+			<span class="divider">&nbsp;</span><isprint value="${pdict.Content.name}" encoding="off"/>
+		</isif>
+	</div>
+</div><!-- END: breadcrumb -->

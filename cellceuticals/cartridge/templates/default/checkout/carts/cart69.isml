@@ -1,0 +1,73 @@
+<!--- TEMPLATENAME: cart2.isml --->
+
+
+<isscript>
+	importPackage(dw.object);
+	importPackage(dw.catalog);
+	
+	var CCC : Object = pdict.CurrentCampaignConfig;
+	var campaignCode : String = CCC.campaignCode;
+	
+	var showHeader : boolean = CCC.showHeader;		
+	var showFooter : boolean = CCC.showFooter;
+	var showNav : boolean = CCC.showNav;
+	var showOrderButton : boolean = CCC.showOrderButton;
+	
+	var category : dw.catalog.Category = CCC.getCampaignCategory();
+</isscript>
+
+<isset name="decorator" value="${empty(pdict.CheckoutStep) || 'cartinformation' == pdict.CheckoutStep ? 'content/checkout/pt_checkoutshippingovernight' : 'content/checkout/pt_checkout'}" scope="page" />
+
+<isdecorate template="${decorator}">
+<isinclude template="util/modules" />
+	<isset name="multiCheckout" value="${false}" scope="pdict" />
+    
+    <script type="text/javascript">
+        app.proactiv.resources.set("GRMSubmissionStatus", "PREPAYMENT")
+    </script>
+    
+    <iscomment>First and default step</iscomment>
+    
+   
+   
+	<isif condition="${empty(pdict.CheckoutStep) || 'cartinformation' == pdict.CheckoutStep}">
+		<iscomment>Disable checkout button for cart. We don't need it at this step</iscomment>
+		<isset name="EnableCheckout" value="${false}" scope="pdict" />
+		
+		<isslot id="cart2-top-banner" description="Cart2 top banner" context="category" context-object="${category}" />
+		
+		<isset name="OmniturePage" value="SinglePageCheckout" scope="pdict">
+		<isinclude template="checkout/steps/cartovernight4" />
+		<iscomment>Media Pixel</iscomment>
+	<isslot id="MediaPixelForSLP" context="global" description="MediaPixelForSLP" />
+	<iscomment>Review page (PayPal payment)</iscomment>
+	
+	<iselseif condition="${'review' == pdict.CheckoutStep}">
+		<ischeckoutbreadcrumbs type="simple" step="review" paypal="${true}" />
+		
+		<isinclude template="checkout/steps/review" />
+	<iscomment>Confirmation page</iscomment>
+	
+	<iselseif condition="${'confirmation' == pdict.CheckoutStep}">
+		<div class="checkout_header">
+			<h1>Your Shopping Cart</h1>
+			<p>Below are the items you've selected for purchase. Your quantity and total will be automatically updated when changed.</p>
+		</div>
+		<isset name="OmniturePage" value="COConfirmationAcq" scope="pdict">
+		<ischeckoutbreadcrumbs type="simple" step="confirm" paypal="${pdict.IsPaypalPayment}" />
+		
+		<isinclude template="checkout/components/errors" />
+		
+		<isinclude template="checkout/steps/confirmation" />
+		
+	<iselseif condition="${'cartempty' == pdict.CheckoutStep}">
+		<div class="checkout_header">
+			<iscontentasset aid="cart-header-text-billing-details" />
+		</div>
+		
+		<isinclude template="checkout/components/errors" />
+		
+		<isinclude template="checkout/steps/cartempty" />
+	</isif>
+	
+</isdecorate>

@@ -1,0 +1,65 @@
+<isdecorate template="mobile/pt_mobile">
+<isinclude template="mobile/util/modules"/>
+
+<script type="text/javascript"><!-- 
+
+/**
+ * Set the form values for postal and country codes and submit the form
+ */
+function searchStores() {
+  postalCode = jQuery("input[name=${pdict.CurrentForms.mobilestorelocator.zipCode.htmlName}]").val();
+  countryCode = jQuery("input[name=${pdict.CurrentForms.mobilestorelocator.countryCode.htmlName}]").val();
+  
+  jQuery("input[name=${pdict.CurrentForms.mobilestorelocator.postalCode.htmlName}]").val(postalCode);
+  jQuery("input[name=${pdict.CurrentForms.mobilestorelocator.countryCode.htmlName}]").val(countryCode);
+  jQuery("form[name=${pdict.CurrentForms.mobilestorelocator.htmlName}]").submit();
+}
+
+/**
+ * Convert the address into it's geographic coordinates from the address field.
+ * If the address is valid submit the form, otherwise display a message.
+ */
+function validate() {
+	postalCode = jQuery("input[name=${pdict.CurrentForms.mobilestorelocator.zipCode.htmlName}]").val();
+    if (postalCode == '') {
+        displayInvalidAddress();
+    } else {
+        searchStores();
+    }
+}
+
+/**
+ * Display invalid address message.
+ */
+function displayInvalidAddress() {
+  jQuery(".error").html("${Resource.msg('storelocator.invalid.postalcode','storelocator',null)}");
+}
+
+/**
+ * Handle the enter key
+ */
+jQuery(document.documentElement).keypress(function (event) {
+  if (event.keyCode == 13) {
+    validate();
+  }
+});
+  
+//--></script>
+<div class="storesearch">
+        <h2>${Resource.msg('storelocator.searchusacanada','storelocator',null)}</h2>
+
+    <!--- Error message --->
+  <div class="addresserrors"></div>
+  <span class="error"></span>
+
+  <form action="${URLUtils.continueURL()}" onsubmit="return false;" method="post" id="${pdict.CurrentForms.mobilestorelocator.htmlName}" name="${pdict.CurrentForms.mobilestorelocator.htmlName}">  
+    <input type="hidden" name="${pdict.CurrentForms.mobilestorelocator.countryCode.htmlName}" value="US" />
+    <input type="hidden" name="${pdict.CurrentForms.mobilestorelocator.distanceUnit.htmlName}" value="mi" />
+    <input type="hidden" name="${pdict.CurrentForms.mobilestorelocator.postalCode.htmlName}"/>
+    <isinputfield formfield="${pdict.CurrentForms.mobilestorelocator.zipCode}" type="input"/>
+    <isinputfield formfield="${pdict.CurrentForms.mobilestorelocator.maxdistance}" type="select"/>
+    <button type="button" onclick="validate();" name="${pdict.CurrentForms.mobilestorelocator.findbyzip.htmlName}" value="${Resource.msg('global.search','locale',null)}"><span>${Resource.msg('global.search','locale',null)}</span></button>
+        </form>
+</form>
+</div><!-- END: storesearch -->
+</isdecorate>

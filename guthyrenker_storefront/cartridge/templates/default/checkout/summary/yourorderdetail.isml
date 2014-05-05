@@ -1,0 +1,107 @@
+<isdecorate template="checkout/pt_checkoutorder"/>
+<isinclude template="util/modules"/>
+<iscomment>
+	This template renders the summary of the current basket at the right hand side
+	of all checkout pages. It includes an order summary including order totals,
+	a list of all included shipments as well as the payment methods used to pay
+	the basket.
+</iscomment>
+<isscript>
+		var shipment : dw.order.Shipment = pdict.Order.defaultShipment;
+		var shippingModel : dw.order.ShipmentShippingModel = dw.order.ShippingMgr.getShipmentShippingModel( shipment );
+</isscript>
+<div class="accountOverView" id="orderDetailOverview">
+	<iscomment>render single shipment boxes</iscomment>
+	<h2 class="formTitle">${Resource.msg('yourOrder.heading','checkout',null)}</h2>
+	<div class="topLabel regRow">
+	<p class="textInfo">${Resource.msg('yourOrder.ordernumber','checkout',null)}: ${pdict.Order.originalOrderNo}</p>
+	<p class="textInfo">${Resource.msg('yourOrder.orderdate','checkout',null)}: 
+	<isprint value="${pdict.Order.creationDate}" formatter="MM-dd-yyyy"/></p>
+	</div>
+		<div class="checkoutminisummary-wraper">	 
+	<div class="checkoutminisummary">	
+		
+		<iscomment>
+		<div class="checkoutsummaryheader">
+			
+				The edit link depends on the basket content: if there is just one gift 
+				certificate in the basket the edit link leads to the gift certificate purchase page
+				offering to edit the gift certificate settings.
+			
+		<div class="l-panel"><span>Shopping Cart</span></div>
+		
+		</div>
+		</iscomment><!-- END: checkoutsummaryheader -->
+		
+		<isif condition="${pdict.Order}">
+			<isset name="lineitem_ctnr" value="${pdict.Order}" scope="page"/>
+		</isif>
+		<div class="checkoutminicart">
+			<islineitemsdetails p_lineitemctnr="${pdict.Order}"/>
+		</div><!-- END: check_minicart -->
+	
+	<iscomment>render the order totals</iscomment>	
+
+	<div id="whiteBg">
+    <div class=panelWraper>
+    	<div class="innerPanel">
+    		<div class="leftPanel">
+				<isinclude template="checkout/summary/billingaddressinfo"/>
+			</div><!-- END:leftPanel -->
+			<div class="rightPanel">		
+				<isinclude template="checkout/summary/shipmentinfo"/>
+			</div><!-- END:rightPanel -->
+		</div><!-- END: innerPanel -->
+	<iscomment>render billing information: billing address and payment instruments</iscomment>
+	<div class="innerPanel panelBottom">
+		<div class="leftPanel">
+		 <isinclude template="checkout/summary/paymentinstrumentsinfo"/>
+			</div><!-- END:leftPanel -->
+		 <iscomment>Shipping Method</iscomment>
+	
+		<div class="rightPanel">	
+			<div class="shippingmethod">
+				<div class="innerTitle">
+				<h2>${Resource.msg('minibillinginfo.shippingmethod','checkout',null)}</h2>
+		</div>
+	<div class="details innerBox"">
+		<isif condition="${pdict.Order}">
+			<isset name="shippingMethod" value="${pdict.Order.defaultShipment.shippingMethod}" scope="page"/>
+		</isif>
+		<isif condition="${!empty(shippingMethod)}">
+			
+					    				<div class="row"><isprint value="${shippingMethod.displayName}"/>:<isprint value="${shippingModel.getShippingCost(shippingMethod).getAmount()}"/></div>
+					    				
+		<iselse/>
+			<isprint value="${shippingMethod.shippingMethodID}"/>
+		</isif>
+		<isif condition="${!empty(shippingMethod.shippingPriceAdjustments)}">
+			<span class="shippingunadjusted"><isprint value="${shippingMethod.shippingTotalPrice}"/></span>
+			<span class="promotiondescription"><isprint value="${shippingMethod.adjustedShippingTotalPrice}"/></span>
+		<iselse/>
+			<isprint value="${shippingMethod.shippingTotalPrice}"/>
+		</isif>
+	 </div>
+			</div>
+		</div><!-- END: rightPanel -->
+	</div>	<!-- END: innerPanel -->
+</div><!-- END: panelWraper -->
+		 
+		 <div class="checkoutordertotals">
+			<isordertotals p_lineitemctnr="${lineitem_ctnr}" p_showshipmentinfo="${true}" p_shipmenteditable="${false}" p_totallabel="Total"/>
+	</div><!-- END: checkoutordertotals -->
+	<div class="note-wraper">
+		<div class="row">${Resource.msg('ordersummary.note','checkout',null)}</div>
+		<div class="row sum-note">${Resource.msg('ordersummary.conditions','checkout',null)}&nbsp;<a id="privacyPolicy" class="newDialog" href="${URLUtils.url('Page-Show', 'cid', 'privacy-policy-popup')}" data-height="500" data-width="600" data-closebuttonclass="" data-wrapperClass="">${Resource.msg('ordersummary.conditions2','checkout',null)}</a>&nbsp;${Resource.msg('ordersummary.conditions3','checkout',null)}&nbsp;<a id="termsConditions" class="newDialog" href="${URLUtils.url('Page-Show', 'cid', 'terms-and-conditions-popup')}" data-height="500" data-width="600" data-closebuttonclass="" data-wrapperClass="">${Resource.msg('ordersummary.conditions4','checkout',null)}</a></div>
+		</div>
+	</div>
+	
+</div><!-- END: checkoutminisummary -->
+<div class="right-box"><iscontentasset aid="cs-contact-number"/></div>
+
+</div>
+	
+
+</div>
+<isset name="OmniturePage" value="OrderReview" scope="pdict">	
+</isdecorate>

@@ -1,0 +1,108 @@
+<isdecorate template="mobile/checkout/confirmation/pt_confirmation">
+<isinclude template="mobile/util/modules">	
+
+<iscontent type="text/html" charset="UTF-8" compact="true">
+<!-- Start: cart/checkout_confirmation  -->
+<isset name="GoogleAnalyticsPath" value="${URLUtils.url('Checkout-Finish')}" scope="REQUEST">
+
+<!---
+	Report the order
+--->
+<isinclude template="mobile/util/reporting/ReportOrder.isml">
+
+<!--- This includes global utilities into the pages --->
+<isinclude template="mobile/util/modules">
+<div id="orderconfirmation" class="mobilecontent">
+	<isset name="OmniturePage" value="COConfirmation" scope="pdict">
+	<div id="confirmOrderIsComplete">CHECKOUT:<br/>YOUR ORDER IS COMPLETE</div>
+	<div id="confirmThanks">Thank you for your order!</div>
+	<div id="confirmOrderNum">Your order number is: ${pdict.Order.orderNo}</div>
+	<div id="confirmEmail">A confirmation email has been sent to:<br/>${pdict.Order.customerEmail}</div>
+	<hr/>
+	<!--  separator -->
+	<div id="confirmOrderSummary">Your Order Summary</div>
+	
+	<isscript>
+		var pli : dw.order.ProductLineItem = pdict.Order.productLineItems.iterator().next();
+		var Product : pli.product;
+	    var revenue = 0;
+	    if (pdict.Order.totalGrossPrice.available) {
+	  	  revenue = pdict.Order.totalGrossPrice.value;
+	    } else {
+	  	  revenue = pdict.Order.getAdjustedMerchandizeTotalPrice(true).value + pdict.Order.giftCertificateTotalPrice.value + pdict.Order.totalTax + pdict.Order.shippingTotalPrice;
+	    }	
+	    var paymentInstrument : dw.order.PaymentInstrument = pdict.Order.paymentInstruments.iterator().next(); 
+	</isscript>
+	<div id="confirmProductName">${pli.productName}</div>
+	<div id="confirmQty">Qty: ${pli.quantityValue.toFixed(0)}</div>
+	<div id="confirmItemPrice">
+		<isinclude template="mobile/product/components/pricing"/>	
+	</div>
+	<table id="totalsTable">
+		<tr>
+			<td align="right">Item Total:&nbsp;</td>
+			<td align="right">$${pdict.Order.merchandizeTotalPrice.value}</td>
+		</tr>
+		<tr>
+			<td align="right">${pdict.Order.defaultShipment.shippingMethod.displayName}:&nbsp;</td>
+			<td align="right">$${pdict.Order.shippingTotalPrice.value}</td>
+		</tr>
+		<tr>
+			<td align="right">Order Total:&nbsp;</td>
+			<td align="right">$${revenue}</td>
+		</tr>
+	</table>
+	<hr/>
+	<!--  separator -->
+	<div id="confirmYourInfo">Your Information</div>
+	<div id="confirmCustomerInfo">
+		${pdict.Order.customerName}<br/>
+		${pdict.Order.customerEmail}<br/>
+		Payment method: ${paymentInstrument.creditCardType}<br/>${paymentInstrument.maskedCreditCardNumber}<br/>
+	</div>
+	<div id="confirmExpiration">Expires:</div>
+	<div id="confirmExpValue">${paymentInstrument.creditCardExpirationMonth}/${paymentInstrument.creditCardExpirationYear}</div>
+	<div id="confirmBillingLabel">Billing address:</div>
+	<div id="confirmBillingValue">
+		${pdict.Order.billingAddress.address1} ${empty(pdict.Order.billingAddress.address2) ? "" : pdict.Order.billingAddress.address2}<br/>
+		${pdict.Order.billingAddress.city}, ${pdict.Order.billingAddress.stateCode} ${pdict.Order.billingAddress.postalCode}
+	</div>
+	<div id="confirmShippingLabel">Shipping address:</div>	
+	<div id="confirmShippingValue">
+		${pdict.Order.defaultShipment.shippingAddress.address1} ${empty(pdict.Order.defaultShipment.shippingAddress.address2) ? "" : pdict.Order.defaultShipment.shippingAddress.address2}<br/>
+		${pdict.Order.defaultShipment.shippingAddress.city}, ${pdict.Order.defaultShipment.shippingAddress.stateCode} ${pdict.Order.defaultShipment.shippingAddress.postalCode}
+	</div>
+</div>
+
+<isscript>
+  var orderId = pdict.Order.orderNo;
+  var quantity = 0;
+  var iter = pdict.Order.getAllProductLineItems().iterator();
+  var brand = 'xout';
+  var kit = '';
+  var productName = '';
+  while (iter.hasNext()) {
+    var pli = iter.next();
+  	quantity = quantity + pli.quantityValue;
+  	brand = pli.product.brand;
+  	kit = pli.product.ID;
+  	productName= pli.product.name;
+  }
+  var primaryUCI : Cookie = request.httpCookies['uci'];
+</isscript>
+	
+<!--  Media Geeks -->
+<script id="script307m" src="https://s2.mgplatform.com/gr/mconfirm-xout.js?orderid=${orderId}"></script>
+<!--  End Media Geeks -->
+<!-- Atlas -->
+<script language="JavaScript" src="https://view.atdmt.com/jaction/grkout_XOUTConfirmationMobile_7/v3/ato.${orderId}/[atm1.${pdict.Order.getAdjustedMerchandizeTotalPrice(true).value}/atc1.${brand}/atc2.${kit}/atc3.${uci}]"></script>
+<noscript><iframe src="https://view.atdmt.com/iaction/grkout_XOUTConfirmationMobile_7/v3/ato.${orderId}/[atm1.${pdict.Order.getAdjustedMerchandizeTotalPrice(true).value}/atc1.${brand}/atc2.${kit}/atc3.${uci}]" width="1" height="1" frameborder="0" scrolling="No" marginheight="0" marginwidth="0" topmargin="0" leftmargin="0"></iframe></noscript>
+<!--  End Atlas -->
+
+<iscomment> Exporting variables to javascript  </iscomment>
+<isinclude template="common/mediaPixelsInit.isml"/>
+<iscontentasset aid="mobile_pixels_confirmation"/>
+
+</isdecorate>
+
+<!-- End: cart/checkout_confirmation  -->

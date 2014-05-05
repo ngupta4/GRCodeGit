@@ -1,0 +1,240 @@
+<!--- TEMPLATENAME: selectasystem.isml --->
+<isdecorate template="search/pt_selectasystem_full">
+<isinclude template="util/modules"/>
+<isset name="saspageid" value="selectasystem" scope="page"/>
+<iscomment>create reporting event</iscomment>
+<isinclude template="util/reporting/ReportSearch.isml"/>
+<isset name="showHeader" value="${true}" scope="page" />
+<isset name="showFooter" value="${true}" scope="page" />
+<iscomment><isset name="showNav" value="${true}" scope="page" /></iscomment>
+<isset name="showOrderButton" value="${true}" scope="pdict" />
+<isscript>
+	importPackage(dw.util);
+	importPackage(dw.catalog);
+	
+	var CCC : Object = pdict.CurrentCampaignConfig;
+
+	var category : dw.catalog.Category = CCC.getCampaignCategory();
+
+	var offersList : ArrayList = new ArrayList();
+	var offerCodes : Array = null;
+	if( !empty(CCC) ) {
+		offerCodes = CCC.sasOfferCodes;
+		var aProduct : Product = null;
+		for( var i=0, ii=offerCodes.length; i<ii; i++ ) {
+			aProduct = ProductMgr.getProduct(offerCodes[i]);
+			if( !empty(aProduct) ) {
+				offersList.add1(aProduct);
+			}
+		}
+	}
+</isscript> 
+
+<div class="sasWrap">
+	<div class="selectedKit2">		
+		<iscomment>Setting variable for setting up selected variation.</iscomment>
+		<isif condition="${'variationValue' in pdict.CurrentHttpParameterMap && pdict.CurrentHttpParameterMap.variationValue != null}">
+			<isset name="selectedVariationVal" value="${pdict.CurrentHttpParameterMap.variationValue}" scope="page"/>
+		<iselse/>
+			<isset name="selectedVariationVal" value="" scope="page"/>
+			
+		</isif>			
+			<ul class="theKits">
+				<isloop items="${offersList}" var="offer" status="offers_status">
+					<li id="offer-${offer.ID}" class="sasTabs tab${offers_status.count} system_${offers_status.count} <isif condition="${offers_status.first}"> first</isif>">
+						<div class="SelectSidePanel">
+							<div class="detailDescription">
+								<isset name="kitName" value="${offer.name}" scope="page"/>								
+								<div class="productDesc">
+								    <div class="kitDesc">
+										<div class="productImage">
+											<isset name="kitProductImage" value="${offer.getImage('large',0)}" scope="page"/>
+											<iscomment>If image couldn't be determined, display a "no image" medium</iscomment>
+											<isif condition="${!kitProductImage}">
+												<isset name="thumbnailUrl" value="${URLUtils.staticURL('/images/noimagemedium.png')}" scope="page"/>
+											<iselse/>
+												<isset name="thumbnailUrl" value="${kitProductImage.url}" scope="page"/>						
+											</isif>
+											
+											<isset name="kitImgTitle" value="${Resource.msg('sas.kitselection.img','locale',null)}" scope="page"/>
+											<iscomment>for showing different order button based on kit.</iscomment>
+											<isset name="buttonClassName" value="basic" scope="page"/>
+											<isif condition="${(kitName.indexOf('Deluxe') != -1) }">
+												<isset name="kitImgTitle" value="${Resource.msg('sas.kitselection.deluxe.img','locale',null)}" scope="page"/>
+												<isset name="buttonClassName" value="deluxe" scope="page"/>
+											<iselseif condition="${(kitName.indexOf('Basic')!= -1)}">	
+												<isset name="kitImgTitle" value="${Resource.msg('sas.kitselection.basic.img','locale',null)}" scope="page"/>
+												<isset name="buttonClassName" value="basic" scope="page"/>
+											</isif>
+											<isset name="thumbnailAlt" value="${kitImgTitle}" scope="page"/>
+											<isset name="thumbnailTitle" value="${kitImgTitle}" scope="page"/>
+											<img src="${thumbnailUrl}" alt='<isprint value="${thumbnailAlt}" encoding="off"/>' title='<isprint value="${thumbnailTitle}" encoding="off"/>' />	
+										</div>
+										<isscript>var kitpopup : String = 'kitpopup-' + offer.ID; </isscript>
+										
+	
+										<!---  Radio Buttons--->	
+										<isset name="kit1Name" value="" scope="page"/>
+										<isif condition="${'kitFrequency' in offer.custom}">
+											<isset name="kit1Name" value="${offer.custom.kitFrequency}" scope="page"/>
+										</isif>
+										<isif condition="${!empty(kit1Name)}">
+											<div class="orderNowSideBySide top">
+												<h5><span>${Resource.msg('sas.kitselection.heading','locale',null)}</span></h5>											
+												<ul class="kitselectionul">
+													<li id="${offer.ID}" class="list${offer.ID} selected">
+													    <input type="radio"  class="kitselection${offers_status.count}" name="kitgroup${offers_status.count}" value='<isprint value="${kit1Name}" encoding="off"/>' checked='checked'/>
+														<div class="opText"><isprint value="${kit1Name}" encoding="off"/></div>
+														<span class="kitSpan" style="display:none;">
+														<div class="priceShow">
+														<isprint value="${offer.priceModel.getPrice()}" encoding="off"/>
+														</div>
+														<iscontentasset aid="SAS-price" /></span>
+													</li>
+													<isset name="recommendations" value="${offer.getRecommendations(Resource.msg('sas.recommendation.replacementupselltype','configuration',null))}" scope="page"/>
+													<isif condition="${null != recommendations && !empty(recommendations)}">
+														<isloop items="${recommendations}" var="recommendation" status="recommend_status">
+															<isset name="scndKitProduct" value="${recommendation.getRecommendedItem()}" scope="page" />
+															<li id="${scndKitProduct.getID()}" class="list${scndKitProduct.getID()}" >
+																<input type="radio"  class="kitselection2${offers_status.count}" name="kitgroup${offers_status.count}" value='<isprint value="${scndKitProduct.custom.kitFrequency}" encoding="off"/>'/>
+																<div class="opText"><isprint value="${scndKitProduct.custom.kitFrequency}" encoding="off"/></div>
+																<div class="kitSpan" style="display:none;">
+																<div class="priceShow"><isprint value="${scndKitProduct.priceModel.getPrice()}" encoding="off"/></div>
+																<iscontentasset aid="SAS-price" />
+																</div>
+															</li>
+														</isloop>
+													
+													</isif>												
+															
+												</ul>
+											</div>
+										</isif>
+										<!--- End Radio Buttons--->
+									</div>
+									<!-- end: kitDesc -->
+									
+									<div class="orderVarButtonWraper">
+										<div class="priceBlock top">
+					                      	<span class="showPrice"><isprint value="${offer.priceModel.getPrice()}" encoding="off" />
+					                      	<iscontentasset aid="SAS-price" />
+					                      	</span>
+					                      	<a href="${URLUtils.https('COCart-AddProduct','pid',offer.ID)}" class="orderVarButton-${buttonClassName} orderBtn">${Resource.msg('sas.ordernow','locale',null)}</a>
+				                      	</div>	
+				                      							
+									</div>
+									<div class="productDetails">
+										<div class="kitSummary">
+											<isif condition="${!empty(offer.shortDescription)&&!empty(offer.shortDescription.markup)}">
+												<isprint value="${offer.shortDescription.markup}" encoding="off"/>
+											</isif>
+										</div>																	
+										<isif condition="${!empty(offer.longDescription)&&!empty(offer.longDescription.markup)}">
+											<isprint value="${offer.longDescription.markup}" encoding="off"/>
+										</isif>
+									
+
+										<isif condition="${'kitFrequency' in offer.custom}">
+											<isset name="kit1Name" value="${offer.custom.kitFrequency}" scope="page"/>
+										</isif>
+										
+										<isif condition="${!empty(kit1Name)}">
+											<div class="orderNowSideBySide btm">
+												<h5><span>${Resource.msg('sas.kitselection.heading','locale',null)}</span></h5>
+												<ul class="kitselectionul">
+													<li id="${offer.ID}" class="selected list${offer.ID}">
+													<input type="radio"  class="kitselection${offers_status.count}" name="kitgroup${offers_status.count}btm" value='<isprint value="${kit1Name}" encoding="off"/>' checked='checked'/>
+														<div class="opText"><isprint value="${kit1Name}" encoding="off"/></div>
+														<div class="kitSpan" style="display:none;"><div class="priceShow"><isprint value="${offer.priceModel.getPrice()}" encoding="off"/></div><iscontentasset aid="SAS-price" /></div>
+													</li>
+													<isset name="recommendations" value="${offer.getRecommendations(Resource.msg('sas.recommendation.replacementupselltype','configuration',null))}" scope="page"/>
+													<isif condition="${null != recommendations && !empty(recommendations)}">
+														<isloop items="${recommendations}" var="recommendation" status="recommend_status">
+															<isset name="scndKitProduct" value="${recommendation.getRecommendedItem()}" scope="page" />
+															<li id="${scndKitProduct.getID()}" class="list${scndKitProduct.getID()}" >
+																<input type="radio"  class="kitselection2${offers_status.count}" name="kitgroup${offers_status.count}btm" value='<isprint value="${scndKitProduct.custom.kitFrequency}" encoding="off"/>'/>
+																<div class="opText"><isprint value="${scndKitProduct.custom.kitFrequency}" encoding="off"/></div>
+																<div class="kitSpan" style="display:none;"><div class="priceShow"><isprint value="${scndKitProduct.priceModel.getPrice()}" encoding="off"/></div><iscontentasset aid="SAS-price" /></div>
+															</li>
+														</isloop>
+													</isif>
+													
+														
+												</ul>
+											</div>
+										</isif>								
+									</div>								
+								</div>	
+							
+							<isif condition="${offer.master && offer.variationModel.variants.size() > 0}">
+		                      <div class="orderVarButtonWraper">
+		                      	<iscomment>for showing different order button based on kit.</iscomment>
+		                      	<isif condition="${(kitName.indexOf('Deluxe') != -1) }">
+		                      			<isset name="buttonClassName" value="deluxe" scope="page"/>
+		                      	<iselse>
+		                      			<isset name="buttonClassName" value="basic" scope="page"/>
+		                      	</isif>
+		                      	
+			                      	<div class="priceBlock">
+				                      	<span class="showPrice"><isprint value="${offer.priceModel.getPrice()}" encoding="off" /></span>
+				                      	<a href="${URLUtils.https('COCart-AddProduct','pid',offer.ID)}" class="orderVarButton-${buttonClassName} orderBtn">${Resource.msg('sas.ordernow','locale',null)}</a>
+			                      	</div>
+		                      	
+		                      </div>
+							<iselse/>
+							
+							 <div class="orderVarButtonWraper">
+							  <div class="priceBlock">
+							  	<div class="showPrice">
+							  	<div class="priceShow"><isprint value="${offer.priceModel.getPrice()}" encoding="off" /></div>
+							  	 <iscontentasset aid="SAS-price" />
+							  	</div>
+							  	<a class="orderBtn" href="${URLUtils.https('COCart-AddProduct','pid',offer.ID)}">${Resource.msg('sas.ordernow','locale',null)}</a>
+							  </div>
+							 
+							 </div>
+							</isif>
+							</div>
+						</div>
+					</li>
+				</isloop>
+			</ul>
+			</div>
+	    </div>        
+		<isset name="acqPage" value="${true}" scope="pdict" />
+		<iscomment><isinclude template="bv/display/rr/reviews" /></iscomment>
+
+<isset name="OmniturePage" value="sas1" scope="pdict" />
+<isslot id="MediaPixelForSAS" context="global" description="MediaPixelForSAS" />
+
+<script type="text/javascript">
+<!--
+
+jQuery(".SelectSidePanel .kitselectionul input").click(function(){
+    var idVal = $(this).parent().find('.kitSpan').html(); 
+    var priceVal =  $(this).parents('.detailDescription').find('.showPrice').html(idVal);
+	var radiochecked = jQuery(this).attr("class");
+	var radiovalue = jQuery(this).val();	 
+	 var liclass=$(this).parent().attr('class');
+	 $(this).parents('.detailDescription').find("li").removeClass("selected");
+	 jQuery('.'+liclass).addClass('selected');
+	jQuery('.'+radiochecked).attr('checked',true);
+	var linkorderbtn='${URLUtils.https("COCart-AddProduct","pid","")}';
+    var pidattached = $(this).parent().attr('id'); 
+    $(this).parents('.detailDescription').find('.orderBtn').attr('href', linkorderbtn+pidattached);
+    
+    //app.sas.selectFragrance(jQuery(this));
+});
+--></script>
+
+<!-- Added to include a new tab functionality -->
+<script type="text/javascript">
+    $(function() {
+        $( ".discTypeList" ).accordion({
+            collapsible: true,
+        	autoHeight: false,
+			active: false
+        });		
+    });
+</script>
+</isdecorate>

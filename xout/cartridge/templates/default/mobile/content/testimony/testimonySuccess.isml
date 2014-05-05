@@ -1,0 +1,8 @@
+<isinclude template="content/testimony/testimony.isml">
+
+<script type="text/javascript">
+	var message="${Resource.msg('testimony.success.message','rendering',null)}";
+	window.onload= function () {
+        alert( message );
+	}
+</script>

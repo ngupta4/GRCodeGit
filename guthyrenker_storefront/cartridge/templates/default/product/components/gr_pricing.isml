@@ -1,0 +1,41 @@
+<!--- TEMPLATENAME: gr_pricing.isml --->
+
+		<iscomment>
+			Regular pricing through price model of the product. If the product is an option product,
+			we have to initialize the product price model with the option model.
+		</iscomment>
+		<isif condition="${Product.optionProduct}">
+			<isset name="PriceModel" value="${Product.getPriceModel(Product.getOptionModel())}" scope="page"/>
+		<iselse/>
+			<isset name="PriceModel" value="${Product.getPriceModel()}" scope="page"/>
+		</isif>
+
+
+		<iscomment>Displays price from Non Member price book.</iscomment>
+		<isif condition="${pdict.CurrentSession.sourceCodeInfo!=null && dw.object.CustomObjectMgr.getCustomObject('SourceCodeGroup_Pricebook_Mapping',pdict.CurrentSession.sourceCodeInfo.group.ID)!=null}">
+			<isset name="salePriceBookId" value="${dw.object.CustomObjectMgr.getCustomObject('SourceCodeGroup_Pricebook_Mapping',pdict.CurrentSession.sourceCodeInfo.group.ID).custom.PriceBookID}" scope="page" />
+			<isif condition="${PriceModel.getPriceBookPrice(salePriceBookId)!=dw.value.Money.NOT_AVAILABLE}">
+				<div class="regularprice ">${Resource.msg('global.regularprice','locale',null)}&nbsp;<span class="strikeout regularpricevalue"><isprint value="${PriceModel.getPriceBookPrice(dw.system.Site.current.preferences.custom.nonMemberPriceBook)}"/></span></div>
+				<div class="memberprice ">${Resource.msg('global.memberprice','locale',null)}&nbsp;<span class="strikeout memberpricevalue"><isprint value="${PriceModel.getPriceBookPrice(dw.system.Site.current.preferences.custom.memberPriceBook)}"/></span>
+				
+				</div>
+				<div class="salesprice">${Resource.msg('global.saleprice','locale',null)}<span class="salespricevalue"><isprint value="${PriceModel.getPriceBookPrice(salePriceBookId)}"/></span></div>														
+			<iselse/>
+				<isif condition="${pdict.CurrentCustomer.authenticated && 'member' in  pdict.CurrentCustomer.profile.custom && pdict.CurrentCustomer.profile.custom.member || !empty(pdict.CurrentRequest.httpCookies['rememberMe'])}">
+					<div class="regularprice ">${Resource.msg('global.regularprice','locale',null)}&nbsp;<span class="strikeout regularpricevalue"><isprint value="${PriceModel.getPriceBookPrice(dw.system.Site.current.preferences.custom.nonMemberPriceBook)}"/></span></div>
+				<iselse/>
+					<div class="regularprice ">${Resource.msg('global.regularprice','locale',null)}&nbsp;<span class="regularpricevalue"><isprint value="${PriceModel.getPriceBookPrice(dw.system.Site.current.preferences.custom.nonMemberPriceBook)}"/></span></div>
+				</isif>									
+				<div class="memberprice ">${Resource.msg('global.memberprice','locale',null)}&nbsp;<span class="memberpricevalue"><isprint value="${PriceModel.getPriceBookPrice(dw.system.Site.current.preferences.custom.memberPriceBook)}"/></span>
+				
+				
+				</div>								
+			</isif>	
+		<iselse/>
+			<isif condition="${pdict.CurrentCustomer.authenticated && 'member' in  pdict.CurrentCustomer.profile.custom && pdict.CurrentCustomer.profile.custom.member || !empty(pdict.CurrentRequest.httpCookies['rememberMe'])}">
+				<div class="regularprice ">${Resource.msg('global.regularprice','locale',null)}&nbsp;<span class="strikeout regularpricevalue"><isprint value="${PriceModel.getPriceBookPrice(dw.system.Site.current.preferences.custom.nonMemberPriceBook)}"/></span></div>
+			<iselse/>
+				<div class="regularprice ">${Resource.msg('global.regularprice','locale',null)}&nbsp;<span class="regularpricevalue"><isprint value="${PriceModel.getPriceBookPrice(dw.system.Site.current.preferences.custom.nonMemberPriceBook)}"/></span></div>
+			</isif>									
+			<div class="memberprice ">${Resource.msg('global.memberprice','locale',null)}&nbsp;<span class="memberpricevalue"><isprint value="${PriceModel.getPriceBookPrice(dw.system.Site.current.preferences.custom.memberPriceBook)}"/></span> </div>								
+		</isif>

@@ -1,0 +1,37 @@
+<!--- TEMPLATENAME: buildnotification.isml --->
+<iscontent type="text/html" charset="UTF-8"/>
+<isinclude template="util/modules"/>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+	<head>
+	 <title>New Codeversion on Staging</title>
+	</head>
+	<body>
+		Hello Folks,<br><br>
+		
+		A new build is available on staging, which can be viewed at <a href="${URLUtils.httpHome()}">${URLUtils.httpHome()}</a>
+		<br><br>
+		The new version number is - ${pdict.CurrentHttpParameterMap.codeversion}. 
+		<br><br>
+		  <isif condition="${ !empty(pdict.CurrentHttpParameterMap.customMessage) && (pdict.CurrentHttpParameterMap.customMessage.toString().length > 2)}">
+		  	This build was manually triggered, because of following reason:<br /><br />
+		  	 <div style="font-style:italic;padding-left:10px;">
+		  	   <isprint value="${pdict.CurrentHttpParameterMap.customMessage}" />
+		  	</div>
+			<br><br>
+		  </isif>
+		
+		Thanks,<br>
+		Build Manager,<br>
+		<Client Name>
+		<br><br>
+		PS: This email was sent automatically by the build process
+	</body>
+</html>
+
+
+
+
+
+
+

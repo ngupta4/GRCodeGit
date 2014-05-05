@@ -1,0 +1,19 @@
+/**
+* Demandware Script File
+* Returns a JSON type Object for Questions from Bazaarvoice. 
+* [Feel free to add more attributes to json object as per the requirements.]
+*/
+importPackage( dw.system );
+
+function QuestionJson( questionResultJson : Array )
+{
+	
+	return {
+		"QuestionSummary" : questionResultJson.QuestionSummary,
+		"TotalAnswerCount" : questionResultJson.TotalAnswerCount,
+		"QuestionDetails" : questionResultJson.QuestionDetails,
+		"SubmittedBy" : questionResultJson.UserNickname,
+		"CategoryId" : questionResultJson.CategoryId,
+		"SubmissionTime" : questionResultJson.SubmissionTime
+	};
+}

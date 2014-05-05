@@ -1,0 +1,9 @@
+<!--- TEMPLATENAME: cartinformation.isml --->
+<div class="cart">
+	<form action="${URLUtils.httpsContinue()}" method="post" id="${pdict.CurrentForms.cart.htmlName}" class="checkoutform" >
+		<iscomment>Include a customer cart</iscomment>
+		<isinclude template="checkout/cart/cocart" />
+		<iscomment>Include a details form</iscomment>
+		<isinclude template="checkout/personinformation/personinformation" />		
+	</form>
+</div>

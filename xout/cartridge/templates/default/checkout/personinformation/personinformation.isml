@@ -1,0 +1,145 @@
+<isinclude template="util/modules"/>
+
+<isset name="multiCheckout" value="${pdict.multiCheckout}" scope="page"/>
+<isif condition="${multiCheckout}">
+	<isset name="submitbtnClass" value="continue_btn" scope="page"/>
+<iselse>	
+	<isset name="submitbtnClass" value="complete_order_btn" scope="page"/>
+</isif>
+
+<iscomment>SuppCY checkbox is not checked, then display CY code</iscomment>
+<isif condition="${session.custom.suppCY == null || session.custom.suppCY == 0}">
+
+<script type="text/javascript">
+  cy.SUPPRESSDEFAULT = true;
+  $(document).ready(function(){
+  	$("#dwfrm_personinf_contact_email").change(cy_checkFieldsAndGetImageSrc);
+  	$("#dwfrm_personinf_contact_emailconfirm").change(cy_checkFieldsAndGetImageSrc);
+  	$("#dwfrm_personinf_billtoaddress_firstName").change(cy_checkFieldsAndGetImageSrc);
+	$("#dwfrm_personinf_billtoaddress_lastName").change(cy_checkFieldsAndGetImageSrc);
+	$("#dwfrm_personinf_billtoaddress_states_stateUS").change(cy_checkFieldsAndGetImageSrc);
+	$("#dwfrm_personinf_creditcard_type").change(cy_checkFieldsAndGetImageSrc);
+  });
+  function getImageSrc()
+  {
+    cy.CUSTOMERCODE = "${dw.system.Site.current.preferences.custom.seeWhyCustomerCode}";
+    cy.FunnelLevel = "2";
+    cy.UserId = "${!empty(pdict.CurrentCustomer.profile)?pdict.CurrentCustomer.profile.email:''}";
+  }
+  function cy_checkFieldsAndGetImageSrc() {
+	  	cy.CUSTOM3='${lineItem.product.ID}';
+		cy.USERID=$("#dwfrm_personinf_contact_email").val();
+		cy.CUSTOM1=$('#dwfrm_personinf_billtoaddress_firstName').val();
+		cy.CUSTOM2=$('#dwfrm_personinf_billtoaddress_lastName').val();
+		cy.CUSTOM4=$('#dwfrm_personinf_billtoaddress_states_stateUS').val();
+		cy.CUSTOM5="";
+		cy.FUNNELLEVEL='4';
+		if ($('#dwfrm_personinf_creditcard_type').val() == 'PREPAY'){
+			cy.FUNNELLEVEL = 5;
+		} 
+		if (isEmailValid(cy.USERID)){
+			cy_getImageSrc();
+		}
+	}
+</script>
+</isif>
+<script type="text/javascript">
+  function isEmailValid(emailAddress) {
+			var pattern = new RegExp(/^(("[\w-\s]+")|([\w-]+(?:\.[\w-]+)*)|("[\w-\s]+")([\w-]+(?:\.[\w-]+)*))(@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$)|(@\[?((25[0-5]\.|2[0-4][0-9]\.|1[0-9]{2}\.|[0-9]{1,2}\.))((25[0-5]|2[0-4][0-9]|1[0-9]{2}|[0-9]{1,2})\.){2}(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[0-9]{1,2})\]?$)/i);
+			return pattern.test(emailAddress);
+  }
+</script>
+
+<iscomment>${pdict.LitleResponseAVSMessage}</iscomment>
+<isif condition="${!empty(pdict.AVSError) && pdict.AVSError && !empty(pdict.LitleResponseAVSMessage)}">
+	<div class="errorform">${Resource.msg('global.avs.error','locale',null)}</div>
+</isif>
+<isif condition="${pdict.PlaceOrderError != null}">
+	<div class="errorform">${Resource.msg(pdict.PlaceOrderError.code,'checkout',null)}</div>
+	<iscomment>
+	<isif condition="${!empty(pdict.LitleResponseMessage)}">
+		<div class="errorform">${pdict.LitleResponseMessage}</div>
+	</isif>
+	</iscomment>
+</isif>
+<form action="${URLUtils.httpsContinue()}" method="post" name="${pdict.CurrentForms.personinf.htmlName}" >
+   	<isinclude template="checkout/personinformation/contactinformation"/>
+   	<isinclude template="checkout/personinformation/paymentinformation"/>
+   	
+   	<div class="billing_shipping">
+    	<isinclude template="checkout/personinformation/billinginformation"/>
+    	<div class="checkout_box cb_shipping">
+			<h4>
+				<isif condition="${!multiCheckout}"> 
+					<isinputfield formfield="${pdict.CurrentForms.personinf.useAsBillingAddress}" type="checkbox" attribute1="checked" value1="checked">	
+				</isif>
+				<span>${Resource.msg('personinformation.shippinginformation.label','rendering',null)}</span>
+			</h4>
+			<div class="checkout_box_inner">
+				<isif condition="${multiCheckout}"> 
+					<div class="same_billing">
+						<isinputfield formfield="${pdict.CurrentForms.personinf.useAsBillingAddress}" type="checkbox" attribute1="checked" value1="checked">
+					</div>						
+				</isif>
+				<div id="shipping_form_block" style="display:none;"></div>
+	   	  	</div>
+		    
+		    <div id="shipping_message_block">
+		    </div>
+		</div>
+	</div>
+   	
+   	<div class="checkout_bottom clearfix">
+   		<isif condition="${multiCheckout}"> 
+			<p class="required_text">${Resource.msg('cart.requiredtext','rendering',null)}</p>	
+		</isif>
+		<isif condition="${!multiCheckout}">						
+			<div class="agree_box">
+				<p>${Resource.msg('cart.agreetext','rendering',null)}</p>
+				<isinputfield formfield="${pdict.CurrentForms.personinf.agree}" type="checkbox" attribute1="requiredmesage" value1="${Resource.msg('forms.checkout.agree.value-error','forms',null)}" attribute2="tabindex" value2="17">
+			</div>
+		</isif>		
+		
+		<div class="${submitbtnClass}">
+			<isif condition="${pdict.AVSError==true}">
+				<input name="avsError" id="avsError" type="hidden" value="${pdict.LitleResponseAVSMessage}" />
+			</isif>
+			<button type="submit" value="${Resource.msg('global.checkout','locale',null)}" name="${pdict.CurrentForms.personinf.apply.htmlName}" tabindex="18"></button>
+			<iscomment><input type="image" src="${URLUtils.staticURL('/images/cart_OrderNowButton.png')}"/></iscomment>
+		</div>
+		<isif condition="${!multiCheckout}"> 
+			<p class="required_text">${Resource.msg('cart.requiredtext','rendering',null)}</p>	
+		</isif>						
+	</div>
+</form>
+<div style="display:none;">
+	<form action="${URLUtils.httpsContinue()}" method="post" name="${pdict.CurrentForms.personinf.shipptoaddress.htmlName}" >
+	   	<isinclude template="checkout/personinformation/shippinginformation"/>
+	</form>
+</div>
+<script type="text/javascript">
+jQuery(document).ready(function(){
+	var equals = ${pdict.BillingEqualsShipping};
+
+	jQuery("input[name=${pdict.CurrentForms.personinf.useAsBillingAddress.htmlName}]").bind("click", function(event){
+		var checked = jQuery(this).attr("checked");
+		if(checked){
+			jQuery("[id=shipping_form_block]").hide();
+			jQuery("[id=shipping_form_block]").html("");
+			jQuery("[id=shipping_message_block]").show();
+			
+		}else{
+			jQuery("[id=shipping_form_block]").html(jQuery("form[name=${pdict.CurrentForms.personinf.shipptoaddress.htmlName}]").html());
+			jQuery("[id=shipping_message_block]").hide();
+			jQuery("[id=shipping_form_block]").show();
+		}
+	});
+	
+	if(equals!=null && !equals){
+		jQuery("input[name=${pdict.CurrentForms.personinf.useAsBillingAddress.htmlName}]").removeAttr("checked").click().removeAttr("checked");
+	}
+	
+	
+});
+
+</script>

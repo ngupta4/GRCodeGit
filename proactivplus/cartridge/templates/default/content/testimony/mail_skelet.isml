@@ -1,0 +1,5 @@
+<!--- TEMPLATENAME: mail_skelet.isml --->
+<iscontent type="${'multipart/mixed; boundary='+boundary}">
+<isprint value="${'--'+boundary}" encoding="off"/>
+<isinclude template="content/testimony/email_body" />
+<isprint value="${'--'+boundary+'--'}" encoding="off"/>

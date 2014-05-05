@@ -1,0 +1,32 @@
+<isset name="DecoratorTemplate" value="error/pt_error" scope="page"/>
+<isif condition="${!empty(pdict.nodecorator) && pdict.nodecorator == true}">
+	<isset name="DecoratorTemplate" value="util/pt_empty" scope="page"/>
+</isif>
+
+<isdecorate template="${DecoratorTemplate}">
+<isinclude template="util/modules"/>
+<isscript>
+	importPackage(dw.object);
+	importPackage(dw.catalog);
+	
+	var CCC : Object = pdict.CurrentCampaignConfig;
+	var campaignCode : String = CCC.campaignCode;
+	
+	var showHeader : boolean = CCC.showHeader;
+	var showFooter : boolean = CCC.showFooter;
+	var showNav : boolean = CCC.showNav;
+	var showOrderButton : boolean = CCC.showOrderButton;
+</isscript>
+<div class="generalerror">
+	<h1>${Resource.msg('generalerror.header','rendering',null)}</h1>
+	<p>${Resource.msg('generalerror.message','rendering',null)}</p>	
+	
+	<div class="sitemap">
+		<isinclude url="${URLUtils.url('Home-IncludeHeaderMenu')}"/>
+		<div class="primary-navigation">
+			<iscontentasset aid="footer-copy" />
+		</div>		
+	</div>		
+</div><!-- END: generalerror -->
+<isset name="OmniturePage" value="GeneralError" scope="pdict">
+</isdecorate>

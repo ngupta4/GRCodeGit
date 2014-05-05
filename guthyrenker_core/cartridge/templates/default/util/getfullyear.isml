@@ -1,0 +1,9 @@
+<isif condition="${dw.system.Site.getCurrent().getCustomPreferenceValue('copyrightText')!=null || !empty(dw.system.Site.getCurrent().getCustomPreferenceValue('copyrightText'))}">
+	${dw.system.Site.getCurrent().getCustomPreferenceValue('copyrightText')}
+<iselse>
+	<isscript>
+		var thisdate:Date=new Date();
+		var thisyear:Number=thisdate.getFullYear();
+		out.print(thisyear);
+	</isscript>
+</isif>

@@ -1,0 +1,19 @@
+<iscache type="relative" hour="24" varyby="price_promotion" />
+<isset name="DecoratorTemplate" value="mobile/content/content/pt_content" scope="page"/>
+
+<iscomment>Use another decorator if the context is the content search</iscomment>
+<iscomment>Comment out because we don't care for mobile at the moment..
+<isif condition="${!empty(pdict.ContentSearchResult) && pdict.ContentSearchResult.count > 0}">
+	<isset name="DecoratorTemplate" value="mobile/search/pt_contentsearchresult" scope="page"/>
+</isif>
+</iscomment>
+<isdecorate template="${DecoratorTemplate}">
+
+<iscomment>Render a "back" link and the article title based on the page context.</iscomment>
+<isif condition="${!empty(pdict.ContentSearchResult) && pdict.ContentSearchResult.count > 0}">
+	<div class="back"><a href="${pdict.ContentSearchResult.url('Search-ShowContent')}">${Resource.msg('foldercontenthits.backtoresults','rendering',null)}</a></div>
+	<h1><isprint value="${pdict.Content.name}"/></h1>
+</isif>
+<iscomment>This content piece must deliver a valid wrapping div!</iscomment>
+<isinclude template="content/content/htmlcontentasset"/>
+</isdecorate>

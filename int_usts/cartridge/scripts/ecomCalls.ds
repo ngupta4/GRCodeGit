@@ -1,0 +1,192 @@
+/**
+*   @input  params: Object 
+*   @output  sid: String
+*   @output  url: String
+*
+*/
+importPackage( dw.system );
+importPackage( dw.crypto );
+importPackage( dw.util );
+importPackage( dw.net );
+importPackage( dw.web);
+
+importScript('int_usts:common/libEcom.ds'); 
+
+var log : Log = Logger.getLogger("EcomSessionAPI: ");
+
+function execute( args : PipelineDictionary ) : Number
+{
+	//track when we know that the parameters have changed so we get a new session and update cookies/download url
+	var paramsChanged:Boolean = false;
+	
+	args.sid = "";
+	args.url = "";
+
+	//check to see if we already have a session id
+	var cookies:Cookies = request.getHttpCookies();
+	log.debug("Params: " + args.params);
+	var sc:String = args.params.sc?args.params.sc.value:null;
+	var pr:String = args.params.pr?args.params.pr.value:null;
+	var sid:String = args.params.sid?args.params.sid.value:null;
+	
+	var query:String = args.params.urlquery.stringValue;
+	if(!empty(query)){
+		if(query.indexOf("?") > -1)
+			query = query.split("?")[1];
+		var urlparts:Array = query.split("&amp;");
+		for(var x:Number = 0;x<urlparts.length;x++){
+			var urlparams:Array = urlparts[x].split("=");
+			for(var y:Number=0;y<urlparams.length;y++){
+				switch(urlparams[0]){
+					case "pr":
+						pr = urlparams[1];
+						break;
+					case "sc":
+						sc = urlparams[1];
+						break;
+					case "sid":
+						sid = urlparams[1];
+						break;
+				}
+			}
+		}
+	}
+	var changed:Boolean = false;
+	
+	if( !empty(sc) && !empty(pr) && !empty(session.custom.pr) && !empty(session.custom.sc) &&  (sc != session.custom.sc || pr != session.custom.pr)){
+		//values changed so clear all the session and cookies
+		changed = true;
+		session.custom.sc = sc;
+		session.custom.pr = pr;
+	}
+	if(!empty(sid)){
+		//set and the cookie for the sid
+		log.debug("session_id overrode");
+		var session_cookie = new Cookie("Cps.user_session_id",sid);
+		session_cookie.setMaxAge(86400 * 3);
+		session_cookie.setPath('/');
+		session_cookie.setDomain(Site.getCurrent().getCustomPreferenceValue("GRCookiesDomain"));
+		response.addHttpCookie(session_cookie);
+		session.custom.user_session_id = sid;
+		changed = false;	
+	}
+	log.debug ("Params changed: " + changed);
+	log.debug("params: sc:" + sc + ",pr:" + pr + ",sid:" + sid);
+	//if we don't have parameters, then read from default or 
+	if(empty(sc)){
+		//log.debug("Setting sku because its empty: " + sc);
+		//try to get it out of the session/cookie first then default
+		if(!empty(session.custom.sc))
+			sc = session.custom.sc;
+		else if(!empty(cookies['Cps.sku']) && !empty(cookies['Cps.sku'].value) )
+			sc = cookies['Cps.sku'].value;
+		else{
+			sc = Site.getCurrent().getCustomPreferenceValue("ecom_default_sc");	
+		}
+	}
+	//log.debug("set values: sc:" + sc + ",pr:" + pr);
+	//create the sc cookie
+	if(empty(cookies['Cps.sku']) || empty(cookies['Cps.sku'].value) || changed){
+	      var sc_cookie = new Cookie("Cps.sku",sc);
+		  sc_cookie.setMaxAge(86400 * 3);
+		  sc_cookie.setPath('/');
+		  sc_cookie.setDomain(Site.getCurrent().getCustomPreferenceValue("GRCookiesDomain"));
+		  response.addHttpCookie(sc_cookie);
+		  session.custom.sc = sc;
+	}
+	if(empty(pr)){
+		//try to get it out of the session/cookie first
+		if(!empty(session.custom.pr))
+			pr = session.custom.sc;
+		else if(!empty(cookies.pr) && !empty(cookies.pr.value))
+			pr = cookies.pr.value;
+		else{
+			pr = Site.getCurrent().getCustomPreferenceValue("ecom_default_pr");
+		}
+	}
+	//create the sc cookie
+	if(empty(cookies['Cps.pr']) || empty(cookies['Cps.pr'].value) || changed){
+	      var pr_cookie = new Cookie("Cps.pr",pr);
+		  pr_cookie.setMaxAge(86400 * 3);
+		  pr_cookie.setPath('/');
+		  pr_cookie.setDomain(Site.getCurrent().getCustomPreferenceValue("GRCookiesDomain"));
+		  response.addHttpCookie(pr_cookie);
+		  session.custom.pr = pr;
+	}
+	
+	//if the parameters have changed then create a new cookie..
+	if(!empty(sid) || (!changed && !empty(cookies["Cps.user_session_id"]) && !empty(cookies["Cps.user_session_id"].value) && !empty(cookies["Cps.product_download_url"]) &&  !empty(cookies["Cps.product_download_url"].value))){
+		//just read in the cookies...
+		if(!empty(session.custom.user_session_id))
+			args.sid = session.custom.user_session_id;
+		else
+			args.sid = cookies["Cps.user_session_id"].value;
+		if(!empty(session.custom.product_download_url))
+			args.url = session.custom.product_download_url;
+		else if(!empty(cookies["Cps.product_download_url"]))
+			args.url = cookies["Cps.product_download_url"].value;
+		log.debug("We have a cookie already! : sid: " + args.sid + " : url:" + args.url);
+		return PIPELET_NEXT;
+	}
+
+	// Make an http 
+	var httpClient : HTTPClient = new HTTPClient();
+	var message:String;
+	var json:JSON;
+	
+	//Set a 15min timeout cause their qa sucks
+	httpClient.setTimeout(Site.getCurrent().getCustomPreferenceValue("ecom_api_timeout") * 1000);//25000);
+	var date = new Date();
+	//get url from site preferences
+	var domain:String = Site.getCurrent().getCustomPreferenceValue("ecom_api_domain");
+	var ecom_url:String = Site.getCurrent().getCustomPreferenceValue("ecom_api_download_url") + "?source_code=" + sc + "&sku=" + pr + "&domain=" + domain;
+	if(empty(ecom_url)){
+		log.info("No ecom_api_download_url configured"); 
+		return PIPELET_NEXT;
+	}
+	log.debug("Making call to: " + ecom_url);
+	var starttime = new Date();
+	httpClient.open('GET', ecom_url);
+	httpClient.send();
+	
+	if (httpClient.statusCode == 200)
+	{
+	      json = JSON.parse(httpClient.text);
+	      log.debug("json: " + httpClient.text);
+	      //set this value in a cookie, also associate it with the session.
+	      log.debug("session_id:" + json.session_id + " : product_download_url:" + json.product_download_url);
+	      args.sid = json.session_id.toString();
+	      args.url = json.product_download_url.toString();
+	      
+	      //now set these in a cookie...
+	      //? Cps.download_attempted  //expires in 3 days
+	      //? Cps.initial_query_parameters //expires in 3 days
+	      
+	      //Cps.user_session_id  //never expires
+	      //Cps.product_download_url  //never expires
+	      var session_cookie = new Cookie("Cps.user_session_id",json.session_id);
+		  session_cookie.setMaxAge(86400 * 3);
+		  session_cookie.setPath('/');
+		  session_cookie.setDomain(Site.getCurrent().getCustomPreferenceValue("GRCookiesDomain"));
+		  response.addHttpCookie(session_cookie);
+		  session.custom.user_session_id = json.session_id;
+		  
+	      var url_cookie = new Cookie("Cps.product_download_url",json.product_download_url);
+		  url_cookie.setMaxAge(86400 * 3);
+		  url_cookie.setPath('/');
+		  url_cookie.setDomain(Site.getCurrent().getCustomPreferenceValue("GRCookiesDomain"));
+		  response.addHttpCookie(url_cookie);
+		  session.custom.product_download_url = json.product_download_url;
+	 }
+	 else
+	 {
+	     // error handling
+	     message="An error occured with status code "+httpClient.statusCode;
+	     log.error("http error message: " + message);
+	 }
+	var endtime = new Date();
+	var diff = endtime - starttime;
+	log.info ("Query: " + query);
+	log.info ("Ecom session id call took: " + (diff/1000).toFixed(2) + " sec");
+   	return PIPELET_NEXT;
+}

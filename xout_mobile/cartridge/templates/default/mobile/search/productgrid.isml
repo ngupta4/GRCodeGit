@@ -1,0 +1,14 @@
+<iscomment>
+	Produces a product listing as a matrix.
+</iscomment>
+
+<isloop items="${pdict.producthits}" var="LoopProductHit" status="loopstate">
+
+		<isset name="ProductHit" value="${LoopProductHit}" scope="page"/>
+		<isset name="starting" value="${loopstate.count}" scope="page"/>
+
+		<iscomment>display a tile per product</iscomment>
+		<isinclude template="mobile/product/productsearchhittile"/>
+		
+</isloop>
+

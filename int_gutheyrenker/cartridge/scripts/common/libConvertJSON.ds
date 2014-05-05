@@ -1,0 +1,45 @@
+importPackage(dw.util);
+importPackage( dw.system );
+
+function convStringJsonHash( strJson : String): HashMap{
+	var objJson : JSON = JSON.parse(strJson);
+	var objHashMap : Map = new HashMap();
+	for (var i in objJson){
+		objHashMap.put(i,objJson[i]);
+	}	
+	return objHashMap;
+}
+
+function convHashJson( eCheckHash : HashMap):String {	
+	var itr : Iterator;
+	var entry : MapEntry = null; 
+	itr = eCheckHash.entrySet().iterator();
+	var stringJson = '';
+	var mapLength = eCheckHash.length;
+	while (itr.hasNext()) {
+		entry = itr.next();
+		stringJson += '"'+entry.getKey() + '":' + entry.getValue();
+		mapLength--;
+		if (mapLength>0) {
+		 stringJson += ",";	
+		}
+	}
+	return JSON.stringify((JSON.parse("{"+stringJson+"}")));
+}
+
+function getCampaignCounter ( campaignCode : String) : Number {
+	var ctrCampaign : Number;
+	if('echeckFailedAcq' in session.custom && null != session.custom.echeckFailedAcq){
+		var echeckFailedAcq :HashMap = convStringJsonHash(session.custom.echeckFailedAcq);
+		ctrCampaign = echeckFailedAcq.get(campaignCode);
+	}
+	return ctrCampaign;
+}
+
+function setCampaignCounter ( campaignCode : String, ctrCampaign : Number) {
+	if('echeckFailedAcqStr' in session.custom && null != session.custom.echeckFailedAcqStr){
+		var echeckFailedAcq = convStringJsonHash(session.custom.echeckFailedAcqStr);
+		ctrCampaign = echeckFailedAcq.put(campaignCode, ctrCampaign);
+		session.custom.echeckFailedAcqStr = convHashJson(echeckFailedAcq);
+	}
+}

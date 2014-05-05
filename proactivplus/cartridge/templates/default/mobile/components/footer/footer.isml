@@ -1,0 +1,23 @@
+<isinclude template="mobile/components/pixels/mediaPixels"/>
+<isinclude template="analytics/omniture/omniture"/>
+<script type="text/javascript">
+jQuery('.cta1').click( function() {
+ 	s.linkTrackVars='pageName,<prop62>,<eVar62>';
+ 	s.pageName='${omnPageName}';
+ 	s.tl(this,'o',"Order Now");
+   });
+
+jQuery('.cta_two').click( function() {
+	s.linkTrackVars='pageName,<prop62>,<eVar62>';
+ 	s.pageName='${omnPageName}:btn1';
+ 	s.tl(this,'o',"Order Now");
+   });
+   
+jQuery('.cta_three').click( function() {
+	s.linkTrackVars='pageName,<prop62>,<eVar62>';
+ 	s.pageName='${omnPageName}:btn2';
+ 	s.tl(this,'o',"Order Now");
+   });
+</script>
+
+<isinclude template="/tealium/include_tealium_pixel.isml">

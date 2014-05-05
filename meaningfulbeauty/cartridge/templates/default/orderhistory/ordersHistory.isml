@@ -1,0 +1,310 @@
+<isdecorate template="account/pt_account">
+<isinclude template="util/modules"/>
+<isinclude url="${URLUtils.url('KitCustomizer-RenderKitDetail')}"/>
+<isset name="OmniturePage" value="OrderHistoryReorder" scope="pdict">
+<istabdisplayed  tabid="OH"/>
+<div class="mainWide" id="idMainWide">
+	<div id="main">
+	<div id="content">
+
+<div class="accountoverview">
+ <div class="registration">
+ <iscomment>Include common framework to make tabs</iscomment>
+ <h2>${Resource.msg('addresslist.orderstatus','account',null)}</h2>
+ 
+
+<isif condition="${empty(pdict.OrderListItr) && empty(pdict.ContinuityObj)}">
+ <div class="inner-l wrap-no-order">
+ <div class="no_orders">${Resource.msg('orders.noorders','account',null)}</div><!-- END: no_orders -->
+ <div class="no_orders-con">${Resource.msg('orders.noordersmsg','account',null)}</div><!-- END: no_orders -->
+ </div>
+<iselse>		
+	
+ 	
+	
+	  <div class="orders">
+		<div class="gr-bg-wraper">
+	    <div class="white-bg">
+	      <div class="top-l-corner"></div>
+	      <div class="top-r-corner"></div>
+	      <div class="bot-l-corner"></div>
+	      <div class="bot-r-corner"></div>
+	       
+		       <div class="title">
+		       <div class="orderid">${Resource.msg('account.mbkit','account',null)}</div>
+		       <div class="r-links"><div class="close-cont"><a href="javascript://">${Resource.msg('account.order.close','account',null)}</a></div>
+		       <div class="vieworderdetails-cont"><a href="javascript://">${Resource.msg('account.order.viewdetails','account',null)}</a></div>
+		       </div>
+		       <div class="clear"></div>
+		       </div>
+		     <div class="panel-wraper accordion"> 
+		      <isif condition="${!empty(pdict.ContinuityObj)}">
+		          
+			    
+			        <div class="left-panel">
+			        <div class="top bgnone"><h2>Your Next Shipment</h2>
+						<div class="clear"></div>
+					</div> 
+			        <div class="inner-l">
+						<div class="row"><label>${Resource.msg('account.order.kitname','account',null)}</label><b><isprint value="${pdict.ContinuityObj.nextShipp.kitName}" /></b></div>
+						<div class="row"><label>${Resource.msg('account.order.status','account',null)}</label><b><isprint value="${pdict.ContinuityObj.nextShipp.status}" /></b></div>
+						<div class="row"><label>${Resource.msg('account.order.estdate','account',null)}</label><b><isprint value="${pdict.ContinuityObj.nextShipp.shipDate}" /></b></div>
+						<div class="row"><label>${Resource.msg('account.order.delivery','account',null)}</label><span class="bold"><label>${Resource.msg('account.order.every','account',null)}</label>&nbsp;<isprint value="${pdict.ContinuityObj.freq}" /><label>&nbsp;${Resource.msg('account.order.weeks','account',null)}</label></span></div>
+						<div class="row"><label>${Resource.msg('account.order.item','account',null)}</label><b><isprint value="${pdict.ContinuityObj.nextShipp.itemNum}" /></b></div>
+					</div>
+					</div>
+					<div class="right-panel">
+						<div class="top bgnone"><h2>${Resource.msg('account.order.shipment','account',null)}</h2><div class="clear"></div> </div>
+						<div class="inner-l">
+						<div class="row"><label>${Resource.msg('account.order.kitname','account',null)}</label><b><isprint value="${pdict.ContinuityObj.lastShipp.kitName}" /></b></div> 
+						<div class="row"><label>${Resource.msg('account.order.status','account',null)}</label><b><isprint value="${pdict.ContinuityObj.lastShipp.status}" /></b></div>
+						<div class="row"><label>${Resource.msg('account.order.estdate','account',null)}</label><b><isprint value="${pdict.ContinuityObj.lastShipp.shipDate}" /></b> </div>
+						<div class="row"><label>${Resource.msg('account.order.delivery','account',null)}</label><span class="bold"><label>${Resource.msg('account.order.every','account',null)}</label><isprint value="${pdict.ContinuityObj.freq}" /> <label>${Resource.msg('account.order.weeks','account',null)}</label></span></div>
+						<div class="row"><label>${Resource.msg('account.order.item','account',null)}</label><b><isprint value="${pdict.ContinuityObj.lastShipp.itemNum}" /></b> </div>
+						<isif condition="${0!=pdict.ContinuityObj.lastShipp.trackingNo}">
+							<div class="row tracking"><label>${Resource.msg('account.order.tracking','account',null)}</label><b><isprint value="${pdict.ContinuityObj.lastShipp.trackingNo}" />.  <a href="${pdict.ContinuityObj.lastShipp.trackingUrl}">${Resource.msg('account.order.tracpackage','account',null)}</a></b></div>
+						</isif>	
+					</div>
+				</div>
+				<div class="clear"></div>
+				
+		 <iselse>
+		  	<div class="inner-2"><strong>You do not have a continuity Kit defined</strong></div>
+	     </isif>
+	   </div>
+	  </div>
+	  </div>
+	 
+	<iscomment>continuity ends here</iscomment>
+	<isif condition="${!empty(pdict.OrderListItr)}">
+	<isloop items="${pdict.OrderListItr}" var="order" status="loopstate">
+	    <div class="gr-bg-wraper order-main">
+	    <div class="white-bg">
+	      <div class="top-l-corner"></div>
+	      <div class="top-r-corner"></div>
+	      <div class="bot-l-corner"></div>
+	      <div class="bot-r-corner"></div> 
+	   <div class="title">
+	    ${Resource.msg('account.order.orderid','account',null)} <span><isprint value="${order.id}" /></span>
+	    <div class="link_id"> <span><isprint value="${order.id}" /></span></div>      
+	   	<div class="r-links">
+	   	<div class="close"><a href="javascript://"><span>${Resource.msg('account.order.close','account',null)}</span></a></div></div>
+		<div class="clear"></div>
+		</div>
+		
+	    <isif condition="${!empty(order.products)}">
+	    	<isloop items="${order.products}" var="prod" status="loopstate1">
+	   
+		     
+				     <isset name="prodId" value="${prod.prodId}" scope="page"/>
+				     <isset name="prodObj" value="${dw.catalog.ProductMgr.getProduct(prodId)}" scope="page"/>			  
+						
+						<div class="panel-wraper top-padding orderpanelht">
+						   <div class="left-panel-order">
+			  					<div class="inner-l">
+			  					  <isif condition="${loopstate1.count==1}">
+						 				${Resource.msg('account.order.ordershipped','account',null)}
+						 				<br/>
+						 				<span class="orderdate"><isprint value="${prod.orderDate}" /></span>
+						 	       <iselse>&nbsp;</iselse>
+						 	       </isif>
+						 	    </div>
+						 	</div>
+						 	
+						
+						<div class="mid-panel">
+							<iscomment>Try to get product image (of type "small")</iscomment>
+							<isset name="Scene7assetID" value="" scope="page"/>
+						    <isif condition="${null!=prodObj}"> 
+							 	<isif condition = "${'sceneSevenAssetId' in prodObj.custom}">		
+									<isset name="Scene7assetID" value="${prodObj.custom.sceneSevenAssetId}" scope="page"/>
+								</isif>	
+							</isif>	
+							<iscomment>If image couldn't be determined, display a "no image" medium</iscomment>
+							<isif condition="${!empty(Scene7assetID)}">
+								<isset name="scene7_1" value="${Resource.msg('image.scene7url','common',null)}" scope="page">
+								<isset name="scene7_2" value="${Resource.msg('image.scene7.preset.categoryhover','common',null)}" scope="page">								
+								<isset name="thumbnailUrl" value="${scene7_1+Scene7assetID+scene7_2}" scope="page"/>						
+							<iselse/>
+								<isset name="thumbnailUrl" value="${URLUtils.staticURL('/images/noimagemedium.png')}" scope="page"/>
+							</isif>
+							<isif condition="${null!=prodObj}"> 
+								<isif condition = "${'catalogDisplayNameTwo' in prodObj.custom}">
+									<isset name="thumbnailAlt" value="${prodObj.custom.catalogDisplayNameTwo}" scope="page"/>
+									<isset name="thumbnailTitle" value="${prodObj.custom.catalogDisplayNameTwo}" scope="page"/>
+								</isif>				
+							</isif>	
+		    				<img src="${thumbnailUrl}" alt='<isprint value="${thumbnailAlt}" encoding="off"/>'  title='<isprint value="${thumbnailTitle}" encoding="off"/>'"/>
+					</div>	
+										
+						<div class="right-panel">
+						<div class="inner-l">
+						<div class="order-history">					
+						<div class="prod-desc">
+						<div class="p-name no-float"><isprint value="${prod.title}"  encoding="off" /></div> 
+						<div class="row"> <isif condition="${null!=prodObj}"> 
+						<isif condition = "${'catalogShortDescription' in prodObj.custom}">	
+							<isprint value="${prodObj.custom.catalogShortDescription}" encoding="off"/>
+						</isif>
+						</isif> 
+						</div>
+						<div class="row">${Resource.msg('account.order.item','account',null)}&nbsp;<b><isprint value="${prod.productNum}" /></b></div>
+						</div>
+						<div class="re-order">
+						<isif condition="${null!=prodObj}"> 
+						   <isif  condition="${prod.status!="Not Shipped"}">
+							    <isif  condition="${prodObj.getAvailabilityModel().orderable}"> 
+								        <isif  condition="${prodObj.getAvailabilityModel().isInStock() && prodObj.categorized}">
+	  									<button id="reorder" class="gr-btn" type="submit" value="${Resource.msg('orders.reorder','account',null)}"  onclick="javascript:app.minicart.addFromCLP('${prodObj.ID}', '${prodObj.getAvailabilityModel().isInStock()}','${(!empty(prodObj.getOrderableRecommendations( dw.system.Site.getCurrent().getCustomPreferenceValue('UpsellRecommendationType'))) )}')"><span class="lc"></span><span>${Resource.msg('orders.reorder','account',null)}</span></button>
+									    </isif>
+							    <iselse>
+							    <!-- Out Of Stock -->
+							    </isif>
+						     </isif>
+						</isif>     
+						</div>
+						<div class="clear"></div>
+						</div>
+						<div class="ordersub">${Resource.msg('account.order.orderstatus','account',null)}&nbsp;<b><isprint value="${prod.status}" /></b></div>
+						<div class="row">${Resource.msg('account.order.ship','account',null)}&nbsp;<b><isprint value="${prod.statusDate}" /></b></div>
+						<div class="quantity">
+						   <br/>
+							<div class="row">${Resource.msg('account.order.quantity','account',null)}&nbsp;<isprint value="${prod.quantity}" /></div>
+						</div>	 
+						<div class="row">${Resource.msg('account.order.price','account',null)}&nbsp;<b><isprint value="${prod.price}" /> </b></div>
+						<div class="availability">
+						 <div class="row">${Resource.msg('account.order.avial','account',null)}&nbsp;
+						 <isif condition="${null!=prodObj}"> 
+						    <isif  condition="${prodObj.getAvailabilityModel().orderable && prodObj.getAvailabilityModel().isInStock() && prodObj.categorized}"> 
+							      ${Resource.msg('account.order.instock','account',null)} 
+						    <iselse>${Resource.msg('account.order.outstock','account',null)}
+							</isif>
+						</isif>	
+						 </div>
+						</div>				
+						<iscomment>
+							<div class="row">${Resource.msg('account.order.tracking','account',null)}&nbsp;<b><isprint value="${prod.linkId}" /></b>.  <a href=""><b>${Resource.msg('account.order.tracpackage','account',null)}</b></a></div>
+						</iscomment>
+						<div class="r-links">
+	  <!--  Commented	<isif  condition="${order.productCount>3}">
+	 <div class="vieworderdetails-number">${Resource.msg('account.order.vieworderdetails','account',null)} <isprint value="${Number(order.productCount-3).toFixed()}" /> ${Resource.msg('account.order.vieworderdetails2','account',null)}
+	 </div>  
+	   </isif> -->
+	   	
+		</div>
+	
+		
+						</div>
+						</div>
+					<div class="clear"></div>
+					 </div>	
+					
+				</isloop> 
+		
+		<div class="clear"></div>
+					<div class="vieworderdetails"><a id="orderdetail" href="javascript://" class="blue-btn bl-btn-a"><span class="blc"></span><span>${Resource.msg('account.order.orderdetails','account',null)}</span></a></div>
+		
+		<div class="clear"></div>
+						<div class="detail-wraper">
+				<div id="ID" class="order-details"></div>
+				<div class="clear"></div>
+				</div>
+		 	  </isif> 
+		     
+		      </div>
+		      </div>
+	</isloop> 
+	</div>
+	
+
+	<iselse/>
+
+	   <div class="inner-l bot-no-order">
+         <div class="no_orders">${Resource.msg('orders.noorders','account',null)}</div><!-- END: no_orders -->
+         <div class="no_orders-con">${Resource.msg('orders.noordersmsg','account',null)}</div><!-- END: no_orders -->
+       </div>
+
+	</isif>
+</isif>
+
+</div>
+</div>
+</div>
+</div>
+</div>
+<script type="text/javascript">
+jQuery(document).ready(function(){
+	jQuery('.vieworderdetails-cont').css('display','none')
+		jQuery('.close-cont').click (function(){
+			jQuery('.accordion').slideUp('slow');
+			jQuery('.vieworderdetails-cont').css('display','block');
+			jQuery(this).css('display','none');
+		})
+	jQuery('.vieworderdetails-cont').click (function(){
+			jQuery('.accordion').slideDown('slow');			
+			jQuery(this).css('display','none');
+			jQuery('.close-cont').css('display','block');
+		})
+		
+		jQuery('#orderdetail').live('click',function(){
+			
+			s.linkTrackVars='pageName,prop24,events';
+	   		s.prop24="show details";
+	   		s.pageName='mb:myaccount:orderstatus';
+	   		s.linkTrackEvents='event29';
+	   		s.events="event29";
+	   		s.tl(this,'o',"show details");
+	   			
+		});
+	jQuery('#reorder').click (function(){
+		s.linkTrackVars='pageName,events';
+   		s.pageName='mb:myaccount:orderstatus';
+   		s.linkTrackEvents='event29';
+   		s.events="event29";
+   		s.tl(this,'o',"reOrder");
+	});
+	jQuery('.order-main .close').each (function(){		
+		jQuery(this).click (function(){
+			document.getElementById("ID").innerHTML="";
+			var parentObj = jQuery(this).parents('.order-main');
+			parentObj.find('.detail-wraper').hide();
+			parentObj.find('.products-hidden').hide();
+			parentObj.find('.quantity').hide();
+			parentObj.find('.availability').hide();		
+			jQuery(this).hide();
+			parentObj.find('.vieworderdetails').show();				
+		});	
+	}); 
+	jQuery('.order-main .vieworderdetails').each (function(){
+			
+		jQuery(this).click (function(){
+			
+			var parentObj = jQuery(this).parents('.order-main');
+			var parentObjdetails = parentObj.find('.order-details');
+			var linkId=parentObj.find('.link_id span').text();
+			var url=app.util.appendParamToURL("${URLUtils.https('OrderHistory-OrderDetails')}", "linkId", linkId);
+			var result = app.ajax.getJson({
+				url: url,
+				callback: function(data) {
+				if(data!=null) {
+						//alert("Data :"+data.ID);
+						//document.getElementById("ID").innerHTML="<br/>Shipping Address: <br/>"+data.ShipName+"<br/>"+data.ShippingAddress+"<br/><br/>Billing Address: "+data.BillName+data.BillingAddress+"<br/><br/>Actual Price: $"+data.ActualPrice+"<br/>ShippingHandling: "+data.ShippingHandling+"<br/>Tax: "+data.Tax+"<br/>Total:"+data.Total;
+							parentObjdetails.html("<div class='shipping-info'><span class='name'>Shipping Address:</span> <br /><strong>"+data.ShipName+"</strong><br>"+data.ShippingAddress+"</div><div class='billing-info'><span class='name'>Billing Address:</span><strong>"+data.BillName+"</strong>"+data.BillingAddress+"</div><div class='price-info'><label>Actual Price:</label>"+"<span>"+data.ActualPrice+"</span></br><label>Order Total: </label>"+data.ActualPrice+"</div><div class='tax-info'><label>Shipping & Handling:</label>"+data.ShippingHandling+"<br><label>Tax:</label>" +data.Tax+"<br><strong><label>Total:</label>"+data.Total+"</strong></div>");
+						return false;
+					}	
+				}
+			});
+			parentObj.find('.detail-wraper').show();
+			parentObj.find('.products-hidden').show();
+			parentObj.find('.quantity').show();
+			parentObj.find('.availability').show();			
+			parentObj.find('.close').show();
+			jQuery(this).hide();
+		});	
+	}); 	
+});
+
+</script>
+
+
+</isdecorate>

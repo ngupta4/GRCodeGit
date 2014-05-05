@@ -1,0 +1,13 @@
+<!--- TEMPLATENAME: include_tealium_pixel.isml --->
+<isif condition="${request.custom.isTealiumIncluded != true}">
+
+<iscomponent pipeline ="Tealium-FooterInclude"
+pid=${pdict.CurrentHttpParameterMap.pid.stringValue}
+searchterm=${pdict.CurrentHttpParameterMap.q.stringValue}
+searchresultscount=${pdict.ProductSearchResult.count+''}
+orderno=${pdict.OrderNo}
+contentsearchresultscount=${pdict.ContentSearchResult.count+''}
+pagecgid=${pdict.CurrentHttpParameterMap.cgid.stringValue} />
+
+  <isset name="isTealiumIncluded" value="${true}" scope="request" />
+</isif>

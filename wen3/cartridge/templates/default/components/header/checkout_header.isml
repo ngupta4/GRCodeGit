@@ -1,0 +1,122 @@
+<isset name="CCC" value="${pdict.CurrentCampaignConfig}" scope="page" />
+<isscript>
+		importPackage(dw.object);
+		importPackage(dw.catalog);
+		
+		importScript('int_gutheyrenker:common/libEncoding.ds');
+		
+		if(pdict.CurrentCampaignConfig!=null) {
+			var CCC : Object = pdict.CurrentCampaignConfig;
+			if(CCC !=null ){
+				var category : dw.catalog.Category = CCC.getCampaignCategory();
+			}
+		}
+</isscript>
+<isslot id="campaign-css" context="category" description="Campaign CSS" context-object="${category}"/>
+<iscomment>Check the htmlhead.isml for the server side tracking pixel</iscomment>
+<isif condition="${dw.system.Site.getCurrent().getCustomPreferenceValue('GRMVisitorLogPixelEnabled') == true}">
+    <img src="${URLUtils.url('GRMiddleware-VisitorLog', 'urlpath', request.httpPath, 'urlquery', request.httpQueryString)}" width="1" height="1"/>
+</isif>
+
+<isif condition="${('showNav' in this && !!showNav) || empty(CCC) || empty(CCC.showNav) }">
+	<isset name="showNav" value="${true}" scope="page" />
+<iselse/>
+	<isset name="showNav" value="${CCC.showNav}" scope="page" />
+</isif>
+
+<isscript>
+      importScript('guthyrenker_core:common/libUtils.ds');
+      var contentInfo    = getCurrentContentInfo(pdict.CurrentHttpParameterMap);
+      var CurrentContent : Content = contentInfo.content;
+      
+      if (pdict.CurrentHttpParameterMap.enableSearch.value == 'true') {
+      		pdict.CurrentSession.custom.enableSearch = true;
+      }
+</isscript>
+
+<isif condition="${!empty(CurrentContent) && CurrentContent.ID == 'rightnow-header'}">
+  <isif condition = "${request.httpCookies['PHPSESSID'] == null}">
+    <iscookie name="PHPSESSID" value="${pdict.CurrentSession.sessionID}" path="/" maxAge="-1" />
+  </isif>
+  
+  <script type="text/javascript">
+    var session_id = "<isprint value="${pdict.CurrentSession.sessionID}">";
+  </script>
+  <link href="${URLUtils.absStatic('/css/cust_care/global.css')}" media="screen" rel="stylesheet" type="text/css" />
+  <link href="${URLUtils.absStatic('/css/cust_care/main.css')}" media="screen" rel="stylesheet" type="text/css" />  
+  <link href="${URLUtils.absStatic('/css/cust_care/js_on_styles.css')}" media="screen" rel="stylesheet" type="text/css">
+  
+</isif>
+  
+<isscript>
+	importPackage(dw.web);
+	importScript("guthyrenker_core:common/libUtils.ds")
+	var loggedIn : boolean = isLoggedIn();
+	
+	var sessionID = null;
+	
+	if( !empty(pdict.CurrentHttpParameterMap.pactvid) && !empty(pdict.CurrentHttpParameterMap.pactvid.stringValue) ) {
+		sessionID = pdict.CurrentHttpParameterMap.pactvid.stringValue;
+	}
+	
+	function url3(pipeline,k1,v1,k2,v2,k3,v3) {
+		var outs : String = '';
+		if( pipeline.indexOf('COCart')>-1 ) {
+			outs = URLUtils.https(pipeline,k1,v1,k2,v2,k3,v3);
+		} else {
+			outs = URLUtils.url(pipeline,k1,v1,k2,v2,k3,v3);
+		}
+		return outs;
+	}
+	
+	function url2(pipeline,k1,v1,k2,v2) {
+		var outs : String = '';
+		if( pipeline.indexOf('COCart')>-1 ) {
+			outs = URLUtils.https(pipeline,k1,v1,k2,v2);
+		} else {
+			outs = URLUtils.url(pipeline,k1,v1,k2,v2);
+		}
+		return outs;
+	}
+	
+	function url1(pipeline,k1,v1) {
+		var outs : String = '';
+		if( pipeline.indexOf('COCart')>-1 ) {
+			outs = URLUtils.https(pipeline,k1,v1);
+		} else {
+			outs = URLUtils.url(pipeline,k1,v1);
+		}
+		return outs;
+	}
+	
+	function url0(pipeline) {
+		var outs : String = '';
+		if( pipeline.indexOf('COCart')>-1 ) {
+			outs = URLUtils.https(pipeline);
+		} else {
+			outs = URLUtils.url(pipeline);
+		}
+		return outs;
+	}
+</isscript>
+
+<isset name="PHPSESSID" value="${!empty(pdict.CurrentRequest.httpCookies['PHPSESSID']) ? pdict.CurrentRequest.httpCookies['PHPSESSID'].value : (!empty(sessionID)?sessionID:'')}" scope="page" />
+
+<isset name="pactvid" value="${empty(PHPSESSID)?'':'?pactvid='+PHPSESSID}" scope="page"/>
+
+<isset name="isLoggedIn" value="${loggedIn}" scope="page"/>
+<div class="navContainer">
+    <div id="nav">
+        
+        <div id="logo"><a href="${URLUtils.httpHome()}" title="WEN Haircare homepage">Wen</a></div>
+        <div class="tagline">A new approach to the way you cleanse your hair.</div>
+        <div class="mainNav">
+            <ul>
+                <li class="nav_shoppingCart"><span class="nav_shoppingCartLabel">SHOPPING CART</span></li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<iscomment>Cookies and Javascript enabled check</iscomment>
+<isinclude template="components/browsertoolscheck"/>

@@ -1,0 +1,118 @@
+<!--- TEMPLATENAME: cart2.isml --->
+<isinclude template="util/modules" />
+
+<isscript>
+	importPackage(dw.object);
+	importPackage(dw.catalog);
+	
+	var CCC : Object = pdict.CurrentCampaignConfig;
+	var campaignCode : String = CCC.campaignCode;
+	
+	var showHeader : boolean = CCC.showHeader;
+	var showFooter : boolean = CCC.showFooter;
+	var showNav : boolean = CCC.showNav;
+	var showOrderButton : boolean = CCC.showOrderButton;
+	
+	var category : dw.catalog.Category = CCC.getCampaignCategory();
+</isscript>
+
+<isset name="decorator" value="${empty(pdict.CheckoutStep) || 'cartinformation' == pdict.CheckoutStep ? 'content/checkout/pt_checkoutshippingovernight' : 'content/checkout/pt_checkout'}" scope="page" />
+
+<isdecorate template="${decorator}">
+	<isset name="multiCheckout" value="${false}" scope="pdict" />
+    
+    <script type="text/javascript">
+        app.proactiv.resources.set("GRMSubmissionStatus", "PREPAYMENT")
+    </script>
+    
+    <iscomment>First and default step</iscomment>
+	<isif condition="${empty(pdict.CheckoutStep) || 'cartinformation' == pdict.CheckoutStep}">
+		<iscomment>Disable checkout button for cart. We don't need it at this step</iscomment>
+		<isset name="EnableCheckout" value="${false}" scope="pdict" />
+
+		<iscomment>For this template we don't have the header and step-control</iscomment>
+		<iscomment>		
+			<div class="checkout_header">
+				<iscontentasset aid="cart-header-text-billing-details" />
+			</div>
+			
+			<ischeckoutbreadcrumbs type="simple" />
+		</iscomment>
+		
+		<div id="selectyourshipment"><span>Select Your Method of Shipment</span></div>
+		<isslot id="cart2-top-banner" description="Cart2 top banner" context="category" context-object="${category}" />
+		<isinclude template="checkout/components/errors" />
+		
+		<isinclude template="checkout/steps/cartovernight" />
+	<iscomment>Review page (PayPal payment)</iscomment>
+	<iselseif condition="${'review' == pdict.CheckoutStep}">
+		<ischeckoutbreadcrumbs type="simple" step="review" paypal="${true}" />
+		
+		<isinclude template="checkout/steps/review" />
+	<iscomment>Confirmation page</iscomment>
+	<iselseif condition="${'confirmation' == pdict.CheckoutStep}">
+		<div class="checkout_header">
+			<h1><isprint value="${Resource.msg('confirmation.header', 'checkout', null)}"/></h1>
+		</div>
+		
+		<ischeckoutbreadcrumbs type="simple" step="confirm" paypal="${pdict.IsPaypalPayment}" />
+		
+		<isinclude template="checkout/components/errors" />
+		
+		<isinclude template="checkout/steps/confirmation" />
+	<iselseif condition="${'cartempty' == pdict.CheckoutStep}">
+		<div class="checkout_header">
+			<iscontentasset aid="cart-header-text-billing-details" />
+		</div>
+		
+		<ischeckoutbreadcrumbs type="simple" step="" paypal="${pdict.IsPaypalPayment}" />
+		
+		<isinclude template="checkout/components/errors" />
+		
+		<isinclude template="checkout/steps/cartempty" />
+	</isif>
+	
+<iscomment>SuppCY checkbox is not checked, then display CY code</iscomment>
+<isif condition="${session.custom.suppCY == null || session.custom.suppCY == 0}">
+
+<script type="text/javascript">
+  cy.SUPPRESSDEFAULT = true;
+  $(document).ready(function(){
+  	$("#dwfrm_personinf_contact_email").change(cy_checkFieldsAndGetImageSrc);
+  	$("#dwfrm_personinf_contact_emailconfirm").change(cy_checkFieldsAndGetImageSrc);
+  	$("#billFirstName").change(cy_checkFieldsAndGetImageSrc);
+	$("#billLastName").change(cy_checkFieldsAndGetImageSrc);
+	$("#billState").change(cy_checkFieldsAndGetImageSrc);
+	$("#paymentMethod").change(cy_checkFieldsAndGetImageSrc);
+  });
+  function getImageSrc()
+  {
+    cy.CUSTOMERCODE = "${dw.system.Site.current.preferences.custom.seeWhyCustomerCode}";
+    cy.FunnelLevel = "2";
+    cy.UserId = "${pdict.CurrentCustomer.profile.email}";
+  }
+  function cy_checkFieldsAndGetImageSrc() {
+	  	cy.CUSTOM3=$('.offerCode').text();
+		cy.USERID=$("#dwfrm_personinf_contact_email").val();
+		cy.CUSTOM1=$('#billFirstName').val();
+		cy.CUSTOM2=$('#billLastName').val();
+		cy.CUSTOM4=$('#billState').val();
+		cy.CUSTOM5="";
+		cy.FUNNELLEVEL='4';
+		if ($('paymentMethod').val() == 'PREPAY'){
+			cy.FUNNELLEVEL = 5;
+		} 
+		if (isEmailValid(cy.USERID)){
+			cy_getImageSrc();
+		}
+	}
+</script>
+</isif>
+
+<script type="text/javascript">
+  function isEmailValid(emailAddress) {
+			var pattern = new RegExp(/^(("[\w-\s]+")|([\w-]+(?:\.[\w-]+)*)|("[\w-\s]+")([\w-]+(?:\.[\w-]+)*))(@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$)|(@\[?((25[0-5]\.|2[0-4][0-9]\.|1[0-9]{2}\.|[0-9]{1,2}\.))((25[0-5]|2[0-4][0-9]|1[0-9]{2}|[0-9]{1,2})\.){2}(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[0-9]{1,2})\]?$)/i);
+			return pattern.test(emailAddress);
+  }
+</script>
+</isdecorate>

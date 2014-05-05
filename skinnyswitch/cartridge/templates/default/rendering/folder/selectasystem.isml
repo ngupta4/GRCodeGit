@@ -1,0 +1,47 @@
+<!--- TEMPLATENAME: selectasystemsingle.isml --->
+<iscache status="off"/>
+
+<iscomment>
+	This template is created before the 'wrapper' template, so we can set
+	up the template configuration for the 'pt_selectasystem' template right here.
+</iscomment>
+
+
+<isdecorate template="rendering/folder/pt_selectasystem">
+	<isinclude template="util/modules"/>
+	<isscript>
+		importPackage(dw.util);
+		importPackage(dw.object);
+		importPackage(dw.catalog);
+		
+		var CCC : Object = pdict.CurrentCampaignConfig;
+		var campaignCode : String = CCC.campaignCode;
+		var showHeader : boolean = CCC.showHeader;
+		var showFooter : boolean = CCC.showFooter;
+		var showNav : boolean = CCC.showNav;
+		var showOrderButton : boolean = CCC.showOrderButton;
+		var containerClasses : String = CCC.getContainerClasses();
+		var category : dw.catalog.Category = dw.catalog.CatalogManager.getCategory(CCC.campaignCode + '-selectasystem');
+	</isscript>
+	
+	<div class="pdp_header">
+		<isslot id="selectasystem-header" context="category" description="Select a System Header" context-object="${category}"/>
+	</div>
+	
+	<div id="pdp_top_slot">
+		<a href="${URLUtils.https('COCart-AddProduct','pid', CCC.sasOfferCodes.toString(), 'upsell', 'true')}">
+			<isslot id="selectasystem-topslot" context="category" description="Select a System Top Slot" context-object="${category}"/>
+		</a>
+	</div>
+	
+	<div id="pdp_middle_slot">
+		<a href="${URLUtils.https('COCart-AddProduct','pid', CCC.sasOfferCodes.toString(), 'upsell', 'true')}">
+			<isslot id="selectasystem-middleslot" context="category" description="Select a System Middle Slot" context-object="${category}"/>
+		</a>
+	</div>
+	<div id="pdp_bottom_slot">
+		<isslot id="selectasystem-bottomslot" context="category" description="Select a System Bottom Slot" context-object="${category}"/>	
+	</div>
+	
+	<isset name="OmniturePage" value="Offerpage" scope="pdict">	
+</isdecorate>

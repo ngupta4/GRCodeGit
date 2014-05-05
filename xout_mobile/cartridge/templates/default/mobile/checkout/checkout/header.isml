@@ -1,0 +1,15 @@
+<div id="header">
+  	<a href="${URLUtils.url('mHome-Show')}" title="${Resource.msg('global.storename','locale',null)}">
+  		<img src="${URLUtils.staticURL('/themes/xout_mobile/images/header/logo.png')}"/>
+  	</a>
+  	<div id="text">
+	  	<span id="title">Checkout</span>
+	  	<span id="subtitle">Your Shopping Cart</span>
+	  	<span id="note">
+	  		Below are the items you've selected for purchase.  If you change quantities, please click "Recalculate" to update your subtotal.
+	  	</span>
+	  	<span id="details">
+	  		<isprint value="${pdict.Product.custom.cartDescription}" encoding="off"/>
+	  	</span>
+  	</div>
+</div>

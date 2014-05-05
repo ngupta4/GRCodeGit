@@ -1,0 +1,97 @@
+<!--- TEMPLATENAME: browsefoldersidebar.isml --->
+
+<isscript>
+	importScript("guthyrenker_core:common/libUtils.ds");
+	var selectedContentID = null;
+	if( !empty(pdict.Content) ) {
+		selectedContentID = pdict.Content.ID;
+	}
+</isscript>
+
+<!--start tertiary nav-->
+<isif condition="${!empty(RootFolder.getOnlineSubFolders())}">
+
+	<div class="successNav">
+		<isloop items="${RootFolder.getOnlineSubFolders()}" var="aFolder" status="navstat">
+			<div class="navItem ${aFolder.ID}">
+				<h3 class="navItemHead">${aFolder.displayName}</h3>
+				<div id="content_${aFolder.ID}" class="navItemContent">
+					<isset name="OnlineContents" value="${aFolder.getOnlineSubFolders()}" scope="page" />
+					<isif condition="${empty(OnlineContents)}">
+						<isset name="OnlineContents" value="${aFolder.getOnlineContent()}" scope="page" />
+					</isif>
+					<isif condition="${!empty(OnlineContents)}">
+						<isloop items="${OnlineContents}" var="aContent" status="navstat1">
+							<isif condition="${aContent.custom.offlineLocales != 'true'}">
+							<isif condition="${'linkPipeline' in aContent.custom && !empty(aContent.custom.linkPipeline)}">
+								<isset name="LinkParts" value="${aContent.custom.linkPipeline.split(',')}" scope="page" />
+								<isset name="Pipeline" value="${LinkParts[0]}" scope="page" />
+								<isif condition="${LinkParts.length>5}">
+									<isset name="ContentLinkURL" value="${URLUtils.url(Pipeline,LinkParts[1],LinkParts[2],LinkParts[3],LinkParts[4],LinkParts[5],LinkParts[6])}" scope="page" />
+								<iselseif condition="${LinkParts.length>3}">
+									<isset name="ContentLinkURL" value="${URLUtils.url(Pipeline,LinkParts[1],LinkParts[2],LinkParts[3],LinkParts[4])}" scope="page" />
+								<iselseif condition="${LinkParts.length>1}">
+									<isset name="ContentLinkURL" value="${URLUtils.url(Pipeline,LinkParts[1],LinkParts[2])}" scope="page" />
+								<iselse/>
+									<isset name="ContentLinkURL" value="${URLUtils.url(Pipeline)}" scope="page" />
+								</isif>
+							<iselseif condition="${('linkType' in aContent.custom && !empty(aContent.custom.linkType) && aContent.custom.linkType.value == 'link') && ('linkHref' in aContent.custom && !empty(aContent.custom.linkHref))}">
+								<isset name="ContentLinkURL" value="${aContent.custom.linkHref}" scope="page" />			
+							<iselse/>
+								<isset name="ContentLinkURL" value="${URLUtils.url('Page-Show','cid',aContent.ID)}" scope="page"/>
+							</isif>
+							<isset name="LinkTitle" value="${aContent.displayName}" scope="page" />
+							<isif condition="${empty(LinkTitle)}">
+								<isset name="LinkTitle" value="${aContent.name}" scope="page" />
+							</isif>
+							<isif condition="${aContent.custom.offlineLocales == 'mp'}">
+								<!-- mp_trans_add
+							</isif>
+							<a href="<isprint value="${ContentLinkURL}" encoding="off"/>" class="${aContent.ID}_link${aContent.ID==selectedContentID ? ' selected' : ''}"> - ${LinkTitle}</a>
+							<isif condition="${!navstat1.last}"><br/></isif>
+							<isif condition="${aContent.custom.offlineLocales == 'mp'}">
+								-->
+							</isif>
+							</isif>
+						</isloop>
+					</isif>
+				</div>
+				<div class="navItemBottom"></div>
+			</div>
+		</isloop>
+		
+		<isif condition="${pdict.DisplayPhone !== false}">
+			<iscomment>Order By Phone section</iscomment>
+			<div class="block nav" id="orderbyphonesidebar">
+				<div class="blockTop"><div class="blockTopRight"></div></div>
+				<div class="blockContent">
+					<isif condition="${!empty(getCustomerUID(request))}">
+					    <isslot id="order-by-phone-loggedin" description="Order by phone for the authorized user" context="global" />
+					<iselse/>
+					    <isslot id="order-by-phone-anonymous" description="Order by phone for the unauthorized user" context="global" />
+					</isif>
+				</div>
+				<div class="blockBottom"><div class="blockBottomRight"></div></div>
+			</div><!-- end block -->
+		</isif>
+		
+		<isif condition="${pdict.DisplayProactiv365 !== false}">
+			<iscomment>Proactiv 365 section</iscomment>
+			<div id="proactiv365sidebar">
+				<isif condition="${!empty(getCustomerUID(request))}">
+				    <isslot id="proactiv-365-sidebar-loggedin" description="proactiv 365 sidebar for the authorized user" context="global" />
+				<iselse/>
+				    <isslot id="proactiv-365-sidebar-anonymous" description="proactiv 365 sidebar for the unauthorized user" context="global" />
+				</isif>
+			</div>
+		</isif>
+	</div>
+	
+	<script type="text/javascript">
+		jQuery(function(){
+			jQuery('.successNav h3').click(function(){
+				jQuery(this).next('.navItemContent').slideToggle("slow");
+			});
+		});
+	</script>
+</isif>

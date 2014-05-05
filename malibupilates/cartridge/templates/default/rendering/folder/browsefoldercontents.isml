@@ -1,0 +1,12 @@
+<iscache status="off"/>
+
+<isdecorate template="search/pt_browsefoldercontents">
+	
+	<isinclude template="util/modules"/>
+	
+	<iscomment>create reporting event</iscomment>
+	<isinclude template="util/reporting/ReportSearch.isml"/>
+
+	<isinclude template="content/content/htmlcontentasset" />
+	<isset name="OmniturePage" value="StaticContent" scope="pdict">
+</isdecorate>

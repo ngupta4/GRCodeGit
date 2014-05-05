@@ -1,0 +1,28 @@
+<!--- TEMPLATENAME: offer.isml --->
+<isif condition="${pdict.Product != null}">
+	<isobject object="${pdict.Product}" view="detail">
+		<iscomment>set the product for local reuse</iscomment>
+		<isset name="Product" value="${pdict.Product}" scope="page"/>	
+		<div id="offer-${Product.ID}" class="offerContainer">
+			<a href="${URLUtils.url('COCart-AddProduct', 'pid', Product.ID)}">
+				<img src="${Product.getImage('medium',0).url}"
+					alt="${Product.getImage('medium',0).alt}" 
+					title="${Product.getImage('medium',0).title}"
+					width="484px"/>
+			</a>
+
+			
+			<div class="shortDescription">
+				<isprint value="${Product.shortDescription}" encoding="off"/>
+			</div><!-- END: shortDescription -->
+			<iscomment>
+			<div class="promo">
+				<isprint value="${Product.custom.shippingPromoText}" encoding="off"/>
+			</div>		
+			</iscomment>			
+			<div class="pricing"><isprint value="${Product.custom.upgradeOfferCallout}" encoding="off"/></div>
+		</div>
+	</isobject>
+<iselse/>
+	
+</isif>

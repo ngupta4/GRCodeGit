@@ -1,0 +1,134 @@
+<isinclude template="components/header/htmlhead"/>
+<isinclude template="util/modules"/>
+<iscomment>
+	This is the footer for all pages. Be careful caching it if it contains
+	user dependent information. Cache its elements instead if necessary (do not forget
+	to change the isinclude into a pipeline include for that).
+</iscomment>
+<isif condition="${ pdict.CurrentHttpParameterMap.loggedin == 'false'}">
+	<iscomment><isinclude template="components/footer/footerold"/></iscomment>
+	<isinclude template="components/footer/footerold"/>
+<iselseif condition="${ pdict.CurrentHttpParameterMap.loggedin == 'true'}">
+	<iscontentasset aid="footer-toplink"/>
+	<div class="footer-customerservice">
+	  <div class="footer">
+	  <iscontentasset aid="footer-customerservice"/>
+	    <!--Start Footer For Logged In / Cookied Members - B-->
+	    
+	    <div class="emailsignup">
+	      <isinclude template="components/emailsubscribe"/>
+	    </div>
+	  </div>
+	</div>
+	<isif condition="${pdict.CurrentCustomer.authenticated || pdict.CurrentCustomer.registered || pdict.CurrentSession.custom.cRememberMe}">
+	<iscontentasset aid="footer-bottomlinks"/>
+		<iselse>
+		<iscontentasset aid="footer-bottomlinks-nonmember"/>
+	</isif>
+	<iscomment>
+	<div id="lyt_btmFooter">
+	  
+	  <div class="footerWide">
+	    <div id="footer">
+			<iscontentasset aid="footer-copy"/>
+			
+			
+			<isif condition="${pdict.CurrentCustomer.authenticated || pdict.CurrentCustomer.registered || pdict.CurrentSession.custom.cRememberMe}">
+			 	<iscontentasset aid="footer-nav"/>
+			<iselse>
+				<iscontentasset aid="footer-nav-nonmember"/>
+			</isif>
+	    </div>
+	  </div>
+	  
+	</div><!-- END: footer -->
+	</iscomment>
+</isif>	
+<script type="text/javascript">
+jQuery('.openDiagonsticTool a').click( function(e) {
+	jQuery("#DrWalkthrough").remove();
+	jQuery("<div/>").attr("id", "DrWalkthrough").html("").appendTo(document.body);
+	app.createDialog({id: 'DrWalkthrough', options: {
+		bgiframe: true,
+		modal: true,
+		height:806,
+	   	width: 825,
+		title:'',
+	   	resizable: false
+	}});
+	var urlvedio =jQuery(this).attr('href');
+	jQuery("#DrWalkthrough").parent().css('background','none');
+	jQuery("#DrWalkthrough").addClass('ui-corner-all');
+	var objtitle= jQuery("#DrWalkthrough").siblings('.ui-dialog-titlebar');
+	objtitle.find('.ui-dialog-titlebar-close').addClass('drwalkthrough-close').removeClass('ui-dialog-titlebar-close');
+	jQuery('#DrWalkthrough').dialog('open');
+	jQuery("#DrWalkthrough").html(app.showProgress("productloader"));
+	jQuery('#DrWalkthrough').load(urlvedio);
+	return false;
+});
+</script>
+<isif condition="${pdict.CurrentCustomer.authenticated}"></isif>
+<isif condition="${pdict.CurrentCustomer.authenticated && pdict.CurrentHttpParameterMap.showWalkThrough.stringValue}">
+<script type="text/javascript">
+jQuery(document).ready(function(){
+	jQuery("#DrWalkthrough").remove();
+	jQuery("<div/>").attr("id", "DrWalkthrough").html("").appendTo(document.body);
+	app.createDialog({id: 'DrWalkthrough', options: {
+		bgiframe: true,
+		autoOpen: true,
+		modal: true,
+		height: 806,
+	   	width: 825,
+		title:'',
+	   	resizable: false
+	}});
+	
+	jQuery("#DrWalkthrough").parent().css('background','none');
+	jQuery("#DrWalkthrough").addClass('ui-corner-all');
+	var objtitle= jQuery("#DrWalkthrough").siblings('.ui-dialog-titlebar');
+	objtitle.find('.ui-dialog-titlebar-close').addClass('drwalkthrough-close').removeClass('ui-dialog-titlebar-close');
+	jQuery('#DrWalkthrough').dialog('open');
+	jQuery("#DrWalkthrough").html(app.showProgress("productloader"));
+	jQuery('#DrWalkthrough').load("${URLUtils.url('DrWalkthrough-Launch')}");
+	return false;
+});
+</script>
+</isif>
+
+
+
+<iscomment>
+	Customer registration can happen everywhere in the page flow. As special tag in the pdict
+	is indicating it. So we have to check on every page, if we have to report this event for
+	the reporting engine.
+</iscomment>
+
+
+
+<isinclude template="util/reporting/ReportUserRegistration.isml"/>
+
+<isif condition="${dw.system.Site.getCurrent().getCustomPreferenceValue('enableLiveChat') == true}">
+    <!-- LIVE CHAT INCLUDE SCRIPT -->
+
+    <isif condition="${!empty(pdict.CheckoutStep) && 'confirmation' == pdict.CheckoutStep}">
+      <iscomment>Confirmation page, Add inq chat confirmation information, rm5736</iscomment>
+      <script type="text/javascript">
+        var inqSalesProducts   = mainOfferCode;
+        var inqSalesQuantities = mainItemQty;
+        var inqClientOrderNum  = orderID;
+      </script>
+    </isif>
+
+    <script type='text/javascript' src="${dw.system.Site.getCurrent().getCustomPreferenceValue('liveChatJSUrl')}"></script>
+</isif>
+
+<isif condition="${dw.system.Site.current.preferences.custom.seeWhyIncluded}">
+	<isinclude url="${URLUtils.url('SeeWhy-Include')}"/>	
+</isif>
+<isinclude template="common/google_analytics" />
+<isif condition="${dw.system.Site.getCurrent().getCustomPreferenceValue('isForeseeIncluded') == true}">
+	<iscomment><script type="text/javascript" src="${URLUtils.staticURL('/foresee/foresee-trigger.js')}"></script></iscomment>
+	<isinclude template="foresee/foresee-trigger"/>
+</isif>
+<!---  Omniture tracking  --->
+<isinclude template="analytics/omniture/omniture"/>

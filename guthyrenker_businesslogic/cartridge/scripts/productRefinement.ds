@@ -1,0 +1,34 @@
+/*
+*This Script finds the Categories of searched products to be returned in a List.
+*/
+importPackage( dw.system );
+importPackage( dw.util );
+importPackage( dw.catalog );
+
+
+function getCategoryID(psm : ProductSearchModel) : List {
+	
+	Logger.info("Entering in productRefinement.ds");
+	var searchmodel : ProductSearchModel = psm;
+	var iter : Iterator = searchmodel.getProducts();
+	var product : Product ;
+	var searchedCategories :List = new ArrayList();
+	var hs: HashSet = new HashSet();
+	
+	while (iter != null && iter.hasNext())
+	{
+		product = iter.next();
+		for(var i=0;i<product.categories.getLength();i++)
+		{
+			Logger.debug("Category: "+product.categories[i].ID);
+			searchedCategories.add1(product.categories[i].ID);
+		}
+	}
+	
+	//Removing duplicate values in the Array of categories
+	hs.addAll(searchedCategories);
+	searchedCategories.clear();
+	searchedCategories.addAll(hs);
+	
+	return searchedCategories;
+}

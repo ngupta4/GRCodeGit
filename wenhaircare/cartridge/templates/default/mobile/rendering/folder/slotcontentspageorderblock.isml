@@ -1,0 +1,43 @@
+<isdecorate template="rendering/folder/pt_contentpage">
+  <isinclude template="util/modules"/>
+  <iscomment>create reporting event</iscomment>
+  <isinclude template="util/reporting/ReportSearch.isml"/>
+        <div class="mainWrapper">
+  <isscript>
+	  importPackage(dw.util);
+	  importScript('guthyrenker_core:common/libUtils.ds');
+	  var CCC : Object = pdict.CurrentCampaignConfig;
+	  var campaignCode : String = CCC.campaignCode;
+</isscript>
+          <div class="leftsection">
+            <isif condition="${empty(pdict.Content.custom.categoryName)}">
+              <isset name="folderName" value="${pdict.Content.classificationFolder.displayName}" scope="page"/>
+            <iselse>
+               <isset name="folderName" value="${pdict.Content.custom.categoryName}" scope="page"/>
+            </isif>
+             <isslot id="left-top-contentpage-banner" context="category" description="Top  left banner content pages" context-object="${dw.catalog.CatalogMgr.getCategory(folderName)}"/>
+            <isif condition="${pdict.CurrentCustomer.authenticated || pdict.CurrentCustomer.registered || pdict.CurrentSession.custom.cRememberMe}">
+            	<iscomment>Do not show order promo in this condition</iscomment>
+            <iselse>
+         		<isslot id="left-orderpromo-contentpages"  context="category" description="Contentpages left orderpromo area at bottom" context-object="${dw.catalog.CatalogMgr.getCategory(campaignCode)}" />
+         	</isif>
+		 </div>
+          <div class="rightsection">  
+          <isslot id="center-content" context="category" description="center content" context-object="${dw.catalog.CatalogMgr.getCategory(folderName)}"/>
+            <isif condition="${'categoryName' in pdict.Content.custom && empty(pdict.Content.custom.categoryName)}">
+              <isset name="folderName" value="${pdict.Content.classificationFolder.displayName}"/>
+              <isslot id="right-side-contentpages" context="category" description="right navigation content pages" context-object="${dw.catalog.CatalogMgr.getCategory(folderName)}"/>
+               <isslot id="right-side-contentpages1" context="category" description="right navigation content pages1" context-object="${dw.catalog.CatalogMgr.getCategory(folderName)}"/>
+                <isslot id="right-side-contentpages2" context="category" description="right navigation content pages2" context-object="${dw.catalog.CatalogMgr.getCategory(folderName)}"/>
+                
+              <iselse>
+              <isslot id="right-side-contentpages" context="category" description="right navigation content pages" context-object="${dw.catalog.CatalogMgr.getCategory(pdict.Content.custom.categoryName)}"/>
+              <isslot id="right-side-contentpages1" context="category" description="right navigation content pages1" context-object="${dw.catalog.CatalogMgr.getCategory(pdict.Content.custom.categoryName)}"/>
+              <isslot id="right-side-contentpages2" context="category" description="right navigation content pages2" context-object="${dw.catalog.CatalogMgr.getCategory(pdict.Content.custom.categoryName)}"/>
+            </isif>
+            <iscomment>Media Pixel</iscomment>
+            <isslot id="MediaPixelForContentPages" context="global" description="MediaPixelForContentPages" />
+          </div>
+        </div>      
+  <isset name="OmniturePage" value="StaticContent" scope="pdict">
+</isdecorate>

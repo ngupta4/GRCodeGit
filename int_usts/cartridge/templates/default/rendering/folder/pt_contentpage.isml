@@ -1,0 +1,64 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<isinclude template="util/modules"/>
+<isscript>importPackage(dw.content);
+  importPackage(dw.util);
+  importPackage(dw.catalog);
+  
+  importScript('guthyrenker_core:common/libUtils.ds');
+  
+  var contentInfo    = getCurrentContentInfo(pdict.CurrentHttpParameterMap);
+  var folderPathInfo = getFolderPathInfo(contentInfo);
+  
+  var CurrentFolder  : Folder = contentInfo.folder;
+  var CurrentContent : Content = contentInfo.content;
+  
+  var CurrentFolderPath : String = folderPathInfo.folderPath;
+  var RootFolder        : Folder = folderPathInfo.rootFolder;
+  
+  CurrentFolderPath += " body_"+RootFolder.ID+" "+RootFolder.ID;
+  
+  var PageID : String = "page_";
+  
+  if( empty(CurrentContent) ) {
+  PageID += CurrentFolder.ID;
+  } else {
+  PageID += CurrentContent.ID;
+  }
+  
+  var CCC : Object = pdict.CurrentCampaignConfig;</isscript>
+<iscomment>This page must be cachable. It inherits the caching attributes by the decorated template.</iscomment>
+
+<head>
+<iscomment>
+Include all important information globally , e.g. meta-data, link information, and javascript.
+</iscomment>
+<isinclude template="components/header/htmlhead"/>
+<iscomment>Add page specific header information here.</iscomment>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<isif condition="${'customCSSFile' in pdict.Content.custom && !empty(pdict.Content.custom.customCSSFile)}">
+<link href="${pdict.Content.custom.customCSSFile.URL}" type="text/css" rel="stylesheet" />
+</isif>
+</head>
+<body  <isif condition="${!empty(pdict.Content.ID)}"> id="${pdict.Content.ID}" </isif>>
+<iscomment>Cookies and Javascript enabled check</iscomment>
+<isinclude template="components/browsertoolscheck"/>
+<isset name="showNav" value="${true}" scope="page" />
+<isset name="showOrderButton" value="${true}" scope="page" />
+<isinclude template="components/header/header"/>
+  <div id="main">
+        <div id="wrapper">
+  			<isreplace/>
+  		</div>
+  </div>
+    <isinclude template="components/footer/footer"/>
+
+  <isinclude template="components/footer/pixels"/>
+  <isinclude template="common/google_analytics" />
+<script type="text/javascript">
+var	contentid ='${pdict.Content.ID}Nav'
+	$('.'+contentid).addClass('active');
+</script>
+<!-- END: container -->
+</body>
+</html>

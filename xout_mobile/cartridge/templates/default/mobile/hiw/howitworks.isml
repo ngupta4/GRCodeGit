@@ -1,0 +1,53 @@
+<iscache type="relative" hour="24"/>
+<isdecorate template="mobile/hiw/pt_hiw">
+
+<a href="${URLUtils.http('mHowItWorks-Show')}" id="btnHIW">
+	<img src="${URLUtils.staticURL('/themes/xout_mobile/images/button/btn_HIW.png')}"/>
+</a>
+
+<a href="${URLUtils.http('mProof-Show')}" id="btnProof">
+	<img src="${URLUtils.staticURL('/themes/xout_mobile/images/button/btn_Proof.png')}"/>
+</a>
+
+<div class="hiwBottle">
+	<img src="${URLUtils.staticURL('/themes/xout_mobile/images/hiw/HIW_Bottle.png')}"/>
+	<div class="hiwBottleText">
+		<b>X Out™</b> is a Wash-in acne treatment because it has prescription-grade acne medicine that gets sucked deep into pores and stays behind to help kill breakout – causing bacteria on contact, even after you wash. It’s an extra-strength anti-microbial. Which really means it blasts out acne bacteria. It’s part of what makes it so easy and effective.
+	</div>	
+</div>
+
+<div class="hiwBanner">
+	<img src="${URLUtils.staticURL('/themes/xout_mobile/images/hiw/HIW_Banner.png')}"/>
+
+</div>
+
+<div class="hiwBannerText">
+	<b>WASH</b><br/>Cleanse 2 minutes, 2x's a day, morning and night.<br/><br/>
+	<b>SPOT TREATMENT</b><br/>Dab it on annoying zits and head to bed.  Does fighting acne get any easier than sleep?<br/><br/>
+	<b>MASK</b><br/>For more intense clearing, leave for 10 minutes while you watch TV, space out, annoy your little brother or pwn some n00bs and then rinse off.
+</div>
+
+<div class="hiwCallToOrder">
+	<isif condition="${pdict.phoneNumber != null}">
+		<a href="tel:<isprint value="${pdict.phoneNumber}"/>">
+  			<img src="${URLUtils.staticURL('/themes/xout_mobile/images/button/btn_CallToOrder.png')}"/>
+		</a>
+	<iselse/>
+		<a href="tel:<isinclude url="${URLUtils.abs('mPhone-PhoneNumber')}" />">
+		  	<img src="${URLUtils.staticURL('/themes/xout_mobile/images/button/btn_CallToOrder.png')}"/>
+		</a>
+	</isif>
+</div>
+<div class="hiwBuyNow">
+	<a href="${URLUtils.url('mOrder-ShowBuyNow')}">
+		<img src="${URLUtils.staticURL('/themes/xout_mobile/images/button/btn_BuyNow.png')}"/>
+	</a>
+</div>
+	
+<isset name="OmniturePage" value="HowItWorks" scope="pdict">
+
+<isscript>
+var primaryUCI : Cookie = request.httpCookies['uci'];
+</isscript>
+
+</isdecorate>

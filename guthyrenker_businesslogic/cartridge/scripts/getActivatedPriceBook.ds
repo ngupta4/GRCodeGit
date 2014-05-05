@@ -1,0 +1,40 @@
+/**
+*
+*   
+*   @output salepricebookid : String
+*
+*/
+importPackage( dw.system );
+importPackage( dw.catalog );
+importPackage( dw.util );
+function execute( args : PipelineDictionary ) : String
+{
+	Logger.info("Entering in getActivatedPriceBook.ds");
+	
+	var pricebooks : Iterator = session.sourceCodeInfo.getGroup().getPriceBooks().iterator();
+    
+   while(pricebooks.hasNext()) {
+        var pricebook : PriceBook = pricebooks.next();
+        if(pricebook.getOnlineFlag()) {
+            args.salepricebookid = pricebook.getID();
+            session.custom.keyCode=session.sourceCodeInfo.group.custom.keyCode;
+            return PIPELET_NEXT;
+        }
+        
+    }
+     args.salepricebookid = null;
+   
+    
+    
+    // read pipeline dictionary input parameter
+    // ... = args.ExampleIn;
+    
+
+    // insert business logic here
+
+    // write pipeline dictionary output parameter
+
+    // args.ExampleOut = ...
+
+   return PIPELET_NEXT;
+}

@@ -1,0 +1,68 @@
+<iscomment>Renders the products selected for a particular slot. 
+Here it renders for Most popular products.
+</iscomment>
+<iscache type="relative" minute="30" varyby="price_promotion"/>
+
+<isinclude template="util/modules"/>
+	<div class="jcarousesearch"><h2>${Resource.msg('nohits.mostpopular','search',null)}</h2></div>
+	<isproducttilegrid producthits="${slotcontent.content}" productrows="${2}" productstoskip="${0}" productsperrow="${4}" pagingmodel="${pdict.ProductPagingModel}" scope="search"/>
+<script type="text/javascript">
+
+	//Add To Bag for Variant Products
+	 jQuery(".white-bg .addtobag").each(function() {		
+		  jQuery(this).click(function() 
+		  {
+			  var parentObj = jQuery(this).siblings('.swatches');
+			  var productid=  parentObj.find('.addtocartvariation li.selected a').attr('id');
+			  var upsell =  parentObj.find('.addtocartvariation li.selected a').attr('upsell');
+			  app.minicart.addFromCLP(productid, '${Product.available}',upsell);
+		 });
+	 });
+ 	 jQuery(".white-bg .addtokitvar").each(function() {		
+		  jQuery(this).click(function() 
+		  {
+			  var parentObj = jQuery(this).parent().siblings('.swatches');
+			  var productid=  parentObj.find('.addtocartvariation li.selected a').attr('id');
+			  addProduct(productid);
+		 });
+	 });
+ 
+jQuery(document).ready(function(){
+	$('.swatchesdisplay li:last-child').addClass("last");
+	equalHeight($(".productlisting .producttile .gr-bg-wraper .white-bg .description"));
+        equalHeightname($(".productlisting .producttile .gr-bg-wraper .white-bg .name"));
+        equalHeightname($(".productlisting .producttile .gr-bg-wraper .white-bg .name"));
+       // equalHeightdescription($(".productlisting .producttile .gr-bg-wraper .white-bg .description"));
+        equalHeight($(".productlisting .producttile .producttilemain .white-bg"));
+        equalHeight($(".productlisting .producttile .gr-bg-wraper .white-bg"));
+       
+});
+
+
+
+function equalHeight(group) {
+       var tallest = 0;
+       group.each(function() {
+               var thisHeight = $(this).height();
+               if(thisHeight > tallest) {
+               tallest = thisHeight;
+               }
+       });
+       group.height(tallest);
+}
+
+function equalHeightname(group) {
+       var tallestname = 0;
+       group.each(function() {
+       var thisHeightname = $(this).height();
+       if(thisHeightname > tallestname) {
+       tallestname = thisHeightname;
+       }
+       });
+       group.height(tallestname);
+}
+
+
+
+
+</script>

@@ -1,0 +1,113 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<isinclude template="util/modules"/>
+<head>
+<iscomment>
+	Include all important information globally , e.g. meta-data, link information, and
+	javascript.
+</iscomment>
+
+<isset name="pagetitle" value="${Resource.msg('pagetitle.checkout','checkout',null)}" scope="pdict" />
+<isinclude template="components/header/htmlhead"/>
+
+<iscomment>Add page type specific header information here.</iscomment>
+<link href="${URLUtils.staticURL('/css/print.css')}" type="text/css" rel="stylesheet" media="print" />
+<script type="text/javascript">
+   var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-7653475-1']);
+  _gaq.push(['_trackPageview']);
+  _gaq.push(['_addTrans',
+    "${pdict.Order.orderNo}",        								// order ID - required
+    "${pdict.Order.affiliatePartnerID}", 							// affiliation or store name
+    "${pdict.Order.totalGrossPrice.value}",     					// total - required
+    "${pdict.Order.totalTax.value}",           						 // tax
+    "${pdict.Order.defaultShipment.adjustedShippingTotalGrossPrice}", // shipping
+    "${pdict.Order.defaultShipment.shippingAddress.city}",       // city
+    "${pdict.Order.defaultShipment.shippingAddress.stateCode}",     // state or province
+    "${pdict.Order.defaultShipment.shippingAddress.countryCode.value}"    // country
+  ]);
+  // add item might be called for every item in the shopping cart
+  // where your ecommerce engine loops through each item in the cart and
+  // prints out _addItem for each
+</script>
+ 
+<isloop items="${pdict.Order.productLineItems}" var="productLineItem">
+   
+	<script type="text/javascript">     
+	  _gaq.push(['_addItem',
+	             "${pdict.Order.orderNo}",             // order ID - required
+	             "${productLineItem.productID}",   ,           // SKU/code - required
+	             "${productLineItem.productName}",         // product name
+	             "${productLineItem.category}",    // category or variation
+	             "${productLineItem.price.value}",        // unit price - required
+	             "${productLineItem.quantity.value}",  // quantity - required
+	  ]);
+	  
+	</script> 
+</isloop> 
+	<script type="text/javascript">    
+  _gaq.push(['_trackTrans']); //submits transaction to the Analytics servers
+  
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+</script>	
+</head>
+<body>
+<div id="container" class="ptOrderConfirmation">
+	<isinclude template="components/header/header"/>
+	<div class="checkOutContainer accountContainer">
+	<div class="checkOutContent">
+			<isreplace/>
+		<iscomment>Provide a create account form for unregistered customers</iscomment>
+		<isif condition="${!pdict.CurrentCustomer.authenticated}">
+			<div id="rightcolumn">
+				<h3>${Resource.msg('pt_orderconfirmation.createheader','checkout',null)}</h3>
+				<div class="createaccount">
+					<form action="${URLUtils.httpsContinue()}" method="post">
+						<fieldset>
+							<p>${Resource.msg('pt_orderconfirmation.accountmessage','checkout',null)}</p>
+							<div class="formfields">
+								<div class="formfield firstname">
+									<isinputfield formfield="${pdict.CurrentForms.profile.customer.firstname}" type="input"/>
+								</div><!-- END: firstname -->
+								<div class="formfield lastname">
+									<isinputfield formfield="${pdict.CurrentForms.profile.customer.lastname}" type="input"/>
+								</div>
+								<div class="formfield">
+									<isinputfield formfield="${pdict.CurrentForms.profile.customer.email}" type="input"/>
+								</div>
+								<div class="formfield">
+									<isinputfield formfield="${pdict.CurrentForms.profile.customer.emailconfirm}" type="input"/>
+								</div>
+								<div class="formfield">
+									<isinputfield formfield="${pdict.CurrentForms.profile.login.password}" type="password"/>
+								</div>
+								<div class="formfield">
+									<isinputfield formfield="${pdict.CurrentForms.profile.login.passwordconfirm}" type="password"/>
+								</div>
+								<div class="formfield">
+									<isinputfield formfield="${pdict.CurrentForms.profile.login.question}" type="select"/>
+								</div>
+								<div class="formfield">
+									<isinputfield formfield="${pdict.CurrentForms.profile.login.answer}" type="input"/>
+								</div>
+								<div class="actions">
+									<button type="submit" value="${Resource.msg('global.createbutton','locale',null)}" name="${pdict.CurrentForms.profile.confirm.htmlName}"><span>${Resource.msg('global.createbutton','locale',null)}</span></button>
+								</div>
+								<input type="hidden" name="${pdict.CurrentForms.profile.secureKeyHtmlName}" value="${pdict.CurrentForms.profile.secureKeyValue}"/>	
+							</div><!-- END: formfields -->
+						</fieldset>
+					</form>
+				</div>
+			</div><!-- END: rightcolumn -->
+		</isif>
+	</div><!-- END: main -->
+	<isset name="OmniturePage" value="COConfirmation" scope="pdict">	
+</div> <!-- END: container -->
+</div>
+<isinclude template="components/footer/footer"/>
+</body>
+</html>

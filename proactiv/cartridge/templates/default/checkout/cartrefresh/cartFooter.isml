@@ -1,0 +1,41 @@
+<!--- TEMPLATENAME: cartFooter.isml --->
+<div class="cartFooter">
+	<iscontentasset aid="cart-footer"/>
+	<!---  Omniture tracking  --->
+<isinclude template="analytics/omniture/omniture"/>
+<isif condition="${dw.system.Site.getCurrent().getCustomPreferenceValue('isForeseeIncluded') == true}">
+	<isinclude template="foresee/foresee-trigger"/>
+</isif>
+<isinclude template="common/mediaPixelsInit.isml"/>
+</div>
+
+<isscript>
+  importPackage( dw.object );
+  var showLiveChat : CustomObject = CustomObjectMgr.getCustomObject("CampaignConfiguration", getCurrentCampaignCode()).custom.showLiveChat;
+</isscript>
+
+<isif condition="${!empty(session.custom.deviceCategory) && session.custom.deviceCategory == 'tablet'}">  
+  <isset name="chat_disable" value="true" scope="session">
+</isif>
+
+<isif condition="${request.locale == 'default' && dw.system.Site.getCurrent().getCustomPreferenceValue('enableLiveChat') == true}">
+  <!-- LIVE CHAT INCLUDE SCRIPT -->
+  <!--  Allow chat if chat_disable is not defined or 0 in session variable -->
+  <isif condition="${session.custom.chat_disable == null || session.custom.chat_disable == 0}">
+    <isif condition="${showLiveChat == true}">
+      <isif condition="${!empty(pdict.CheckoutStep) && 'confirmation' == pdict.CheckoutStep}">
+        <iscomment>Confirmation page, Add inq chat confirmation information, rm9084</iscomment>
+        <script type="text/javascript" language="javascript"> 
+          var inqSalesProducts = mainOfferCode;
+          var inqSalesQuantities = mainItemQty;
+          var inqSalesPrices = subTotal;
+          var inqClientOrderNum = orderID;
+          var inqCustomerName = '<isprint value="${pdict.CurrentForms.personinf.billtoaddress.firstName.value}" encoding="off">' + " " + '<isprint value="${pdict.CurrentForms.personinf.billtoaddress.lastName.value}" encoding="off">';
+          var inqOtherInfo = "TYP:Proactiv~CNF:" + '<isprint value="${pdict.CurrentForms.personinf.billtoaddress.firstName.value}" encoding="off">' + "~CNL:" + '<isprint value="${pdict.CurrentForms.personinf.billtoaddress.lastName.value}" encoding="off">' + "~CST:New~CMP:" + uci + "~OVO:" + orderTotal;
+        </script>
+      </isif>
+
+      <script type='text/javascript' src="${dw.system.Site.getCurrent().getCustomPreferenceValue('liveChatJSUrl')}"></script>
+    </isif>
+  </isif>
+</isif>

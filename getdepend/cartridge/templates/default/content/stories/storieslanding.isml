@@ -1,0 +1,53 @@
+<!--- TEMPLATENAME: storieslanding.isml --->
+
+
+<isscript>
+	importPackage(dw.content);
+	importPackage(dw.util);
+	importPackage(dw.catalog);
+	
+	importScript('guthyrenker_core:common/libUtils.ds');
+	
+	var contentInfo    = getCurrentContentInfo(pdict.CurrentHttpParameterMap);
+	var folderPathInfo = getFolderPathInfo(contentInfo);
+	
+	var CurrentFolder  : Folder = contentInfo.folder;
+	var CurrentContent : Content = contentInfo.content;
+	
+	var CurrentFolderPath : String = folderPathInfo.folderPath;
+	var RootFolder        : Folder = folderPathInfo.rootFolder;
+	
+	CurrentFolderPath += " body_"+RootFolder.ID+" "+RootFolder.ID;
+	
+	var PageID : String = "page_";
+	
+	if( empty(CurrentContent) ) {
+		PageID += CurrentFolder.ID;
+	} else {
+		PageID += CurrentContent.ID;
+	}
+</isscript>
+
+<isdecorate template="content/stories/pt_stories">
+<isinclude template="util/modules" />
+	<iscomment>Include the landing page content asset for this section</iscomment>
+	<iscontentasset aid="success-stories-landing" />
+	<div class="clearfix"><!-- FLOAT CLEAR --></div>
+	
+	<iscomment>Links to the Success Stories sub-folders landing pages</iscomment>
+	<div class="sectionSubFolders">
+		<div class="sectionSubFoldersInner">
+			<ul>
+				<isloop items="${RootFolder.getOnlineSubFolders()}" var="folder">
+					<li>
+						<a href="${URLUtils.url('Page-Show', 'cid', folder.ID)}" title="${folder.displayName}">
+							<img src="${folder.custom['thumbnail'].url}" alt="${folder.displayName}" />
+							<span>${folder.displayName}</span>
+						</a>
+					</li>
+				</isloop>
+			</ul>
+			<div class="clearfix"><!-- FLOAT CLEAR --></div>
+		</div>
+	</div>
+</isdecorate>

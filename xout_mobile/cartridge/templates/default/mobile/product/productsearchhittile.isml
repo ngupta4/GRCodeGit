@@ -1,0 +1,175 @@
+<iscomment>
+	This template renders a product in the search result using a ProductSearchHit object.
+</iscomment>
+
+<isif condition="${!empty(ProductHit) && !empty(ProductHit.product)}">
+	<iscomment>Set the product of the product search hit locally for reuse</iscomment>
+	<isset name="Product" value="${ProductHit.product}" scope="page"/>
+	
+	<iscomment>
+		Get the colors selectable from the current product master or variant range if we
+		need to determine them based on a search result.
+	</iscomment>
+	<isscript>
+		var selectableColors : dw.util.Collection = new dw.util.ArrayList();
+		var varAttrColor : dw.catalog.ProductVariationAttribute = null;
+		
+		if( Product.master )
+		{
+			var varModel : dw.catalog.ProductVariationModel = Product.variationModel;
+			varAttrColor = varModel.getProductVariationAttribute("color");
+	
+			if( varAttrColor != null )
+			{
+				selectableColors = ProductHit.getRepresentedVariationValues( varAttrColor );
+			}
+		}
+	</isscript>
+	
+    <iscomment>
+		Generate link to product detail page: by default it's just the product of the product search hit.
+		If a color variation is available, the first color is used as link URL.
+	</iscomment>
+	<isset name="productUrl" value="${URLUtils.http('mProduct-Show', 'pid', Product.ID)}" scope="page"/>
+	<isif condition="${!empty(selectableColors) && selectableColors.size() > 0 && !empty(varAttrColor)}">
+		<isset name="productUrl" value="${Product.variationModel.url('mProduct-Show', varAttrColor, selectableColors.get(0))}" scope="page"/>
+	</isif>
+
+    <iscomment>append the paging parameters to the product URL</iscomment>
+	<isset name="productUrl" value="${productUrl.append('start', starting)}" scope="page"/>
+
+	<iscomment>append the search query parameters to the product URL</iscomment>
+	<isif condition="${!empty(pdict.ProductSearchResult)}">
+		<isset name="productUrl" value="${pdict.ProductSearchResult.url( productUrl )}" scope="page"/>
+	</isif>
+
+	<iscomment>Determine the correct image, either first displayed color variation or default product thumbnail</iscomment>
+	<isif condition="${!empty(selectableColors) && selectableColors.size() > 0}">
+		<isset name="firstColorVariation" value="${selectableColors.get(0)}" scope="page"/>
+		<isset name="image" value="${firstColorVariation.getImage('medium')}" scope="page"/>
+	<iselse/>
+		<isset name="image" value="${Product.getImage('medium',0)}" scope="page"/>
+	</isif>
+	
+	<iscomment>If image couldn't be determined, display a "no image" medium</iscomment>
+	<isif condition="${!empty(image)}">
+		<isset name="thumbnailUrl" value="${image.url}" scope="page"/>
+		<isset name="thumbnailAlt" value="${image.alt}" scope="page"/>
+		<isset name="thumbnailTitle" value="${image.title}" scope="page"/>
+	<iselse/>
+		<isset name="thumbnailUrl" value="${URLUtils.staticURL('/images/noimagemedium.png')}" scope="page"/>
+		<isset name="thumbnailAlt" value="${Product.name}" scope="page"/>
+		<isset name="thumbnailTitle" value="${Product.name}" scope="page"/>
+	</isif>
+<iscomment>CREATES SCRIPT TO RUN THROUGH ODD/EVEN ROWS COLOR </iscomment>
+<isscript>
+	/*
+		Small function to realize odd and even recognition of rows across multiple
+	   	loops
+	*/
+	function RowClass()
+	{
+		// define the counter
+		var rowCounter = 0;
+
+		RowClass.prototype.getName = function()
+		{
+			// increase counter
+			rowCounter++;
+
+			if (rowCounter % 2 == 0)
+			{
+				return 'even';
+			}
+			else
+			{
+				return 'odd';
+			}
+		}
+	};
+</isscript>
+<isscript>
+	/* create a new instance to name our rows 'odd' or 'even' */
+	var rowNaming = new RowClass();
+</isscript>
+<div class="producttile">
+<a href="${productUrl}" title="${Product.name}" class="producttile ${rowNaming.getName()}">
+	<table width="100%" border="0" cellpadding="0" cellspacing="0">
+		<tr valign="top">
+			<td class="image">
+				<a href="${productUrl}" title="${Product.name}"><img src="${thumbnailUrl}" alt="${thumbnailAlt}" title="${thumbnailTitle}" /></a>
+			</td>
+			<td class="productdetail">
+				<a class="name" href="${productUrl}">${Product.getName()}</a>
+				<div class="promo">
+					<iscomment>Render information on active product promotions</iscomment>
+					<isset name="promos" value="${dw.campaign.PromotionMgr.activeCustomerPromotions.getProductPromotions(Product)}" scope="page"/>
+					<isif condition="${!empty(promos)}">
+						<isloop items="${promos}" var="promo">
+							<div class="promotionalMessage">
+								<isprint value="${promo.calloutMsg}" encoding="off"/>
+							</div>
+						</isloop>
+					</isif>		
+				</div><!-- END: promo -->
+				<iscomment>Renders pricing information depending on the option or variation model, as well as scaled prices and so on.</iscomment>
+				<div class="pricing">
+					<iscomment>Renders pricing information depending on the option or variation model, as well as scaled prices and so on.</iscomment>
+					<div class="price">
+						<isif condition="${Product.productSet}">
+							<iscomment>Product set pricing</iscomment>
+							<div class="productsetprice">${Resource.msg('global.buyall','locale',null)}</div>
+						<iselseif condition="${Product.master && ProductHit.priceRange}"/>
+							<iscomment>Product master price range depending on the represented variants</iscomment>						
+								<div class="salesprice"><isprint value="${ProductHit.minPrice}"/> - <isprint value="${ProductHit.maxPrice}"/></div>
+						<iselse/>						
+							<iscomment>For Product master without a price range get the pricing from firstRepresentedProduct </iscomment>
+							<isif condition="${Product.master && !ProductHit.priceRange}"/>
+								<iscomment>Preserve current product instance</iscomment>
+								<isset name="OrgProduct" value="${Product}" scope="page"/>
+								<isset name="Product" value="${ProductHit.firstRepresentedProduct}" scope="page"/>
+							</isif>
+							<iscomment>
+								Regular pricing through price model of the product. If the product is an option product,
+								we have to initialize the product price model with the option model.
+							</iscomment>
+							<isif condition="${Product.optionProduct}">
+								<isset name="PriceModel" value="${Product.getPriceModel(Product.getOptionModel())}" scope="page"/>
+							<iselse/>
+								<isset name="PriceModel" value="${Product.getPriceModel()}" scope="page"/>
+							</isif>
+		
+							<iscomment>
+								Check whether the product has price in the sale pricebook. If so, then
+								display two prices: crossed-out standard price and sales price.
+							</iscomment>
+							<isinclude template="mobile/product/components/standardprice"/>
+							<isset name="SalesPrice" value="${PriceModel.getPrice()}" scope="page"/>
+							<isset name="ShowStandardPrice" value="${StandardPrice.available && SalesPrice.available && StandardPrice.compareTo(SalesPrice) == 1}" scope="page"/>
+
+							<isif condition="${ShowStandardPrice}">
+								<div class="discountprice">
+									<div class="standardprice"><isprint value="${StandardPrice}"/></div>
+									<div class="salesprice"><isprint value="${SalesPrice}"/></div>
+								</div>
+							<iselse/>
+								<div class="salesprice"><isprint value="${SalesPrice}"/></div>
+							</isif>
+							<isif condition="${!empty(pdict.OrgProduct)}">
+								<iscomment>Restore current product instance</iscomment>
+								<isset name="Product" value="${OrgProduct}" scope="page"/>
+								<isset name="OrgProduct" value="${null}" scope="page"/>
+							</isif>
+						</isif>
+					</div>
+		
+				</div><!-- END: pricing -->
+							
+			</td>
+		</tr>
+	</table>
+</a>
+</div>
+<iselse/>
+	<!-- ProductSearchHit was not in dictionary, so blank. -->
+</isif>

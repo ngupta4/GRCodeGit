@@ -1,0 +1,16 @@
+<!--- TEMPLATENAME: contactus-confirm.isml --->
+<isset name="CurrentFolder"  value="${dw.content.ContentMgr.getFolder('contact-us')}" scope="page"/>
+<isset name="CurrentContent" value="${dw.content.ContentMgr.getFolder('contact-us')}" scope="page"/>
+<isset name="OmniturePage" value="ContactUsSuccess" scope="pdict"/>
+<isdecorate template="account/pt_account">
+<isinclude template="util/modules"/>
+
+<div class="contactusThankyou">
+	 <h2>${Resource.msg('contactus.wen','locale',null)}</h2>
+        <div class="contactus messagesent">
+        	<div class="callUs"><span>${Resource.msg('contactus.wen.callno','locale',null)}</span></div>
+        	<p><strong>${Resource.msg('contactus.wen.thankyou','locale',null)}</strong></p>
+            <p>${Resource.msg('forms.contactus.messagesent','forms',null)}. ${Resource.msg('forms.contactus.messagerequires','forms',null)}</p>
+    </div>
+</div>
+</isdecorate>

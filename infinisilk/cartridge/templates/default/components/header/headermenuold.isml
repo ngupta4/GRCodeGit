@@ -1,0 +1,192 @@
+<iscache status="off"/>
+
+<iscomment>
+	This template displays a 3-level category tree as top navigation.
+	Only categories marked with showInMenu are shown.
+</iscomment>
+
+
+<isscript>
+	importPackage(dw.web);
+	importScript("guthyrenker_core:common/libUtils.ds")
+	var loggedIn : boolean = isLoggedIn();
+	
+	var sessionID = null;
+	
+	if( !empty(pdict.CurrentHttpParameterMap.pactvid) && !empty(pdict.CurrentHttpParameterMap.pactvid.stringValue) ) {
+		sessionID = pdict.CurrentHttpParameterMap.pactvid.stringValue;
+	}
+	
+	function url3(pipeline,k1,v1,k2,v2,k3,v3) {
+		var outs : String = '';
+		if( pipeline.indexOf('COCart')>-1 ) {
+			outs = URLUtils.https(pipeline,k1,v1,k2,v2,k3,v3);
+		} else {
+			outs = URLUtils.url(pipeline,k1,v1,k2,v2,k3,v3);
+		}
+		return outs;
+	}
+	
+	function url2(pipeline,k1,v1,k2,v2) {
+		var outs : String = '';
+		if( pipeline.indexOf('COCart')>-1 ) {
+			outs = URLUtils.https(pipeline,k1,v1,k2,v2);
+		} else {
+			outs = URLUtils.url(pipeline,k1,v1,k2,v2);
+		}
+		return outs;
+	}
+	
+	function url1(pipeline,k1,v1) {
+		var outs : String = '';
+		if( pipeline.indexOf('COCart')>-1 ) {
+			outs = URLUtils.https(pipeline,k1,v1);
+		} else {
+			outs = URLUtils.url(pipeline,k1,v1);
+		}
+		return outs;
+	}
+	
+	function url0(pipeline) {
+		var outs : String = '';
+		if( pipeline.indexOf('COCart')>-1 ) {
+			outs = URLUtils.https(pipeline);
+		} else {
+			outs = URLUtils.url(pipeline);
+		}
+		return outs;
+	}
+</isscript>
+
+<isset name="PHPSESSID" value="${!empty(pdict.CurrentRequest.httpCookies['PHPSESSID']) ? pdict.CurrentRequest.httpCookies['PHPSESSID'].value : (!empty(sessionID)?sessionID:'')}" scope="page" />
+
+<isset name="pactvid" value="${empty(PHPSESSID)?'':'?pactvid='+PHPSESSID}" scope="page"/>
+
+<isset name="isLoggedIn" value="${loggedIn}" scope="page"/>
+
+<isset name="HomeLink" value="${(!isLoggedIn?URLUtils.httpHome():dw.system.Site.current.getCustomPreferenceValue('GRLoggedInHome')+(!empty(PHPSESSID)?'?pactvid='+PHPSESSID:''))}" scope="page"/>
+
+ <div id="logo"><a href="${HomeLink}"></a></div>
+ <div class="customerlinks ">
+       <isif condition="${pdict.CurrentSession.userAuthenticated || pdict.CurrentCustomer.registered || pdict.CurrentSession.custom.cRememberMe || loggedin}">
+		      <div id="minicartOuter">
+		      	<div id="minicart"><isinclude url="${URLUtils.url('Cart-MiniCart')}"/></div>
+		      </div>
+	      </isif>       
+	      <div class="welcomecoloum"><isinclude template="components/header/headercustomerinfo.isml"/></div> 
+      <isif condition="${pdict.CurrentSession.userAuthenticated || pdict.CurrentCustomer.registered || pdict.CurrentSession.custom.cRememberMe || loggedin}">
+		    	<isinclude template="search/simplesearch"/>	
+		<iselse/> 
+			<iscomment> <div class="toporder">
+				 <a href="${URLUtils.url('Page-Show','cid','order')}" >Order Now</a>  
+			 </div></iscomment>
+		</isif>
+ 
+  </div> 
+  
+<isscript>
+	// get root category of current site's navigation catalog
+	var siteCatalog = dw.catalog.CatalogMgr.getSiteCatalog();
+	var root = null;
+	if(siteCatalog!=null) {root = siteCatalog.getRoot();}
+
+	// get the "sale" category
+	var saleCategory = dw.catalog.CatalogMgr.getCategory('Product-Type');
+</isscript>
+
+
+
+<isif condition="${pdict.CurrentSession.userAuthenticated || pdict.CurrentCustomer.registered}">
+<div class="topNav">		 
+		<ul>
+<isset name="cgid" value="${pdict.CurrentHttpParameterMap.cgid.stringValue}" scope="page"/>
+	<isloop items="${saleCategory.getOnlineSubCategories()}" var="subCat">
+		<isif condition="${subCat.ID == dw.web.Resource.msg('search.solutionfinder','search',null)}">
+			<iscontinue/>
+		</isif>
+      <li>
+	     <a href="${URLUtils.http('Search-Show', 'cgid', subCat.getID())}"><isprint value="${subCat.getDisplayName()}"/></a>
+	  	<iscomment>  
+	  	<div class="subnav">
+			 <isslot id="headerNavigation" context="category" description="Header Sub Navigation" context-object="${subCat}"/>
+			 <div class="seemore"> <a href="${URLUtils.http('Search-Show', 'cgid', subCat.ID)}"><img src="${URLUtils.absStatic('themes/demandwarestore/images/btn-seemore.jpg')}"  alt="See More"  /></a> </div>
+		</div>
+		</iscomment>
+      </li>
+
+		<iscomment>
+			Category landing Banners
+			<isslot id="CategoryPromoBanner" context="category" description="Category Promo Banner" context-object="${subCat}"/>
+		</iscomment>      
+
+      </isloop>
+    </ul>
+   
+</div>
+
+<iselse/>
+  
+		<div class="topNav">		 
+		<ul>
+		
+			<isset name="OnlineSubFolders" value="${getPrimaryNavigation(isLoggedIn, 'retention-primary-navigation')}" scope="page" />
+			<isloop items="${OnlineSubFolders}" var="aFolder" status="navstat">
+		    <isif condition="${true || !empty(getCustomerUID(request)) || aFolder.ID != 'community'}">
+					<li class="${aFolder.ID}${navstat.last ? ' last' : ''}">
+						<isif condition="${'linkPipeline' in aFolder.custom && !empty(aFolder.custom.linkPipeline)}">
+							<isset name="LinkParts" value="${aFolder.custom.linkPipeline.split(',')}" scope="page" />
+							<isset name="Pipeline" value="${LinkParts[0]}" scope="page" />
+							<isif condition="${LinkParts.length>5}">
+								<isset name="FolderLinkURL" value="${url3(Pipeline,LinkParts[1],LinkParts[2],LinkParts[3],LinkParts[4],LinkParts[5],LinkParts[6])}" scope="page" />
+							<iselseif condition="${LinkParts.length>3}">
+								<isset name="FolderLinkURL" value="${url2(Pipeline,LinkParts[1],LinkParts[2],LinkParts[3],LinkParts[4])}" scope="page" />
+							<iselseif condition="${LinkParts.length>1}">
+								<isset name="FolderLinkURL" value="${url1(Pipeline,LinkParts[1],LinkParts[2])}" scope="page" />
+							<iselse/>
+								<isset name="FolderLinkURL" value="${url0(Pipeline)}" scope="page" />
+							</isif>				
+						<iselseif condition="${('linkType' in aFolder.custom && !empty(aFolder.custom.linkType) && aFolder.custom.linkType.value == 'link') && ('linkHref' in aFolder.custom && !empty(aFolder.custom.linkHref))}">
+							<isset name="FolderLinkURL" value="${aFolder.custom.linkHref+pactvid}" scope="page" />			
+						<iselse/>
+							<isset name="FirstContentAsset" value="${!empty(aFolder.onlineContent)?aFolder.onlineContent[0].ID:aFolder.ID}" scope="page" />
+							<isset name="FolderLinkURL" value="${URLUtils.http('Page-Show','cid',FirstContentAsset)}" scope="page"/>
+						</isif>
+						<a id="${('htmlID' in aFolder.custom && !empty(aFolder.custom.htmlID))?aFolder.custom.htmlID:aFolder.ID}" href="<isprint value="${FolderLinkURL}" encoding="off"/>" class="alt-img">${aFolder.displayName}</a>
+					</li>
+				</isif>
+			</isloop>
+			 	<li class="btnOrdernow"><a title="ORDER Depend NOW" href="${URLUtils.url('Page-Show','cid','order')}">ORDER NOW</a></li>
+		</ul>
+		
+		<isset name="secondaryNav" value="${getPrimaryNavigation(isLoggedIn, 'secondary-navigation')}" scope="page"/>
+		<isif condition="${secondaryNav != null}">
+			<ul>
+				<isloop items="${secondaryNav}" var="aFolder" status="navstat">
+					<li class="${aFolder.ID}">
+						<isif condition="${'linkPipeline' in aFolder.custom && !empty(aFolder.custom.linkPipeline)}">
+							<isset name="LinkParts" value="${aFolder.custom.linkPipeline.split(',')}" scope="page" />
+							<isset name="Pipeline" value="${LinkParts[0]}" scope="page" />
+							<isif condition="${LinkParts.length>5}">
+								<isset name="FolderLinkURL" value="${url3(Pipeline,LinkParts[1],LinkParts[2],LinkParts[3],LinkParts[4],LinkParts[5],LinkParts[6])}" scope="page" />
+							<iselseif condition="${LinkParts.length>3}">
+								<isset name="FolderLinkURL" value="${url2(Pipeline,LinkParts[1],LinkParts[2],LinkParts[3],LinkParts[4])}" scope="page" />
+							<iselseif condition="${LinkParts.length>1}">
+								<isset name="FolderLinkURL" value="${url1(Pipeline,LinkParts[1],LinkParts[2])}" scope="page" />
+							<iselse/>
+								<isset name="FolderLinkURL" value="${url0(Pipeline)}" scope="page" />
+							</isif>				
+						<iselseif condition="${('linkType' in aFolder.custom && !empty(aFolder.custom.linkType) && aFolder.custom.linkType.value == 'link') && ('linkHref' in aFolder.custom && !empty(aFolder.custom.linkHref))}">
+							<isset name="FolderLinkURL" value="${aFolder.custom.linkHref+pactvid}" scope="page" />			
+						<iselse/>
+							<isset name="FirstContentAsset" value="${!empty(aFolder.onlineContent)?aFolder.onlineContent[0].ID:aFolder.ID}" scope="page" />
+							<isset name="FolderLinkURL" value="${URLUtils.http('Page-Show','cid',FirstContentAsset)}" scope="page"/>
+						</isif>
+						<a id="${('htmlID' in aFolder.custom && !empty(aFolder.custom.htmlID))?aFolder.custom.htmlID:aFolder.ID}" href="<isprint value="${FolderLinkURL}" encoding="off"/>" class="alt-img">${aFolder.displayName}</a>
+					</li>
+				</isloop>
+				
+			</ul>
+		</isif>
+		</div>
+</isif>  
+ 

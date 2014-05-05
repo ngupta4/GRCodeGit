@@ -1,0 +1,25 @@
+/**
+* 
+* To identify the retention catalog based on isCatalogProduct flag set in Products.
+*
+*   @input basket : dw.order.Basket
+*   @output isRetention : Boolean
+*
+*/
+importPackage( dw.system );
+
+function execute( args : PipelineDictionary ) : Number
+{
+	args.isRetention = false;
+	var basket : dw.order.Basket = args.basket;
+	var prodLineItems: Iterator = basket.getProductLineItems().iterator();
+       while(prodLineItems.hasNext()){
+       	var pLineItem:dw.order.ProductLineItem = prodLineItems.next();
+        var product:Product = pLineItem.getProduct();
+        if(product.custom.isCatalogProduct == true){
+			args.isRetention = true;	
+			break;		
+		}
+       }
+    return PIPELET_NEXT;
+}

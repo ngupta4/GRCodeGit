@@ -1,0 +1,231 @@
+/**
+* Demandware Script File
+* To define input and output parameters, create entries of the form:
+*
+* @<paramUsageType> <paramName> : <paramDataType> [<paramComment>]
+*
+* where
+*   <paramUsageType> can be either 'input' or 'output'
+*   <paramName> can be any valid parameter name
+*   <paramDataType> identifies the type of the parameter
+*   <paramComment> is an optional comment
+*
+* For example:
+*    @input paymentForm : dw.web.Form
+*    @input request : dw.system.Request
+*    @input continiutyAddress :  dw.customer.CustomerAddress
+*    @input currentCustomer	: dw.customer.Customer
+**   The variable actionEvent has the values: save/update/changeContinuityMethod values assigned in pipeline
+*    @input actionEvent : String  
+*	 @input sessionId : String
+*	 @input ipAddress : String
+*	 @input cartId : String
+*	 @input expMonth : Number
+*	 @input expYear : Number
+*	 @output status : String
+*	 @output sequenceNumber : Number
+*/
+importPackage( dw.system );
+importPackage( dw.net );
+importPackage( dw.io );
+importPackage( dw.web );
+importPackage(dw.object);
+importPackage( dw.util );
+importPackage( dw.customer ); 
+importPackage (dw.crypto);
+ 
+
+importScript("common/libUtils.ds");
+importScript( "grmiddleware/libGRMiddleware.ds" );
+
+	function execute( args : PipelineDictionary ) : Number
+	{		
+		logInfo("Start of the file RetnCustomerPaymentWS.ds ");
+		var url: String = createUrl(args);
+	   	var reqXML = buildRequestXML(args);
+	   //	var echeckFailedLoopCounter : Number = 0;
+	   	logDebug("Request XML generated from Payment Method:: \n"+reqXML);
+	   	var responseString : String = invokePaymentAPI(url, reqXML);
+	   	logDebug("Response XML in Payment Method:: \n"+responseString);
+	    parseResponseXML(responseString, args);	
+ 		logInfo("End of the file RetnCustomerPaymentWS.ds ");
+	    logDebug("Response Status while invoking RetnCustomerPaymentWS.ds"+args.status);
+		if (((responseString == null)||(dw.util.StringUtils.trim(responseString) == "")) || args.status > 200 ) {
+			
+			if(args.paymentForm.creditcards.newcreditcard.defaultCreditCardID.value == "AddNewEcheckMethod")
+			{
+				var realStart : Number = responseString.indexOf('<customerResponse');
+				var errorXML : XML = new XML(responseString.substring(realStart)).descendants('errorData');
+				var stringCode = errorXML.error.code;
+			
+				if(stringCode == 8320 || stringCode == 8321){
+					setMaxAttemptBACounter();
+					}
+
+		   			session.custom.errorResponseForPaymentMethod = "eCheckError";	
+				}
+				else
+				{
+					session.custom.errorResponseForPaymentMethod = "creditCardError";
+				}
+		 	 return PIPELET_ERROR;
+		}
+	    /* if(args.status > 200){
+	    	return PIPELET_ERROR;
+	    }
+	    */
+	    return PIPELET_NEXT;
+	}
+	function createUrl(args : PipelineDictionary){
+		var domain : String = normalizeURL(pref('middlewareAPIURL'));
+		var uid:String = getCustomerUID(args.request);
+		var transactionId:String = getTransactionID();
+		var brand : String= Site.current.getCustomPreferenceValue("GRMProductLine");
+		var verifyFlag = (args.actionEvent=='changeContinuityMethod') ? 'false' : 'true';
+		var mwid : String = args.currentCustomer.profile.custom.mwid;
+		var url : String = domain+'/customer/payment/mwid/'+mwid+'/verify/'+verifyFlag+'/brand/'+brand+'/uid/'+uid+'/trans/'+transactionId;
+		return url;
+	}
+	
+	// This function handles the CRUD flow handling
+	function  invokePaymentAPI(urlStr : String, reqXML : String){
+		
+		var http : HTTPClient;
+		http = callMWAPI (new HTTPClient(), "PUT", urlStr,reqXML);
+		var response : String = "";
+		if( !empty(http.getText()) && empty(http.getErrorText()) ) {
+					response = http.getText();
+		}else{
+			response = http.getErrorText();
+		}			
+		return response;
+	}
+	
+	// Generates the request xml havind credit card informstion
+	function buildRequestXML(args : PipelineDictionary){
+		
+		var xmlWriter : StringWriter = new StringWriter();
+			xmlWriter.write('<customerRequest xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="customerShippingFrequencyRequest_0-1.xsd"> \n');
+			
+			xmlWriter.write(' <clientId>Demandware</clientId>\n');
+			xmlWriter.write('	<sessionData>\n');
+			xmlWriter.write('	<sessionId><![CDATA['+args.sessionId+']]></sessionId>\n');
+			xmlWriter.write('	<ipAddress><![CDATA['+args.ipAddress+']]></ipAddress>\n');
+			xmlWriter.write('	<cartId><![CDATA['+args.cartId+']]></cartId>\n');
+			xmlWriter.write('	</sessionData>\n');	
+			
+			xmlWriter.write(' <payment>\n');
+				
+			if(args.paymentForm.creditcards.newcreditcard.defaultCreditCardID.value == "AddNewEcheckMethod")
+			{
+				buildAccountInfo(xmlWriter, args);
+			}
+			else
+			{
+			buildCreditCardInfo(xmlWriter, args);
+			}
+			buildContinuityAddress(xmlWriter, args.continiutyAddress);
+			xmlWriter.write('</payment> \n');
+			
+			xmlWriter.write('</customerRequest> \n');
+			return xmlWriter.toString();
+	}
+	function buildCreditCardInfo(xmlWriter : StringWriter , args : PipelineDictionary){
+			
+			xmlWriter.write('<creditCard> \n');
+			xmlWriter.write('<cardType>'+args.paymentForm.creditcards.newcreditcard.type.value+'</cardType> \n');
+		    xmlWriter.write('<ccNumber><![CDATA['+encryptCreditCard(args.paymentForm.creditcards.newcreditcard.number.value)+']]></ccNumber> \n');
+		    xmlWriter.write('<expMonth>'+args.paymentForm.creditcards.newcreditcard.month.value+'</expMonth> \n');
+		    xmlWriter.write('<expYear>'+args.paymentForm.creditcards.newcreditcard.year.value+'</expYear> \n');
+			xmlWriter.write('</creditCard>');
+	}
+	
+	function buildContinuityAddress(xmlWriter : StringWriter , address : CustomerAddress){
+			xmlWriter.write('<billingAddress>\n');	
+			xmlWriter.write('<firstName><![CDATA['+address.firstName+']]></firstName>\n');
+			xmlWriter.write('<lastName><![CDATA['+address.lastName+']]></lastName>\n');	
+			xmlWriter.write('<address><![CDATA['+address.address1+']]></address>\n');
+			xmlWriter.write('<address><![CDATA['+address.address2+']]></address>\n');
+			xmlWriter.write('<city><![CDATA['+address.city+']]></city>\n');	
+			xmlWriter.write('<state><![CDATA['+address.getStateCode()+']]></state>\n');
+			xmlWriter.write('<postalCode><![CDATA['+address.getPostalCode()+']]></postalCode>\n');
+			xmlWriter.write('<countryCode><![CDATA['+address.countryCode+']]></countryCode>\n');
+			if(address.getPhone() != null && address.getPhone() != ""){
+				xmlWriter.write('<phones>\n');	
+				xmlWriter.write('<dayPhone><![CDATA['+address.getPhone() +']]></dayPhone>\n');
+				//xmlWriter.write('<eveningPhone><![CDATA['+(address.custom.eveningPhone != null) ? address.custom.eveningPhone: "" +']]></eveningPhone>\n');
+				if(address.custom.eveningPhone !=null && address.custom.eveningPhone !=""){
+					xmlWriter.write('<eveningPhone><![CDATA['+address.custom.eveningPhone +']]></eveningPhone>\n');
+				}	
+				xmlWriter.write('</phones>\n');	
+			}
+			xmlWriter.write('</billingAddress>\n');	
+	}
+	
+	// parses the xml response	
+	function parseResponseXML(respStr, args : PipelineDictionary){
+		var respXML : XML = new XML(respStr);
+		var ns: Namespace = new Namespace(respXML.namespace());
+		var status : String = respXML.ns ::status.toString();
+		args.status = status;
+		if(status=="200"){
+			if(respXML.responseData.sequenceNumber.toString != null && respXML.responseData.sequenceNumber != ""){
+				args.sequenceNumber = new Number(respXML.responseData.sequenceNumber.toString());
+			}
+		}else{
+			getErrorResponse (respXML);
+		} 
+	}
+
+	// encryptCreditCard encrypts the credit card number using the keys defined
+	function encryptCreditCard(ccnumber : String){
+		var ccEncryptKey : String = Site.getCurrent().getCustomPreferenceValue("grCCEncryptionKey");
+		var ccEncryptType : String = Site.getCurrent().getCustomPreferenceValue("grEncryptionType");	
+		var creditCardEncrypted : String = null;
+		var cipher : Cipher = new Cipher();
+		creditCardEncrypted = cipher.encrypt(ccnumber, ccEncryptKey, ccEncryptType, "", 0);
+		return creditCardEncrypted;
+	}	
+	/*
+	function mockResponseXML_200(){
+		var mockResp: String = <customerResponse>
+  							  <status>200</status>
+							  <requestData>
+								  <method>payment</method>
+								  <account>202265898</account>
+								  <brand>PA</brand>
+								  <uid>VHgNyZ</uid>
+							      <trans>12233445514</trans>
+							    </requestData>
+							    <responseData>
+									<statusMessage>OK</statusMessage>
+							    </responseData>
+							</customerResponse>;
+		 return mockResp;
+	}
+	*/
+	
+	function buildAccountInfo(xmlWriter : StringWriter , args : PipelineDictionary){
+			
+			xmlWriter.write('<eCheck> \n');
+			xmlWriter.write('<accountType>'+args.paymentForm.creditcards.newcreditcard.type.value+'</accountType> \n');
+		    xmlWriter.write('<accountNumber><![CDATA['+args.paymentForm.creditcards.newcreditcard.number.value+']]></accountNumber> \n');
+		    xmlWriter.write('<routingNumber>'+args.paymentForm.creditcards.newcreditcard.routing.value+'</routingNumber> \n');
+		   	xmlWriter.write('</eCheck>');
+	}
+	
+
+function setMaxAttemptBACounter(){
+	var echeckFailedContinuity = null;
+		if('echeckFailedContinuity' in session.custom && null != session.custom.echeckFailedContinuity){
+			echeckFailedContinuity = session.custom.echeckFailedContinuity;
+			echeckFailedContinuity = echeckFailedContinuity + 1;
+		}else{
+			echeckFailedContinuity = 1;	
+		}
+		var echeckMaxAttempt = dw.system.Site.getCurrent().getCustomPreferenceValue('BAMaxAttemptLimit');
+		if(echeckFailedContinuity == echeckMaxAttempt){
+				session.custom.errorResponseCode = "error.echeck.maxattempt";
+			}
+		session.custom.echeckFailedContinuity = echeckFailedContinuity;
+}

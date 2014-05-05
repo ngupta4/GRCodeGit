@@ -1,0 +1,66 @@
+<!--- TEMPLATENAME: selectasystemBasickit.isml --->
+	<isinclude template="util/modules"/>
+<isloop items="${offersList}" var="product" status="offers_status">
+	<isscript>
+		if( !empty(product) ) {			
+				var titleString = product.getName();
+				var lastIndex = titleString.lastIndexOf(" ",24);
+				if( titleString.length>23 && lastIndex>0 ) {
+					titleString = titleString.substring(0,lastIndex);
+				}
+				var altSKUsString = product.ID;
+				if( !empty(product.custom.giftSelectSKUs) ) {
+					altSKUsString = product.custom.giftSelectSKUs;
+				} 
+				var altSKUs = altSKUsString.split(',');
+				
+				var giftProducts : dw.util.ArrayList = new dw.util.ArrayList();
+				for( var i=0, ii=altSKUs.length; i<ii; i++ ) {
+					giftProducts.add1(dw.catalog.ProductMgr.getProduct(altSKUs[i]));
+				}
+		}
+	</isscript>
+	<div id="system${offers_status.count}Gift" class="freeGiftID" style="<isif condition="${offers_status.count==1}">display:block;<iselse>display:none;</isif>" >
+		 <div class="selectFeeGift freeGiftSelector PanelB">
+		 	
+			
+			<div class="selectKit selectGift column${giftProducts.size()}">
+				<iscomment>center right panel</iscomment>
+				<h2 class="pageTitle"><isprint value="${Resource.msg('select.free.gift.label.inline2','rendering',null)}" encoding="off"/></h2>		
+				<isif condition="${!empty(product.custom.giftSelectSKUs)}">
+					<ul class="sasKits">		
+					<isloop items="${giftProducts}" var="aProduct" status="gift_status">					
+						<li id="system${offers_status.count}Gift${gift_status.count}" class="${aProduct.variationModel.defaultVariant.ID} updatecartbtn">
+						 <isif condition="${gift_status.count==1}"><div class="free_GiftID" style="display:none;">${aProduct.variationModel.defaultVariant.ID}</div></isif>
+							<div id="${aProduct.ID}" class="giftBlock">									
+								<div class="giftDesc">									
+									<div class="leftCol">
+										<div class="giftImage productDriven">
+											<isif condition="${!empty(aProduct.getImage('alternateSelect',0))}">
+												<img src="${aProduct.getImage('alternateSelect',0).url}" alt="${aProduct.getImage('alternateSelect',0).alt}" />
+											<iselse>
+												<img src="${URLUtils.staticURL('/images/noimagesmall.png')}" alt="${Resource.msg('noimage.alt.text','locale',null)}"/>
+											</isif>
+										</div>
+									</div>
+									<isif condition="${('contentPageOfferCopy' in aProduct.custom) &&  (null != aProduct.custom.contentPageOfferCopy)}">
+										<isprint value="${aProduct.custom.contentPageOfferCopy.markup}" encoding="off"/>
+									</isif>									
+								</div>
+							</div>
+						</li>
+					</isloop>
+					</ul>
+				</isif>
+			</div>
+		</div>
+	
+		<iscomment>Bottom panel</iscomment>
+		<div class="bottomPanel panelB">
+			<isprint value="${product.custom.tabDetails.markup}" encoding="off"/>
+			<a href="#Step3" class="medOrngBtn" id="step3">&nbsp;<span><em><isprint value="${Resource.msg('next.select.freegiftsmall','locale',null)}" encoding="off"/>&nbsp;</em><isprint value="${Resource.msg('next.select.supply','locale',null)}" encoding="off"/></span></a>
+			
+		</div>
+	</div>
+</isloop>
+<div id="moreInfo"></div>

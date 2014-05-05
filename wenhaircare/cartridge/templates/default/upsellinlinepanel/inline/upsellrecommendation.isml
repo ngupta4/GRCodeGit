@@ -1,0 +1,118 @@
+<!--- TEMPLATENAME: upsellrecommendation.isml --->
+<isinclude template="util/modules"/>
+<isloop items="${offersList}" var="product" status="offers_status">
+	<isscript>
+		if( !empty(product) ) {
+			
+				var titleString = product.getName();
+				var lastIndex = titleString.lastIndexOf(" ",24);
+				if( titleString.length>23 && lastIndex>0 ) {
+					titleString = titleString.substring(0,lastIndex);
+				}
+				var altSKUsString = product.ID;
+				if( !empty(product.custom.giftSelectSKUs) ) {
+					altSKUsString = product.custom.giftSelectSKUs;
+				} 
+				var altSKUs = altSKUsString.split(',');
+				
+				var giftProducts : dw.util.ArrayList = new dw.util.ArrayList();
+				for( var i=0, ii=altSKUs.length; i<ii; i++ ) {
+					giftProducts.add1(dw.catalog.ProductMgr.getProduct(altSKUs[i]));
+				}
+		}
+	</isscript> 
+	<isloop items="${giftProducts}" var="product" status="gift_Product_status">
+	
+	<isloop items="${product.variationModel.getVariants()}" var="aProduct" status="gift_status">
+	<div id="system${offers_status.count}Gift${gift_Product_status.count}Variant${gift_status.count}Upsell" class="upsell-id" style="<isif condition="${offers_status.count==1 && gift_status.count==1}">display:block;<iselse>display:none;</isif>">
+		<isscript>
+		if( !empty(aProduct) ) {
+			var upsellProducts : dw.util.ArrayList = new dw.util.ArrayList();
+			var upsellRecommendationsIter : dw.util.Iterator ;
+			    upsellRecommendationsIter = aProduct.getOrderableRecommendations(5).iterator();
+			    upsellProducts.add(aProduct);
+			    while( upsellRecommendationsIter.hasNext() )
+					{
+						var recommendation : dw.catalog.Recommendation = upsellRecommendationsIter.next();
+						var recommendedProduct : dw.catalog.Product = recommendation.getRecommendedItem();
+						upsellProducts.add( recommendedProduct );
+					}
+						
+		}	
+		</isscript>
+	
+		<div class="upsellInline PanelB">
+			<div class="selectKit column${upsellProducts.size()}">
+					<h2 class="pageTitle"><isprint value="${Resource.msg('select.supply.page.title','locale',null)}" encoding="off"/></h2>					
+					<isif condition="${!empty(giftProducts)}">
+						<ul class="sasKits">
+						<isloop items="${upsellProducts}" var="recommendProduct" status="recommend_status">
+						  <isif condition="${recommend_status.count==1}">
+							<li id="system${offers_status.count}Gift${gift_Product_status.count}Variant${gift_status.count}Upsell${recommend_status.count}" class="${recommendProduct.ID} updatecartbtn 30-Day">
+							<isset name="supply_value" value="Regular Supply" scope="page" />
+						  <iselse>
+						  	
+							<li id="system${offers_status.count}Gift${gift_Product_status.count}Variant${gift_status.count}Upsell${recommend_status.count}" class="${recommendProduct.ID} updatecartbtn 90-Day">
+							<div class="chazRecommendsCornerRibbon"></div>
+							<isset name="supply_value" value="Extra Large Supply" scope="page" />							
+						  </isif>								
+							 <isif condition="${recommend_status.count==1}"><input type="hidden" name="recommend_Product" class="recommend_Product" value="${recommendProduct.ID}" /></isif>
+							<div class="giftBlockUpsell">
+								<div class="selected"><span><isprint value="${supply_value}" encoding="off" /></span></div>
+									<div class="giftImage">
+										<isif condition="${!empty(recommendProduct.getImage('large',0))}">
+											<img src="${recommendProduct.getImage('large',0).url}" alt="${recommendProduct.getImage('large',0).alt}" />
+										<iselse>
+											<img src="${URLUtils.staticURL('/images/noimagelarge.png')}" alt="${Resource.msg('noimage.alt.text','locale',null)}"/>
+										</isif>
+										<isif condition="${('tabDetails' in recommendProduct.custom) &&  (null != recommendProduct.custom.tabDetails)}">
+											<isprint value="${recommendProduct.custom.tabDetails}" encoding="off"/>
+										</isif>										
+									</div>	
+								</div>
+							</li>
+						</isloop>
+						</ul>
+					</isif>
+			</div>	
+			<div class="bottomPanel panelB">
+			<isif condition="${isFrequencySection}">
+				<a href="#Step5" class="medOrngBtn" id="step5"><span><em><isprint value="${Resource.msg('next.select.freegiftsmall','locale',null)}" encoding="off"/></em><isprint value="${Resource.msg('cart.upsell.next.checkout','locale',null)}" encoding="off"/></span></a>
+			<iselse/>
+				<a href="#Step6" class="medOrngBtn checkout" id="step6"><span><em><isprint value="${Resource.msg('next.select.freegiftsmall','locale',null)}" encoding="off"/></em><isprint value="${Resource.msg('cart.upsell.next.checkout','locale',null)}" encoding="off"/></span></a>
+			</isif>
+		</div>
+		</div>
+	</div>
+	</isloop>
+	</isloop>
+</isloop>
+
+<isif condition="${(pdict.BasketStatus != null && pdict.BasketStatus.error) ||pdict.PlaceOrderError != null || (!empty(pdict.AVSError) && pdict.AVSError && !empty(pdict.LitleResponseAVSMessage)) }">
+<script type="text/javascript">
+$(document).ready(function() {
+	var frequencySection="${isFrequencySection}";
+	$(".breadcrumb li").removeClass('active');
+	$(".breadcrumb li.step5").addClass('active');
+	var selectKitHeight = jQuery('.selectakitpanel').height();
+	var freeGiftHeight = jQuery('.freeGiftCont').height();
+	var upsellInlineHeight = jQuery('.upsellrecommendation').height();
+	var frequencyHeight = jQuery('.frequencyPanel').height();
+	var formulaHeight=jQuery('.formulaCont').height();
+	var checkoutHeight = jQuery('.checkoutform').height();
+	var giftUpsellFrequencyCheckoutHeightRec = selectKitHeight + freeGiftHeight + upsellInlineHeight + frequencyHeight+formulaHeight;
+	var giftUpsellCheckoutHeightRec = selectKitHeight + freeGiftHeight + upsellInlineHeight+formulaHeight;
+	if(frequencySection == true) {
+		function scrollOnload(){
+			$("html,body").animate({scrollTop: giftUpsellCheckoutHeightRec}, 1000);
+		}	
+	}
+	else{
+		function scrollOnload(){
+			$("html,body").animate({scrollTop: giftUpsellFrequencyCheckoutHeightRec}, 1000);
+		}		
+	}
+	scrollOnload();
+});
+</script>				
+</isif>

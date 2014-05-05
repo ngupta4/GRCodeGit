@@ -1,0 +1,101 @@
+<!--- TEMPLATENAME: contactinformation.isml --->
+<div class="contactinfo">
+	<h4>${Resource.msg('personinformation.contactinformation.label','rendering',null)}</h4>
+	
+	
+		<isif condition="${!empty(pdict.CurrentForms.personinf.contact.error)}">
+			<div class="errorform">
+				${pdict.CurrentForms.personinf.contact.error}
+			</div>
+		</isif>
+
+		<div class="row">
+			<div class="formfield email">
+	    		<isinputfield formfield="${pdict.CurrentForms.personinf.contact.email}" type="input" attribute1="requiredmesage" value1="${Resource.msg('forms.contactinf.email.parse-error','forms',null)}" attribute2="tabindex" value2="1">
+	    		<isif condition="${!empty(pdict.EmailValidationError)}">
+					<span class="errorclient" htmlfor="${pdict.CurrentForms.personinf.contact.email.htmlName}">
+						<strong><isprint value="${Resource.msgf('checkout.error.useractive','rendering',null, URLUtils.url('Account-Show'))}" encoding="off" /><strong>
+					</span> 
+				</isif>
+	    	</div>
+	    	
+	    	<iscomment><div class="formfield phone daytime">
+	    		<isinputfield id="daytimePhone" formfield="${pdict.CurrentForms.personinf.contact.daytimephone}" type="input" attribute1="requiredmesage" value1="${Resource.msg('forms.contactinf.daytimephone.parse-error','forms',null)}" attribute2="tabindex" value2="3">	    		
+	    	</div></iscomment>
+	    	
+	    	
+	    	<div class="formfield phone <isif condition="${pdict.CurrentForms.personinf.contact.daytimephone.valid!=true}"> phoneerror </isif>">
+	    		<div class="label">${Resource.msg('day.phone','account',null)}&nbsp;<span class="requiredindicator">*</span></div>
+	    		<input type="text" id="phone1" class="small required" maxlength="3" size="3" tabindex="3" />
+		        <input type="text" id="phone2" class="small required" maxlength="3" size="3" tabindex="4"/>
+		        <input type="text" id="phone3" class="numberbox required" maxlength="4" size="6" tabindex="5" />
+		        <isinputfield formfield="${pdict.CurrentForms.personinf.contact.daytimephone}" type="hidden" id="phonenumber" class="phone"/>
+				<isif condition="${pdict.CurrentForms.personinf.contact.daytimephone.valid!=true}">
+		    		<div class="errormessage">${Resource.msg('profile.dayphoneno.parseerror','forms',null)}</div>
+		    	</isif>	    		
+	    	</div>
+	    	
+		</div>		
+		<div class="row">
+			<div class="formfield emailConfirm">
+	    		<isinputfield formfield="${pdict.CurrentForms.personinf.contact.emailconfirm}" type="input" attribute1="requiredmesage" value1="${Resource.msg('forms.contactinf.email.parse-error','forms',null)}" attribute2="tabindex" value2="2" attribute3="equalTo" value3="${'#'+pdict.CurrentForms.personinf.contact.email.htmlName}">	   
+	    	</div>		
+		    <iscomment>										
+				<div class="formfield phone evening">
+				
+				<!-- Removing evening phone number  -->
+					 <isinputfield id="eveningPhone" formfield="${pdict.CurrentForms.personinf.contact.eveningphone}" type="input" attribute1="tabindex" value1="4">
+			
+				</div>
+			</iscomment>
+		</div>
+		
+	
+</div>
+
+
+<script type="text/javascript"><!--
+
+	app.URLs.submitDialogURL = '${URLUtils.httpContinue()}';
+	
+	function beforesubmitcheck()	{
+		var textVal1 = jQuery("#phone1").val();
+		var textVal2 = jQuery("#phone2").val();
+		var textVal3 = jQuery("#phone3").val();
+		var textval = textVal1+textVal2+textVal3;
+		jQuery("input[id=phonenumber]").val(textval);
+	}
+	
+	jQuery(document).ready(function() {		
+		$("#phone1,#phone2,#phone3").keyup(function () {
+			var maxLength = $(this).attr('maxlength');
+			if($(this).val().length == maxLength) {
+				$(this).next('span').remove();
+		        $(this).next().focus();
+		    }
+		});
+		$("#phone1,#phone2,#phone3").keydown(function(event) {
+		      
+		      if ( event.keyCode == 46 || event.keyCode == 8 || event.keyCode == 9 || event.keyCode == 27 || event.keyCode == 13 || (event.keyCode == 65 && event.ctrlKey === true) || (event.keyCode >= 35 && event.keyCode <= 39)) {
+		        return;
+		      }
+		      else {
+		      
+		        if (event.shiftKey || (event.keyCode < 48 || event.keyCode > 57) && (event.keyCode < 96 || event.keyCode > 105 )) {
+		          event.preventDefault();
+		        }
+		      }
+		    }); 
+
+
+		var acc1= $("#phonenumber").val().substr(0,3);
+		var acc2= $("#phonenumber").val().substr(3,3);
+		var acc3= $("#phonenumber").val().substr(6,4);
+		jQuery("#phone1").val(acc1);
+		jQuery("#phone2").val(acc2);
+		jQuery("#phone3").val(acc3);
+		
+	});
+	
+		
+//--></script>

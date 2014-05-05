@@ -1,0 +1,84 @@
+<iscomment>
+	This is the footer for all pages. Be careful caching it if it contains
+	user dependent information. Cache its elements instead if necessary (do not forget
+	to change the isinclude into a pipeline include for that).
+</iscomment>
+
+	<div id="socialMedia">
+		<div class="socialMediaContent">
+			<div id="socialMediaFloat">
+				<div class="socialTitle">
+					CONNECT WITH US:
+				</div>
+				<div class="socialImage first">
+	          	<a target="_new" href="http://www.facebook.com/XOut" onclick="s.linkTrackVars='eVar33,events';
+	             s.linkTrackEvents='event32';
+	             s.eVar33='US:Xout:Facebook';
+	             s.events='event32';
+	             s.tl(this,'o','Social Network Exit');
+	             ">
+	             	<img src="${URLUtils.staticURL('/images/fb.png')}"/>
+	             </a>
+	             </div>
+	            <div class="socialLabel">
+	            	Share with us
+			  	</div>
+	
+				<div class="socialImage">
+	        	<a target="_new" href="http://tinyurl.com/xoutxout" onClick="s.linkTrackVars='eVar33,events';
+	             s.linkTrackEvents='event32';
+	             s.eVar33='US:Xout:Twitter';
+	             s.events='event32';
+	             s.tl(this,'o','Social Network Exit');
+	             ">
+	            	<img src="${URLUtils.staticURL('/images/Twitter.png')}"/>
+	        	</a>
+	        	</div>
+	        	<div class="socialLabel">
+	        		Follow us
+			  	</div>
+	        	
+	        	<div class="socialImage">
+	        	<a target="_new" href="https://plus.google.com/116454403344801044770/posts">
+			  		<img src="${URLUtils.staticURL('/images/google.png')}"/>
+			  	</a>
+			  	</div>
+			  	<div class="socialLabel last">
+			  		+ us
+			  	</div>					  
+			</div>
+		</div>
+	</div>	
+
+<div id="footer">
+	<div class="footerContent">
+		<div id="footer-links-left">
+			<iscontentasset aid="global-footer-links"/>
+		</div>
+		<div id="footer-links-right">
+			<isslot id="footer-links-slot" description="Markup to appear to the right of footer-links" context="global" />
+		</div>
+		<div class="footer-message">
+			<div class="footer-copy"><iscontentasset aid="global-footer-copyright"/></div>
+		</div>
+		<div style="clear: both;"></div>
+		
+	</div>
+</div><!-- END: footer -->
+
+<iscomment>
+	Customer registration can happen everywhere in the page flow. As special tag in the pdict
+	is indicating it. So we have to check on every page, if we have to report this event for
+	the reporting engine.
+</iscomment>
+<isinclude template="util/reporting/ReportUserRegistration.isml"/>
+
+<!---  Omniture tracking  --->
+<isinclude template="analytics/omniture/omniture"/>
+<iscomponent pipeline ="Tealium-FooterInclude"
+pid=${pdict.CurrentHttpParameterMap.pid.stringValue}
+searchterm=${pdict.CurrentHttpParameterMap.q.stringValue}
+searchresultscount=${!empty(pdict.ProductSearchResult)?pdict.ProductSearchResult.count+'':''}
+orderno=${pdict.OrderNo}
+contentsearchresultscount=${!empty(pdict.ContentSearchResult)?pdict.ContentSearchResult.count+'':''}
+pagecgid=${pdict.CurrentHttpParameterMap.cgid.stringValue} />

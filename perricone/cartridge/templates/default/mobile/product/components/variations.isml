@@ -1,0 +1,174 @@
+<iscomment>
+	Desc:
+		Creates the variation section if product is a variation or a master		
+
+	Parameter:
+		Product - the product to use
+
+	Options:
+		none
+</iscomment>
+
+<isif condition="${pdict.Product.isVariant() || pdict.Product.isMaster()}">
+	<isif condition="${pdict.CurrentVariationModel != null}">
+		<isset name="PVM" value="${pdict.CurrentVariationModel}" scope="page"/>
+	<iselse>
+		<isset name="PVM" value="${pdict.Product.variationModel}" scope="page"/>
+	</isif>
+	
+	
+	<div class="variationattributes">
+		<iscomment>
+			Filter out variation attribute values with no orderable variants.
+			The "clean" ProductVariationModel of the master without any selected attribute values is used to filter the variants.
+			Otherwise hasOrderableVariants() would use currently selected values resulting in a too narrow selection of variants.
+		</iscomment>
+		<isset name="cleanPVM" value="${(pdict.Product.variant ? pdict.Product.masterProduct.variationModel : pdict.Product.variationModel)}" scope="page"/>
+		
+		<isloop items="${PVM.productVariationAttributes}" var="VA" status="loopstatus0">
+			<isset name="VAVALS" value="${PVM.getAllValues(VA)}" scope="page"/>
+			<isset name="Valength" value="${VAVALS.length}" scope="page"/>
+			<isset name="vaId" value="${VA.getAttributeID()}" scope="page"/>		
+			
+			<isif condition="${vaId == 'color' || vaId == 'size' || vaId == 'width' || vaId == 'waist' || vaId == 'length'}">
+				<iscomment>custom ui i.e. divs controlled via css</iscomment>
+				<div class="swatches ${VA.getID()}">
+				<iscomment>Size Chart link and is shown only once on the product detail page</iscomment>
+				
+				<iscomment>Select a default variant color if none selected.</iscomment>
+				<isscript>
+					importScript("guthyrenker_businesslogic:productlist/VariationsScript.ds");
+					var variantColor = getDefaultVariantColor(pdict.Product, VAVALS,PVM,cleanPVM, VA, vaId);
+					importScript("guthyrenker_businesslogic:productlist/ProductTileScript.ds" );
+				</isscript>
+				
+				
+				<iscomment><span class="value selectedvarval"></span> </iscomment>
+				<iscomment> Setting some display value by default to variant display name</iscomment>
+				<isset name="variationname" value="${VA.displayName}" scope="page"/>
+				<isif condition="${Valength > 1}">
+						<isif condition="${vaId == 'color'}">
+							<isset name="variationname" value="${Resource.msg('global.selectshade','locale',null)}" scope="page"/>
+						<iselseif condition="${vaId == 'size'}"/>
+							<isset name="variationname" value="${Resource.msg('global.selectsize','locale',null)}" scope="page"/>
+						</isif>
+					<div class="label"><isprint value="${variationname}"/></div>
+					<ul class="swatchesdisplay">			
+									
+						<isloop items="${VAVALS}" var="VV" status="varloop"	>
+							 <isscript>
+								    var varProd = getProductForVariantID(pdict.Product, VV.ID, VA);
+							</isscript>
+							<isif condition="${(!empty(varProd.getOrderableRecommendations(dw.system.Site.getCurrent().getCustomPreferenceValue('UpsellRecommendationType'))) && varProd.getOrderableRecommendations(dw.system.Site.getCurrent().getCustomPreferenceValue('UpsellRecommendationType')).size() > 0)}">
+								<isset name="addUpsell" value="true" scope="page"></isset>
+							<iselse/>	
+								<isset name="addUpsell" value="" scope="page"></isset>
+							</isif>
+							<iscomment>filter out unorderable variation attribute values</iscomment>						
+							<isif condition="${cleanPVM.hasOrderableVariants(VA, VV)}">
+								<isif condition="${PVM.isSelectedAttributeValue(VA, VV) || Valength == 1 || (!empty(variantColor) && VV.value.equals(variantColor))}">
+									<li class="emptyswatch${varloop.count} selected" <isif condition="${(pdict.CurrentCustomer.authenticated || pdict.CurrentSession.custom.cRememberMe) && varProd.custom.isCustomizableFlag && !empty(varProd.custom.kitPrice)}">lang="addtokit"</isif>>
+								<iselse>
+									<li class="emptyswatch${varloop.count}" <isif condition="${(pdict.CurrentCustomer.authenticated || pdict.CurrentSession.custom.cRememberMe) && varProd.custom.isCustomizableFlag && !empty(varProd.custom.kitPrice)}">lang="addtokit"</isif>>
+								</isif>
+										<isif condition="${VV.displayValue != null}">
+											<a title="${VV.displayValue}" id="${varProd.ID}" upsell="${addUpsell}" class="swatchanchor"><isprint value="${VV.displayValue}"/></a>
+										<iselse>
+											<a title="${VV.value}" id="${varProd.ID}" upsell="${addUpsell}"><isprint value="${VV.value}"/></a>
+										</isif>
+									</li>
+							</isif>
+						</isloop>
+					</ul>
+				<iselseif condition="${Valength == 1}"/>
+						<isif condition="${vaId == 'color'}">
+							<isset name="variationname" value="${Resource.msg('global.shade','locale',null)}" scope="page"/>
+							
+							<span class="label"><isprint value="${variationname}"/></span>
+							<ul class="swatchesdisplay">
+								<isloop items="${VAVALS}" var="VV" status="varloop"	>
+									 <isscript>
+									    var varProd = getProductForVariantID(pdict.Product, VV.ID, VA);
+									</isscript>
+									
+									<isif condition="${(!empty(varProd.getOrderableRecommendations(dw.system.Site.getCurrent().getCustomPreferenceValue('UpsellRecommendationType'))) && varProd.getOrderableRecommendations(dw.system.Site.getCurrent().getCustomPreferenceValue('UpsellRecommendationType')).size() > 0)}">
+										<isset name="addUpsell" value="true" scope="page"></isset>
+									<iselse/>	
+										<isset name="addUpsell" value="" scope="page"></isset>
+									</isif>
+									
+									<isif condition="${PVM.isSelectedAttributeValue(VA, VV) || Valength == 1 || (!empty(variantColor) && VV.value.equals(variantColor))}">
+										<li class="emptyswatch${varloop.count} selected" <isif condition="${(pdict.CurrentCustomer.authenticated || pdict.CurrentSession.custom.cRememberMe) && varProd.custom.isCustomizableFlag && !empty(varProd.custom.kitPrice)}">lang="addtokit"</isif>>
+									<iselse>
+										<li class="emptyswatch${varloop.count}" <isif condition="${(pdict.CurrentCustomer.authenticated || pdict.CurrentSession.custom.cRememberMe) && varProd.custom.isCustomizableFlag && !empty(varProd.custom.kitPrice)}">lang="addtokit"</isif>>
+									</isif>
+											<isif condition="${VV.displayValue != null}">
+												<a title="${VV.displayValue}" id="${varProd.ID}" upsell="${addUpsell}" class="swatchanchor"><isprint value="${VV.displayValue}"/></a>
+											<iselse>
+												<a title="${VV.value}" id="${varProd.ID}" upsell="${addUpsell}"><isprint value="${VV.value}"/></a>
+											</isif>
+										</li>
+								</isloop>
+							</ul>
+							
+						<iselseif condition="${vaId == 'size'}"/>
+							<isset name="variationname" value="${Resource.msg('global.size','locale',null)}" scope="page"/>
+							
+							<span class="label single"><isprint value="${variationname}"/></span>
+							<ul class="swatchesdisplay">
+								<isloop items="${VAVALS}" var="VV" status="varloop"	>
+									<isscript>
+									    var varProd = getProductForVariantID(pdict.Product, VV.ID, VA);
+									</isscript>
+									
+									<isif condition="${(!empty(varProd.getOrderableRecommendations(dw.system.Site.getCurrent().getCustomPreferenceValue('UpsellRecommendationType'))) && varProd.getOrderableRecommendations(dw.system.Site.getCurrent().getCustomPreferenceValue('UpsellRecommendationType')).size() > 0)}">
+										<isset name="addUpsell" value="true" scope="page"></isset>
+									<iselse/>	
+										<isset name="addUpsell" value="" scope="page"></isset>
+									</isif>
+									
+									<isif condition="${PVM.isSelectedAttributeValue(VA, VV) || Valength == 1 || (!empty(variantColor) && VV.value.equals(variantColor))}">
+										<li class="emptyswatch-single selected" <isif condition="${(pdict.CurrentCustomer.authenticated || pdict.CurrentSession.custom.cRememberMe) && varProd.custom.isCustomizableFlag && !empty(varProd.custom.kitPrice)}">lang="addtokit"</isif>>
+									<iselse>
+										<li class="emptyswatch${varloop.count}" <isif condition="${(pdict.CurrentCustomer.authenticated || pdict.CurrentSession.custom.cRememberMe) && varProd.custom.isCustomizableFlag && !empty(varProd.custom.kitPrice)}">lang="addtokit"</isif>>
+									</isif>
+											<isif condition="${VV.displayValue != null}">
+												<a title="${VV.displayValue}" id="${varProd.ID}" upsell="${addUpsell}" class="swatchanchor"><isprint value="${VV.displayValue}"/></a>
+											<iselse>
+												<a title="${VV.value}" id="${varProd.ID}" upsell="${addUpsell}"><isprint value="${VV.value}"/></a>
+											</isif>
+										</li>
+								</isloop>
+							</ul>
+						</isif>
+						
+					
+				</isif>
+
+				
+			<iselse>
+				<iscomment>default ui i.e. dropdown</iscomment>
+				<div class="variantdropdown">
+				<span class="label"><isprint value="${VA.displayName}"/>: </span>
+				<span class="value selectedvarval"></span>
+				<div>
+					<select>
+						<isif condition="${Valength > 1}"><option value="">${Resource.msg('global.select','locale',null)} <isprint value="${VA.displayName}"/></option></isif>
+						<isloop items="${VAVALS}" var="VV">
+							<iscomment>filter out unorderable variation attribute values</iscomment>						
+							<isif condition="${cleanPVM.hasOrderableVariants(VA, VV)}">
+								<isif condition="${PVM.isSelectedAttributeValue(VA,VV) || Valength == 1}"><isset name="selected" value="${'selected=\'selected\''}" scope="page"/><iselse><isset name="selected" value="${''}" scope="page"/></isif>
+								<isif condition="${VV.displayValue != null}"><option value="${VV.displayValue}" ${selected}><isprint value="${VV.displayValue}"/></option><iselse><option value="${VV.value}" ${selected}><isprint value="${VV.value}"/></option></isif>
+							</isif>
+						</isloop>
+					</select>
+					<span class="hidden">${vaId}</span>
+				</div>
+			</isif>
+			<div class="clear"><!-- FLOAT CLEAR --></div>
+			</div>
+			<span class="hidden">${vaId}</span>
+			<div class="clear"><!-- FLOAT CLEAR --></div>
+		</isloop>
+	</div><!-- END: variationattributes -->
+</isif>

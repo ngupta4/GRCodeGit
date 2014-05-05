@@ -1,0 +1,67 @@
+<div class="SASpartition select1open">
+<div class="selectKit freeGiftSelector PanelB kitType">
+	<h2 class="pageTitle1">
+		<isprint value="${Resource.msg('step1.title.SAS.1','locale',null)}" encoding="off" />
+	</h2>
+	<h2 class="pageTitle2">
+		<isprint value="${Resource.msg('step1.title.SAS.2','locale',null)}" encoding="off" />
+	</h2>
+	<div class="selectKit">
+	
+		<ul class="sasKits">
+		
+		
+			<isloop items="${offersList}" var="offer" status="offers_status">
+			<isscript>
+			importScript('infinisilk:product/GetProductMap.ds');
+			importPackage(dw.util);
+			importPackage(dw.catalog);
+			
+			if( !empty(product) ) {
+				var upsellProductsMale : dw.util.ArrayList = getProductDetails(offer.ID,"Gender","male");
+				var upsellProductsFemale : dw.util.ArrayList = getProductDetails(offer.ID,"Gender","female");
+				}	
+			var productID:String="";
+			
+			if(!empty(upsellProductsFemale))
+			   productID = upsellProductsFemale.get(0).ID;
+			else
+			   productID = upsellProductsMale.get(0).ID;
+			</isscript>
+				<li id="system${offers_status.count}" class="${productID} ${offer.ID} updatecartbtn">
+				<span class="selected">${offer.ID}</span>
+					<div class="giftBlockSAS">
+						<div class="selectKit_Img pKitImg">
+							<iscomment>For customer favourite</iscomment>
+							<isif condition="${!empty(offer.custom.offerTabCallout)&&!empty(offer.custom.offerTabCallout.markup)}">
+								<isprint value="${offer.custom.offerTabCallout.markup}" encoding="off"/>
+							<iselse/>
+							</isif>
+							<img src="${offer.getImage('mobile',0).url}" alt="${offer.getImage('mobile',0).alt}"/>
+						</div>
+						<div class="sasLongDescription">
+							<isprint value="${offer.longDescription}" encoding="off"/>
+							<isscript>
+							var contentID = "m-"+offer.ID;
+							</isscript>
+							
+							<iscontentasset aid="${contentID}"/>
+						</div>
+						<!-- <div class="kitIncludes">
+							<isif condition="${!empty(offer.custom.tabDescription)&&!empty(offer.custom.tabDescription.markup)}">
+								<isprint value="${offer.custom.tabDescription.markup}" encoding="off"/>
+							<iselse/>
+							</isif>
+						</div> -->
+					</div>
+				</li>
+			</isloop>
+		</ul>
+	</div>
+	<!-- <div class="bottomPanel">
+			<a href="#Step2" class="medOrngBtn" id="step2">${Resource.msg('back.select','locale',null)}</a>
+			<a href="#Step2" class="medOrngBtn" id="step2">${Resource.msg('next.select','locale',null)}</a>
+	</div>-->
+	
+</div>
+</div>

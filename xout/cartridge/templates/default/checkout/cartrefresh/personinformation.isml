@@ -1,0 +1,110 @@
+<isinclude template="util/modules"/>
+<iscomment>SuppCY checkbox is not checked, then display CY code</iscomment>
+
+<iscomment>js for value change event on text fields.</iscomment>
+<isinclude template="checkout/steps/triggerseewhy" />
+
+<div class="personinfform">
+	<iscomment>Account access information</iscomment>
+	<isinclude template="checkout/cartrefresh/accountaccessinformation" />
+	<div class="clearfix"></div>	
+	<iscomment>Contact information</iscomment>
+	<isinclude template="checkout/cartrefresh/contactinformation" />
+	<div class="clearfix"></div>
+	 	
+	<iscomment>Billing and shipping</iscomment>
+	<div class="billing_shipping">
+		<isinclude template="checkout/cartrefresh/billinginformation" />
+		<isinputfield id="sameAsBilling" formfield="${pdict.CurrentForms.personinf.useAsBillingAddress}" type="checkbox"  attribute2="tabindex" value2="15"/>
+		
+		<div class="checkout_box cb_shipping">
+			<h4 class="asbilling"><span>${Resource.msg('personinformation_refresh.shippinginformation.label', 'rendering', null)}</span></h4>
+			<div class="checkout_box_inner">
+				<div id="shipping_message_block">
+					<iscontentasset aid="cart-international-site" />
+			    </div>
+				
+				<isinclude template="checkout/cartrefresh/shippinginformation" />
+			</div>
+		</div>
+	</div>
+	<div class="clearfix"></div>
+	
+	<iscomment>Payment information</iscomment>
+	<isinclude template="checkout/cartrefresh/paymentinformation" />
+	<div class="clearfix"></div>
+	
+	<iscomment>  	
+		<p class="required_text"><span class="requiredindicator">*</span> ${Resource.msg('cart.requiredtext', 'rendering', null)}</p>
+	</iscomment>
+	  	
+	<iscomment>order total
+	<div class="ordertotalfinal">
+		<span class="cocart-container">
+			<div class="totalPrice cocart-price" id="orderTotal_2">					
+				<isprint value="${pdict.Basket.getTotalNetPrice()}"/>
+			</div>
+			<span class="cocart-label">
+				${Resource.msg('cart.ordertotal.label', 'rendering', null)}&nbsp;
+			</span>
+		</span>
+	</div>
+	</iscomment>
+	
+	<div class="checkout_bottom clearfix">
+		<div class="agree_box personinfo_agree_box_container">
+			<iscomment><isinputfield id="termsAndConditions" formfield="${pdict.CurrentForms.personinf.agree}" type="checkbox" attribute1="requiredmesage" value1="${Resource.msg('forms.checkout.agree.value-error','forms',null)}" attribute2="tabindex" value2="27"><p><isprint value="${Resource.msg('cart_refresh.agreetext','rendering',null)}" encoding="off"/></p></iscomment>
+			<input type="hidden" id="termsAndConditions" name="${pdict.CurrentForms.personinf.agree.htmlName}" value="true">
+			<iscomment>
+			 <p><isprint value="${Resource.msg('cart_refresh.agreetext_nocheckbox','rendering',null)}" encoding="off"/>
+               <a href="${URLUtils.http('Page-Show','cid','terms')}" target="_blank"><isprint value="${Resource.msg('cart_refresh.terms_and_cond','rendering',null)}" encoding="off"/></a>
+            </p>
+            </iscomment>
+		</div>
+		<div class="clearfix"></div>
+	</div>
+	<iscomment>Payment information
+	<isinclude template="checkout/cartrefresh/accountpasswordonline" />
+	<div class="clearfix"></div></iscomment>
+	
+	<div class="checkout_bottom clearfix">
+		<isif condition="${pdict.CurrentCampaignConfig['cartID']==100}">
+			<div class="compBtn">
+					<input type="hidden" value="x" name="${pdict.CurrentForms.personinf.apply.htmlName}" />
+					<button class="continueBtn medOrngBtn" id="contYourOrder" tabindex="30" type="submit" value="${Resource.msg('global.checkout', 'locale', null)}" name="${pdict.CurrentForms.personinf.apply.htmlName}" onClick="beforesubmitcheck()"><span>${Resource.msg('checkout_refresh.submit', 'rendering', null)}</span></button>
+			</div>
+		</isif>
+		<div class="clearfix"></div>
+	</div>
+	
+</div>
+<isif condition="${null!=CCC.rtsEnabled && CCC.rtsEnabled==true}">
+		<iscomment>This Content Asset is Added for RTS PayLater 100$ Content pop up</iscomment>
+				<iscontentasset aid="popup-paylater-100dollar" />
+		<iscomment>This Content Asset is Added for RTS PayLater Terms and Condition pop up</iscomment>
+				<iscontentasset aid="popup-paylater-termsandcond" />
+		  
+		<input type="hidden" name="uciCode" id="uciCode" value="${pdict.CurrentCampaignConfig.uciCode}">
+		<input type="hidden" name="netPrice" id="netPrice" value="${pdict.Basket.getTotalNetPrice()}">
+		<input type="hidden" name="continueBtnClkd" id="continueBtnClkd" value="${false}">
+		<input type="hidden" name="rtsPayMethods" id="rtsPayMethods" value="${session.custom.RTSPayMethod}">
+		<input type="hidden" name="showPopUpForBH" id="showPopUpForBH" value="${session.custom.showPopUp}">
+	
+	
+		
+		<script src="${URLUtils.staticURL('/js/paymentMethods/rtsHandler.js')}" type="text/javascript"></script>
+</isif>
+<iscomment>End of RTS Check</iscomment>
+<script type="text/javascript"><!--
+app.airline.resources.set({
+	'verifyEmailLimit' : ${pdict.CurrentSession.privacy.verifyemaillimit},
+	'verifyEmailUrl' : '<isprint value="${URLUtils.url('GRMiddleware-VerifyEmail')}" encoding="off"/>',
+	'billingEqualsShipping' : ${pdict.BillingEqualsShipping},
+	'billingEqualsShippingCheckbox' : '${pdict.CurrentForms.personinf.useAsBillingAddress.htmlName}',
+	'updateShippingPriceUrl' : '${URLUtils.url("COCart-SetShippingMethod")}',
+	'updateQtyUrl' : '${URLUtils.url("COCart-UpdateProductQty")}',
+	'subtotal-selector' : '.merchandiseTotal',
+	'shipping-price-selector' : '${"#"}totalshippingprice .value',
+	'total-price-selector' : '.order-totals .totalPrice, .ordertotalfinal .totalPrice'
+});
+//--></script>

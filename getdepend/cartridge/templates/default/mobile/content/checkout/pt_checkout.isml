@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html>
+<!--[if lt IE 7]> <html class="ie6 oldie" lang="en"> <![endif]-->
+<!--[if IE 7]>    <html class="ie7 oldie" lang="en"> <![endif]-->
+<!--[if IE 8]>    <html class="ie8 oldie" lang="en"> <![endif]-->
+<!--[if gt IE 8]><!--> <html lang="en"> <!--<![endif]-->
+<isinclude template="util/modules"/>
+<isset name="bodyclass" value="${''}" scope="page" />
+<isset name="pagetitle" value="Depend - Your Shopping Cart" scope="pdict">
+<isscript>
+	importScript('guthyrenker_core:common/libUtils.ds');
+
+	importPackage(dw.object);
+	importPackage(dw.catalog);
+	
+	var CCC : Object = pdict.CurrentCampaignConfig;
+	var campaignCode : String = CCC.campaignCode;
+	
+	var showFooter : boolean = CCC.showFooter;
+	var showHeader : boolean = CCC.showHeader;
+	var showNav : boolean = CCC.showNav;
+	var showOrderButton : boolean = CCC.showOrderButton;
+	
+	var category : dw.catalog.Category = CCC.getCampaignCategory();
+</isscript>
+
+<iscomment>This page must be cachable. It inherits the caching attributes by the decorated template.</iscomment>
+
+<head>
+	<isset name="noBackground" value="true" scope="page"/>
+	
+	<iscomment>Include all important information globally , e.g. meta-data, link information, and javascript.</iscomment>
+	<isinclude template="mobile/components/header/htmlhead"/>
+
+	<!-- <link href="${URLUtils.staticURL('/css/main_checkout.css')}" type="text/css" rel="stylesheet" /> -->
+	
+    <iscomment>Insert meta tag for the "Google-Verification" feature to verify that you are the owner of this site.</iscomment>
+    <isif condition="${'GoogleVerificationTag' in dw.system.Site.current.preferences.custom && dw.system.Site.current.preferences.custom.GoogleVerificationTag!=''}">
+        <meta name="google-site-verification" content="<isprint value="${dw.system.Site.current.preferences.custom.GoogleVerificationTag}"/>" />
+    </isif>
+    
+    <script type="text/javascript" src="${URLUtils.staticURL('js/proactiv.js')}"></script>
+    
+    <meta name="ROBOTS" content="NOINDEX,NOFOLLOW" />
+</head>
+<body class="pt-checkout ${bodyclass}">
+<isset name="showOrderButton" value="${false}" scope="page" />
+<isanalyticsoff>
+<isset name="showNav" value="${true}" scope="page" />
+	<isinclude template="mobile/components/header/header"/>
+<isinclude template="common/mediaPixelsInit" />
+
+<iscomment>Cookies and Javascript enabled check</iscomment>
+<isinclude template="components/browsertoolscheck"/>
+
+<isset name="multiCheckout" value="${pdict.multiCheckout}" scope="page"/>
+<isif condition="${multiCheckout}">
+	<isset name="checkoutHeader" value="${Resource.msg('cart3steps.header','rendering',null)}" scope="page"/>
+	<isset name="checkoutClass" value="cart_multiple" scope="page"/>
+<iselse>	
+	<isset name="checkoutHeader" value="${Resource.msg('cart2steps.header','rendering',null)}" scope="page"/>
+	<isset name="checkoutClass" value="cart_single" scope="page"/>
+</isif>
+<div class="page-outer-inner">
+ <div class="page-wrapper">
+	<div id="ptChekoutMobile">
+		<isreplace/>
+		<isif condition="${pdict.LeftRailShowCheck !== false}">  		
+		  	<iscomment>
+			  	<div class="mcafee_logo">
+					<iscontentasset aid="cart-comfort-copy" />		
+				</div>		
+			</iscomment>
+		</isif>	
+	  </div>
+	</div><!-- END: container -->
+</div><!-- END: full width wrapper -->
+<isif condition="${CCC && CCC.showFooter}">
+		<isinclude template="mobile/components/footer/footer"/>
+	<iselse>
+		<iscomment>REFACTOR:  We need to refactor the footer to have this logic to include omniture/pixels regardless if it is shown</iscomment>
+		<!---  Omniture tracking  --->
+		<isinclude template="analytics/omniture/omniture"/>
+</isif>
+<isinclude template="components/footer/pixels"/>
+<isinclude template="common/google_analytics" />
+<div id="popupBG">&nbsp;</div>
+
+<script type="text/javascript">
+jQuery(document).ready(function () {
+	jQuery("a.details").bind("click", function(event){
+		event.preventDefault();
+		//jQuery("button.details").click();
+		return false;
+	});
+
+	// Initialize the Checkout API
+	app.proactiv.checkout.init();
+});
+</script>
+</body>
+</html>

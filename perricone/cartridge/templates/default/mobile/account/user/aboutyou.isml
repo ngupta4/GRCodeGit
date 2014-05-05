@@ -1,0 +1,171 @@
+<isdecorate template="account/pt_account">
+  <isinclude template="util/modules"/>
+  	<isinclude url="${URLUtils.url('KitCustomizer-RenderKitDetail')}"/>
+  	<input type="hidden" id="tagetPipeline" value="${pdict.TargetPipeline}"/>
+		<input type="hidden" id="tagetParams" value="${pdict.TargetPipelineParams}"/>
+  <iscomment>Builds a registration page for the user. It provides all input fields for names and address</iscomment>
+   <istabdisplayed  tabid="AY"/>
+ <div id="idMainWide" class="mainWide">
+	  	<div class="clearfix" id="main">
+	  	   <div id="content">
+  <div class="registration">
+     
+  <iscomment>Include common framework to make tabs</iscomment>
+  
+  
+    <div class="registrationform auto-wraper margin0">
+    <h2>${Resource.msg('account.aboutyou','account',null)}</h2>
+    <isinclude template="util/errordisplay"/>
+      <form action="${URLUtils.httpsContinue()}" method="post" id="AboutYouForm" >
+        <div class="formfields">
+        <div class="formChange">
+          <div class="form-wraper reg-row">
+            <div class="formfield f-left">
+              <isinputfield formfield="${pdict.CurrentForms.profile.customer.age}" type="input"/>
+            </div>
+            <div class="formfield f-left margin-box">
+              <isinputfield formfield="${pdict.CurrentForms.profile.customer.gender}" type="select"/>
+            </div>
+            <div class="clear"></div>
+          </div>
+          <div class="formfield reg-row">
+            <div class="label">
+              <isprint value="${Resource.msg('profile.skintpye','account',null)}"/>
+            </div>
+            <div class="radio value">
+              <div class="radio-fields">
+                <label><input type="radio" value="sensitive"
+                  <isif condition="${pdict.CurrentForms.profile.customer.skinType.value=='sensitive'}">Checked</isif>
+                  id="${pdict.CurrentForms.profile.customer.skinType.htmlName}"
+                  name="${pdict.CurrentForms.profile.customer.skinType.htmlName}">
+                  <isprint value="${Resource.msg('profile.sensitive','account',null)}"/>
+                </label>
+                <div class="clear"></div>
+              </div>
+              <div class="radio-fields">
+                <label><input type="radio" value="dry" 
+                  <isif condition="${pdict.CurrentForms.profile.customer.skinType.value=='dry'}">Checked</isif>
+                  id="${pdict.CurrentForms.profile.customer.skinType.htmlName}"
+                  name="${pdict.CurrentForms.profile.customer.skinType.htmlName}">
+                  <isprint value="${Resource.msg('profile.dry','account',null)}"/>
+                </label>
+                <div class="clear"></div>
+              </div>
+              <div class="radio-fields">
+                <label><input type="radio" value="oily"
+                  <isif condition="${pdict.CurrentForms.profile.customer.skinType.value=='oily'}">Checked</isif>
+                  id="${pdict.CurrentForms.profile.customer.skinType.htmlName}"
+                  name="${pdict.CurrentForms.profile.customer.skinType.htmlName}">
+                  <isprint value="${Resource.msg('profile.oily','account',null)}"/>
+                </label>
+                <div class="clear"></div>
+              </div>
+              <div class="radio-fields">
+                <label><input type="radio" value="combination"
+                  <isif condition="${pdict.CurrentForms.profile.customer.skinType.value=='combination'}">Checked</isif>
+                  id="${pdict.CurrentForms.profile.customer.skinType.htmlName}"
+                  name="${pdict.CurrentForms.profile.customer.skinType.htmlName}">
+                  <isprint value="${Resource.msg('profile.combination','account',null)}"/>
+                </label>
+                <div class="clear"></div>
+              </div>
+              <div class="radio-fields">
+                <label><input type="radio" value="normal"
+                  <isif condition="${pdict.CurrentForms.profile.customer.skinType.value=='normal'}">Checked</isif>
+                  id="${pdict.CurrentForms.profile.customer.skinType.htmlName}"
+                  name="${pdict.CurrentForms.profile.customer.skinType.htmlName}">
+                  <isprint value="${Resource.msg('profile.normal','account',null)}"/>
+                </label>
+                <div class="clear"></div>
+              </div>
+              <div class="clear"></div>
+            </div>
+          </div>
+          <div class="formfield reg-row">
+            <div class="label">
+              <isprint value="${Resource.msg('profile.skintone','account',null)}"/>
+            </div>
+            <div class="radio value">
+              <div class="radio-fields">
+                <label><input type="radio" value="medium"
+                  <isif condition="${pdict.CurrentForms.profile.customer.skinTone.value=='medium'}">Checked</isif>
+                  id="${pdict.CurrentForms.profile.customer.skinTone.htmlName}"
+                  name="${pdict.CurrentForms.profile.customer.skinTone.htmlName}">
+                  <isprint value="${Resource.msg('profile.medium','account',null)}"/>
+                </label>
+                <div class="clear"></div>
+              </div>
+              <div class="radio-fields">
+                <label><input type="radio" value="tan" 
+                  <isif condition="${pdict.CurrentForms.profile.customer.skinTone.value=='tan'}">Checked</isif>
+                  id="${pdict.CurrentForms.profile.customer.skinTone.htmlName}"
+                  name="${pdict.CurrentForms.profile.customer.skinTone.htmlName}">
+                  <isprint value="${Resource.msg('profile.tan','account',null)}"/>
+                </label>
+                <div class="clear"></div>
+              </div>
+              <div class="radio-fields">
+                <label><input type="radio" value="dark"
+                  <isif condition="${pdict.CurrentForms.profile.customer.skinTone.value=='dark'}">Checked</isif>
+                  id="${pdict.CurrentForms.profile.customer.skinTone.htmlName}"
+                  name="${pdict.CurrentForms.profile.customer.skinTone.htmlName}">
+                  <isprint value="${Resource.msg('profile.dark','account',null)}"/>
+                </label>
+                <div class="clear"></div>
+              </div>
+              <div class="clear"></div>
+            </div>
+          </div>
+          <div class="formfield reg-row">
+            <div class="label">
+              <isprint value="${Resource.msg('profile.acneseverity','account',null)}"/>
+            </div>
+            <div class="radio value">
+              <div class="radio-fields">
+                <label><input type="radio" value="mild"
+                  <isif condition="${pdict.CurrentForms.profile.customer.acneSeverity.value=='mild'}">Checked</isif>
+                  id="${pdict.CurrentForms.profile.customer.acneSeverity.htmlName}"
+                  name="${pdict.CurrentForms.profile.customer.acneSeverity.htmlName}">
+                  <isprint value="${Resource.msg('profile.mild','account',null)}"/>
+                </label>
+                <div class="clear"></div>
+              </div>
+              <div class="radio-fields">
+                <label><input type="radio" value="moderate" 
+                  <isif condition="${pdict.CurrentForms.profile.customer.acneSeverity.value=='moderate'}">Checked</isif>
+                  id="${pdict.CurrentForms.profile.customer.acneSeverity.htmlName}"
+                  name="${pdict.CurrentForms.profile.customer.acneSeverity.htmlName}">
+                  <isprint value="${Resource.msg('profile.moderate','account',null)}"/>
+                </label>
+                <div class="clear"></div>
+              </div>
+              <div class="radio-fields">
+                <label><input type="radio" value="stubborn"
+                  <isif condition="${pdict.CurrentForms.profile.customer.acneSeverity.value=='stubborn'}">Checked</isif>
+                  id="${pdict.CurrentForms.profile.customer.acneSeverity.htmlName}"
+                  name="${pdict.CurrentForms.profile.customer.acneSeverity.htmlName}">
+                  <isprint value="${Resource.msg('profile.stubborn','account',null)}"/>
+                </label>
+                <div class="clear"></div>
+              </div>
+              <div class="clear"></div>
+            </div>
+          </div>
+          <input type="hidden" name="${pdict.CurrentForms.profile.secureKeyHtmlName}" value="${pdict.CurrentForms.profile.secureKeyValue}"/>
+          <div class="formactions">
+            <button type="submit" value="${Resource.msg('global.apply','locale',null)}" name="${pdict.CurrentForms.profile.save.htmlName}" class="blue-btn margin0">
+            <span class="blc"></span>
+            <span>${Resource.msg('global.apply','locale',null)}</span></button>
+            <a href="${URLUtils.https('Account-Show')}" title="Cancel" class="gy-btn gy-btn-a"><span class="grey-button"></span><span>${Resource.msg('profile.cancel','account',null)}</span></a>
+            <div class="clear"></div>
+          </div>
+          </div> <!-- End of formChange -->
+        </div>
+      </form>
+    </div>
+  </div>
+    </div>
+  </div></div>
+  
+ <isset name="OmniturePage" value="aboutyou" scope="pdict"> 
+</isdecorate>

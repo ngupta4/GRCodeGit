@@ -1,0 +1,124 @@
+/**
+ * ValidateCartForCheckout.ds
+ *
+ * This script implements a typical shopping cart checkout validation. 
+ * The script is provided with the Demandware reference application. Some 
+ * parts of the validation script are specific to the reference application
+ * logic and might not be applicable to our customer's storefront applications.
+ * However, the shopping cart validation script can be customized to meet 
+ * specific needs and requirements.
+ * 
+ * The script implements the validation of the shopping cart against specific
+ * conditions. This includes the following steps:
+ * - validate if total price is not N/A
+ * - validate if products are still in site catalog and online
+ *
+ * @input  Basket : dw.order.Basket
+ * @output BasketStatus : dw.system.Status
+ */
+
+
+ importPackage( dw.system );
+ importPackage( dw.web );
+ importPackage( dw.value );
+ importPackage( dw.util );
+ importPackage( dw.order );  
+ importPackage( dw.catalog ); 
+
+
+/**
+ * Function: execute
+ *
+ * Main function of the validation script. 
+ */
+function execute( pdict : PipelineDictionary ) : Number
+{
+    // ===================================================
+	// =====     	PROCESS INPUT PARAMETERS 		 ===== 
+    // ===================================================
+
+	var basket : Basket = pdict.Basket;
+
+    // ===================================================
+	// =====   VALIDATE PRODUCT EXISTENCE            ===== 
+    // ===================================================
+	// Check if all products in basket can still be resolved
+	// and are online
+	var productExistence = validateProductExistence(basket);
+
+    // ===================================================
+	// =====             VALIDATE CONTENT            ===== 
+    // ===================================================
+	// Check if basket contains products or gift certificates
+	var hasContent = validateContent(basket);
+	
+    // ===================================================
+	// =====    CHECK MERCHANDIZE TOTAL NET PRICE   ====== 
+    // ===================================================
+
+	// Checks the availability of the basket's merchandize
+	// total price (net or gross depending on taxation policy)
+	var pricesAvailable = basket.merchandizeTotalPrice.available; 
+	
+    // ===================================================
+	// =====           EVALUATE CONDITIONS           =====
+    // ===================================================
+    
+	if(!pricesAvailable || !productExistence)
+	{
+		// there are either any product line items without existing 
+		// product or one or more line items has no price
+		pdict["BasketStatus"] = new Status(Status.ERROR);
+		return PIPELET_ERROR;
+	}
+
+	if(!hasContent)
+	{
+		// there are neither products nor gift certificates in the 
+		// basket; we exit with an error however the basket status is OK
+		pdict["BasketStatus"] = new Status(Status.OK);
+		return PIPELET_ERROR;
+	}
+
+    // ===================================================
+	// =====            DONE                         =====
+    // ===================================================
+	
+	pdict["BasketStatus"] = new Status(Status.OK);
+    return PIPELET_NEXT;
+}
+
+/**
+ * FUNCTION: validateProductExistence
+ */
+function validateProductExistence(basket : Basket)
+{
+	var plis : Iterator = basket.getProductLineItems().iterator();
+	
+	while(plis.hasNext())
+	{
+		var pli : Product = plis.next();
+		if(pli.product == null || !pli.product.online)
+		{
+			return false;
+		}
+	}
+	
+	return true;
+}
+
+/**
+ * FUNCTION: validateContent
+ */
+function validateContent(basket : Basket)
+{
+	var plis : Collection = basket.getProductLineItems();
+	var gclis : Collection = basket.getGiftCertificateLineItems();
+	
+	if(plis.size() == 0 && gclis.size() == 0)
+	{
+		return false;
+	}
+	
+	return true;
+}

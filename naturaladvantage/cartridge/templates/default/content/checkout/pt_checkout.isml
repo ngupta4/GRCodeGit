@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html>
+<isinclude template="util/modules"/>
+
+<isscript>
+	importScript('guthyrenker_core:common/libUtils.ds');
+</isscript>
+
+<iscomment>This page must be cachable. It inherits the caching attributes by the decorated template.</iscomment>
+
+<head>
+	<isset name="noBackground" value="true" scope="page"/>
+	<iscomment>Include all important information globally , e.g. meta-data, link information, and javascript.</iscomment>
+	<isinclude template="components/header/htmlhead"/>
+
+	<link href="${URLUtils.staticURL('/css/checkout.css')}" type="text/css" rel="stylesheet" />
+	
+    <iscomment>Insert meta tag for the "Google-Verification" feature to verify that you are the owner of this site.</iscomment>
+    <isif condition="${'GoogleVerificationTag' in dw.system.Site.current.preferences.custom && dw.system.Site.current.preferences.custom.GoogleVerificationTag!=''}">
+        <meta name="google-site-verification" content="<isprint value="${dw.system.Site.current.preferences.custom.GoogleVerificationTag}"/>" />
+    </isif>
+</head>
+<body class="${bodyclass}">
+
+<iscomment>Cookies and Javascript enabled check</iscomment>
+<isinclude template="components/browsertoolscheck"/>
+
+<isset name="multiCheckout" value="${pdict.multiCheckout}" scope="page"/>
+<isif condition="${multiCheckout}">
+	<isset name="checkoutHeader" value="${Resource.msg('cart3steps.header','rendering',null)}" scope="page"/>
+	<isset name="checkoutClass" value="cart_multiple" scope="page"/>
+<iselse>	
+	<isset name="checkoutHeader" value="${Resource.msg('cart2steps.header','rendering',null)}" scope="page"/>
+	<isset name="checkoutClass" value="cart_single" scope="page"/>
+</isif>
+
+<div id="container" class="pt_storefront ${CCC.getContainerClasses()}">
+	<div id="main">
+	
+	<div class="content_checkout">
+	
+		<div class="offer_sidebar_left">
+			<div class="content_box_outer_pdp">
+				<div class="content_box_inner_sp">				
+						<isslot id="cart-amazing-results" context="global" description="Cart Amazing Results Content Slot" />					
+				</div>
+			</div>
+			<div class="content_box_outer_pdp">
+				<div class="content_box_inner_sp">				
+						<isslot id="cart-phone-number" context="category" description="Cart Phone Number Content Slot" context-object="${category}"/>									
+				</div>
+			</div>
+			<div>
+			 	<isif condition="${!empty(pdict.IsShowSuggest) && (pdict.IsShowSuggest == true)}">
+					<isinclude url="${URLUtils.url('COCart-ShowRecommendation','IsShowSuggest','true')}"/>
+				<iselse>
+					<isinclude url="${URLUtils.url('COCart-ShowRecommendation')}"/>
+				</isif>
+			</div>
+		</div>
+		
+		<div class="checkout_right ${checkoutClass}">
+		
+			<div class="checkout_header">
+				<h1>${checkoutHeader}</h1>				
+			</div>
+		
+	  		<isreplace/>
+	  		
+	  		<div class="mcafee_logo">
+				<iscontentasset aid="cart-comfort-copy" />		
+			</div>		
+		
+		</div><!-- END: checkout_right -->
+	
+	</div><!-- END: content_checkout -->
+  	
+	</div><!-- END: main -->
+
+	<isinclude template="components/header/header"/>
+	
+	<isif condition="${CCC.showFooter}">
+		<isinclude template="components/footer/footer"/>
+	</isif>
+	<isinclude template="common/google_analytics" />
+</div><!-- END: container -->
+
+<div id="popupBG">&nbsp;</div>
+<isif condition="${shouldShowDebugInfo()}">
+	<iscomment>this is the template rendering the checkout pages</iscomment>
+	<pre><!-- +1.888.553.9216 --><!--This phone is a requirement to support existing Gomez monitor of SiteGenesis. Demadware customers can remove this.-->
+		
+	LandingTemplate: ${CCC.landingTemplate}
+	Campaign Code:${CCC.campaignCode}
+	Campaign ID:${getCurrentCampaignCode()}
+	ShowHeader?:${CCC.showHeader}
+	ShowFooter?:${CCC.showFooter}
+	ShowNav?:${CCC.showNav}
+	ShowOrderButton?:${CCC.showOrderButton}
+	Phone:${CCC.phone}
+	
+	</pre>
+</isif>
+<script type="text/javascript">
+jQuery(document).ready(function () {
+	jQuery("a.details").bind("click", function(event){
+		event.preventDefault();
+		//jQuery("button.details").click();
+		return false;
+	});
+	/*jQuery("input").bind("blur",function(){
+		jQuery("span." + app.validatorSettings.errorClass).each(function(){
+			if(jQuery(this).attr("for")){
+				jQuery(this).attr("htmlfor",jQuery(this).attr("for"));
+				jQuery(this).removeAttr("for");
+			}
+		});
+	});*/
+});
+</script>
+
+<iscomment>dsweeney 1/12/12- Quick fix for bug with validator: all versions of IE are submitting even when agree to terms box is unchecked
+<!--[if IE]>
+<script type="text/javascript">
+jQuery(document).ready(function() {
+    var c = jQuery("#dwfrm_personinf_agree, #dwfrm_advertise_agree, #dwfrm_orderreview_agree");
+    if (c.length) {
+		jQuery('button[name="dwfrm_advertise_suggest_i0_addtobasket"], button[name="dwfrm_personinf_apply"], button[name="dwfrm_orderreview_apply"]').live("click",function(e) {
+			var v = jQuery("#dwfrm_personinf_agree, #dwfrm_advertise_agree, #dwfrm_orderreview_agree").prop("checked");
+			if (typeof(v)==="undefined" || !v) {
+				var s = jQuery('span[htmlfor="dwfrm_personinf_agree"], span[htmlfor="dwfrm_advertise_agree"], span[htmlfor="dwfrm_orderreview_apply"]');
+				if (s.length == 0)
+					jQuery("#dwfrm_personinf_agree, #dwfrm_advertise_agree, #dwfrm_orderreview_agree").after('<span generated="true" class="errorclient" htmlfor="dwfrm_personinf_agree">Please agree to the terms and conditions</span>');
+				else
+					jQuery(s).show();
+				
+				e.preventDefault();
+			}
+				//return false;
+		});
+	}
+});
+</script>
+<![endif]-->
+</iscomment>
+</body>
+</html>

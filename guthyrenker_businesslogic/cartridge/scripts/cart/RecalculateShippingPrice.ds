@@ -1,0 +1,38 @@
+/**
+ * This script will change the shipping cost
+ * Shipping cost should be multiplied by product quantity
+ *
+ * @input Basket : dw.order.Basket
+ * @input Qty : Number
+ */
+importPackage( dw.system );
+importPackage( dw.order );
+
+function execute( args : PipelineDictionary ) : Number
+{
+	var basket : Basket = args.Basket;
+	
+	/*for each (var pli : ProductLineItem in basket.getDefaultShipment().getProductLineItems())
+	{
+		if ('coreItem' in pli.product.custom && pli.product.custom["coreItem"] == true)
+		{
+			for each (var shipping in pli.getShipment().getShippingLineItems())
+			{
+				// We will use offer attribute "ShippingCost" for default shipping method and method price for others
+				var price = (basket.getDefaultShipment().getShippingMethod() && basket.getDefaultShipment().getShippingMethod().isDefaultMethod() && !empty(pli.product.custom["shippingCost"])) ? pli.product.custom["shippingCost"] : shipping.getPriceValue();
+				
+				// Set the price multiplied by product quantity
+				price = shipping.getPriceValue() * (args.Qty || pli.getQuantityValue());
+				
+				shipping.setPriceValue(price);
+				// Need to manually set the gross price because order gets it somehow
+				shipping.setGrossPrice(shipping.getPrice());
+			}
+		}
+	}
+	
+	// Update the total price according to modifications made
+	basket.updateTotals();*/
+
+	return PIPELET_NEXT;
+}

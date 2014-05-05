@@ -1,0 +1,23 @@
+<!--- TEMPLATENAME: mbox_global.isml --->
+<isscript>
+//look for UCI in the following order : 1. cookie 2. querystring 3. current CampaignConfig object
+var the_UCI_cookie : dw.web.Cookie = pdict.CurrentRequest.httpCookies['uci'];
+var mboxUCI : String = !empty(the_UCI_cookie) ? the_UCI_cookie.value   
+			    	 : ( ("uci" in pdict.CurrentHttpParameterMap && !empty(pdict.CurrentHttpParameterMap.uci.value)) ? 
+			    	     pdict.CurrentHttpParameterMap.uci.value 
+			    	 : ( (!empty(pdict.CurrentCampaignConfig.uciCode) && pdict.CurrentCampaignConfig.uciCode != null) ?
+			    	     pdict.CurrentCampaignConfig.uciCode 
+			    	 : "none" )); //default to none
+			    	 
+var mboxCampaignID : String = pdict.CurrentSession.privacy.campaignID;
+var mboxStorefrontName = "mcp_dw"; 	 
+
+var mboxState="acq";
+var mboxPageName = mboxCampaignID + ":" +mboxStorefrontName+ ":" + mboxState + ":" + pdict.OmniturePage;				    	 
+</isscript>
+
+<div class="mboxDefault"></div>
+
+<script type="text/javascript">
+	mboxCreate('sp_dw_global','pageName='+"${mboxPageName}",'pageUCI='+ "${mboxUCI}");
+</script>	

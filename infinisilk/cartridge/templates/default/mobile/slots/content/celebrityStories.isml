@@ -1,0 +1,63 @@
+<iscomment>
+	This template renders the slot content of the bottom category landing slot
+	in case the slot content is of type Content Asset.
+	Note, only one content asset is rendered.
+</iscomment>
+
+<isinclude template="util/modules"/>
+<isscript>
+	importScript('guthyrenker_core:common/libUtils.ds');
+	
+	if( empty(slotcontent) ) {
+		slotID = 'no-slot-configured';
+	} else {
+		slotID = slotcontent.slotID;
+	}
+</isscript>
+
+
+	
+
+		<iscomment>make sure we have content at all</iscomment>
+		<isif condition="${slotcontent != null}">
+			<isif condition="${!empty(slotcontent.content)}">
+			<div class="pageWidth">
+			<ul class="celebListings">
+				<isloop items="${slotcontent.content}" var="contentAsset" status="ca_status">
+				
+				<li>
+				<isif condition="${'afterImg' in contentAsset.custom && !empty(contentAsset.custom.afterImg)}">
+					<isset name="thumbnailUrl" value="${contentAsset.custom.afterImg.url}" scope="page"/>
+				<iselse/>
+					<isset name="thumbnailUrl" value="${URLUtils.staticURL('/images/noimagemedium.png')}" scope="page"/>
+				</isif>
+				
+				<isset name="thumbnailAlt" value="${contentAsset.name}" scope="page"/>
+				<isset name="thumbnailTitle" value="${contentAsset.name}" scope="page"/>
+				<a href="${URLUtils.http('Search-ShowSlotOnlyCategory','cgid',contentAsset.ID)}" title="${contentAsset.name}" class="thumb">
+					<img src="${thumbnailUrl}" alt="${thumbnailAlt}" title="${thumbnailTitle}" />
+				</a>
+				
+				<div class="desc">
+				<h2 class="celebName">
+					<a href="${URLUtils.http('Search-ShowSlotOnlyCategory','cgid',contentAsset.ID)}" title="${contentAsset.name}">
+					<isprint value="${contentAsset.name}" encoding="off"/></a>
+				</h2>
+				
+				
+				<p><isprint value="${contentAsset.description}" encoding="off"/>
+				<a href="${URLUtils.http('Search-ShowSlotOnlyCategory','cgid',contentAsset.ID)}">Read More ></a></p>
+				
+				</div>
+				
+				</li>
+				
+						
+				</isloop>	
+				</ul>
+				</div>		
+			</isif>			
+		</isif>
+			
+	
+	

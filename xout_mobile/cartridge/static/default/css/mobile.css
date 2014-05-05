@@ -1,0 +1,339 @@
+/* CSS Table of Contents (In Order):
+	- Global Resets
+	- Page Structure (Layout Divs)
+	- Default CSS
+	- jQuery Default CSS
+	- Header/Footer Elements
+	- Homepage	
+*/
+
+/* GLOBAL RESETS/SETTINGS (Edit at your own risk!)
+--------------------------------------------------------------------------------------- */
+body{box-sizing: border-box;font-family: "Trebuchet MS", Verdana, Arial, Helvetica;font-size: 13px;left: 0;margin:0;min-height: 354px;overflow-x: hidden;padding:0;position: absolute;top: 0;width: 100%;-webkit-user-select: none;-webkit-text-size-adjust: none;-webkit-box-sizing: border-box;-moz-box-sizing: border-box;}
+body[orient="portrait"] .wrapper {min-height: 350px;width: 100%;}
+body[orient="landscape"] .wrapper {min-height: 215px;width: 100%;}
+
+/***********************************************/
+/* PAGE ELEMENT STYLING CSS                    */
+/***********************************************/
+
+/* DEFAULT CSS CLASSES
+--------------------------------------------------------------------------------------- */
+
+/***** Global Classes *****/
+.clear			{clear:both;}
+.floatleft		{float:left;}
+.floatright		{float:right;}
+.textleft		{text-align:left;}
+.textright		{text-align:right;}
+.textcenter		{text-align:center;}
+.textjustify	{text-align:justify;}
+.bold			{font-weight:bold;}
+.italic			{font-style:italic;}
+.imgleft		{float:left;}
+.imgright		{float:right;}
+.odd			{background-color:#efefef;}
+.even			{background-color:#fff;}
+.hidden 		{display: none;}
+.label 			{font-weight: bold;}
+.value 			{width:auto;}
+.discount 		{color:red;}
+.error			{color:red;}
+.promo			{color:red;font-weight:bold;}
+.bonusitem	 	{color:red;text-transform:uppercase;}
+.relative		{position:relative;}
+.absolute		{position:absolute;}
+.small			{font-size: xx-small;vertical-align: top;}
+h1 				{background-color: #eeeeee;color:black;font-size:16pt;font-weight:bold;padding: 1px 0px 1px 5px;-moz-border-radius:3px;-webkit-border-radius : 3px;}
+h2 				{color:black;font-size:14pt;font-weight:bold;}
+h3 				{background-color:transparent;border-bottom:solid 1px #aaa;color:black;font-size:13pt;font-weight:bold;}	
+h4 				{color:black;font-size:12pt;font-weight:bold;}
+h5 				{background-color:#CCCCCC;color:black;font-size:11pt;font-weight:bold;}
+h6 				{color:#003344;font-size:11pt;font-weight:bold;}
+a 				{color:#5781ae;font-size: 10pt;}
+
+/* generic loading container */
+.loading {display:block;text-align:center;width:100%;}
+
+a.linkbar {background:#eee url(../images/linkarrow.png) no-repeat scroll right center;border-bottom:1px solid #CCCCCC;color:#666666;display:block;font-size:15px;font-weight:bold;padding:9px 32px 8px 10px;text-decoration:none;-moz-background-clip:border;-moz-background-inline-policy:continuous;-moz-background-origin:padding;}
+a.linkbar:hover {background-color:#666666;border-bottom:1px solid #eee;color:#fff;}
+a.sublinkbar {background:#fff;border-bottom:1px dotted #CCCCCC;color:#666666;display:block;font-size:14px;font-weight:bold;padding:6px 32px 5px 15px;text-decoration:none;-moz-background-clip:border;-moz-background-inline-policy:continuous;-moz-background-origin:padding;}
+a.sublinkbar:hover {background-color:#666666;border-bottom:1px dotted #eee;color:#fff;}
+a.sublinkbar[selected] {background-color:#fff;color:#EEEEEE;}
+a.sublinklast {border-bottom:1px solid #CCCCCC;}
+a.cartlink, a.logoutlink {background-image:none;margin-top:5px;padding:5px 32px 4px 10px;}
+a.backlink {background-image:none;padding:5px 32px 4px 10px;}
+
+/***** Form Classes *****/
+form {display:inline;margin:0;padding:0;}
+label {clear:left;display:inline;font-size:9pt;font-weight:bold;text-align:right;}
+label.errormessage {font-size:1.0em;font-weight:normal;text-align:left;}
+input, select, textarea {font-size: 13pt;}
+input, input[type=text], input[type="password"] {background-color: white;border:1px solid #CCCCCC;vertical-align:middle;z-index:-1;}
+input.errormessage {border-color: red;}
+input.disabled {background:#e1e1e1;cursor:default;}
+select {border:1px solid #CCCCCC;font-size: 1.1em;z-index:-1;}
+select.selectbox {width:auto;}
+textarea, textarea.textbox {background-color: white;border:1px solid #CCCCCC;vertical-align:middle;z-index:-1;}
+/* Form/Form Fields/Labels Containers */
+form .label {font-weight: bold;text-align: right;width: 150px;}
+form .value {width:auto;}
+/* Error Handling CSS */
+.errorform {background: transparent url(../images/errorform.gif) no-repeat 0 3px;color: red;font-size:1.2em;font-weight:bold;line-height:11pt;text-align:left;padding:0 0 0 20px;}
+.errorlabel {color: red;font-style:italic;}
+.errormessage {color: red;display:block;white-space:nowrap;}
+.errorclient {background:#ffcccc !important;border-color: red !important;}
+/* Actions/Buttons Handling */
+.actions {text-align: right;}
+.formactions {text-align: right;}
+/* Required Fields Handling */
+.requiredcaption {white-space: nowrap;font-size: 10px;}
+.requirederror {color: red;}
+.requiredindicator {color: red;font-size:1.2em;}
+.requiredmessage {color: gray;font-size:1.0em;font-weight:normal;vertical-align:top;}
+input.quantityinput {width:24px;}
+.caption {display: block;}
+.expirationdate .year select.selectbox {}
+
+/***** TABLE DEFAULT STYLING *****/
+table {border-collapse: collapse;}
+table th {background-color:#ffffff;border-right: 2px solid white;border-bottom: 2px solid white;color: Black;font-size:1.2em;font-weight:bold;text-align:left;white-space: nowrap;}
+table tfoot tr {border: 0px;}
+tr.tablerow {border-bottom: 1px dashed #898989;}
+td.imagecolumn {text-align: center;vertical-align: top;width: 113px;}
+td.detailscolumn {vertical-align: top;}
+td.detailscolumn .name {font-size: 1.2em;font-weight: bold;}
+td.unitpricecolumn {text-align: right;white-space: nowrap;}
+
+/* Button Styling CSS */
+button {font-size:10pt;font-weight:normal;}
+
+/* Button Styling looking like text */
+button.textbutton {background:transparent none !important;border:0 !important;color:#5781AE !important;font-size:1em !important;margin:0;outline:none;padding:0 !important;white-space:nowrap;}
+button.textbutton span{background:transparent none !important;color:#5781AE !important;display:inline;font-size:1em !important;font-weight:normal !important;height:auto !important;line-height:normal;margin:0;outline:none;padding:0;text-decoration:underline !important;white-space:nowrap;}
+button.textbutton:hover {background:transparent none !important;}
+button.textbutton:hover span{background:transparent none !important;color:#F95929 !important;}
+
+/***** PRODUCT TILE *****/
+.producttile {border-bottom:1px solid #eee;}
+.producttile .facebook {margin:4px 2px;}
+.producttile a img {border:none;}
+a.producttile:hover {background-color: #dedede;}
+table td.image {width:113px;}
+table td.productdetail {padding-top:10px;}
+a.name {font-size: 10pt;font-weight:bold;text-decoration:none;}
+
+/***** PRODUCT DETAILS *****/
+.productdetail table {margin:4px;}
+.productdetail h1 {background:none;font-size:12pt;padding-left:0;}
+.productdetail .productimages, .productdetail .productinfo {margin:auto;width:50%;}
+.productdetail .productimages, .productdetail .productinfo select {width: 125px;}
+.productdetail .price {color:#e62617;font-weight:bold;}
+.productdetail .price .standardprice {color: #000000;border-right: 1px black solid;margin-right:5px;padding-right:5px;}
+.productdetail .tieredprice {color: red;margin: 8px 0 12px 0;}
+.productdetail .promotion {border-top: 1px solid gray;border-bottom: 1px solid gray;margin: 10px 0px;padding: 3px 10px;}
+.productdetail .promotion .label {color: #e62617;}
+.productdetail .socialmedia {margin:4px 0 0;}
+.productdetail .socialmedia .socialmedia .facebook, .productdetail .socialmedia .share {float:left;margin-right:12px;}
+.productdetail .socialmedia .share {margin-top:2px;}
+
+/***** ACCOUNT PAYMENT INSTRUMENTS *****/
+.paymentcreditcardform table {width:100%;}
+.paymentcreditcardform td {vertical-align:top;}
+.paymentcreditcardform .cardtype {font-weight:bold;}
+.paymentcreditcardform .cardnumber input {width:100%;}
+.paymentcreditcardform .cardexpirelabel {white-space:nowrap;}
+.paymentcreditcardform .month {width:100px;}
+.paymentcreditcardform .month div {display:inline;}
+.paymentcreditcardform .cvnnumber input{width:90px;}
+.paymentcreditcardform .actionbuttons td {padding:16px 0 0 0;}
+
+/* PRICING */
+.price {margin: 0px auto;}
+.price .standardprice {display: inline;margin: 2px 3px;text-decoration: line-through;}
+.price .salesprice {display: inline;}
+.price .discountprice .salesprice {color: #e62617;}
+
+/***** BUY NOW *****/
+#buynowcontainer {font-family: Helvetica, Arial, sans-serif; }
+#buynowcontainer div > img {z-index:1;}
+#buynowcontainer div > a {z-index:1001;}
+#buynowcontainer div > a.offerA {display:block;height:39px;width: 142px;}
+#buynowcontainer div > .topClick.offerA {top:113px;left:8px;}
+#buynowcontainer div > .bottomClick.offerA {bottom:0;left:6px;}
+#buynowcontainer div > a.offerB {display:block;height:25px;width:93px;}
+#buynowcontainer div > .topClick.offerB {top:151px;left:40px;}
+#buynowcontainer div > .bottomClick.offerB {bottom: 22px;left:40px;}
+#buynowcontainer div > form {left: 5px;bottom: 68px;width: 148px;height: 91px;z-index: 1001;}
+#buynowcontainer div > form .label {display:block;border:1px solid #fff;background-color:#fff;text-align:left;margin:0;padding:0 0 5px;text-decoration:none;width: 147px !important;}
+#buynowcontainer div > form .label.selected {border:1px solid #00d2f3;background-color:#e0f5fc;}
+#buynowcontainer div > form .label input {float:left;margin:3px 0 0;height: 10px;width: 10px;}
+#buynowcontainer div > form .label div h3 {font-size:10px;display:inline;border:none;margin:0 0 10px 2px;}
+#buynowcontainer div > form .label div p {font-size:8px;font-weight:normal;margin:0 0 0 12px;line-height:1;color:#000;}
+#buynowcontainer div > form .label div p span {color:#9d008c;font-weight:bold;}
+#buynowcontainer div > form.offerA {left: 5px;bottom: 78px;width: 148px;height: 181px;z-index: 1001;}
+#buynowcontainer div > form.offerA .label {display:block;border:1px solid #fff;background-color:#fff;text-align:left;margin:5px 0;padding:5px 0;width: 147px !important;}
+#buynowcontainer div > form.offerA .label.selected {border:1px solid #00d2f3;background-color:#e0f5fc;}
+#buynowcontainer div > form.offerA .label input {float:left;margin:3px 0 0;height: 10px;width: 10px;}
+#buynowcontainer div > form.offerA .label div h3 {font-size:14px;display:inline;border:none;margin:0 0 10px 2px;}
+#buynowcontainer div > form.offerA .label div p {font-size:12px;font-weight:normal;margin:0 0 1px 12px;line-height:1;color:#000;}
+#buynowcontainer div > form.offerA .label div p span {color:#350071;font-weight:normal;}
+#buynowcontainer div > form.offerA .label div p span.price {color:#616161;font-weight:normal;display:block;}
+#call_now_offer_a #calltoorder {z-index:1001;left:59px;top:90px;width:207px !important;height:36px;}
+#call_now_offer_b #calltoorder {z-index:1001;left:90px;top:21px;width:137px !important;height:25px;}
+
+/* RM 8046 Panel A CSS
+--------------------------------------------------------------------------------------- */
+.panelA {width:320px !important;height:905px;}
+.panelA .primaryCart.absolute.topClick.offerA {top: 90px !important;left: 86px !important;}
+.panelA #leftForm.offerA {width: 289px;height: 231px;padding: 0 10px;bottom:98px;}
+.panelA #leftForm.offerA .label {width: 279px !important;padding: 5px;}
+.panelA #leftForm.offerA .label.firstOne {margin-bottom: 20px;}
+.panelA #leftForm.offerA input {margin: 5px 0 0 !important;}
+.panelA #leftForm.offerA .label div h3 {font-size: 18px;margin: 0 0 10px 10px;}
+.panelA #leftForm.offerA .label div p {font-size: 16px;margin: 3px 0 1px 20px;}
+.panelA #leftForm.offerA .label div p.sasText {font-size: 14px;margin: 6px 0 1px 20px;line-height: 1.4;}
+.panelA #leftForm.offerA .label div p .price {margin-bottom: 6px;}
+.panelA #leftForm.offerA .label div p span .cents {font-size:12px;vertical-align:top;color:#000;}
+.panelA .primaryCart.absolute.bottomClick.offerA {bottom: -1px !important;left: 64px !important;width: 184px !important;height: 50px !important;}
+
+
+/* HEADER/FOOTER COMPONENTS (Logo, Search, User Info, Mini Cart, Links, Category Menu)
+--------------------------------------------------------------------------------------- */
+/***** Header Logo *****/
+h1.logo {background:none;padding: 0;}
+h1.logo a {background: url(../images/logo.gif) no-repeat top right /* Company Logo */;display:block;height: 32px /* Sets overall height of header */;margin: 0px 0 0 -2000px /* Navigative margin hides plain text in H1 tag (Best practice for SEO optimization) */;outline:none /* Removes Link Outline */;position:relative;text-decoration:none;top:3px;width: 2195px /* width of logo is 195px, therefore to get logo to display width is set to 2000px to compensate for nagitive margin plus 195px =  2195px */;}
+
+.welcomemessage {text-align:left;}
+
+/***** COPYRIGHT *****/
+.copyright {display:block;font-size:9px;margin-top: 10px;text-align: center;text-decoration:none;}
+
+#footerbar {border-bottom: 1px solid #ccc;margin: 0px auto;padding: 10px 0px;text-align: center;}
+#footerbar ul {list-style: none;margin: 0;padding: 0;text-align: center;width: 100%;}
+#footerbar ul li {display: inline; }
+#footerbar ul li a {font-size: 9pt;text-align: center;font-weight: normal;letter-spacing: 0px;padding: 8px;white-space: nowrap;width: 90px; }
+.footer_links {display:none;}
+
+/***** Search Bar *****/
+.sitesearch {white-space:nowrap;margin:2px auto;width:80%;}
+.sitesearch input {font-size: 11pt;margin-top: -4px;width:80%;}
+.sitesearch button {margin:0;}
+
+/******* PAGINATION *************/
+#pagination {background-color: #eeeeee;border-bottom:solid 1px #ccc;color:#5781AE;font-size:12pt;margin:0 0 7px 0;padding: 4px 8px;text-align: center;}
+#pagination a {background-color: #fff;border:solid 1px #5781AE;font-size:12pt;padding:0 6px;margin: 0 3px;text-decoration: none;}
+#pagination a:hover {background-color:#5781AE;border:1px solid #fff;color:#fff;}
+
+/* MINI-CART
+--------------------------------------------------------------------------------------- */
+.minicart .minicarttotal {background:transparent url(../images/cart_icon.gif) no-repeat 0 0;}
+#minicart {background-color: #000;color: white;font-size:8pt;padding: 2px 6px;}
+#minicart a.linkminicart {color: white;float: right;font-size:8pt;text-decoration: none;}
+.emptycart {float: right;}
+
+/* CART
+--------------------------------------------------------------------------------------- */
+#mainCartTable {font-size:9pt;margin:1px;padding:1px;width: 100%;}
+#mainCartTable td.productname {border-width:1px 1px 0 1px;border-color:#ccc;border-style: solid;padding:2px;}
+#mainCartTable td.productname a.productname {display:block;overflow: hidden;text-overflow: ellipsis;-o-text-overflow: ellipsis;white-space: nowrap;width:75%;}
+#mainCartTable td.image {border-width:0 0 0 1px;border-color:#ccc;border-style: solid;vertical-align:top;width:75px;}
+#mainCartTable td.productdetailfooter {border-width:0 1px 1px 1px;border-color:#ccc;border-style: solid;padding:2px;}
+#mainCartTable td.productdetail {border-width:0 1px 0 0;border-color:#ccc;border-style: solid;padding: 0px 0px 0px 8px;vertical-align:top;}
+#mainCartTable .stockstate ul, #mainCartTable .stockstate li {display:inline;}
+#mainCartTable td input {font-size:9pt;}
+#mainCartTable .displayliproducts .productname {display:none;}
+#mainCartTable .applycoupon {background-color: #EEE;}
+.productdetailmore {padding:4px;background-color: #ededed;}
+button.checktop {float: right;margin-top: -20px;}
+button.removebutton {background:url("../images/icon_remove24.png") no-repeat center center;border:0;float:right;height:24px;margin-top:-19px;width:24px;}
+button.removebutton span {display:none;}
+#cart .price div {display:block;margin:0;padding:0;}
+#cart .price label {color:#000;padding:0 2px 0 0;text-align: left;text-decoration: none;}
+#cart .price .standardprice {border-right: 0;text-decoration: none;}
+#cart .price .standardprice span {text-decoration:line-through;}
+.bonuslabel {color:red;text-align:center;text-transform:uppercase;}
+
+.mobilecontent {background-color:#FFFFFF;border:1px solid #000000;margin:7px;padding: 5px;overflow:hidden;-moz-border-radius-bottomleft:5px;-moz-border-radius-bottomright:5px;-moz-border-radius-topleft:5px;-moz-border-radius-topright:5px;-webkit-border-radius : 5px;}
+
+.stockstate .onorder {margin-top:4px;color: #cc0000;display: block;}
+.stockstate .notavailable {margin-top:4px;color: #cc0000;font-weight: bold;display: block;}
+.cartfooter {background-color:#eeeeee;border-top:solid 1px #ddd;margin: 4px 0px;padding:4px;}
+.cartfooter button {float:left;}
+#orderTotalTable {border-collapse: collapse;float:right;width:65%;}
+#orderTotalTable td {padding:0 4px 0 0;text-align:right;}
+.actionbuttons .continuecheckout {float:right;}
+.checkoutshipping .formactions {margin-top:15px;}
+.checkoutshipping .formactions .backbutton {float:left;}
+
+/* STORE LOCATOR
+--------------------------------------------------------------------------------------- */
+.storesearch { padding:4px;}
+.storelocator h1 {border-bottom: 1px solid #CCC;color: #666;font-size: 12px;font-weight: bold;}
+.storeresults h5 {background:none;font-size:10pt;}
+.storeresults .storedistance {color:red;font-size:10pt;font-weight:bold;}
+.storeresults .storedetailtable {border-bottom: 1px solid #CCC;display:block;font-size:9pt !important;padding:4px;text-decoration:none;}
+.storeresults .storedetailtable div{font-size:9pt !important;}
+.storeevents,.storehours {padding:4px}
+
+
+#contentContainer { 
+    width: 320px; 
+    font-family: Arial, Helvetica, sans-serif; 
+    text-align: center; 
+    margin: 0 auto; 
+    background: #fff;
+}
+.cta { 
+    background: url(../images/order_BTN.png) 0 0 no-repeat;
+    width: 145px;
+    height: 39px;
+    text-align: center;
+    margin: 0 auto;
+    display: block;
+    padding-bottom: 10px;
+ }
+ .cta2 { 
+    background: url(../images/order_btn.gif) 0 0 no-repeat;
+    width: 320px;
+    height: 63px;
+    text-align: center;
+    margin: 0 auto;
+    display: block;
+ }
+.purple_txt { 
+    color: #9D008C; 
+    font-size: 1em; 
+    font-style: italic; 
+    font-weight: bold;
+} 
+.youget {
+    font-size: 1em;
+    font-weight: bold;
+    text-align: left;
+    margin-left: 20px;    
+}
+ul.list, ul.list li {
+    text-align: left;
+    font-size: 1em;
+    margin-top: 0;    
+    font-family: Arial,Helvetica,sans-serif;
+    position: relative;
+    margin-left: 12px;
+}
+.price_onetime { 
+    background: url(../images/price.gif) 0 0 no-repeat;
+    width: 218px;
+    height: 85px;
+    text-align: center;
+    margin: 0 auto;
+    display: block;
+    padding: 10px;
+    position: relative;
+    clear:both;  
+    /*top: 100px;*/
+}
+
+
+
+

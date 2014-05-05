@@ -1,0 +1,23 @@
+/**
+ * @input CampaignConfig : Object
+ * @output NewCampaignConfig : Object
+ */
+importPackage( dw.system );
+
+function execute( args : PipelineDictionary ) : Number
+{
+	importScript('guthyrenker_core:common/libUtils.ds');
+	
+	var tmpCampaignConfig : dw.object.CustomObject = getCampaignForCampaignCode('core');
+	var campaignConfig : dw.object.CustomObject = args.CampaignConfig;
+	
+	if (!empty(tmpCampaignConfig))
+	{
+		campaignConfig['cartID'] = tmpCampaignConfig.custom['cartID'];
+		campaignConfig['checkoutType'] = tmpCampaignConfig.custom['checkoutType'];
+	}
+	
+	args.NewCampaignConfig = campaignConfig;
+	
+   return PIPELET_NEXT;
+}

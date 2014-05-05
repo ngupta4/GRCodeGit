@@ -1,0 +1,56 @@
+<isinclude template="util/modules"/>
+<iscomment>SuppCY checkbox is not checked, then display CY code</iscomment>
+<iscomment>js for value change event on text fields.</iscomment>
+<isinclude template="checkout/steps/triggerseewhy" />
+
+<script type="text/javascript">
+  	app.resources.verifyEmailLimit = '${pdict.CurrentSession.privacy.verifyemaillimit}'
+	app.resources.verifyEmailUrl = '<isprint value="${URLUtils.url('GRMiddleware-VerifyEmail')}" encoding="off"/>'
+</script>
+	<iscomment>Contact information</iscomment>
+	<div class="segment-title">${Resource.msg('personinformation.contactinformation.label','rendering',null)}
+	</div>
+	<isinclude template="mobile/checkout/personinformation/contactinformation" />
+	<iscomment>Payment information</iscomment>
+	<div class="segment-title">
+	${Resource.msg('billing.paymentheader.mobile','checkout',null)}
+	</div>
+	<isinclude template="mobile/checkout/personinformation/paymentinformation" />
+		 	
+	<iscomment>Billing and shipping</iscomment>
+	
+	<div class="segment-title">${Resource.msg('personinformation.billinginformation.label','rendering',null)}</div>
+	<isinclude template="mobile/checkout/personinformation/billinginformation" />
+	
+	<div class="segment-title">${Resource.msg('personinformation.shippinginformation.label','rendering',null)}</div>
+    <isinputfield id="sameAsBilling" formfield="${pdict.CurrentForms.personinf.useAsBillingAddress}" type="checkbox" />
+    <div class="shipping_info" <isif condition="${pdict.CurrentForms.personinf.useAsBillingAddress.checked}">style="display:none;"</isif>>
+		<isinclude template="mobile/checkout/personinformation/shippinginformation" />
+	</div>
+	
+	
+	<script type="text/javascript">
+	    $('${'#' + pdict.CurrentForms.personinf.useAsBillingAddress.htmlName}').change(function(e){$('.shipping_info').toggle();});
+	</script>
+
+
+	<div class="clearfix"></div>
+	
+	
+	
+	  	
+	<iscomment>order total</iscomment>
+	<div data-role="content" class="gray-bg">
+		<span class="cocart-container">
+			<div class="totalPrice cocart-price" id="orderTotal_2">					
+				<isprint value="${pdict.Basket.getTotalNetPrice()}"/>
+			</div>
+			<span class="cocart-label">
+				${Resource.msg('cart.ordertotal.label', 'rendering', null)}&nbsp;
+			</span>
+		</span>
+	</div>
+<div style="text-align:center;" data-role="content" class="gray-bg">
+	<button class="continueBtn completeBtn" id="contYourOrder" type="submit" value="apply" name="${pdict.CurrentForms.personinf.apply.htmlName}" tabindex="21"><span>${Resource.msg('checkout.submit.mobile', 'rendering', null)}</span></button>
+</div>
+<div class="clearfix"></div>

@@ -1,0 +1,8 @@
+<isdecorate template="search/pt_customertestimonial.isml">
+<isset name="OmniturePage" value="testimonySuccess" scope="pdict" />
+	<isinclude template="util/modules"/>
+	<div class="testimonialSuccess">
+		<iscomment><isprint value="${Resource.msg('testimony.success.message','rendering',null)}" encoding="off"/></iscomment>
+		<iscontentasset aid="testimonial-success"/>		
+	</div>
+</isdecorate>

@@ -1,0 +1,18 @@
+<isinclude template="mobile/search/simplesearch"/>
+
+<div class="searchcategories">
+	<isloop iterator="${pdict.Category.getOnlineSubCategories()}" alias="catPrimary">
+		<isif condition="${((catPrimary.custom.mobile != true) && ((empty(catPrimary.custom.categoryBehavior.value)) || (catPrimary.custom.categoryBehavior.value == 'advancedSearch')))}">
+			<a href="${URLUtils.url('mSearch-Show','cgid',catPrimary.getID())}"  class="linkbar"><span>${catPrimary.getDisplayName()}  <isif condition="${catPrimary.getOnlineSubCategories().isEmpty()}">(${catPrimary.onlineProducts.length})</isif></span></a>
+			<isloop iterator="${catPrimary.getOnlineSubCategories()}" alias="catSub" status="loopState">
+				<isif condition="${((catSub.custom.mobile != true) && ((empty(catSub.custom.categoryBehavior.value)) || (catSub.custom.categoryBehavior.value == 'advancedSearch')))}">
+					<isif condition="${loopState.isLast()}">
+						<a class="sublinkbar sublinklast" href="${URLUtils.url('mSearch-Show','cgid',catSub.getID())}" >${catSub.getDisplayName()} <isif condition="${!catSub.getOnlineSubCategories().isEmpty()}">+<iselse>(${catSub.onlineProducts.length})</isif></a>
+					<iselse>
+						<a href="${URLUtils.url('mSearch-Show','cgid',catSub.getID())}" class="sublinkbar">${catSub.getDisplayName()} <isif condition="${!catSub.getOnlineSubCategories().isEmpty()}">+<iselse>(${catSub.onlineProducts.length})</isif></a>
+					</isif>
+				</isif>
+			</isloop>
+		</isif>
+	</isloop>
+</div>

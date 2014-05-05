@@ -1,0 +1,4 @@
+<iscache status = "off">
+<isif condition="${pdict.CurrentCustomer.registered}">
+    <a href="${URLUtils.https('mLogin-Logout')}" class="linkbar logoutlink">${Resource.msg('global.logout','locale',null)}</a>
+</isif>

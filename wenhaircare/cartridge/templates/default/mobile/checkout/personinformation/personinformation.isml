@@ -1,0 +1,97 @@
+<isinclude template="util/modules"/>
+<iscomment>SuppCY checkbox is not checked, then display CY code</iscomment>
+<isif condition="${session.custom.suppCY == null || session.custom.suppCY == 0}">
+
+<script type="text/javascript">
+  cy.SUPPRESSDEFAULT = true;
+  $(document).ready(function(){
+  	$("#dwfrm_personinf_contact_email").change(cy_checkFieldsAndGetImageSrc);
+  	$("#dwfrm_personinf_contact_emailconfirm").change(cy_checkFieldsAndGetImageSrc);
+  	$("#billFirstName").change(cy_checkFieldsAndGetImageSrc);
+	$("#billLastName").change(cy_checkFieldsAndGetImageSrc);
+	$("#billState").change(cy_checkFieldsAndGetImageSrc);
+	$("#paymentMethod").change(cy_checkFieldsAndGetImageSrc);
+  });
+  function getImageSrc()
+  {
+    cy.CUSTOMERCODE = "${dw.system.Site.current.preferences.custom.seeWhyCustomerCode}";
+    cy.FunnelLevel = "2";
+    cy.UserId = "${pdict.CurrentCustomer.profile.email?:''}";
+  }
+  function cy_checkFieldsAndGetImageSrc() {
+	  	cy.CUSTOM3='${lineItem.product.ID}';
+		cy.USERID=$("#dwfrm_personinf_contact_email").val();
+		cy.CUSTOM1=$('#billFirstName').val();
+		cy.CUSTOM2=$('#billLastName').val();
+		cy.CUSTOM4=$('#billState').val();
+		cy.CUSTOM5="";
+		cy.FUNNELLEVEL='4';
+		if ($('paymentMethod').val() == 'PREPAY'){
+			cy.FUNNELLEVEL = 5;
+		} 
+		if (isEmailValid(cy.USERID)){
+			cy_getImageSrc();
+		}
+	}
+</script>
+</isif>
+<iscomment>js for value change event on text fields.</iscomment>
+
+
+<script type="text/javascript">
+  function isEmailValid(emailAddress) {
+			var pattern = new RegExp(/^(("[\w-\s]+")|([\w-]+(?:\.[\w-]+)*)|("[\w-\s]+")([\w-]+(?:\.[\w-]+)*))(@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$)|(@\[?((25[0-5]\.|2[0-4][0-9]\.|1[0-9]{2}\.|[0-9]{1,2}\.))((25[0-5]|2[0-4][0-9]|1[0-9]{2}|[0-9]{1,2})\.){2}(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[0-9]{1,2})\]?$)/i);
+			return pattern.test(emailAddress);
+  }
+  //Set email verify call stuff
+	app.resources.verifyEmailLimit = '${pdict.CurrentSession.privacy.verifyemaillimit}'
+	app.resources.verifyEmailUrl = '<isprint value="${URLUtils.url('GRMiddleware-VerifyEmail')}" encoding="off"/>'
+</script>
+	<iscomment>Contact information</iscomment>
+	<div class="segment-title">${Resource.msg('personinformation.contactinformation.label','rendering',null)}
+	</div>
+	<isinclude template="mobile/checkout/personinformation/contactinformation" />
+		 	
+	<iscomment>Billing and shipping</iscomment>
+	
+	<div class="segment-title">${Resource.msg('personinformation.billinginformation.label','rendering',null)}</div>
+	<isinclude template="mobile/checkout/personinformation/billinginformation" />
+	
+	<div class="segment-title">${Resource.msg('personinformation.shippinginformation.label','rendering',null)}</div>
+    <isinputfield id="sameAsBilling" formfield="${pdict.CurrentForms.personinf.useAsBillingAddress}" type="checkbox" />
+    <div class="shipping_info" <isif condition="${pdict.CurrentForms.personinf.useAsBillingAddress.checked}">style="display:none;"</isif>>
+		<isinclude template="mobile/checkout/personinformation/shippinginformation" />
+	</div>
+	<iscomment>Payment information</iscomment>
+	<div class="segment-title">
+	${Resource.msg('billing.paymentheader','checkout',null)}
+	</div>
+	<isinclude template="mobile/checkout/personinformation/paymentinformation" />
+	
+	
+	
+	<script type="text/javascript">
+	    $('${'#' + pdict.CurrentForms.personinf.useAsBillingAddress.htmlName}').change(function(e){$('.shipping_info').toggle();});
+	</script>
+
+
+	<div class="clearfix"></div>
+	
+	
+	<p class="required_text"><span class="requiredindicator">*</span> ${Resource.msg('cart.requiredtext', 'rendering', null)}</p>
+	  	
+	<iscomment>order total</iscomment>
+	<div data-role="content" class="gray-bg">
+		<span class="cocart-container">
+			<div class="totalPrice cocart-price" id="orderTotal_2">					
+				<isprint value="${pdict.Basket.getTotalNetPrice()}"/>
+			</div>
+			<span class="cocart-label">
+				${Resource.msg('cart.ordertotal.label', 'rendering', null)}&nbsp;
+			</span>
+		</span>
+	</div>
+<div style="text-align:center;" data-role="content" class="gray-bg">
+	<button class="continueBtn completeBtn" id="contYourOrder" type="submit" value="apply" name="${pdict.CurrentForms.personinf.apply.htmlName}" tabindex="21"><span>${Resource.msg('checkout.submit', 'rendering', null)}</span></button>
+</div>
+<div class="clearfix"></div>

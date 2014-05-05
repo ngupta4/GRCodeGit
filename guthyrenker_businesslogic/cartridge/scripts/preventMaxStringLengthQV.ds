@@ -1,0 +1,43 @@
+/**
+* preventMaxStringLengthQV.ds
+* The purpose of this script is to truncate the CurrentRequest.httpReferer
+* and CurrentRequest.httpQueryString string variables to 1200 characters
+* before they are saved to the Session.privacy array. This script should only
+* be called when it needs to be (when either of these variables are over 1200
+* characters. This script should also prevent Quota Violations revolving around
+* maxStringLength.
+*
+*   @input OriginalReferer : String
+*   @input OriginalQueryString : String
+*   @output SafeReferer : String
+*   @output SafeQueryString : String
+*
+*/
+importPackage( dw.system );
+
+function execute( args : PipelineDictionary ) : Number
+{
+	// set local variables for inputs
+	var originalReferer : String =		args.OriginalReferer;
+	var originalQueryString : String =	args.OriginalQueryString;
+
+	// ensure we end up returning the original values if no truncating needs to take place
+	var safeReferer : String =			originalReferer;
+	var safeQueryString : String =		originalQueryString;
+	
+	// truncate the referer if it is longer than 1200 characters
+	if( !empty( originalReferer ) && originalReferer.length > 1200 ) {
+		safeReferer = originalReferer.substring( 0, 1200 );
+	}
+	
+	// truncate the querystring if it is onger than 1200 characters
+	if( !empty( originalQueryString ) && originalQueryString.length > 1200 ) {
+		safeQueryString = originalQueryString.substring( 0, 1200 );	
+	}
+	
+	// return session-safe string values as our outputs
+	args.SafeReferer =		safeReferer;
+	args.SafeQueryString = 	safeQueryString;
+
+    return PIPELET_NEXT;
+}

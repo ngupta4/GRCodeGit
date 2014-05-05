@@ -1,0 +1,16 @@
+<isif condition="${'format' in pdict.CurrentHttpParameterMap && pdict.CurrentHttpParameterMap.format.stringValue=='dialog'}">
+	<isset name="DecoratorTemplateName" value="${'rendering/content/pt_popupdialog'}" scope="page"/>
+<iselse/>
+	<isset name="DecoratorTemplateName" value="${'error/pt_error'}" scope="page"/>
+</isif>
+<isdecorate template="${DecoratorTemplateName}">
+<iscache type="relative" hour="24" varyby="price_promotion" />
+<isinclude template="util/modules"/>
+<div class="notfound">
+	<div class="errorpage">
+		<div class="errorpagemessage">
+			<iscontentasset aid="404-PDP-Error"/>
+		</div><!-- END: errorpagemessage -->
+	</div><!-- END: errorpage -->
+</div><!-- END: notfound -->
+</isdecorate>

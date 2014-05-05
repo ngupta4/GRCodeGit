@@ -1,0 +1,46 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<isinclude template="util/modules"/>
+
+<iscomment>This page must be cachable. It inherits the caching attributes by the decorated template.</iscomment>
+
+
+<isset name="showHeader" value="${true}" scope="page" />
+<isset name="showFooter" value="${true}" scope="page" />
+<isset name="showNav" value="${true}" scope="page" />
+<isset name="showOrderButton" value="${true}" scope="page" />
+
+<head>
+	<iscomment>
+		Include all important information globally , e.g. meta-data, link information, and
+		javascript.
+	</iscomment>
+	<isinclude template="components/header/htmlhead"/>
+
+	<iscomment>Add page specific header information here.</iscomment>
+	<link href="${URLUtils.staticURL('css/kiosklocator.css')}" type="text/css" rel="stylesheet" />
+	
+</head>
+<body>
+<isinclude template="common/mboxglobal"/>
+	<isinclude template="components/header/header"/>
+	<div id="idMainWide" class="mainWide">
+	  <div class="clearfix" id="main">
+			<div id="primaryContent" class="clearfix">
+				<isreplace/>
+				
+				<br clear="all" />
+			</div><!-- END: content -->
+			<div id="secondaryContent">
+				<isinclude template="content/kiosklocator/sidebar.isml"/>
+			</div><!-- END: leftcolumn -->
+		</div> <!-- END: main -->
+	</div>
+	
+
+	<isinclude template="components/footer/footer"/>
+	<isinclude template="components/footer/pixels"/>
+	<iscontentasset aid="Higher-Signal-Atlas-Container-media"/>
+	<isinclude template="common/google_analytics" />
+</body>
+</html>

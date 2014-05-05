@@ -1,0 +1,36 @@
+<!--- TEMPLATENAME: upsellinlinebreadcrumbs.isml --->
+<div class="breadcrumb <isif condition="${!isFrequencySection}">breadcrumbCore</isif> panelC">
+		<div class="refreshLogo"><a href="${URLUtils.httpHome()}" title="Proactiv Plus"><img src="${URLUtils.staticURL('images/proactivplus/proactivplus.png')}" alt="Proactiv Plus" /></a></div>
+		<ul>
+			<isset name="orderStep" value="${0}" scope="page">
+			<iscomment>Removing 'if' conditions, making numbering dynamic using 'orderStep'</iscomment>
+			<isif condition="${showBrands}">
+				<li class="step1 <isif condition="${orderStep == 0}"> active</isif>">
+					<a href="javascript:void(0)"><span>0${(orderStep = orderStep +1).toString()}</span>
+					<p>${Resource.msg('cart.breadcrumbs.selectbrand.label.inline2', 'rendering', null)}</p></a>
+				</li>
+			</isif>
+			<li class="step2 <isif condition="${orderStep == 0}"> active</isif>">
+				<a  href="javascript:void(0)"><span>0${(orderStep = orderStep +1).toString()}</span>
+				<p>${Resource.msg('cart.breadcrumbs.selectsystem.label.inline2', 'rendering', null)}</p></a>
+			</li>
+			<li class="step3">
+				<a href="javascript:void(0)"><span>0${(orderStep = orderStep +1).toString()}</span>
+				<p>${Resource.msg('cart.breadcrumbs.selectfreegift.label.inline2', 'rendering', null)}</p></a>
+			</li>
+			<li class="step4">
+				<a href="javascript:void(0)"><span>0${(orderStep = orderStep +1).toString()}</span>
+				<p>${Resource.msg('cart.breadcrumbs.selectsupply.label.inline2', 'rendering', null)}</p></a>
+			</li>
+			<isif condition="${isFrequencySection}">
+				<li class="step5">
+					<a href="javascript:void(0)" ><span>0${(orderStep = orderStep +1).toString()}</span>
+					<p>${Resource.msg('cart.breadcrumbs.frequency.label.inline2', 'rendering', null)}</p></a>
+				</li>
+			</isif>
+			<li class="step6">
+				<a href="javascript:void(0)" ><span>0${(orderStep = orderStep +1).toString()}</span>
+				<p>${Resource.msg('cart.breadcrumbs.checkout.label.inline2', 'rendering', null)}</p></a>
+			</li>
+		</ul>
+</div>

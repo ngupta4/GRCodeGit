@@ -1,0 +1,24 @@
+<iscomment>
+	This template includes a placeholder for showing captchas. If the functionality is enabled, the captcha will be 
+	filled in via unobtrusive Javascript.
+</iscomment>
+<isif condition="${dw.system.Site.getCurrent().getCustomPreferenceValue('enableCaptcha')}">
+
+
+    <div id="recaptcha_container" <isprint value="${pdict.CaptchaErrorCode?'class=\"error\"':''}" encoding="off">><!-- {
+                                            "publickey" : "${dw.system.Site.getCurrent().getCustomPreferenceValue('recaptchaPublicKey')}",
+<isif condition="${pdict.CaptchaErrorCode}">"error"     : "${pdict.CaptchaErrorCode}",</isif>
+                                            "locale"    : "${pdict.CurrentRequest.locale.split('_')[0]}",
+                                            "theme"     : "white"
+                                        } --></div>
+    <isif condition="${pdict.ErrorCode == 'invalidcapture'}"><div class="catpchaerror">${Resource.msg('captcha.invalid', 'locale', null)}</div></isif>
+    
+    
+	<noscript>
+	   <iframe src="https://www.google.com/recaptcha/api/noscript?k=${dw.system.Site.getCurrent().getCustomPreferenceValue('recaptchaPublicKey')}"
+	       height="300" width="500" frameborder="0"></iframe><br />
+	   <textarea name="recaptcha_challenge_field" rows="3" cols="40">
+	   </textarea>
+	   <input type="hidden" name="recaptcha_response_field" value="manual_challenge" />
+	</noscript>
+</isif>

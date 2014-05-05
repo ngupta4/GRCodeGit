@@ -1,0 +1,69 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<isinclude template="util/modules"/>
+<isscript>importPackage(dw.content);
+  importPackage(dw.util);
+  importPackage(dw.catalog);
+  
+  importScript('guthyrenker_core:common/libUtils.ds');
+  
+  var contentInfo    = getCurrentContentInfo(pdict.CurrentHttpParameterMap);
+  var folderPathInfo = getRetentionFolderPathInfo(contentInfo);
+  
+  var CurrentFolder  : Folder = contentInfo.folder;
+  var CurrentContent : Content = contentInfo.content;
+  
+  var CurrentFolderPath : String = folderPathInfo.folderPath;
+  var RootFolder        : Folder = folderPathInfo.rootFolder;
+  
+  CurrentFolderPath += " body_"+RootFolder.ID+" "+RootFolder.ID;
+  
+  var PageID : String = "page_";
+  
+  if( empty(CurrentContent) ) {
+  PageID += CurrentFolder.ID;
+  } else {
+  PageID += CurrentContent.ID;
+  }
+  
+  var CCC : Object = pdict.CurrentCampaignConfig;</isscript>
+<iscomment>This page must be cachable. It inherits the caching attributes by the decorated template.</iscomment>
+<head>
+<link href="${URLUtils.staticURL('/css/content.css')}" type="text/css" rel="stylesheet" />
+<iscomment>
+Include all important information globally , e.g. meta-data, link information, and javascript.
+</iscomment>
+<isinclude template="components/header/htmlhead"/>
+<iscomment>Add page specific header information here.</iscomment>
+</head>
+<body>
+<iscomment>Cookies and Javascript enabled check</iscomment>
+<isinclude template="components/browsertoolscheck"/>
+
+<isinclude template="components/header/header"/>
+
+
+	 
+  <isinclude template="search/components/contentStaticNavigation"/>
+  
+  <isreplace/>
+  <a href="${pdict.CurrentRequest.httpHost}${pdict.CurrentRequest.httpPath}" id="currentURL"></a>
+   <div class="footer-breadcrumb">
+	  	<div class="footer">
+		    <div class="footer_nav">
+		     <isinclude template="components/contentbreadcrumbs"/> 	 
+		    </div>
+	  </div>
+	</div>
+
+    <isinclude template="components/footer/footer"/>
+
+  <isinclude template="components/footer/pixels"/>
+  <isinclude template="common/google_analytics" />
+<
+<!-- END: container -->
+<script type="text/javascript">
+jQuery('#celebritySpotlight').parent().addClass('active');
+</script>
+</body>
+</html>

@@ -1,0 +1,25 @@
+<!--check htmlhead -->
+<isinclude template="util/modules"/>
+<isif condition="${pagename == 'cartPage'}">
+	<iscache type="relative" hour="24" varyby="price_promotion" />
+	<iscomment>Test Header page</iscomment>
+	<isif condition="${dw.campaign.ABTestMgr.isParticipant('cartpageTest', 'segmentA')}">
+	    <iscontentasset aid="m-header-ab-participant"/>
+	  <iselse>
+	  
+	    <iscontentasset aid="m-header" />
+	</isif>
+<iselse>
+	<iscontentasset aid="m-header" />
+</isif>
+
+<script type="text/javascript">
+jQuery('#cta2').click( function(e) {
+	 s.linkTrackVars='prop61,eVar61';
+	 s.prop61='ClickToCall:'+s.pageName;
+     s.eVar61= s.prop61;
+     s.tl(this,'o','ClickToCall:'+s.pageName);
+     s_objectID='hp_ClickToCall';
+    
+});
+</script>

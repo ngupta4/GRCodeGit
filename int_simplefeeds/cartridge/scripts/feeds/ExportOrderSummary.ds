@@ -1,0 +1,94 @@
+/**
+* Demandware Script File
+* Export an XML file for order place count in a day
+*
+*	@input StartDate : Date mandatory, Should be the first date of the date range of the orders contained within the file
+*	@input ExportFile : String  Export file path. This path is relative to the 'src' subdirectory within the top-level IMPEX directory.
+*	@output Status	: dw.system.Status 
+*/
+importPackage( dw.system );
+importPackage( dw.util );
+importPackage( dw.io );
+importPackage( dw.order );
+
+function execute( args : PipelineDictionary ) : Number
+{
+	Logger.getLogger("simplefeeds").debug("ExportOrderSummary: Start"); 
+	
+	var currentCalendare : Calendar = new Calendar (new Date());
+	var endOrderDate : Date = new Date (currentCalendare.get(Calendar.YEAR),null,currentCalendare.get(Calendar.DAY_OF_YEAR));
+	currentCalendare.roll(Calendar.DAY_OF_YEAR, false);
+	var startOrderDate : Date = new Date (currentCalendare.get(Calendar.YEAR),null,currentCalendare.get(Calendar.DAY_OF_YEAR));
+	var orders : SeekableIterator = OrderMgr.queryOrders("creationDate<{0} AND creationDate >={1}", "orderNo", endOrderDate, startOrderDate);
+	var count : Number = orders.count;
+	
+	//separate out the counts based on cart ids
+	var cartIdCountMap : HashMap = new HashMap();
+	var order = null;
+	var cartId = null;
+	var cartIDSpecificCount = 0;
+	while(orders.hasNext()){
+		
+		order = orders.next();
+		cartId = order.custom.cartID;
+		if(cartIdCountMap.get(cartId) != null ){
+			cartIDSpecificCount = cartIdCountMap.get(cartId);
+			cartIdCountMap.put(cartId, ++cartIDSpecificCount);
+		}else{
+			cartIdCountMap.put(cartId, 1);
+		}
+	}
+	
+	var startdate : Number = new Date().getTime();
+	var exportFile : String = args.ExportFile;
+	if (empty(exportFile)){
+		trace("ExportOrderSummary: Parameter ExportFile empty");
+		Logger.getLogger("simplefeeds").error( "ExportOrderSummary: Parameter ExportFile empty" );
+		args.Status = new Status(Status.ERROR,"IMPEX-100");
+		return PIPELET_ERROR;
+	}
+	
+	var exportFilePath : String = File.IMPEX + File.SEPARATOR +"src"+ File.SEPARATOR + exportFile;
+	
+	var xmlFile : File = new File(exportFilePath); 
+	var xmlFileWriter : FileWriter = new FileWriter(xmlFile);
+	
+	// Write XML to file
+	try {
+		xmlFileWriter.writeLine('<?xml version="1.0" encoding="ISO-8859-1" ?>');
+		xmlFileWriter.writeLine('<orderSummary xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="Guthy_Renker_Order_DailyRecon_Spec.xsd" >');
+		xmlFileWriter.writeLine('  <source>demandware</source>');
+		xmlFileWriter.writeLine('  <date>'+StringUtils.formatCalendar( new Calendar(args.StartDate), "yyyy-MM-dd" )+'</date>');
+		xmlFileWriter.writeLine('  <orderMasterCount>'+count+'</orderMasterCount>');
+		Logger.debug('orderMasterCount->'+count);
+		xmlFileWriter.writeLine('  <orderSubCounts>');
+		for each(var cartIdSet : String in cartIdCountMap.keySet()){
+			xmlFileWriter.writeLine('  	  <orderSubCount>');
+			xmlFileWriter.writeLine('  	     <siteId>'+ Site.current.ID +'</siteId>');
+			xmlFileWriter.writeLine('        <cartId>'+cartIdSet+'</cartId>');
+			xmlFileWriter.writeLine('  		 <orderCount>'+cartIdCountMap.get(cartIdSet)+'</orderCount>');
+			xmlFileWriter.writeLine('  	  </orderSubCount>');
+		}
+		xmlFileWriter.writeLine('  </orderSubCounts>');
+		//xmlFileWriter.writeLine('  <orderCount>'+count+'</orderCount>');
+		//xmlFileWriter.writeLine('  <source>DW</source>');
+		//xmlFileWriter.writeLine('  <date>'+StringUtils.formatCalendar( new Calendar(args.StartDate), "yyyy-MM-dd" )+ '</date>');
+		xmlFileWriter.writeLine('</orderSummary>');
+	}
+	catch(e) {
+		trace("ExportOrderSummary: Could not write header for XML file");
+		Logger.getLogger("simplefeeds").error("ExportOrderSummary: Could not write header for XML file");
+		var enddate : Number = new Date().getTime();
+		Logger.getLogger("simplefeeds").error("ExportOrderSummary: Export Runtime:"+(startdate-enddate)/1000+"s");
+		args.Status = new Status(Status.ERROR,"IMPEX-130");
+		return PIPELET_ERROR;
+	}
+
+	xmlFileWriter.flush();
+	xmlFileWriter.close();
+	var enddate : Number = new Date().getTime();
+	Logger.getLogger("simplefeeds").debug("ExportOrderSummary: Export Runtime:"+(startdate-enddate)/1000+"s");
+	Logger.getLogger("simplefeeds").debug("ExportOrderSummary: End");
+	args.Status = new Status(Status.OK,"IMPEX-0","OK");
+	return PIPELET_NEXT;
+}

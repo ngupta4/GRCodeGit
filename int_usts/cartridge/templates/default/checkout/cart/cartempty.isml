@@ -1,0 +1,8 @@
+<!--- TEMPLATENAME: cartempty.isml --->
+<isdecorate template="content/checkout/pt_checkout">
+	<div class="cartempty">${Resource.msg('cart.cartempty','checkout',null)}</div>
+	
+	<div class="backtoshopping">
+		<a href="${URLUtils.url('Page-Show', 'cid', 'order')}" title="${Resource.msg('cart.continueshopping', 'rendering', null)}">${Resource.msg('cart.continueshopping', 'rendering', null)}</a>
+	</div>
+</isdecorate>

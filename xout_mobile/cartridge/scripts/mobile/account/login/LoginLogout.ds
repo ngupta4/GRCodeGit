@@ -1,0 +1,25 @@
+/**
+* Demandware Script File
+* Clear the forms
+*
+*
+*/
+importPackage( dw.system );
+importPackage(dw.order);
+importPackage(dw.web);
+
+function execute( pdict : PipelineDictionary ) : Number
+{
+
+	try{
+	 	var forms : Forms = pdict.CurrentForms;
+	 	forms.login.clearFormElement();
+	 	forms.profile.clearFormElement();
+ 	
+	} catch(e) {
+		
+	}
+	
+
+    return PIPELET_NEXT;
+}

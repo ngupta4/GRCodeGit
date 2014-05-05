@@ -1,0 +1,8 @@
+<!--- TEMPLATENAME: cartempty.isml --->
+<isset name="ShowUpsells" value="${false}" scope="pdict" />
+<div class="cartempty">
+	<h1>${Resource.msg('cart.cartempty', 'rendering', null)}</h1>
+</div>
+<div class="backtoshopping">
+	<a href="${URLUtils.url('COCart-AddProduct','pid','B7EG3J')}" title="${Resource.msg('cart.continueshopping', 'rendering', null)}" rel="noindex, nofollow"><span class="button-bg-left"></span><span class="button-bg-main">${Resource.msg('cart.continueshopping', 'rendering', null)}</span></a>
+</div>
